@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About | BLEUSKM Studios</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;800;900&family=Red+Hat+Display:wght@300;400;500;600;700&family=Kalnia:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="32x32" href="images/bleuskm-logo.png">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  --gold: #DAAF37;
+  --cream: #EADFCF;
+  --bg: #080808;
+}
+
+body {
+  background: var(--bg);
+  color: var(--cream);
+  margin: 0;
+  padding-top: 70px;
+  font-family: "Red Hat Display", sans-serif;
+}
+
+/* HERO */
+.about-hero {
+  min-height: unset;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto auto;
+  align-items: start;
+  padding: 120px 80px 30px;
+  position: relative;
+  overflow: hidden;
+}
+
+.about-hero::after {
+  content: "";
+  position: absolute;
+  top: -200px; right: -100px;
+  width: 700px; height: 700px;
+  background: radial-gradient(ellipse, rgba(218,175,55,0.06) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+.hero-eyebrow {
+  font-family: "League Spartan", sans-serif;
+  font-size: 0.62rem; letter-spacing: 5px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 0;
+  position: absolute; top: 60px; left: 80px;
+  z-index: 2;
+  display: flex; align-items: center; gap: 16px;
+  opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
+}
+.hero-eyebrow::before {
+  content: ""; display: block; width: 40px; height: 1px; background: var(--gold);
+}
+
+.hero-headline {
+  font-family: "League Spartan", sans-serif;
+  font-weight: 900;
+  font-size: clamp(3rem, 7vw, 6.5rem);
+  letter-spacing: -2px; text-transform: uppercase;
+  color: var(--cream); line-height: 0.9;
+  margin: 0 0 0; position: relative; z-index: 2;
+  opacity: 0; animation: fadeUp 0.9s 0.35s forwards;
+  grid-column: 1 / -1; white-space: nowrap;
+}
+.hero-headline em {
+  font-style: italic; color: var(--gold);
+  font-family: "Kalnia", serif; font-weight: 400; font-size: 0.85em;
+}
+.hero-subline {
+  font-family: "Kalnia", serif; font-style: italic;
+  font-size: clamp(0.75rem, 1.2vw, 0.95rem);
+  color: rgba(234,223,207,0.4);
+  margin-top: 10px; margin-bottom: 0; letter-spacing: 0.5px;
+  grid-column: 1 / -1; font-size: clamp(0.88rem, 1.4vw, 1.1rem);
+}
+.hero-subline em {
+  color: rgba(218,175,55,0.7);
+  font-style: italic;
+}
+
+.hero-bottom {
+  display: flex; justify-content: center; align-items: center;
+  border-top: 1px solid rgba(218,175,55,0.15);
+  padding: 30px 80px 20px;
+  margin: 30px -80px 0;
+  position: relative; z-index: 2;
+  opacity: 0; animation: fadeUp 0.9s 0.5s forwards;
+  grid-column: 1 / -1;
+  text-align: center;
+}
+
+.hero-quote {
+  font-family: "Kalnia", serif; font-style: italic;
+  font-size: clamp(1rem, 1.6vw, 1.2rem); line-height: 1.7;
+  color: rgba(234,223,207,0.7); margin: 0;
+  max-width: 700px;
+}
+.hero-quote cite {
+  display: block; margin-top: 16px;
+  font-family: "League Spartan", sans-serif; font-style: normal;
+  font-size: 0.62rem; letter-spacing: 3px; text-transform: uppercase;
+  color: rgba(218,175,55,0.5);
+}
+
+.hero-meta { display: flex; flex-direction: column; justify-content: flex-end; gap: 0; }
+.hero-services-link {
+  font-family: 'League Spartan', sans-serif; font-weight: 700;
+  font-size: 0.72rem; letter-spacing: 3px; text-transform: uppercase;
+  color: #DAAF37; text-decoration: none;
+  border: 1px solid rgba(218,175,55,0.35);
+  transition: background 0.2s, color 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 200px; height: 48px; text-align: center;
+}
+.hero-services-link:hover { background: #DAAF37; color: #0b0b0b; }
+.hero-services-link svg { transition: transform 0.3s; flex-shrink: 0; }
+.hero-services-link:hover svg { transform: translateY(3px); }
+.hero-services-btn-top {
+  position: absolute;
+  top: 48px;
+  right: 80px;
+  margin: 0;
+}
+.hero-meta-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 0; border-bottom: 1px solid rgba(218,175,55,0.08);
+}
+.meta-label { font-size: 0.62rem; letter-spacing: 3px; text-transform: uppercase; color: rgba(218,175,55,0.4); }
+.meta-val { font-family: "League Spartan", sans-serif; font-weight: 700; font-size: 0.82rem; color: var(--cream); }
+
+/* MANIFESTO */
+.manifesto-section {
+  display: grid; grid-template-columns: 260px 1fr;
+  border-top: 1px solid rgba(218,175,55,0.1);
+}
+.manifesto-sidebar {
+  padding: 80px 50px; border-right: 1px solid rgba(218,175,55,0.1);
+  position: sticky; top: 70px; height: fit-content;
+}
+.manifesto-sidebar-label {
+  font-family: "League Spartan", sans-serif;
+  font-size: 0.6rem; letter-spacing: 4px; text-transform: uppercase;
+  color: rgba(218,175,55,0.4); display: block; margin-bottom: 20px;
+}
+.manifesto-h {
+  font-family: "League Spartan", sans-serif; font-weight: 900;
+  font-size: 1.8rem; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--cream); line-height: 1; margin: 0 0 16px;
+}
+.pronunciation { font-family: "Kalnia", serif; font-style: italic; font-size: 0.9rem; color: var(--gold); }
+
+.manifesto-body { padding: 80px 80px 80px 60px; }
+.manifesto-body p {
+  font-size: clamp(0.92rem, 1.2vw, 1.02rem); line-height: 1.9;
+  color: rgba(234,223,207,0.6); margin-bottom: 26px;
+}
+.manifesto-body p.closer {
+  font-family: "Kalnia", serif; font-style: italic;
+  font-size: clamp(1.1rem, 1.5vw, 1.3rem);
+  color: rgba(234,223,207,0.85); margin-bottom: 0;
+}
+
+/* STATS */
+.stats-focus-label {
+  font-family: "League Spartan", sans-serif;
+  font-size: 0.62rem; letter-spacing: 3px; text-transform: uppercase;
+  color: rgba(218,175,55,0.45);
+  padding: 14px 80px 10px;
+  border-top: 1px solid rgba(218,175,55,0.08);
+  text-align: center;
+}
+.stats-bar {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  border-top: 1px solid rgba(218,175,55,0.1);
+  border-bottom: 1px solid rgba(218,175,55,0.1);
+  background: rgba(218,175,55,0.02);
+}
+.stat-cell {
+  padding: 50px 60px; border-right: 1px solid rgba(218,175,55,0.1);
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+}
+.stat-cell:last-child { border-right: none; }
+.stat-cell::after {
+  content: ""; position: absolute; bottom: 0; left: 0;
+  width: 0; height: 2px; background: var(--gold); transition: width 0.5s ease;
+}
+.stat-cell:hover::after { width: 100%; }
+.stat-num {
+  font-family: "League Spartan", sans-serif; font-weight: 900;
+  font-size: clamp(2.8rem, 5vw, 4.5rem); color: var(--gold);
+  letter-spacing: -2px; display: block; line-height: 1; margin-bottom: 8px;
+}
+.stat-label { font-size: 0.68rem; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(234,223,207,0.35); }
+
+/* SERVICES */
+.services-section { padding: 100px 80px; }
+.section-header {
+  display: flex; align-items: baseline; gap: 24px;
+  margin-bottom: 60px; padding-bottom: 24px;
+  border-bottom: 1px solid rgba(218,175,55,0.1);
+}
+.section-title {
+  font-family: "League Spartan", sans-serif; font-weight: 900;
+  font-size: clamp(1.8rem, 3vw, 2.6rem); letter-spacing: 4px; text-transform: uppercase;
+  color: var(--cream); margin: 0;
+}
+.section-count { font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase; color: rgba(218,175,55,0.4); }
+
+.services-list { display: flex; flex-direction: column; }
+.service-row {
+  display: grid; grid-template-columns: 60px 1fr 1.2fr auto;
+  gap: 40px; align-items: center;
+  padding: 28px 0; border-bottom: 1px solid rgba(218,175,55,0.08);
+  position: relative;
+}
+.service-row::before {
+  content: ""; position: absolute; left: -80px; right: -80px; top: 0; bottom: 0;
+  background: rgba(218,175,55,0.03); opacity: 0; transition: opacity 0.3s;
+}
+.service-row:hover::before { opacity: 1; }
+.service-row:hover .svc-num { color: var(--gold); }
+.service-row:hover .svc-name { color: var(--gold); }
+
+.svc-num {
+  font-family: "League Spartan", sans-serif; font-weight: 900;
+  font-size: 0.7rem; letter-spacing: 2px;
+  color: rgba(218,175,55,0.2); transition: color 0.3s; position: relative; z-index: 1;
+}
+.svc-name {
+  font-family: "League Spartan", sans-serif; font-weight: 900;
+  font-size: clamp(1rem, 1.8vw, 1.35rem); letter-spacing: 2px; text-transform: uppercase;
+  color: var(--cream); transition: color 0.3s; position: relative; z-index: 1;
+}
+.svc-desc {
+  font-size: 0.85rem; color: rgba(234,223,207,0.45); line-height: 1.6;
+  margin: 0; position: relative; z-index: 1;
+}
+.svc-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: "League Spartan", sans-serif; font-weight: 900;
+  font-size: 0.68rem; letter-spacing: 2.5px; text-transform: uppercase;
+  color: #0b0b0b; background: var(--gold); text-decoration: none;
+  padding: 11px 22px; transition: background 0.2s;
+  white-space: nowrap; position: relative; z-index: 1; flex-shrink: 0;
+}
+.svc-cta:hover { background: #b9892e; color: #0b0b0b; }
+
+/* CTA BANNER */
+.cta-banner {
+  padding: 80px; background: linear-gradient(135deg, #0f0a00 0%, #0b0b0b 40%, #0a0800 100%);
+  border-top: 1px solid rgba(218,175,55,0.15); border-bottom: 1px solid rgba(218,175,55,0.15);
+  display: grid; grid-template-columns: 1fr auto auto; gap: 40px; align-items: center;
+  position: relative; overflow: hidden;
+}
+.cta-banner::before {
+  content: "BLEUSKM"; position: absolute; right: -20px; top: 50%;
+  transform: translateY(-50%);
+  font-family: "League Spartan", sans-serif; font-weight: 900; font-size: 12rem;
+  letter-spacing: -5px; color: rgba(218,175,55,0.025); pointer-events: none;
+  white-space: nowrap; line-height: 1;
+}
+.cta-eyebrow { font-family: "League Spartan", sans-serif; font-size: 0.62rem; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 12px; }
+.cta-headline { font-family: "League Spartan", sans-serif; font-weight: 900; font-size: clamp(1.4rem, 2.5vw, 2rem); letter-spacing: 3px; text-transform: uppercase; color: var(--cream); margin: 0 0 10px; }
+.cta-sub { font-size: 0.85rem; color: rgba(234,223,207,0.4); margin: 0; line-height: 1.6; max-width: 420px; }
+.cta-btn-primary {
+  display: inline-flex; align-items: center; background: var(--gold); color: #0b0b0b;
+  font-family: "League Spartan", sans-serif; font-weight: 900; font-size: 0.78rem;
+  letter-spacing: 3px; text-transform: uppercase; padding: 18px 36px;
+  text-decoration: none; white-space: nowrap; transition: background 0.2s; flex-shrink: 0;
+}
+.cta-btn-primary:hover { background: #b9892e; color: #0b0b0b; }
+.cta-btn-secondary {
+  display: inline-flex; align-items: center; background: transparent; color: var(--gold);
+  font-family: "League Spartan", sans-serif; font-weight: 900; font-size: 0.78rem;
+  letter-spacing: 3px; text-transform: uppercase; padding: 18px 36px;
+  text-decoration: none; white-space: nowrap; border: 1px solid rgba(218,175,55,0.4);
+  transition: all 0.2s; flex-shrink: 0;
+}
+.cta-btn-secondary:hover { background: var(--gold); color: #0b0b0b; }
+
+/* FOOTER */
+.site-footer-full { background: #040404; border-top: 1px solid rgba(218,175,55,0.1); padding: 50px 60px 30px; }
+.footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+.footer-brand img { height: 32px; margin-bottom: 14px; }
+.footer-brand p { font-size: 0.78rem; color: rgba(234,223,207,0.35); line-height: 1.6; max-width: 220px; }
+.footer-col h4 { font-family: "League Spartan", sans-serif; font-weight: 700; font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase; color: rgba(218,175,55,0.5); margin-bottom: 16px; }
+.footer-col a { display: block; font-size: 0.8rem; color: rgba(234,223,207,0.45); text-decoration: none; margin-bottom: 10px; transition: color 0.2s; }
+.footer-col a:hover { color: var(--gold); }
+.footer-bottom { border-top: 1px solid rgba(218,175,55,0.08); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+.footer-bottom p { font-size: 0.72rem; color: rgba(234,223,207,0.2); }
+.footer-bottom a { font-size: 0.72rem; color: rgba(234,223,207,0.2); text-decoration: none; margin-left: 20px; }
+.footer-bottom a:hover { color: rgba(218,175,55,0.5); }
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .about-hero { padding: 0 30px 50px; }
+  .hero-bottom { grid-template-columns: 1fr; gap: 30px; }
+  .manifesto-section { grid-template-columns: 1fr; }
+  .manifesto-sidebar { position: static; padding: 50px 30px 0; border-right: none; border-bottom: 1px solid rgba(218,175,55,0.1); }
+  .manifesto-body { padding: 40px 30px; }
+  .services-section { padding: 60px 30px; }
+  .service-row { grid-template-columns: 40px 1fr; gap: 12px; }
+  .service-row .svc-desc, .service-row .svc-cta { grid-column: 2; }
+  .cta-banner { grid-template-columns: 1fr; padding: 50px 30px; gap: 24px; }
+  .stats-bar { grid-template-columns: 1fr; }
+  .stat-cell { border-right: none; border-bottom: 1px solid rgba(218,175,55,0.1); padding: 36px 30px; }
+}
+
+/* NAV */
+.navbar{background:rgba(8,8,8,0.92)!important;backdrop-filter:blur(12px);border-bottom:1px solid rgba(218,175,55,0.08)}
+.navbar-brand span{font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37}
+.nav-link{font-family:'League Spartan',sans-serif;font-weight:600;font-size:0.65rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(234,223,207,0.5)!important;transition:color 0.2s;padding:0.5rem 1rem!important}
+.nav-link:hover,.nav-link.active{color:#DAAF37!important}
+</style>
+  <style>
+    a { color: inherit; text-decoration: none; }
+    a:hover { color: #DAAF37; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar navbar-expand-md navbar-dark fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand brand-logo" href="index.html" style="display:flex;align-items:center;gap:10px">
+      <img src="images/bleuskm-logo.png" alt="BLEUSKM Logo">
+      <span style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37">BLEUSKM Studios</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="about.html" class="nav-link active">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="my productions.html">Productions</a></li>
+        <li class="nav-item"><a class="nav-link" href="visuals.html">Visuals</a></li>
+        <li class="nav-item"><a class="nav-link" href="echos.html">Echos</a></li>
+        <li class="nav-item"><a class="nav-link" href="casting.html">Casting</a></li>
+        <li class="nav-item"><a class="nav-link" href="bleuskm shop.html">Shop</a></li>
+        <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="about-hero">
+  <p class="hero-eyebrow">Founded by Zaria Lashae &nbsp;&middot;&nbsp; Los Angeles,CA/Dallas-Ft. Worth, TX &nbsp;&middot;&nbsp; Est. 2026</p>
+  <h1 class="hero-headline">We Are <em>The Story.</em></h1>
+  <p class="hero-subline">So who better to tell it than <strong style="color:#DAAF37;font-style:normal;text-transform:uppercase;font-family:'League Spartan',sans-serif;">US.</strong></p>
+  <a href="#services" class="hero-services-link hero-services-btn-top" onclick="event.preventDefault();document.getElementById('services').scrollIntoView({behavior:'smooth'})">
+    Services
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M7 1v10M2 7l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </a>
+  <div class="hero-bottom">
+    <blockquote class="hero-quote">
+      &ldquo;This is not where the story begins. This is where it&rsquo;s remembered.&rdquo;
+      <cite>&mdash; Zaria Lashae, Founder &amp; Director</cite>
+    </blockquote>
+  </div>
+</section>
+
+<!-- MANIFESTO -->
+<div class="manifesto-section reveal">
+  <aside class="manifesto-sidebar">
+    <span class="manifesto-sidebar-label">About the Studio</span>
+    <h2 class="manifesto-h">WHO<br>ARE<br>WE?</h2>
+    <p class="pronunciation">/blu&#x2D0;-sk&#x25B;m&#x25B;/</p>
+  </aside>
+  <div class="manifesto-body">
+    <p>BLEUSKM is a film and visual production house founded by Zaria Lashae, director, writer, producer, and multihyphenate creative. It was built as a space where black imagination operates without containment. The name carries cultural memory. &ldquo;Bleu&rdquo; invokes blue-black depth &mdash; the richness of very dark skin tones historically diminished through colorism yet central to black identity and beauty. Blue is indigo tied to forced labor and survival. Blue is the blues as testimony and transformation. Blue holds sorrow and resilience at the same time. It represents power, grace, and cultural inheritance.</p>
+    <p>&ldquo;SKM&rdquo; draws from the idea of schema &mdash; a form and structural design, a program of action. BLEUSKM therefore becomes both symbol and structure: a framework for building worlds grounded in black history while refusing the limitations placed upon it.</p>
+    <p>We create psychological thrillers, surrealism, romance, satire, and speculative worlds that reflect the complexity, softness, intellect, humor, and spiritual depth of our communities. Our work challenges conventional genre boundaries while balancing bold visual language with emotional resonance and cultural precision. We reject the idea that black storytelling must orbit trauma to be meaningful.</p>
+    <p>This is more than content production. It is cultural architecture. BLEUSKM exists to construct space for imagination that does not shrink, for narratives that do not apologize, and for skin, history, and identity that are neither diluted nor reduced. It is founder-led and community-driven &mdash; a commitment to storytelling powerful enough to shift perspective and expand what black cinema is allowed to become.</p>
+    <p class="closer">It is a commitment to building the worlds we were never given.</p>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-focus-label"> Film &amp; Visual Production</div>
+<div class="stats-bar reveal">
+  <div class="stat-cell">
+    <span class="stat-num">8+</span>
+    <span class="stat-label">Projects in Development</span>
+  </div>
+  <div class="stat-cell">
+    <span class="stat-num">2026</span>
+    <span class="stat-label">Year of Active Production</span>
+  </div>
+  <div class="stat-cell">
+    <span class="stat-num">&infin;</span>
+    <span class="stat-label">Worlds Left to Build</span>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section id="services" class="services-section reveal">
+  <div class="section-header">
+    <h2 class="section-title">Services</h2>
+    <span class="section-count">06 Offerings</span>
+  </div>
+  <div class="services-list">
+    <div class="service-row">
+      <span class="svc-num">01</span>
+      <span class="svc-name">Creative Direction</span>
+      <p class="svc-desc">Visual concept development, mood boards, color palettes, styling, and full aesthetic guidance from ideation to execution.</p>
+      <a href="contact.html?service=Creative+Direction" class="svc-cta">Inquire &rarr;</a>
+    </div>
+    <div class="service-row">
+      <span class="svc-num">02</span>
+      <span class="svc-name">Music Video Production</span>
+      <p class="svc-desc">Cinematic music visuals built through intentional framing, dynamic lighting, and immersive storytelling energy.</p>
+      <a href="contact.html?service=Music+Video+Production" class="svc-cta">Inquire &rarr;</a>
+    </div>
+    <div class="service-row">
+      <span class="svc-num">03</span>
+      <span class="svc-name">Short Film Production</span>
+      <p class="svc-desc">Narrative-driven filmmaking centered on atmosphere, strong performances, and visually compelling direction.</p>
+      <a href="contact.html?service=Short+Film+Production" class="svc-cta">Inquire &rarr;</a>
+    </div>
+    <div class="service-row">
+      <span class="svc-num">04</span>
+      <span class="svc-name">Photography + Visuals</span>
+      <p class="svc-desc">High-impact photography aligned with brand identity, artistic vision, and intentional composition.</p>
+      <a href="contact.html?service=Photography+%2B+Visuals" class="svc-cta">Inquire &rarr;</a>
+    </div>
+    <div class="service-row">
+      <span class="svc-num">05</span>
+      <span class="svc-name">Editing + Post-Production</span>
+      <p class="svc-desc">Polished final cuts through advanced editing, color grading, pacing, and refined sound design.</p>
+      <a href="contact.html?service=Editing+%2B+Post-Production" class="svc-cta">Inquire &rarr;</a>
+    </div>
+    <div class="service-row">
+      <span class="svc-num">06</span>
+      <span class="svc-name">Brand Development + Content</span>
+      <p class="svc-desc">Strategic brand visuals designed to engage audiences across digital platforms with cinematic cohesion.</p>
+      <a href="contact.html?service=Brand+Development+%2B+Content" class="svc-cta">Inquire &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner reveal">
+  <div>
+    <span class="cta-eyebrow">Let&rsquo;s Build Together</span>
+    <h3 class="cta-headline">Ready to Build Something?</h3>
+    <p class="cta-sub">Every project starts with a conversation. Submit an inquiry and we&rsquo;ll explore the vision together.</p>
+  </div>
+  <a href="contact.html" class="cta-btn-primary">Start a Project &rarr;</a>
+  <a href="crew-application.html" class="cta-btn-secondary">Join the Crew &rarr;</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const revealEls = document.querySelectorAll(".reveal");
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("visible"); obs.unobserve(e.target); } });
+}, { threshold: 0.07 });
+revealEls.forEach(el => obs.observe(el));
+</script>
+
+<footer class="site-footer-full">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <img src="images/bleuskm-logo.png" alt="BLEUSKM Logo">
+      <p>A film and visual production house building worlds grounded in Black imagination, history, and cultural memory.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Navigate</h4>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="my productions.html">Productions</a>
+      <a href="visuals.html">Visuals</a>
+      <a href="echos.html">Echos</a>
+    </div>
+    <div class="footer-col">
+      <h4>Work With Us</h4>
+      <a href="contact.html">Project Inquiry</a>
+      <a href="casting.html">Apply to Casting Calls</a>
+      <a href="crew-application.html">Join the Crew</a>
+      <a href="bleuskm shop.html">The Vault &mdash; Shop</a>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms of Use</a>
+      <a href="contact.html">Contact Us</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 BLEUSKM Studios. All rights reserved.</p>
+    <div>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="casting.html">Casting</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+</footer>
+<!-- CART POPUP BUTTON -->
+<div id="cartPopupBtn" onclick="toggleCartPopup()" style="position:fixed;top:80px;right:24px;z-index:1100;cursor:pointer;display:none;align-items:center;gap:8px;background:rgba(8,8,8,0.9);border:1px solid rgba(218,175,55,0.3);padding:8px 16px;backdrop-filter:blur(10px)">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DAAF37" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+  <span style="font-family:'League Spartan',sans-serif;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:#DAAF37">Cart</span>
+  <span id="cartPopupBadge" style="display:none;background:#DAAF37;color:#000;font-size:0.55rem;font-weight:900;border-radius:50%;width:16px;height:16px;align-items:center;justify-content:center;font-family:'League Spartan',sans-serif">0</span>
+</div>
+<div id="cartPopup" style="display:none;position:fixed;top:130px;right:24px;z-index:1200;width:360px;max-height:70vh;overflow-y:auto;background:#0d0d0d;border:1px solid rgba(218,175,55,0.2);padding:24px;box-shadow:0 20px 60px rgba(0,0,0,0.8)">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37">Your Cart</span>
+    <button onclick="toggleCartPopup()" style="background:none;border:none;color:rgba(234,223,207,0.4);font-size:1.2rem;cursor:pointer;line-height:1">&times;</button>
+  </div>
+  <div id="cartPopupItems"></div>
+  <div id="cartPopupEmpty" style="text-align:center;padding:30px 0;color:rgba(234,223,207,0.3);font-family:'League Spartan',sans-serif;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase">Cart is empty</div>
+  <div id="cartPopupFooter" style="display:none;border-top:1px solid rgba(218,175,55,0.15);padding-top:16px;margin-top:16px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+      <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:rgba(234,223,207,0.5)">Subtotal</span>
+      <span id="cartPopupTotal" style="color:#DAAF37;font-family:'Red Hat Display',sans-serif;font-weight:600"></span>
+    </div>
+    <a href="cart.html" style="display:block;background:#DAAF37;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;padding:14px;text-align:center;text-decoration:none">View Cart &amp; Checkout</a>
+  </div>
+</div>
+<script>
+function toggleCartPopup() {
+  var popup = document.getElementById('cartPopup');
+  popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
+  if (popup.style.display === 'block') renderCartPopup();
+}
+function renderCartPopup() {
+  var cart = JSON.parse(sessionStorage.getItem('bleuskm_cart') || '[]');
+  var items = document.getElementById('cartPopupItems');
+  var empty = document.getElementById('cartPopupEmpty');
+  var footer = document.getElementById('cartPopupFooter');
+  var badge = document.getElementById('cartPopupBadge');
+  var total = cart.reduce(function(s,i){ return s + parseFloat(i.price)*i.quantity; }, 0);
+  var count = cart.reduce(function(s,i){ return s + i.quantity; }, 0);
+  if (count > 0) { badge.style.display = 'flex'; badge.textContent = count; } else { badge.style.display = 'none'; }
+  if (cart.length === 0) { items.innerHTML = ''; empty.style.display = 'block'; footer.style.display = 'none'; return; }
+  empty.style.display = 'none'; footer.style.display = 'block';
+  document.getElementById('cartPopupTotal').textContent = '$' + total.toFixed(2);
+  items.innerHTML = cart.map(function(item) {
+    return '<div style="display:grid;grid-template-columns:50px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid rgba(218,175,55,0.08)">' +
+      '<img src="' + (item.image||'') + '" style="width:50px;height:50px;object-fit:cover">' +
+      '<div><div style="font-family:League Spartan,sans-serif;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;color:#EADFCF;margin-bottom:2px">' + item.title + '</div>' +
+      '<div style="font-size:0.75rem;color:rgba(234,223,207,0.4)">' + (item.variantTitle !== 'Default Title' ? item.variantTitle : '') + ' &times;' + item.quantity + '</div></div>' +
+      '<span style="color:#DAAF37;font-size:0.85rem">$' + (parseFloat(item.price)*item.quantity).toFixed(2) + '</span></div>';
+  }).join('');
+}
+window.addEventListener('load', function() {
+  var cart = JSON.parse(sessionStorage.getItem('bleuskm_cart') || '[]');
+  var count = cart.reduce(function(s,i){ return s+i.quantity; }, 0);
+  var badge = document.getElementById('cartPopupBadge');
+  if (badge && count > 0) { badge.style.display = 'flex'; badge.textContent = count; }
+});
+document.addEventListener('click', function(e) {
+  var popup = document.getElementById('cartPopup');
+  var btn = document.getElementById('cartPopupBtn');
+  if (popup && btn && popup.style.display === 'block' && !popup.contains(e.target) && !btn.contains(e.target)) {
+    popup.style.display = 'none';
+  }
+});
+</script>
+
+
+<script>
+// Show cart button only if items in cart
+(function() {
+  var cart = JSON.parse(sessionStorage.getItem('bleuskm_cart') || '[]');
+  var count = cart.reduce(function(s,i){ return s+i.quantity; }, 0);
+  if (count > 0) {
+    var btn = document.getElementById('cartPopupBtn');
+    if (btn) btn.style.display = 'flex';
+    var badge = document.getElementById('cartPopupBadge');
+    if (badge) { badge.style.display = 'flex'; badge.textContent = count; }
+  }
+})();
+</script>
+<!-- SOCIAL MEDIA SIDE PULLOUT -->
+<div id="socialTab" onclick="toggleSocial()" style="position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:999;cursor:pointer;background:rgba(8,8,8,0.92);border:1px solid rgba(218,175,55,0.3);border-right:none;padding:14px 10px;backdrop-filter:blur(10px);transition:all 0.2s" onmouseover="openSocial()" onmouseout="scheduleSocialClose()">
+  <span style="font-family:'League Spartan',sans-serif;font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37;writing-mode:vertical-rl;text-orientation:mixed;user-select:none">Follow</span>
+</div>
+
+<div id="socialPanel" style="position:fixed;right:-200px;top:50%;transform:translateY(-50%);z-index:998;background:rgba(8,8,8,0.95);border:1px solid rgba(218,175,55,0.2);border-right:none;padding:24px 20px;backdrop-filter:blur(16px);transition:right 0.3s ease;display:flex;flex-direction:column;gap:18px;min-width:180px" onmouseover="openSocial()" onmouseout="scheduleSocialClose()">
+  <span style="font-family:'League Spartan',sans-serif;font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:rgba(218,175,55,0.5);display:block;margin-bottom:4px">Follow BLEUSKM</span>
+
+  <a href="https://www.instagram.com/bleuskm.studios/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">Instagram</span>
+  </a>
+
+  <a href="https://www.threads.net/@bleuskm.studios" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 1.327-.012 2.5-.235 3.485-.67 1.15-.502 1.953-1.258 2.39-2.248.37-.849.507-1.804.395-2.858-.115-1.08-.478-1.964-1.076-2.623-.467-.518-1.067-.878-1.78-1.07.225 1.593-.044 2.89-.797 3.854-.868 1.107-2.166 1.664-3.858 1.657-1.358-.006-2.484-.44-3.253-1.255-.824-.874-1.128-2.07-.857-3.37.257-1.213.95-2.16 2.007-2.737.966-.527 2.17-.748 3.576-.655.492.031.97.085 1.43.16-.044-.28-.107-.533-.19-.757-.348-.95-1.048-1.45-2.08-1.485-.717-.024-1.396.175-2.02.591l-.923-1.668c.898-.573 1.92-.864 3.039-.864h.043c2.342.08 3.79 1.453 4.226 3.982.107.627.162 1.276.163 1.932.003.16.001.32-.004.48.76.348 1.39.844 1.876 1.48.782 1.02 1.222 2.342 1.308 3.932.1 1.862-.16 3.467-.77 4.77-.77 1.654-2.017 2.833-3.706 3.503C15.139 23.74 13.74 24 12.186 24zm.024-11.87c-.574 0-1.09.07-1.534.207-.742.224-1.18.698-1.302 1.408-.1.58.02 1.077.355 1.432.357.38.913.577 1.652.582 1.019.004 1.742-.31 2.15-.933.45-.686.516-1.72.193-3.074-.5-.093-1.006-.15-1.514-.182l-.003.56z"/></svg>
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">Threads</span>
+  </a>
+
+  <a href="https://www.tiktok.com/@bleuskm.studios" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.27 8.27 0 004.84 1.55V6.79a4.85 4.85 0 01-1.07-.1z"/></svg>
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">TikTok</span>
+  </a>
+
+  <a href="https://www.youtube.com/@BLEUSKMStudios" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">YouTube</span>
+  </a>
+</div>
+
+<script>
+var socialCloseTimer;
+function openSocial() {
+  clearTimeout(socialCloseTimer);
+  document.getElementById('socialPanel').style.right = '0';
+}
+function scheduleSocialClose() {
+  socialCloseTimer = setTimeout(function() {
+    document.getElementById('socialPanel').style.right = '-200px';
+  }, 400);
+}
+function toggleSocial() {
+  var p = document.getElementById('socialPanel');
+  p.style.right = p.style.right === '0px' ? '-200px' : '0';
+}
+</script>
+
+</body>
+</html>
