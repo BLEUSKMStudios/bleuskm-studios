@@ -1068,11 +1068,8 @@ body { background: #080808; color: #EADFCF; }
         </div>
       </div>
 
-      <button class="apply-from-info-btn" onclick="switchTab('final-hand', 'apply')"><a href="#" class="gold-btn">
-  Apply for this film →
-</a></button>
-      <a href="crew-application.html" style="display:block;margin-top:10px;text-align:center;font-family:'League Spartan',sans-serif;font-size:0.62rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(234,223,207,0.35);text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='rgba(218,175,55,0.6)'" onmouseout="this.style.color='rgba(234,223,207,0.35)'"><a href="crew-application.html" class="not-actor-link">
-  Not an actor? Apply for crew →</a>
+      <button class="apply-from-info-btn" onclick="switchTab('final-hand', 'apply')">Apply for This Film →</button>
+      <a href="crew-application.html" class="not-actor-link">Not an actor? Apply for crew →</a>
     </div>
     <div class="modal-tab-content" id="final-hand-apply">
       <div class="casting-form">
@@ -1490,8 +1487,556 @@ body { background: #080808; color: #EADFCF; }
     </div>
   </div>
 </footer>
+<script>
+// ── BLEUSKM STUDIOS · UNIFIED SUBMISSION HANDLER ──
+// Airtable: all submissions organized by table
+// Brevo: confirmation emails only
 
+var AIRTABLE_TOKEN = 'pat4zUowRMotxgqVA.a73f5a23210ddceaf777f3f95916908f07c023f2a2afd795e7e65a747534dfd6';
+var AIRTABLE_BASE  = 'appXf1NxIVhYbuV4j';
+var TBL_CASTING    = 'tblLGmXULNb9ebFxH';
+var TBL_NEWSLETTER = 'tblSMb3y7vrvjbONx';
+var TBL_INQUIRIES  = 'tblwfk7tmoFhGIia5';
+var TBL_CREW       = 'tblCR7Cg3WugORlwO';
+var TBL_NOTIFY     = 'tblcSHay5dfYcbDKC';    // ← you will replace this after creating the table
 
+var BREVO_KEY = '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';
+
+// ── AIRTABLE ──
+async function sendToAirtable(tableId, fields) {
+  try {
+    var r = await fetch('https://api.airtable.com/v0/' + AIRTABLE_BASE + '/' + tableId, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + AIRTABLE_TOKEN,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ fields: fields })
+    });
+    var j = await r.json();
+    console.log('Airtable:', j);
+    return j;
+  } catch(e) {
+    console.error('Airtable error:', e);
+  }
+}
+
+// ── BREVO (add to list) ──
+async function sendToBrevo(listId, email, name, extraAttrs) {
+  try {
+    var attrs = Object.assign({ FIRSTNAME: name }, extraAttrs || {});
+    var r = await fetch('https://api.brevo.com/v3/contacts', {
+      method: 'POST',
+      headers: { 'api-key': BREVO_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, attributes: attrs, listIds: [listId], updateEnabled: true })
+    });
+    var j = await r.json();
+    console.log('Brevo contact:', j);
+    return j;
+  } catch(e) {
+    console.error('Brevo contact error:', e);
+  }
+}
+
+// ── BREVO (send transactional email) ──
+async function sendEmail(templateId, email, name, params) {
+  try {
+    var r = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: { 'api-key': BREVO_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sender: { email: 'clients@bleuskm.com', name: 'BLEUSKM Studios' },
+        to: [{ email: email, name: name }],
+        templateId: templateId,
+        params: params || {}
+      })
+    });
+    var j = await r.json();
+    console.log('Brevo email:', j);
+    return j;
+  } catch(e) {
+    console.error('Brevo email error:', e);
+  }
+}
+
+// ── CASTING SUBMISSION ──
+async function submitCasting(event, filmTitle) {
+  e.preventDefault();
+  var form = e.target;
+  var btn  = form.querySelector('button[type="submit"]');
+  btn.textContent = 'Submitting...'; btn.disabled = true;
+
+  var name     = form.querySelector('[name="name"]').value.trim();
+  var email    = form.querySelector('[name="email"]').value.trim();
+  var phone    = (form.querySelector('[name="phone"]') || {}).value || '';
+  var age      = (form.querySelector('[name="age"]') || {}).value || '';
+  var location = (form.querySelector('[name="location"]') || {}).value || '';
+  var role     = (form.querySelector('[name="role"]') || {}).value || '';
+  var reel     = (form.querySelector('[name="reel"]') || {}).value || '';
+  var headshot = (form.querySelector('[name="files"]') || {}).value || '';
+  var about    = (form.querySelector('[name="about"]') || {}).value || '';
+  var nlCheck  = form.querySelector('[name="newsletter"]');
+
+  var fields = { 'Name': name, 'Email': email, 'Film': filmTitle, 'Role': role };
+  if (phone)    fields['Phone']    = phone;
+  if (age)      fields['Age']      = parseFloat(age);
+  if (location) fields['Location'] = location;
+  if (reel)     fields['Reel/Portfolio Link'] = reel;
+  if (headshot) fields['Headshot'] = headshot;
+  if (about)    fields['About']    = about;
+  fields['Casting Status'] = 'Reviewing';
+
+  try {
+    await sendToAirtable(TBL_CASTING, fields);
+    await sendToBrevo(4, email, name, { FILM: filmTitle, ROLE: role });
+    await sendEmail(1, email, name, { FIRSTNAME: name, FILM: filmTitle, ROLE: role });
+    if (nlCheck && nlCheck.checked) { await sendToAirtable(TBL_NEWSLETTER, {'Name': name, 'Email': email}); await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
+
+    var formId = form.id;
+    form.style.display = 'none';
+    var filmId = formId.replace('form-', '');
+    var s = document.getElementById(filmId + '-success');
+    if (s) s.style.display = 'block';
+  } catch(err) {
+    console.error(err);
+    btn.textContent = 'Submit Audition Materials'; btn.disabled = false;
+    alert('Submission failed. Please try again.');
+  }
+}
+
+// ── FILM NOTIFICATION (casting soon — has role interest) ──
+async function submitNotify(event, filmTitle) {
+  e.preventDefault();
+  var form    = e.target;
+  var btn     = form.querySelector('button[type="submit"]');
+  btn.textContent = 'Submitting...'; btn.disabled = true;
+
+  var name       = (form.querySelector('[name="name"]') || {}).value || '';
+  var email      = form.querySelector('[name="email"]').value.trim();
+  var roleInt    = (form.querySelector('[name="role"]') || {}).value || '';
+  var nlCheck    = form.querySelector('[name="newsletter"]');
+
+  var fields = { 'Name': name, 'Email': email, 'Film': filmTitle, 'Type': 'Casting Soon' };
+  if (roleInt) fields['Role Interested In'] = roleInt;
+
+  try {
+    await sendToAirtable(TBL_NOTIFY, fields);
+    await sendToBrevo(2, email, name, { FILM: filmTitle, ROLE_INTEREST: roleInt });
+    await sendEmail(4, email, name, { FIRSTNAME: name, FILM: filmTitle });
+    if (nlCheck && nlCheck.checked) { await sendToAirtable(TBL_NEWSLETTER, {'Name': name, 'Email': email}); await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
+
+    form.style.display = 'none';
+    var s = form.nextElementSibling;
+    if (s) s.style.display = 'block';
+  } catch(err) {
+    console.error(err);
+    btn.textContent = 'Notify Me When Casting Opens'; btn.disabled = false;
+    alert('Submission failed. Please try again.');
+  }
+}
+
+// ── FILM NOTIFICATION (coming soon — just name + email) ──
+async function submitComingSoon(event, filmTitle) {
+  e.preventDefault();
+  var form  = e.target;
+  var btn   = form.querySelector('button[type="submit"]');
+  btn.textContent = 'Submitting...'; btn.disabled = true;
+
+  var name    = (form.querySelector('[name="name"]') || {}).value || '';
+  var email   = form.querySelector('[name="email"]').value.trim();
+  var nlCheck = form.querySelector('[name="newsletter"]');
+
+  var fields = { 'Name': name, 'Email': email, 'Film': filmTitle, 'Type': 'Coming Soon' };
+
+  try {
+    await sendToAirtable(TBL_NOTIFY, fields);
+    await sendToBrevo(2, email, name, { FILM: filmTitle });
+    await sendEmail(4, email, name, { FIRSTNAME: name, FILM: filmTitle });
+    if (nlCheck && nlCheck.checked) { await sendToAirtable(TBL_NEWSLETTER, {'Name': name, 'Email': email}); await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
+
+    form.style.display = 'none';
+    var s = form.nextElementSibling;
+    if (s) s.style.display = 'block';
+  } catch(err) {
+    console.error(err);
+    btn.textContent = 'Notify Me When Casting Opens'; btn.disabled = false;
+    alert('Submission failed. Please try again.');
+  }
+}
+
+// ── NEWSLETTER ONLY ──
+async function submitNewsletter(e) {
+  e.preventDefault();
+  var form  = e.target;
+  var btn   = form.querySelector('button[type="submit"]');
+  btn.textContent = 'Subscribing...'; btn.disabled = true;
+
+  var name  = (form.querySelector('[name="name"]') || document.getElementById('fnl-name') || {}).value || '';
+  var email = (form.querySelector('[name="email"]') || document.getElementById('fnl-email') || {}).value.trim();
+  if (!email) return;
+
+  try {
+    await sendToAirtable(TBL_NEWSLETTER, { 'Name': name, 'Email': email });
+    await sendToBrevo(2, email, name, {});
+    await sendEmail(3, email, name, { FIRSTNAME: name });
+
+    form.style.display = 'none';
+    var s = document.getElementById('fnl-success') || form.nextElementSibling;
+    if (s) s.style.display = 'block';
+  } catch(err) {
+    console.error(err);
+    btn.textContent = 'Subscribe'; btn.disabled = false;
+  }
+}
+
+// ── CREW APPLICATION ──
+async function submitCrewForm(e) {
+  e.preventDefault();
+  var btn = document.querySelector('#crewForm button[type="submit"]');
+  if (btn) { btn.textContent = 'Submitting...'; btn.disabled = true; }
+
+  var name         = document.getElementById('crew-name').value.trim();
+  var email        = document.getElementById('crew-email').value.trim();
+  var phone        = (document.getElementById('crew-phone') || {}).value || '';
+  var city         = (document.getElementById('crew-city') || {}).value || '';
+  var role         = (document.getElementById('crew-role') || {}).value || '';
+  var resume       = (document.getElementById('crew-resume') || {}).value || '';
+  var reel         = (document.getElementById('crew-reel') || {}).value || '';
+  var gear         = (document.getElementById('crew-gear') || {}).value || '';
+  var availability = (document.getElementById('crew-availability') || {}).value || '';
+  var filmInterest = (document.getElementById('crew-film-interest') || {}).value || '';
+
+  var fields = { 'Name': name, 'Email': email, 'Role': role };
+  if (phone)        fields['Phone']             = phone;
+  if (city)         fields['City']              = city;
+  if (resume)       fields['Resume / Portfolio Link'] = resume;
+  if (reel)         fields['Reel / Work Samples'] = reel;
+  if (gear)         fields['Gear List']          = gear;
+  if (availability) fields['Availability']       = availability;
+  if (filmInterest) fields['Film Interest']       = filmInterest;
+
+  try {
+    await sendToAirtable(TBL_CREW, fields);
+    await sendToBrevo(6, email, name, { CREW_ROLE: role });
+    await sendEmail(2, email, name, { FIRSTNAME: name, ROLE: role });
+
+    document.getElementById('crewForm').style.display = 'none';
+    document.getElementById('crewSuccess').style.display = 'block';
+  } catch(err) {
+    console.error(err);
+    if (btn) { btn.textContent = 'Submit Crew Application'; btn.disabled = false; }
+    alert('Submission failed. Please try again.');
+  }
+}
+
+// ── PROJECT INQUIRY ──
+async function submitContact() {
+  var name      = (document.getElementById('contact-name') || {}).value || '';
+  var email     = (document.getElementById('contact-email') || {}).value || '';
+  var phone     = (document.getElementById('contact-phone') || {}).value || '';
+  var projType  = (document.getElementById('contact-type') || {}).value || '';
+  var budget    = (document.getElementById('contact-budget') || {}).value || '';
+  var concept   = (document.getElementById('contact-concept') || {}).value || '';
+  var timeline  = (document.getElementById('contact-timeline') || {}).value || '';
+  var nlCheck   = document.getElementById('contact-newsletter');
+  var understood = document.getElementById('contact-understood');
+
+  if (!email) { alert('Email is required.'); return; }
+  if (understood && !understood.checked) { alert('Please confirm you understand this is an inquiry.'); return; }
+
+  var btn = document.querySelector('.submit-btn');
+  if (btn) { btn.textContent = 'Submitting...'; btn.disabled = true; }
+
+  var fields = { 'Name': name, 'Email': email };
+  if (phone)    fields['Phone number']      = phone;
+  if (projType) fields['Project Type']      = projType;
+  if (budget)   fields['Budget']            = budget;
+  if (concept)  fields['Concept']           = concept;
+  if (timeline) fields['Timeline']          = timeline;
+
+  try {
+    await sendToAirtable(TBL_INQUIRIES, fields);
+    await sendToBrevo(5, email, name, { PROJECT_TYPE: projType });
+    if (nlCheck && nlCheck.checked) { await sendToAirtable(TBL_NEWSLETTER, {'Name': name, 'Email': email}); await sendToBrevo(2, email, name, {}); }
+
+    var form = document.getElementById('contactForm') || document.querySelector('form');
+    if (form) form.style.display = 'none';
+    var s = document.getElementById('contactSuccess');
+    if (s) s.style.display = 'block';
+  } catch(err) {
+    console.error(err);
+    if (btn) { btn.textContent = 'Submit Project Inquiry'; btn.disabled = false; }
+    alert('Submission failed. Please try again.');
+  }
+}
+
+</script>
+<script>
+var AIRTABLE_TOKEN = 'pat4zUowRMotxgqVA.a73f5a23210ddceaf777f3f95916908f07c023f2a2afd795e7e65a747534dfd6';
+var AIRTABLE_BASE  = 'appXf1NxIVhYbuV4j';
+var TBL_CASTING    = 'tblLGmXULNb9ebFxH';
+var TBL_NEWSLETTER = 'tblSMb3y7vrvjbONx';
+var TBL_INQUIRIES  = 'tblwfk7tmoFhGIia5';
+var TBL_CREW       = 'tblCR7Cg3WugORlwO';
+var TBL_NOTIFY     = 'tblcSHay5dfYcbDKC';
+var BREVO_KEY = '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';
+
+async function sendToAirtable(tableId, fields) {
+  try {
+    var r = await fetch('https://api.airtable.com/v0/' + AIRTABLE_BASE + '/' + tableId, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + AIRTABLE_TOKEN, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields: fields })
+    });
+    var j = await r.json(); console.log('Airtable:', j); return j;
+  } catch(e) { console.error('Airtable error:', e); }
+}
+
+async function sendToBrevo(listId, email, name, extraAttrs) {
+  try {
+    var attrs = Object.assign({ FIRSTNAME: name }, extraAttrs || {});
+    var r = await fetch('https://api.brevo.com/v3/contacts', {
+      method: 'POST',
+      headers: { 'api-key': BREVO_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, attributes: attrs, listIds: [listId], updateEnabled: true })
+    });
+    var j = await r.json(); console.log('Brevo:', j); return j;
+  } catch(e) { console.error('Brevo error:', e); }
+}
+
+// ── MODAL CONTROLS ──
+function openModal(id) {
+  document.querySelectorAll('.modal-overlay').forEach(function(m) { m.style.display = 'none'; });
+  var modal = document.getElementById('modal-' + id);
+  if (modal) { modal.style.display = 'flex'; document.body.style.overflow = 'hidden'; }
+}
+function closeModal(id) {
+  var modal = document.getElementById('modal-' + id);
+  if (modal) modal.style.display = 'none';
+  document.body.style.overflow = '';
+}
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('modal-overlay')) { e.target.style.display = 'none'; document.body.style.overflow = ''; }
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') { document.querySelectorAll('.modal-overlay').forEach(function(m) { m.style.display = 'none'; }); document.body.style.overflow = ''; }
+});
+function switchTab(modalId, tab) {
+  var modal = document.getElementById('modal-' + modalId);
+  if (!modal) return;
+  modal.querySelectorAll('.modal-tab').forEach(function(t) { t.classList.remove('active'); });
+  modal.querySelectorAll('.modal-tab-content').forEach(function(c) { c.classList.remove('active'); });
+  var idx = (tab === 'info') ? 0 : 1;
+  var tabs = modal.querySelectorAll('.modal-tab');
+  var conts = modal.querySelectorAll('.modal-tab-content');
+  if (tabs[idx]) tabs[idx].classList.add('active');
+  if (conts[idx]) conts[idx].classList.add('active');
+}
+// Auto-open modal from sessionStorage (used by film pages)
+window.addEventListener('load', function() {
+  var id = sessionStorage.getItem('openModal');
+  if (id) { sessionStorage.removeItem('openModal'); openModal(id); }
+});
+
+// ── CASTING SUBMISSION ──
+async function submitCasting(e, filmTitle) {
+  e.preventDefault();
+  var form = e.target;
+  var btn  = form.querySelector('button[type="submit"]');
+  btn.textContent = 'Submitting...'; btn.disabled = true;
+  var name     = form.querySelector('[name="name"]').value.trim();
+  var email    = form.querySelector('[name="email"]').value.trim();
+  var phone    = (form.querySelector('[name="phone"]') || {}).value || '';
+  var age      = (form.querySelector('[name="age"]') || {}).value || '';
+  var location = (form.querySelector('[name="location"]') || {}).value || '';
+  var role     = (form.querySelector('[name="role"]') || {}).value || '';
+  var reel     = (form.querySelector('[name="reel"]') || {}).value || '';
+  var headshot = (form.querySelector('[name="files"]') || {}).value || '';
+  var about    = (form.querySelector('[name="about"]') || {}).value || '';
+  var nlCheck  = form.querySelector('[name="newsletter"]');
+  var fields = { 'Name': name, 'Email': email, 'Film': filmTitle, 'Role': role, 'Casting Status': 'Reviewing' };
+  if (phone)    fields['Phone']    = phone;
+  if (age)      fields['Age']      = parseFloat(age);
+  if (location) fields['Location'] = location;
+  if (reel)     fields['Reel/Portfolio Link'] = reel;
+  if (headshot) fields['Headshot'] = headshot;
+  if (about)    fields['About']    = about;
+  try {
+    await sendToAirtable(TBL_CASTING, fields);
+    await sendToBrevo(4, email, name, { FILM: filmTitle, ROLE: role });
+    await sendEmail(1, email, name, { FIRSTNAME: name, FILM: filmTitle, ROLE: role });
+    if (nlCheck && nlCheck.checked) { await sendToAirtable(TBL_NEWSLETTER, {'Name': name, 'Email': email}); await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
+    form.style.display = 'none';
+    var filmId = form.id.replace('form-', '');
+    var s = document.getElementById(filmId + '-success');
+    if (s) s.style.display = 'block';
+  } catch(err) {
+    console.error(err); btn.textContent = 'Submit Audition Materials'; btn.disabled = false;
+    alert('Submission failed. Please try again.');
+  }
+}
+
+// ── FILM NOTIFICATION (casting soon — has role interest) ──
+async function submitNotify(e, filmTitle) {
+  e.preventDefault();
+  var form = e.target;
+  var btn  = form.querySelector('button[type="submit"]');
+  btn.textContent = 'Submitting...'; btn.disabled = true;
+  var name    = (form.querySelector('[name="name"]') || {}).value || '';
+  var email   = form.querySelector('[name="email"]').value.trim();
+  var roleInt = (form.querySelector('[name="role"]') || {}).value || '';
+  var nlCheck = form.querySelector('[name="newsletter"]');
+  var fields = { 'Name': name, 'Email': email, 'Film': filmTitle, 'Type': 'Casting Soon' };
+  if (roleInt) fields['Role Interested In'] = roleInt;
+  try {
+    await sendToAirtable(TBL_NOTIFY, fields);
+    await sendToBrevo(2, email, name, { FILM: filmTitle, ROLE_INTEREST: roleInt });
+    await sendEmail(4, email, name, { FIRSTNAME: name, FILM: filmTitle });
+    if (nlCheck && nlCheck.checked) { await sendToAirtable(TBL_NEWSLETTER, {'Name': name, 'Email': email}); await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
+    form.style.display = 'none';
+    var s = form.nextElementSibling; if (s) s.style.display = 'block';
+  } catch(err) {
+    console.error(err); btn.textContent = 'Notify Me When Casting Opens'; btn.disabled = false;
+    alert('Submission failed. Please try again.');
+  }
+}
+
+// ── FILM NOTIFICATION (coming soon) ──
+async function submitComingSoon(e, filmTitle) {
+  e.preventDefault();
+  var form = e.target;
+  var btn  = form.querySelector('button[type="submit"]');
+  btn.textContent = 'Submitting...'; btn.disabled = true;
+  var name    = (form.querySelector('[name="name"]') || {}).value || '';
+  var email   = form.querySelector('[name="email"]').value.trim();
+  var nlCheck = form.querySelector('[name="newsletter"]');
+  var fields = { 'Name': name, 'Email': email, 'Film': filmTitle, 'Type': 'Coming Soon' };
+  try {
+    await sendToAirtable(TBL_NOTIFY, fields);
+    await sendToBrevo(2, email, name, { FILM: filmTitle });
+    await sendEmail(4, email, name, { FIRSTNAME: name, FILM: filmTitle });
+    if (nlCheck && nlCheck.checked) { await sendToAirtable(TBL_NEWSLETTER, {'Name': name, 'Email': email}); await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
+    form.style.display = 'none';
+    var s = form.nextElementSibling; if (s) s.style.display = 'block';
+  } catch(err) {
+    console.error(err); btn.textContent = 'Notify Me When Casting Opens'; btn.disabled = false;
+    alert('Submission failed. Please try again.');
+  }
+}
+
+// ── NEWSLETTER (generic — used by footer forms, echos, casting stay-in-loop) ──
+async function submitNewsletter(e) {
+  e.preventDefault();
+  var form = e.target;
+  var btn  = form.querySelector('button[type="submit"]');
+  if (btn) { btn.textContent = 'Subscribing...'; btn.disabled = true; }
+  var name  = (form.querySelector('[name="name"]') || form.querySelector('input[type="text"]') || {}).value || '';
+  var email = (form.querySelector('[name="email"]') || form.querySelector('input[type="email"]') || {}).value || '';
+  email = email.trim();
+  if (!email) { if (btn) { btn.textContent = 'Subscribe'; btn.disabled = false; } return; }
+  try {
+    await sendToAirtable(TBL_NEWSLETTER, { 'Name': name, 'Email': email });
+    await sendToBrevo(2, email, name, {});
+    await sendEmail(3, email, name, { FIRSTNAME: name });
+    form.style.display = 'none';
+    var successId = form.id ? form.id.replace('Form', 'Success').replace('form', 'Success') : null;
+    var s = (successId && document.getElementById(successId)) || document.getElementById('fnl-success') || form.nextElementSibling;
+    if (s) s.style.display = 'block';
+  } catch(err) { console.error(err); if (btn) { btn.textContent = 'Subscribe'; btn.disabled = false; } }
+}
+
+// aliases
+var submitNewsletterFooter = submitNewsletter;
+var submitEchosNewsletter  = submitNewsletter;
+var submitFilmNewsletter   = submitNewsletter;
+
+// ── CREW APPLICATION ──
+function selectRole(el) {
+  var role = el.textContent.trim();
+  var select = document.getElementById('crew-role');
+  if (select) {
+    for (var i = 0; i < select.options.length; i++) {
+      if (select.options[i].text === role) { select.selectedIndex = i; break; }
+    }
+  }
+  document.querySelectorAll('.dept-role').forEach(function(r) { r.classList.remove('selected'); });
+  el.classList.add('selected');
+  if (window.innerWidth < 768) { var f = document.getElementById('crewForm'); if (f) f.scrollIntoView({ behavior: 'smooth' }); }
+}
+
+async function submitCrewForm(e) {
+  e.preventDefault();
+  var btn = document.querySelector('#crewForm button[type="submit"]');
+  if (btn) { btn.textContent = 'Submitting...'; btn.disabled = true; }
+  var name         = document.getElementById('crew-name').value.trim();
+  var email        = document.getElementById('crew-email').value.trim();
+  var phone        = (document.getElementById('crew-phone') || {}).value || '';
+  var city         = (document.getElementById('crew-city') || {}).value || '';
+  var role         = (document.getElementById('crew-role') || {}).value || '';
+  var resume       = (document.getElementById('crew-resume') || {}).value || '';
+  var reel         = (document.getElementById('crew-reel') || {}).value || '';
+  var gear         = (document.getElementById('crew-gear') || {}).value || '';
+  var availability = (document.getElementById('crew-availability') || {}).value || '';
+  var filmInterest = (document.getElementById('crew-film-interest') || {}).value || '';
+  var fields = { 'Name': name, 'Email': email, 'Role': role };
+  if (phone)        fields['Phone']                  = phone;
+  if (city)         fields['City']                   = city;
+  if (resume)       fields['Resume / Portfolio Link'] = resume;
+  if (reel)         fields['Reel / Work Samples']     = reel;
+  if (gear)         fields['Gear List']               = gear;
+  if (availability) fields['Availability']            = availability;
+  if (filmInterest) fields['Film Interest']           = filmInterest;
+  try {
+    await sendToAirtable(TBL_CREW, fields);
+    await sendToBrevo(6, email, name, { CREW_ROLE: role });
+    await sendEmail(2, email, name, { FIRSTNAME: name, ROLE: role });
+    document.getElementById('crewForm').style.display = 'none';
+    document.getElementById('crewSuccess').style.display = 'block';
+  } catch(err) {
+    console.error(err);
+    if (btn) { btn.textContent = 'Submit Crew Application'; btn.disabled = false; }
+    alert('Submission failed. Please try again.');
+  }
+}
+
+// ── PROJECT INQUIRY ──
+async function submitContact() {
+  var name     = (document.getElementById('cf-name') || {}).value || '';
+  var email    = (document.getElementById('cf-email') || {}).value || '';
+  var phone    = (document.getElementById('cf-phone') || {}).value || '';
+  var projType = (document.getElementById('cf-type') || {}).value || '';
+  var budget   = (document.getElementById('cf-budget') || {}).value || '';
+  var concept  = (document.getElementById('cf-concept') || {}).value || '';
+  var timeline = (document.getElementById('cf-timeline') || {}).value || '';
+  var nlCheck  = document.getElementById('cf-newsletter');
+  var agree    = document.getElementById('cf-agree');
+  email = email.trim();
+  if (!email) { alert('Email is required.'); return; }
+  if (agree && !agree.checked) { alert('Please confirm you understand this is an inquiry.'); return; }
+  var btn = document.querySelector('.submit-btn');
+  if (btn) { btn.textContent = 'Submitting...'; btn.disabled = true; }
+  var fields = { 'Name': name, 'Email': email };
+  if (phone)    fields['Phone number'] = phone;
+  if (projType) fields['Project Type'] = projType;
+  if (budget)   fields['Budget']       = budget;
+  if (concept)  fields['Concept']      = concept;
+  if (timeline) fields['Timeline']     = timeline;
+  try {
+    await sendToAirtable(TBL_INQUIRIES, fields);
+    await sendToBrevo(5, email, name, { PROJECT_TYPE: projType });
+    if (nlCheck && nlCheck.checked) { await sendToAirtable(TBL_NEWSLETTER, {'Name': name, 'Email': email}); await sendToBrevo(2, email, name, {}); }
+    var form = document.getElementById('contactForm');
+    if (form) form.style.display = 'none';
+    var s = document.getElementById('contactSuccess');
+    if (s) s.style.display = 'block';
+  } catch(err) {
+    console.error(err);
+    if (btn) { btn.textContent = 'Submit Project Inquiry'; btn.disabled = false; }
+    alert('Submission failed. Please try again.');
+  }
+}
+
+</script>
 
 
 <!-- CART POPUP BUTTON -->
@@ -1623,6 +2168,5 @@ function toggleBreakdown(btn) {
   btn.querySelector('.toggle-arrow').style.transform = isOpen ? '' : 'rotate(180deg)';
 }
 </script>
-<script src="/js/forms.js"></script>
 </body>
 </html>
