@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Echos | BLEUSKM Studios</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;800;900&family=Red+Hat+Display:wght@300;400;500;600;700&family=Kalnia:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="icon" type="image/png" sizes="32x32" href="images/bleuskm-logo.png">
+<style>
+html, body { height: 100%; margin: 0; }
+body {
+  display: flex; flex-direction: column;
+  background: linear-gradient(to right, #950606, #B24C1E, #DAAF37);
+  background-attachment: fixed;
+  color: #EADFCF; font-family: 'Red Hat Display', sans-serif;
+}
+main { flex: 1; }
+
+.echos-page-header { padding: 70px 60px 40px; border-bottom: 1px solid rgba(0,0,0,0.15); }
+.echos-page-header h1 { font-family: 'League Spartan',sans-serif; font-weight:900; font-size:clamp(2rem,5vw,3.2rem); letter-spacing:6px; text-transform:uppercase; color:#0C0C0C; margin-bottom:6px; }
+.echos-page-header p { font-size:0.8rem; letter-spacing:2px; text-transform:uppercase; color:rgba(0,0,0,0.45); }
+
+.echos-filter {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 0 60px;
+  background: rgba(0,0,0,0.2);
+  border-bottom: 1px solid rgba(0,0,0,0.15);
+  overflow-x: hidden;
+}
+.echos-filter {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.echos-filter::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+.echos-filter {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.echos-filter::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+@media (max-width: 768px) {
+  .echos-filter {
+    overflow-x: auto;
+  }
+}
+.filter-btn { background:none; border:none; border-bottom:3px solid transparent; color:rgba(234,223,207,0.55); font-family:'League Spartan',sans-serif; font-weight:600; font-size:0.72rem; letter-spacing:2.5px; text-transform:uppercase; cursor:pointer; padding:18px 28px; transition:color 0.2s,border-color 0.2s; white-space:nowrap; }
+.filter-btn:hover { color:#EADFCF; }
+.filter-btn.active { color:#DAAF37; border-bottom:3px solid #DAAF37; }
+
+.echos-body { display:grid; grid-template-columns:1fr 320px; gap:0; max-width:1400px; margin:0 auto; padding:50px 60px 80px; width:100%; box-sizing:border-box; }
+
+.echo-item { border-bottom:1px solid rgba(0,0,0,0.15); overflow:hidden; }
+.echo-header { background:none; border:none; width:100%; text-align:left; cursor:pointer; padding:28px 0; display:block; transition:opacity 0.2s; }
+.echo-header:hover { opacity:0.85; }
+.echo-header-inner { display:flex; align-items:flex-start; gap:20px; }
+.echo-type-badge { font-size:0.6rem; letter-spacing:2.5px; text-transform:uppercase; font-family:'League Spartan',sans-serif; font-weight:700; padding:4px 10px; border-radius:2px; white-space:nowrap; margin-top:4px; flex-shrink:0; }
+.badge-announcement { background:rgba(0,0,0,0.5); color:#DAAF37; border:1px solid rgba(218,175,55,0.3); }
+.badge-casting-open { background:#DAAF37; color:#000; }
+.badge-casting-closed { background:rgba(0,0,0,0.4); color:rgba(234,223,207,0.5); border:1px solid rgba(255,255,255,0.1); }
+.badge-casting-postponed { background:rgba(80,40,0,0.7); color:rgba(218,175,55,0.8); border:1px solid rgba(218,175,55,0.3); }
+.badge-casting-postponed { background:rgba(80,40,0,0.7); color:rgba(218,175,55,0.8); border:1px solid rgba(218,175,55,0.3); }
+.badge-past { background:rgba(0,0,0,0.3); color:rgba(234,223,207,0.4); }
+.echo-header-text { flex:1; }
+.echo-category-label { font-size:0.6rem; letter-spacing:2px; text-transform:uppercase; color:rgba(0,0,0,0.4); margin-bottom:6px; display:block; }
+.echo-header h3 { font-family:'League Spartan',sans-serif; font-weight:800; font-size:1.15rem; color:#0C0C0C; margin-bottom:5px; line-height:1.2; }
+.echo-date { font-size:0.75rem; color:rgba(0,0,0,0.4); }
+.echo-chevron { color:rgba(0,0,0,0.3); font-size:0.8rem; margin-top:6px; flex-shrink:0; transition:transform 0.3s ease; display:inline-block; }
+.echo-item.open .echo-chevron { transform:rotate(180deg); }
+.echo-content { max-height:0; overflow:hidden; transition:max-height 0.4s ease; }
+.echo-content-inner { padding:0 0 32px 0; border-left:2px solid rgba(218,175,55,0.4); padding-left:24px; margin-left:4px; }
+.echo-content p { font-size:0.9rem; line-height:1.7; color:rgba(0,0,0,0.65); margin-bottom:16px; max-width:680px; }
+.echo-read-more { display:inline-flex; align-items:center; gap:8px; font-family:'League Spartan',sans-serif; font-weight:700; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; color:#0C0C0C; text-decoration:none; border-bottom:1px solid rgba(0,0,0,0.3); padding-bottom:2px; transition:color 0.2s,border-color 0.2s; }
+.echo-read-more:hover { color:#950606; border-color:#950606; }
+
+.echos-sidebar { padding-left:50px; border-left:1px solid rgba(0,0,0,0.12); }
+.sidebar-block { margin-bottom:48px; }
+.sidebar-label { font-family:'League Spartan',sans-serif; font-size:0.6rem; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:rgba(0,0,0,0.35); margin-bottom:20px; display:block; padding-bottom:10px; border-bottom:1px solid rgba(0,0,0,0.1); }
+.sidebar-newsletter input { width:100%; background:rgba(0,0,0,0.15); border:1px solid rgba(0,0,0,0.2); color:#0C0C0C; padding:10px 14px; font-family:'Red Hat Display',sans-serif; font-size:0.85rem; margin-bottom:10px; box-sizing:border-box; }
+.sidebar-newsletter input::placeholder { color:rgba(0,0,0,0.35); }
+.sidebar-newsletter input:focus { outline:none; border-color:rgba(0,0,0,0.5); }
+.sidebar-newsletter button { width:100%; background:#0C0C0C; color:#DAAF37; border:none; font-family:'League Spartan',sans-serif; font-weight:800; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; padding:12px; cursor:pointer; transition:opacity 0.2s; }
+.sidebar-newsletter button:hover { opacity:0.8; }
+.sidebar-nl-success { display:none; font-size:0.8rem; color:#0C0C0C; padding:12px; background:rgba(0,0,0,0.1); text-align:center; letter-spacing:1px; }
+.sidebar-link { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid rgba(0,0,0,0.08); text-decoration:none; }
+.sidebar-link-title { font-family:'League Spartan',sans-serif; font-weight:700; font-size:0.8rem; letter-spacing:1px; text-transform:uppercase; color:#0C0C0C; }
+.sidebar-link-tag { font-size:0.6rem; letter-spacing:1.5px; text-transform:uppercase; color:rgba(0,0,0,0.35); }
+.sidebar-link:hover .sidebar-link-title { color:#950606; }
+
+.site-footer-full { background:#040404; border-top:1px solid rgba(218,175,55,0.1); padding:50px 60px 30px; }
+.footer-grid { display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:40px; margin-bottom:40px; }
+.footer-brand img { height:32px; margin-bottom:14px; }
+.footer-brand p { font-size:0.78rem; color:rgba(234,223,207,0.35); line-height:1.6; max-width:220px; }
+.footer-col h4 { font-family:'League Spartan',sans-serif; font-weight:700; font-size:0.65rem; letter-spacing:3px; text-transform:uppercase; color:rgba(218,175,55,0.5); margin-bottom:16px; }
+.footer-col a { display:block; font-size:0.8rem; color:rgba(234,223,207,0.45); text-decoration:none; margin-bottom:10px; transition:color 0.2s; }
+.footer-col a:hover { color:#DAAF37; }
+.footer-bottom { border-top:1px solid rgba(218,175,55,0.08); padding-top:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+.footer-bottom p { font-size:0.72rem; color:rgba(234,223,207,0.2); }
+.footer-bottom a { font-size:0.72rem; color:rgba(234,223,207,0.2); text-decoration:none; margin-left:20px; transition:color 0.2s; }
+.footer-bottom a:hover { color:rgba(218,175,55,0.5); }
+
+@media (max-width:900px) {
+  .echos-body { grid-template-columns:1fr; padding:30px 20px 60px; }
+  .echos-sidebar { padding-left:0; border-left:none; border-top:1px solid rgba(0,0,0,0.12); padding-top:40px; margin-top:20px; }
+  .echos-page-header,.echos-filter { padding-left:20px; padding-right:20px; }
+  .footer-grid { grid-template-columns:1fr 1fr; }
+}
+/* ── BLEUSKM GOLD TEXT OVERRIDE ── */
+
+.echos-page-header h1 {
+  color: #DAAF37 !important;
+}
+
+.echos-page-header p {
+  color: rgba(218,175,55,0.8) !important;
+}
+
+/* small labels */
+.echo-category-label,
+.echo-date,
+.sidebar-label {
+  color: rgba(218,175,55,0.7) !important;
+}
+
+/* body preview text */
+.echo-content p {
+  color: rgba(234,223,207,0.9) !important;
+}
+
+/* sidebar text */
+.sidebar-block p {
+  color: rgba(234,223,207,0.8) !important;
+}
+
+/* NAV */
+.navbar{background:rgba(8,8,8,0.92)!important;backdrop-filter:blur(12px);border-bottom:1px solid rgba(218,175,55,0.08)}
+.navbar-brand span{font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37}
+.nav-link{font-family:'League Spartan',sans-serif;font-weight:600;font-size:0.65rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(234,223,207,0.5)!important;transition:color 0.2s;padding:0.5rem 1rem!important}
+.nav-link:hover,.nav-link.active{color:#DAAF37!important}
+</style>
+  <style>
+    a { color: inherit; text-decoration: none; }
+    a:hover { color: #DAAF37; text-decoration: none; }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-dark fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand brand-logo" href="index.html" style="display:flex;align-items:center;gap:10px"><img src="images/bleuskm-logo.png" alt="BLEUSKM Logo"><span style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37">BLEUSKM Studios</span></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="my productions.html">Productions</a></li>
+        <li class="nav-item"><a class="nav-link" href="visuals.html">Visuals</a></li>
+        <li class="nav-item"><a class="nav-link" href="echos.html" class="nav-link active">Echos</a></li>
+        <li class="nav-item"><a class="nav-link" href="casting.html">Casting</a></li>
+        <li class="nav-item"><a class="nav-link" href="bleuskm shop.html">Shop</a></li>
+        <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <div class="echos-page-header">
+    <h1>Echos</h1>
+    <p>Studio announcements, casting calls &amp; dispatches from BLEUSKM</p>
+  </div>
+  <div class="echos-filter">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="announcement">Announcements</button>
+    <button class="filter-btn" data-filter="upcoming">Open Castings</button>
+    <button class="filter-btn" data-filter="closed">Closed Castings</button>
+    <button class="filter-btn" data-filter="archive">Archive</button>
+  </div>
+  <div class="echos-body">
+    <div class="echos-feed" id="echosFeed">
+
+      <!-- THE FINAL HAND — CASTING OPEN -->
+      <div class="echo-item" data-category="upcoming">
+        <button class="echo-header"><div class="echo-header-inner">
+          <span class="echo-type-badge badge-casting-open">Casting Open</span>
+          <div class="echo-header-text">
+            <span class="echo-category-label">Open Casting Call</span>
+            <h3>Casting Announcement: "The Final Hand"</h3>
+            <span class="echo-date">Casting Opens April 2026 · Production May 2026</span>
+          </div>
+          <span class="echo-chevron">▼</span>
+        </div></button>
+        <div class="echo-content"><div class="echo-content-inner">
+          <p>Casting submissions open Apr 2026 for BLEUSKM's psychological short "The Final Hand." Roles include High John (Lead), The Player (Lead), and The Stranger (Supporting).</p>
+          <a href="final-hand-casting.html" class="echo-read-more">Read Full Casting Call →</a>
+        </div></div>
+      </div>
+
+      <!-- POSTPONEMENT ANNOUNCEMENT -->
+      <div class="echo-item" data-category="announcement">
+        <button class="echo-header"><div class="echo-header-inner">
+          <span class="echo-type-badge badge-announcement">Announcement</span>
+          <div class="echo-header-text">
+            <span class="echo-category-label">Production Update</span>
+            <h3>Production Update: "The 15th Hour" — Postponed</h3>
+            <span class="echo-date">April 2026</span>
+          </div>
+          <span class="echo-chevron">▼</span>
+        </div></button>
+        <div class="echo-content"><div class="echo-content-inner">
+          <p>After careful consideration, BLEUSKM Studios has made the decision to postpone production on <strong>The 15th Hour</strong> due to persistent location availability issues and ongoing scheduling conflicts. The project is not cancelled — it is paused. A formal announcement will be made when we are ready to move forward.</p>
+          <a href="pro 15th hour update.html" class="echo-read-more">Read Full Statement →</a>
+        </div></div>
+      </div>
+
+      <!-- BLEUSKM SLATE ANNOUNCEMENT -->
+      <div class="echo-item" data-category="announcement">
+        <button class="echo-header"><div class="echo-header-inner">
+          <span class="echo-type-badge badge-announcement">Announcement</span>
+          <div class="echo-header-text">
+            <span class="echo-category-label">Studio News</span>
+            <h3>BLEUSKM Expands Narrative Slate for 2026</h3>
+            <span class="echo-date">February 2026</span>
+          </div>
+          <span class="echo-chevron">▼</span>
+        </div></button>
+        <div class="echo-content"><div class="echo-content-inner">
+          <p>BLEUSKM confirms multiple original narrative projects entering development in 2026 — expanding its psychological thriller, surrealist, and experimental slate with new short and feature projects led by founder Zaria Lashae.</p>
+          <a href="narrative-slate-2026.html" class="echo-read-more">Read Full Announcement →</a>
+        </div></div>
+      </div>
+
+      <div class="echo-item" data-category="archive">
+        <button class="echo-header"><div class="echo-header-inner">
+          <span class="echo-type-badge badge-casting-postponed">Casting Postponed</span>
+          <div class="echo-header-text">
+            <span class="echo-category-label">Archived</span>
+            <h3>Casting Announcement: "The 15th Hour"</h3>
+            <span class="echo-date">Originally Posted January 14, 2026</span>
+          </div>
+          <span class="echo-chevron">▼</span>
+        </div></button>
+        <div class="echo-content"><div class="echo-content-inner">
+          <p>The original open casting call for "The 15th Hour" — archived for reference. Submissions are now closed.</p>
+          <a href="the-15th-hour-archive.html" class="echo-read-more">View Original Post →</a>
+        </div></div>
+      </div>
+
+
+    </div>
+
+    <aside class="echos-sidebar">
+      <div class="sidebar-block">
+        <span class="sidebar-label">Stay Updated</span>
+        <p style="font-size:0.8rem;color:rgba(0,0,0,0.5);line-height:1.6;margin-bottom:16px">Get casting calls and studio news delivered to your inbox.</p>
+        <div class="sidebar-newsletter">
+          <form id="echosNlForm" onsubmit="submitEchosNewsletter(event)">
+        <div style="display:flex;gap:12px;flex-direction:column">
+          <input type="text" id="echos-nl-name" placeholder="Your name" style="background:rgba(255,255,255,0.08);border:1px solid rgba(218,175,55,0.2);color:#EADFCF;padding:12px 16px;font-family:'Red Hat Display',sans-serif;font-size:0.88rem;border-radius:0;width:100%">
+          <input type="email" id="echos-nl-email" placeholder="name@email.com" required style="background:rgba(255,255,255,0.08);border:1px solid rgba(218,175,55,0.2);color:#EADFCF;padding:12px 16px;font-family:'Red Hat Display',sans-serif;font-size:0.88rem;border-radius:0;width:100%">
+          <button type="submit" style="background:#DAAF37;border:none;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.8rem;letter-spacing:2px;text-transform:uppercase;padding:14px;cursor:pointer;transition:background 0.2s">Subscribe</button>
+        </div>
+      </form>
+      <div id="echos-nl-success" style="display:none;padding:20px 0">
+        <p style="color:#DAAF37;font-family:'League Spartan',sans-serif;letter-spacing:2px;font-size:0.85rem">YOU'RE ON THE LIST</p>
+        <p style="color:rgba(234,223,207,0.4);font-size:0.8rem;margin-top:8px">Don't worry, we won't spam your inbox.</p>
+      </div>
+          <div class="sidebar-nl-success" id="echosNlSuccess">Thank you for subscribing!</div>
+        </div>
+      </div>
+      <div class="sidebar-block">
+        <span class="sidebar-label">Quick Links</span>
+        <a href="casting.html" class="sidebar-link"><span class="sidebar-link-title">Casting Portal</span><span class="sidebar-link-tag">Apply</span></a>
+        <a href="my productions.html" class="sidebar-link"><span class="sidebar-link-title">All Productions</span><span class="sidebar-link-tag">Films</span></a>
+        <a href="final-hand-casting.html" class="sidebar-link"><span class="sidebar-link-title">The Final Hand</span><span class="sidebar-link-tag">Casting Open</span></a>
+        <a href="narrative-slate-2026.html" class="sidebar-link"><span class="sidebar-link-title">2026 Slate</span><span class="sidebar-link-tag">Read</span></a>
+        <a href="contact.html" class="sidebar-link"><span class="sidebar-link-title">Project Inquiry</span><span class="sidebar-link-tag">Hire Us</span></a>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer class="site-footer-full">
+  <div class="footer-grid">
+    <div class="footer-brand"><img src="images/bleuskm-logo.png" alt="BLEUSKM Logo"><p>A film and visual production house building worlds grounded in Black imagination, history, and cultural memory.</p></div>
+    <div class="footer-col"><h4>Navigate</h4><a href="index.html">Home</a><a href="about.html">About</a><a href="my productions.html">Productions</a><a href="visuals.html">Visuals</a><a href="echos.html">Echos</a></div>
+    <div class="footer-col"><h4>Work With Us</h4><a href="contact.html">Project Inquiry</a><a href="casting.html">Apply to Casting Calls</a><a href="crew-application.html">Join the Crew</a><a href="bleuskm shop.html">The Vault — Shop</a></div>
+    <div class="footer-col"><h4>Legal</h4><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a><a href="contact.html">Contact Us</a></div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 BLEUSKM Studios. All rights reserved.</p>
+    <div><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="casting.html">Casting</a><a href="contact.html">Contact</a></div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.querySelectorAll('.echo-header').forEach(header => {
+  header.addEventListener('click', () => {
+    const item = header.closest('.echo-item');
+    const content = item.querySelector('.echo-content');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.echo-item').forEach(i => { i.classList.remove('open'); i.querySelector('.echo-content').style.maxHeight = null; });
+    if (!isOpen) { item.classList.add('open'); content.style.maxHeight = content.scrollHeight + 'px'; }
+  });
+});
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelector('.filter-btn.active').classList.remove('active');
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    document.querySelectorAll('.echo-item').forEach(item => {
+      item.style.display = (filter === 'all' || item.dataset.category === filter) ? 'block' : 'none';
+    });
+  });
+});
+document.getElementById('echosNlForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(new FormData(this)).toString() })
+  .finally(() => { this.style.display = 'none'; document.getElementById('echosNlSuccess').style.display = 'block'; });
+});
+</script>
+
+
+
+
+
+
+<!-- CART POPUP BUTTON -->
+<div id="cartPopupBtn" onclick="toggleCartPopup()" style="position:fixed;top:80px;right:24px;z-index:1100;cursor:pointer;display:none;align-items:center;gap:8px;background:rgba(8,8,8,0.9);border:1px solid rgba(218,175,55,0.3);padding:8px 16px;backdrop-filter:blur(10px)">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DAAF37" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+  <span style="font-family:'League Spartan',sans-serif;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:#DAAF37">Cart</span>
+  <span id="cartPopupBadge" style="display:none;background:#DAAF37;color:#000;font-size:0.55rem;font-weight:900;border-radius:50%;width:16px;height:16px;align-items:center;justify-content:center;font-family:'League Spartan',sans-serif">0</span>
+</div>
+<div id="cartPopup" style="display:none;position:fixed;top:130px;right:24px;z-index:1200;width:360px;max-height:70vh;overflow-y:auto;background:#0d0d0d;border:1px solid rgba(218,175,55,0.2);padding:24px;box-shadow:0 20px 60px rgba(0,0,0,0.8)">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37">Your Cart</span>
+    <button onclick="toggleCartPopup()" style="background:none;border:none;color:rgba(234,223,207,0.4);font-size:1.2rem;cursor:pointer;line-height:1">&times;</button>
+  </div>
+  <div id="cartPopupItems"></div>
+  <div id="cartPopupEmpty" style="text-align:center;padding:30px 0;color:rgba(234,223,207,0.3);font-family:'League Spartan',sans-serif;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase">Cart is empty</div>
+  <div id="cartPopupFooter" style="display:none;border-top:1px solid rgba(218,175,55,0.15);padding-top:16px;margin-top:16px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+      <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:rgba(234,223,207,0.5)">Subtotal</span>
+      <span id="cartPopupTotal" style="color:#DAAF37;font-family:'Red Hat Display',sans-serif;font-weight:600"></span>
+    </div>
+    <a href="cart.html" style="display:block;background:#DAAF37;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;padding:14px;text-align:center;text-decoration:none">View Cart &amp; Checkout</a>
+  </div>
+</div>
+<script>
+function toggleCartPopup() {
+  var popup = document.getElementById('cartPopup');
+  popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
+  if (popup.style.display === 'block') renderCartPopup();
+}
+function renderCartPopup() {
+  var cart = JSON.parse(sessionStorage.getItem('bleuskm_cart') || '[]');
+  var items = document.getElementById('cartPopupItems');
+  var empty = document.getElementById('cartPopupEmpty');
+  var footer = document.getElementById('cartPopupFooter');
+  var badge = document.getElementById('cartPopupBadge');
+  var total = cart.reduce(function(s,i){ return s + parseFloat(i.price)*i.quantity; }, 0);
+  var count = cart.reduce(function(s,i){ return s + i.quantity; }, 0);
+  if (count > 0) { badge.style.display = 'flex'; badge.textContent = count; } else { badge.style.display = 'none'; }
+  if (cart.length === 0) { items.innerHTML = ''; empty.style.display = 'block'; footer.style.display = 'none'; return; }
+  empty.style.display = 'none'; footer.style.display = 'block';
+  document.getElementById('cartPopupTotal').textContent = '$' + total.toFixed(2);
+  items.innerHTML = cart.map(function(item) {
+    return '<div style="display:grid;grid-template-columns:50px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid rgba(218,175,55,0.08)">' +
+      '<img src="' + (item.image||'') + '" style="width:50px;height:50px;object-fit:cover">' +
+      '<div><div style="font-family:League Spartan,sans-serif;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;color:#EADFCF;margin-bottom:2px">' + item.title + '</div>' +
+      '<div style="font-size:0.75rem;color:rgba(234,223,207,0.4)">' + (item.variantTitle !== 'Default Title' ? item.variantTitle : '') + ' &times;' + item.quantity + '</div></div>' +
+      '<span style="color:#DAAF37;font-size:0.85rem">$' + (parseFloat(item.price)*item.quantity).toFixed(2) + '</span></div>';
+  }).join('');
+}
+window.addEventListener('load', function() {
+  var cart = JSON.parse(sessionStorage.getItem('bleuskm_cart') || '[]');
+  var count = cart.reduce(function(s,i){ return s+i.quantity; }, 0);
+  var badge = document.getElementById('cartPopupBadge');
+  if (badge && count > 0) { badge.style.display = 'flex'; badge.textContent = count; }
+});
+document.addEventListener('click', function(e) {
+  var popup = document.getElementById('cartPopup');
+  var btn = document.getElementById('cartPopupBtn');
+  if (popup && btn && popup.style.display === 'block' && !popup.contains(e.target) && !btn.contains(e.target)) {
+    popup.style.display = 'none';
+  }
+});
+</script>
+
+
+<script>
+// Show cart button only if items in cart
+(function() {
+  var cart = JSON.parse(sessionStorage.getItem('bleuskm_cart') || '[]');
+  var count = cart.reduce(function(s,i){ return s+i.quantity; }, 0);
+  if (count > 0) {
+    var btn = document.getElementById('cartPopupBtn');
+    if (btn) btn.style.display = 'flex';
+    var badge = document.getElementById('cartPopupBadge');
+    if (badge) { badge.style.display = 'flex'; badge.textContent = count; }
+  }
+})();
+</script>
+<!-- SOCIAL MEDIA SIDE PULLOUT -->
+<div id="socialTab" onclick="toggleSocial()" style="position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:999;cursor:pointer;background:rgba(8,8,8,0.92);border:1px solid rgba(218,175,55,0.3);border-right:none;padding:14px 10px;backdrop-filter:blur(10px);transition:all 0.2s" onmouseover="openSocial()" onmouseout="scheduleSocialClose()">
+  <span style="font-family:'League Spartan',sans-serif;font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37;writing-mode:vertical-rl;text-orientation:mixed;user-select:none">Follow</span>
+</div>
+
+<div id="socialPanel" style="position:fixed;right:-200px;top:50%;transform:translateY(-50%);z-index:998;background:rgba(8,8,8,0.95);border:1px solid rgba(218,175,55,0.2);border-right:none;padding:24px 20px;backdrop-filter:blur(16px);transition:right 0.3s ease;display:flex;flex-direction:column;gap:18px;min-width:180px" onmouseover="openSocial()" onmouseout="scheduleSocialClose()">
+  <span style="font-family:'League Spartan',sans-serif;font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:rgba(218,175,55,0.5);display:block;margin-bottom:4px">Follow BLEUSKM</span>
+
+  <a href="https://www.instagram.com/bleuskm.studios/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">Instagram</span>
+  </a>
+
+  <a href="https://www.threads.net/@bleuskm.studios" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 1.327-.012 2.5-.235 3.485-.67 1.15-.502 1.953-1.258 2.39-2.248.37-.849.507-1.804.395-2.858-.115-1.08-.478-1.964-1.076-2.623-.467-.518-1.067-.878-1.78-1.07.225 1.593-.044 2.89-.797 3.854-.868 1.107-2.166 1.664-3.858 1.657-1.358-.006-2.484-.44-3.253-1.255-.824-.874-1.128-2.07-.857-3.37.257-1.213.95-2.16 2.007-2.737.966-.527 2.17-.748 3.576-.655.492.031.97.085 1.43.16-.044-.28-.107-.533-.19-.757-.348-.95-1.048-1.45-2.08-1.485-.717-.024-1.396.175-2.02.591l-.923-1.668c.898-.573 1.92-.864 3.039-.864h.043c2.342.08 3.79 1.453 4.226 3.982.107.627.162 1.276.163 1.932.003.16.001.32-.004.48.76.348 1.39.844 1.876 1.48.782 1.02 1.222 2.342 1.308 3.932.1 1.862-.16 3.467-.77 4.77-.77 1.654-2.017 2.833-3.706 3.503C15.139 23.74 13.74 24 12.186 24zm.024-11.87c-.574 0-1.09.07-1.534.207-.742.224-1.18.698-1.302 1.408-.1.58.02 1.077.355 1.432.357.38.913.577 1.652.582 1.019.004 1.742-.31 2.15-.933.45-.686.516-1.72.193-3.074-.5-.093-1.006-.15-1.514-.182l-.003.56z"/></svg>
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">Threads</span>
+  </a>
+
+  <a href="https://www.tiktok.com/@bleuskm.studios" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.27 8.27 0 004.84 1.55V6.79a4.85 4.85 0 01-1.07-.1z"/></svg>
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">TikTok</span>
+  </a>
+
+  <a href="https://www.youtube.com/@BLEUSKMStudios" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">YouTube</span>
+  </a>
+</div>
+
+<script>
+var socialCloseTimer;
+function openSocial() {
+  clearTimeout(socialCloseTimer);
+  document.getElementById('socialPanel').style.right = '0';
+}
+function scheduleSocialClose() {
+  socialCloseTimer = setTimeout(function() {
+    document.getElementById('socialPanel').style.right = '-200px';
+  }, 400);
+}
+function toggleSocial() {
+  var p = document.getElementById('socialPanel');
+  p.style.right = p.style.right === '0px' ? '-200px' : '0';
+}
+</script>
+
+<script src="/js/forms.js"></script>
+</body>
+</html>

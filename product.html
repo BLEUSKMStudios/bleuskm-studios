@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product | BLEUSKM Studios</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;800;900&family=Red+Hat+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="icon" type="image/png" href="images/bleuskm-logo.png">
+<style>
+
+/* ── PRODUCT PAGE ── */
+body { background: #0a0a0a; color: #EADFCF; }
+
+.product-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: calc(100vh - 70px);
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 60px 60px 100px;
+  gap: 80px;
+  align-items: start;
+}
+
+/* ── LEFT: GALLERY ── */
+.gallery-col { position: sticky; top: 90px; }
+
+.main-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #111;
+  overflow: hidden;
+  border: 1px solid rgba(218,175,55,0.1);
+}
+
+.main-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 0.3s ease;
+}
+
+/* Gallery arrows */
+.gallery-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.6);
+  border: 1px solid rgba(218,175,55,0.3);
+  color: #DAAF37;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  z-index: 10;
+  transition: background 0.2s ease, border-color 0.2s ease;
+  border-radius: 0;
+}
+
+.gallery-arrow:hover {
+  background: rgba(218,175,55,0.2);
+  border-color: #DAAF37;
+}
+
+.gallery-arrow.prev { left: 14px; }
+.gallery-arrow.next { right: 14px; }
+
+/* Thumbnail strip */
+.thumb-strip {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.thumb-strip img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  cursor: pointer;
+  border: 2px solid transparent;
+  opacity: 0.5;
+  transition: opacity 0.2s, border-color 0.2s;
+}
+
+.thumb-strip img.active,
+.thumb-strip img:hover {
+  border-color: #DAAF37;
+  opacity: 1;
+}
+
+/* ── RIGHT: PRODUCT INFO ── */
+.info-col { padding-top: 10px; }
+
+.back-to-shop {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(218,175,55,0.6);
+  text-decoration: none;
+  margin-bottom: 32px;
+  transition: color 0.2s;
+}
+
+.back-to-shop:hover { color: #DAAF37; }
+
+.product-title {
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 900;
+  font-size: 2.4rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #EADFCF;
+  margin-bottom: 10px;
+  line-height: 1.1;
+}
+
+.product-price {
+  font-family: 'Red Hat Display', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #DAAF37;
+  margin-bottom: 24px;
+}
+
+.product-divider {
+  width: 50px;
+  height: 2px;
+  background: rgba(218,175,55,0.4);
+  margin-bottom: 24px;
+}
+
+.product-desc {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: rgba(234,223,207,0.75);
+  margin-bottom: 36px;
+}
+
+/* ── OPTION SELECTORS ── */
+.option-group {
+  margin-bottom: 20px;
+}
+
+.option-label {
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(218,175,55,0.7);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.option-label .selected-val {
+  color: #EADFCF;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  font-family: 'Red Hat Display', sans-serif;
+  font-size: 0.85rem;
+}
+
+/* Pill buttons for size/color */
+.option-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.option-pill {
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid rgba(218,175,55,0.25);
+  color: rgba(234,223,207,0.7);
+  font-family: 'Red Hat Display', sans-serif;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 0;
+}
+
+.option-pill:hover {
+  border-color: rgba(218,175,55,0.6);
+  color: #EADFCF;
+}
+
+.option-pill.active {
+  background: #DAAF37;
+  border-color: #DAAF37;
+  color: #0b0b0b;
+  font-weight: 700;
+}
+
+.option-pill.unavailable {
+  opacity: 0.3;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+/* ── QUANTITY + ADD TO CART ── */
+.purchase-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 32px;
+}
+
+.qty-wrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(218,175,55,0.3);
+}
+
+.qty-btn {
+  width: 40px;
+  height: 50px;
+  background: transparent;
+  border: none;
+  color: #DAAF37;
+  font-size: 1.2rem;
+  cursor: pointer;
+  font-family: 'League Spartan', sans-serif;
+  transition: background 0.2s;
+}
+
+.qty-btn:hover { background: rgba(218,175,55,0.1); }
+
+.qty-input {
+  width: 50px;
+  height: 50px;
+  background: transparent;
+  border: none;
+  border-left: 1px solid rgba(218,175,55,0.3);
+  border-right: 1px solid rgba(218,175,55,0.3);
+  color: #EADFCF;
+  text-align: center;
+  font-size: 1rem;
+  font-family: 'Red Hat Display', sans-serif;
+}
+
+.qty-input:focus { outline: none; }
+
+.add-to-cart-btn {
+  flex: 1;
+  height: 50px;
+  background: #DAAF37;
+  border: none;
+  color: #0b0b0b;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 900;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.add-to-cart-btn:hover { background: #b9892e; }
+.add-to-cart-btn:disabled {
+  background: rgba(218,175,55,0.2);
+  color: rgba(0,0,0,0.4);
+  cursor: not-allowed;
+}
+
+/* ── CART NOTIFICATION ── */
+.cart-toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: #DAAF37;
+  color: #0b0b0b;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 800;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  padding: 14px 22px;
+  border-radius: 0;
+  z-index: 9999;
+  transform: translateY(80px);
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.cart-toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* ── VIEW CART BUTTON (appears after add) ── */
+.view-cart-btn {
+  display: none;
+  width: 100%;
+  margin-top: 12px;
+  height: 46px;
+  background: transparent;
+  border: 1px solid rgba(218,175,55,0.4);
+  color: #DAAF37;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.view-cart-btn:hover {
+  background: rgba(218,175,55,0.1);
+  border-color: #DAAF37;
+  color: #DAAF37;
+}
+
+/* ── PRODUCT DETAILS SECTION ── */
+.product-details-block {
+  margin-top: 48px;
+  border-top: 1px solid rgba(218,175,55,0.1);
+  padding-top: 32px;
+}
+
+.product-details-block h4 {
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(218,175,55,0.6);
+  margin-bottom: 16px;
+}
+
+.product-details-block p {
+  font-size: 0.85rem;
+  color: rgba(234,223,207,0.55);
+  line-height: 1.6;
+}
+
+/* ── LOADING ── */
+.product-loading {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'League Spartan', sans-serif;
+  letter-spacing: 4px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: rgba(234,223,207,0.3);
+}
+
+/* ── FOOTER ── */
+.site-footer {
+  border-top: 1px solid rgba(218,175,55,0.1);
+  padding: 24px 60px;
+  font-size: 0.8rem;
+  color: rgba(218,175,55,0.5);
+  background: #0a0a0a;
+  margin-top: 0;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 960px) {
+  .product-layout {
+    grid-template-columns: 1fr;
+    padding: 30px 20px 60px;
+    gap: 40px;
+  }
+  .gallery-col { position: static; }
+  .product-title { font-size: 1.8rem; }
+}
+/* ── FOOTER ── */
+.site-footer-full {
+  background: #040404;
+  border-top: 1px solid rgba(218,175,55,0.1);
+  padding: 50px 60px 30px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.footer-brand img {
+  height: 32px;
+  margin-bottom: 14px;
+}
+
+.footer-brand p {
+  font-size: 0.78rem;
+  color: rgba(234,223,207,0.35);
+  line-height: 1.6;
+  max-width: 220px;
+}
+
+.footer-col h4 {
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 700;
+  font-size: 0.65rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(218,175,55,0.5);
+  margin-bottom: 16px;
+}
+
+.footer-col a {
+  display: block;
+  font-size: 0.8rem;
+  color: rgba(234,223,207,0.45);
+  text-decoration: none;
+  margin-bottom: 10px;
+  transition: color 0.2s;
+}
+
+.footer-col a:hover {
+  color: #DAAF37;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(218,175,55,0.08);
+  padding-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.footer-bottom p {
+  font-size: 0.72rem;
+  color: rgba(234,223,207,0.2);
+}
+
+.footer-bottom a {
+  font-size: 0.72rem;
+  color: rgba(234,223,207,0.2);
+  text-decoration: none;
+  margin-left: 20px;
+}
+
+.footer-bottom a:hover {
+  color: rgba(218,175,55,0.5);
+}
+
+/* NAV */
+.navbar{background:rgba(8,8,8,0.92)!important;backdrop-filter:blur(12px);border-bottom:1px solid rgba(218,175,55,0.08)}
+.navbar-brand span{font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37}
+.nav-link{font-family:'League Spartan',sans-serif;font-weight:600;font-size:0.65rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(234,223,207,0.5)!important;transition:color 0.2s;padding:0.5rem 1rem!important}
+.nav-link:hover,.nav-link.active{color:#DAAF37!important}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar navbar-expand-md navbar-dark fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand brand-logo" href="index.html" style="display:flex;align-items:center;gap:10px"><img src="images/bleuskm-logo.png" alt="BLEUSKM Logo"><span style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37">BLEUSKM Studios</span></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="my productions.html">Productions</a></li>
+        <li class="nav-item"><a class="nav-link" href="visuals.html">Visuals</a></li>
+        <li class="nav-item"><a class="nav-link" href="echos.html">Echos</a></li>
+        <li class="nav-item"><a class="nav-link" href="casting.html">Casting</a></li>
+        <li class="nav-item"><a class="nav-link" href="bleuskm shop.html" class="nav-link active">Shop</a></li>
+        <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- PRODUCT CONTENT -->
+<div id="productRoot">
+  <div class="product-loading">Loading product...</div>
+</div>
+
+<!-- CART TOAST -->
+<div class="cart-toast" id="cartToast">Added to cart</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const DOMAIN = 'migq28-z2.myshopify.com';
+const TOKEN  = '25385bc47649a3914f1cb6596442c8bc';
+
+// ── GET HANDLE FROM URL ──
+const params = new URLSearchParams(window.location.search);
+const handle = params.get('handle');
+
+if (!handle) {
+  window.location.href = 'bleuskm shop.html';
+}
+
+// ── FETCH PRODUCT BY HANDLE ──
+const PRODUCT_QUERY = `
+{
+  product(handle: "${handle}") {
+    id
+    title
+    handle
+    descriptionHtml
+    images(first: 10) {
+      edges { node { url altText } }
+    }
+    variants(first: 50) {
+      edges {
+        node {
+          id
+          title
+          price { amount currencyCode }
+          selectedOptions { name value }
+          image { url altText }
+          availableForSale
+        }
+      }
+    }
+    options { name values }
+  }
+}`;
+
+// ── STATE ──
+let allImages    = [];
+let allVariants  = [];
+let currentImgIndex = 0;
+let selectedOptions = {};
+let checkoutUrl  = null;
+
+// ── INIT ──
+async function init() {
+  try {
+    const res = await fetch(`https://${DOMAIN}/api/2023-10/graphql.json`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Storefront-Access-Token': TOKEN
+      },
+      body: JSON.stringify({ query: PRODUCT_QUERY })
+    });
+    const json = await res.json();
+    const product = json?.data?.product;
+    if (!product) { throw new Error('Product not found'); }
+
+    allImages   = product.images.edges.map(e => e.node);
+    allVariants = product.variants.edges.map(e => e.node);
+    currentProduct = product;
+
+    // Pre-select first option values
+    product.options.forEach(opt => {
+      selectedOptions[opt.name] = opt.values[0];
+    });
+
+    renderProduct(product);
+    updateCartBadge();
+  } catch(err) {
+    document.getElementById('productRoot').innerHTML =
+      `<div class="product-loading" style="color:#950606">Product could not be loaded.</div>`;
+    console.error(err);
+  }
+}
+
+// ── RENDER ──
+function renderProduct(product) {
+  const root = document.getElementById('productRoot');
+  document.title = `${product.title} | BLEUSKM Studios`;
+
+  // Build options HTML
+  let optionsHTML = '';
+  product.options.forEach(opt => {
+    const pills = opt.values.map(val => `
+      <button class="option-pill ${val === selectedOptions[opt.name] ? 'active' : ''}"
+              data-option="${opt.name}" data-value="${val}">
+        ${val}
+      </button>
+    `).join('');
+
+    optionsHTML += `
+      <div class="option-group">
+        <span class="option-label">${opt.name} <span class="selected-val" id="selVal-${opt.name.replace(/\s/g,'_')}">${selectedOptions[opt.name]}</span></span>
+        <div class="option-pills">${pills}</div>
+      </div>
+    `;
+  });
+
+  // Initial matching variant
+  const initVariant = getMatchingVariant();
+  const initPrice = initVariant
+    ? parseFloat(initVariant.price.amount).toFixed(2)
+    : parseFloat(allVariants[0]?.price.amount || 0).toFixed(2);
+
+  // Thumb strip
+  const thumbsHTML = allImages.map((img, i) => `
+    <img src="${img.url}" alt="${img.altText || ''}"
+         class="${i === 0 ? 'active' : ''}"
+         data-idx="${i}" onclick="setMainImage(${i})">
+  `).join('');
+
+  root.innerHTML = `
+    <div class="product-layout">
+
+      <!-- LEFT: GALLERY -->
+      <div class="gallery-col">
+        <div class="main-img-wrap">
+          <img id="mainImg" src="${allImages[0]?.url || ''}" alt="${allImages[0]?.altText || product.title}">
+          ${allImages.length > 1 ? `
+            <button class="gallery-arrow prev" onclick="shiftImage(-1)">&#8592;</button>
+            <button class="gallery-arrow next" onclick="shiftImage(1)">&#8594;</button>
+          ` : ''}
+        </div>
+        ${allImages.length > 1 ? `<div class="thumb-strip" id="thumbStrip">${thumbsHTML}</div>` : ''}
+      </div>
+
+      <!-- RIGHT: INFO -->
+      <div class="info-col">
+        <a href="bleuskm shop.html" class="back-to-shop">&#8592; Back to Shop</a>
+
+        <h1 class="product-title">${product.title}</h1>
+        <div class="product-price" id="productPrice">$${initPrice}</div>
+        <div class="product-divider"></div>
+
+        ${optionsHTML}
+
+        <div class="purchase-row">
+          <div class="qty-wrap">
+            <button class="qty-btn" onclick="changeQty(-1)">−</button>
+            <input class="qty-input" id="qtyInput" type="number" value="1" min="1" max="10" readonly>
+            <button class="qty-btn" onclick="changeQty(1)">+</button>
+          </div>
+          <button class="add-to-cart-btn" id="addToCartBtn" onclick="addToCart()">
+            Add to Cart
+          </button>
+        </div>
+
+        <a href="#" class="view-cart-btn" id="viewCartBtn">
+          View Cart &amp; Checkout &#8594;
+        </a>
+
+        <div class="product-desc" style="margin-top: 32px;">
+          ${product.descriptionHtml || '<p>Premium BLEUSKM Studios merch. Print on demand via Printify.</p>'}
+        </div>
+
+        <div class="product-details-block">
+          <h4>Details</h4>
+          <p>Print on demand · Ships worldwide · Fulfilled by Printify via Shopify</p>
+        </div>
+      </div>
+
+    </div>
+  `;
+
+  // Attach option pill listeners
+  document.querySelectorAll('.option-pill').forEach(pill => {
+    pill.addEventListener('click', () => selectOption(pill));
+  });
+
+  // Update availability on load
+  updateVariantState();
+}
+
+// ── OPTION SELECTION ──
+function selectOption(pill) {
+  const optName = pill.dataset.option;
+  const optVal  = pill.dataset.value;
+
+  // Update selected
+  selectedOptions[optName] = optVal;
+
+  // Update active pills for this option
+  document.querySelectorAll(`.option-pill[data-option="${optName}"]`).forEach(p => {
+    p.classList.toggle('active', p.dataset.value === optVal);
+  });
+
+  // Update label
+  const labelEl = document.getElementById(`selVal-${optName.replace(/\s/g,'_')}`);
+  if (labelEl) labelEl.textContent = optVal;
+
+  updateVariantState();
+}
+
+// ── FIND MATCHING VARIANT ──
+function getMatchingVariant() {
+  return allVariants.find(v =>
+    v.selectedOptions.every(o => selectedOptions[o.name] === o.value)
+  ) || null;
+}
+
+// ── UPDATE PRICE + GALLERY + AVAILABILITY ──
+function updateVariantState() {
+  const variant = getMatchingVariant();
+
+  // Price
+  if (variant) {
+    const price = parseFloat(variant.price.amount).toFixed(2);
+    document.getElementById('productPrice').textContent = `$${price}`;
+  }
+
+  // Image — switch to variant image if it has one
+  if (variant?.image?.url) {
+    const idx = allImages.findIndex(img => img.url === variant.image.url);
+    if (idx >= 0) setMainImage(idx);
+  }
+
+  // Availability
+  const btn = document.getElementById('addToCartBtn');
+  if (btn) {
+    if (!variant || !variant.availableForSale) {
+      btn.textContent = 'Sold Out';
+      btn.disabled = true;
+    } else {
+      btn.textContent = 'Add to Cart';
+      btn.disabled = false;
+    }
+  }
+}
+
+// ── GALLERY CONTROLS ──
+function setMainImage(idx) {
+  currentImgIndex = idx;
+  const mainImg = document.getElementById('mainImg');
+  if (mainImg && allImages[idx]) {
+    mainImg.style.opacity = '0';
+    setTimeout(() => {
+      mainImg.src = allImages[idx].url;
+      mainImg.alt = allImages[idx].altText || '';
+      mainImg.style.opacity = '1';
+    }, 150);
+  }
+  // Update thumbs
+  document.querySelectorAll('#thumbStrip img').forEach((t, i) => {
+    t.classList.toggle('active', i === idx);
+  });
+}
+
+function shiftImage(dir) {
+  const next = (currentImgIndex + dir + allImages.length) % allImages.length;
+  setMainImage(next);
+}
+
+// ── QUANTITY ──
+function changeQty(dir) {
+  const input = document.getElementById('qtyInput');
+  const val = parseInt(input.value) + dir;
+  if (val >= 1 && val <= 10) input.value = val;
+}
+
+// ── ADD TO CART — saves to sessionStorage, links to cart.html ──
+function addToCart() {
+  const variant = getMatchingVariant();
+  if (!variant || !variant.availableForSale) return;
+
+  const qty = parseInt(document.getElementById('qtyInput').value) || 1;
+  const btn = document.getElementById('addToCartBtn');
+
+  // Load existing cart
+  let cart = JSON.parse(sessionStorage.getItem('bleuskm_cart') || '[]');
+
+  // Find if this exact variant already in cart
+  const existing = cart.find(i => i.variantId === variant.id);
+  if (existing) {
+    existing.quantity = Math.min(10, existing.quantity + qty);
+  } else {
+    cart.push({
+      variantId: variant.id,
+      title: currentProduct.title,
+      variantTitle: variant.title,
+      price: variant.price.amount,
+      image: (currentProduct.images.edges[0]?.node?.url) || '',
+      quantity: qty
+    });
+  }
+
+  sessionStorage.setItem('bleuskm_cart', JSON.stringify(cart));
+
+  // Update cart count badge
+  updateCartBadge();
+
+  // Toast
+  const toast = document.getElementById('cartToast');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2800);
+
+  // Show view cart button
+  const vcBtn = document.getElementById('viewCartBtn');
+  vcBtn.href = 'cart.html';
+  vcBtn.style.display = 'flex';
+
+  // Brief button feedback
+  btn.textContent = '✓ Added';
+  setTimeout(() => { btn.textContent = 'Add to Cart'; }, 1500);
+}
+
+// ── CART BADGE ──
+function updateCartBadge() {
+  const cart = JSON.parse(sessionStorage.getItem('bleuskm_cart') || '[]');
+  const count = cart.reduce((s, i) => s + i.quantity, 0);
+  const badge = document.getElementById('cartBadge');
+  if (badge) {
+    badge.textContent = count;
+    badge.style.display = count > 0 ? 'inline-flex' : 'none';
+  }
+}
+
+// Store product ref globally for cart use
+let currentProduct = null;
+
+// ── START ──
+init();
+</script>
+<footer class="site-footer-full">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <img src="images/bleuskm-logo.png" alt="BLEUSKM Logo">
+      <p>A film and visual production house building worlds grounded in Black imagination, history, and cultural memory.</p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Navigate</h4>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="my productions.html">Productions</a>
+      <a href="visuals.html">Visuals</a>
+      <a href="echos.html">Echos</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Work With Us</h4>
+      <a href="contact.html">Project Inquiry</a>
+      <a href="casting.html">Apply to Casting Calls</a>
+      <a href="crew-application.html">Join the Crew</a>
+      <a href="bleuskm shop.html">The Vault — Shop</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms of Use</a>
+      <a href="contact.html">Contact Us</a>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; 2026 BLEUSKM Studios. All rights reserved.</p>
+    <div>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="casting.html">Casting</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+</footer>
+<!-- CART POPUP BUTTON -->
+<div id="cartPopupBtn" onclick="toggleCartPopup()" style="position:fixed;top:80px;right:24px;z-index:1100;cursor:pointer;display:flex;align-items:center;gap:8px;background:rgba(8,8,8,0.9);border:1px solid rgba(218,175,55,0.3);padding:8px 16px;backdrop-filter:blur(10px)">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DAAF37" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+  <span style="font-family:'League Spartan',sans-serif;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:#DAAF37">Cart</span>
+  <span id="cartPopupBadge" style="display:none;background:#DAAF37;color:#000;font-size:0.55rem;font-weight:900;border-radius:50%;width:16px;height:16px;align-items:center;justify-content:center;font-family:'League Spartan',sans-serif">0</span>
+</div>
+<div id="cartPopup" style="display:none;position:fixed;top:130px;right:24px;z-index:1200;width:360px;max-height:70vh;overflow-y:auto;background:#0d0d0d;border:1px solid rgba(218,175,55,0.2);padding:24px;box-shadow:0 20px 60px rgba(0,0,0,0.8)">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37">Your Cart</span>
+    <button onclick="toggleCartPopup()" style="background:none;border:none;color:rgba(234,223,207,0.4);font-size:1.2rem;cursor:pointer;line-height:1">&times;</button>
+  </div>
+  <div id="cartPopupItems"></div>
+  <div id="cartPopupEmpty" style="text-align:center;padding:30px 0;color:rgba(234,223,207,0.3);font-family:'League Spartan',sans-serif;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase">Cart is empty</div>
+  <div id="cartPopupFooter" style="display:none;border-top:1px solid rgba(218,175,55,0.15);padding-top:16px;margin-top:16px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+      <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:rgba(234,223,207,0.5)">Subtotal</span>
+      <span id="cartPopupTotal" style="color:#DAAF37;font-family:'Red Hat Display',sans-serif;font-weight:600"></span>
+    </div>
+    <a href="cart.html" style="display:block;background:#DAAF37;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;padding:14px;text-align:center;text-decoration:none">View Cart &amp; Checkout</a>
+  </div>
+</div>
+<script>
+function toggleCartPopup() {
+  var popup = document.getElementById('cartPopup');
+  popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
+  if (popup.style.display === 'block') renderCartPopup();
+}
+function renderCartPopup() {
+  var cart = JSON.parse(sessionStorage.getItem('bleuskm_cart') || '[]');
+  var items = document.getElementById('cartPopupItems');
+  var empty = document.getElementById('cartPopupEmpty');
+  var footer = document.getElementById('cartPopupFooter');
+  var badge = document.getElementById('cartPopupBadge');
+  var total = cart.reduce(function(s,i){ return s + parseFloat(i.price)*i.quantity; }, 0);
+  var count = cart.reduce(function(s,i){ return s + i.quantity; }, 0);
+  if (count > 0) { badge.style.display = 'flex'; badge.textContent = count; } else { badge.style.display = 'none'; }
+  if (cart.length === 0) { items.innerHTML = ''; empty.style.display = 'block'; footer.style.display = 'none'; return; }
+  empty.style.display = 'none'; footer.style.display = 'block';
+  document.getElementById('cartPopupTotal').textContent = '$' + total.toFixed(2);
+  items.innerHTML = cart.map(function(item) {
+    return '<div style="display:grid;grid-template-columns:50px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid rgba(218,175,55,0.08)">' +
+      '<img src="' + (item.image||'') + '" style="width:50px;height:50px;object-fit:cover">' +
+      '<div><div style="font-family:League Spartan,sans-serif;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;color:#EADFCF;margin-bottom:2px">' + item.title + '</div>' +
+      '<div style="font-size:0.75rem;color:rgba(234,223,207,0.4)">' + (item.variantTitle !== 'Default Title' ? item.variantTitle : '') + ' &times;' + item.quantity + '</div></div>' +
+      '<span style="color:#DAAF37;font-size:0.85rem">$' + (parseFloat(item.price)*item.quantity).toFixed(2) + '</span></div>';
+  }).join('');
+}
+window.addEventListener('load', function() {
+  var cart = JSON.parse(sessionStorage.getItem('bleuskm_cart') || '[]');
+  var count = cart.reduce(function(s,i){ return s+i.quantity; }, 0);
+  var badge = document.getElementById('cartPopupBadge');
+  if (badge && count > 0) { badge.style.display = 'flex'; badge.textContent = count; }
+});
+document.addEventListener('click', function(e) {
+  var popup = document.getElementById('cartPopup');
+  var btn = document.getElementById('cartPopupBtn');
+  if (popup && btn && popup.style.display === 'block' && !popup.contains(e.target) && !btn.contains(e.target)) {
+    popup.style.display = 'none';
+  }
+});
+</script>
+
+
+<!-- SOCIAL MEDIA SIDE PULLOUT -->
+<div id="socialTab" onclick="toggleSocial()" style="position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:999;cursor:pointer;background:rgba(8,8,8,0.92);border:1px solid rgba(218,175,55,0.3);border-right:none;padding:14px 10px;backdrop-filter:blur(10px);transition:all 0.2s" onmouseover="openSocial()" onmouseout="scheduleSocialClose()">
+  <span style="font-family:'League Spartan',sans-serif;font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37;writing-mode:vertical-rl;text-orientation:mixed;user-select:none">Follow</span>
+</div>
+
+<div id="socialPanel" style="position:fixed;right:-200px;top:50%;transform:translateY(-50%);z-index:998;background:rgba(8,8,8,0.95);border:1px solid rgba(218,175,55,0.2);border-right:none;padding:24px 20px;backdrop-filter:blur(16px);transition:right 0.3s ease;display:flex;flex-direction:column;gap:18px;min-width:180px" onmouseover="openSocial()" onmouseout="scheduleSocialClose()">
+  <span style="font-family:'League Spartan',sans-serif;font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:rgba(218,175,55,0.5);display:block;margin-bottom:4px">Follow BLEUSKM</span>
+
+  <a href="https://www.instagram.com/bleuskm.studios/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">Instagram</span>
+  </a>
+
+  <a href="https://www.threads.net/@bleuskm.studios" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 1.327-.012 2.5-.235 3.485-.67 1.15-.502 1.953-1.258 2.39-2.248.37-.849.507-1.804.395-2.858-.115-1.08-.478-1.964-1.076-2.623-.467-.518-1.067-.878-1.78-1.07.225 1.593-.044 2.89-.797 3.854-.868 1.107-2.166 1.664-3.858 1.657-1.358-.006-2.484-.44-3.253-1.255-.824-.874-1.128-2.07-.857-3.37.257-1.213.95-2.16 2.007-2.737.966-.527 2.17-.748 3.576-.655.492.031.97.085 1.43.16-.044-.28-.107-.533-.19-.757-.348-.95-1.048-1.45-2.08-1.485-.717-.024-1.396.175-2.02.591l-.923-1.668c.898-.573 1.92-.864 3.039-.864h.043c2.342.08 3.79 1.453 4.226 3.982.107.627.162 1.276.163 1.932.003.16.001.32-.004.48.76.348 1.39.844 1.876 1.48.782 1.02 1.222 2.342 1.308 3.932.1 1.862-.16 3.467-.77 4.77-.77 1.654-2.017 2.833-3.706 3.503C15.139 23.74 13.74 24 12.186 24zm.024-11.87c-.574 0-1.09.07-1.534.207-.742.224-1.18.698-1.302 1.408-.1.58.02 1.077.355 1.432.357.38.913.577 1.652.582 1.019.004 1.742-.31 2.15-.933.45-.686.516-1.72.193-3.074-.5-.093-1.006-.15-1.514-.182l-.003.56z"/></svg>
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">Threads</span>
+  </a>
+
+  <a href="https://www.tiktok.com/@bleuskm.studios" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.27 8.27 0 004.84 1.55V6.79a4.85 4.85 0 01-1.07-.1z"/></svg>
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">TikTok</span>
+  </a>
+
+  <a href="https://www.youtube.com/@BLEUSKMStudios" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">YouTube</span>
+  </a>
+</div>
+
+<script>
+var socialCloseTimer;
+function openSocial() {
+  clearTimeout(socialCloseTimer);
+  document.getElementById('socialPanel').style.right = '0';
+}
+function scheduleSocialClose() {
+  socialCloseTimer = setTimeout(function() {
+    document.getElementById('socialPanel').style.right = '-200px';
+  }, 400);
+}
+function toggleSocial() {
+  var p = document.getElementById('socialPanel');
+  p.style.right = p.style.right === '0px' ? '-200px' : '0';
+}
+</script>
+
+<script src="/js/forms.js"></script>
+</body>
+</html>

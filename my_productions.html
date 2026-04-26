@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Productions | BLEUSKM Studios</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;800;900&family=Red+Hat+Display:wght@300;400;500;600;700&family=Kalnia:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="icon" type="image/png" sizes="32x32" href="images/bleuskm-logo.png">
+
+<style>
+
+*,*::before,*::after{box-sizing:border-box}
+body.productions-page{background:#080808;color:#EADFCF}
+
+/* ── SCROLL SECTION ── */
+.coming-soon-section{padding:0}
+.coming-wrapper{padding:60px 0 50px;background:rgba(0,0,0,0.3);border-bottom:1px solid rgba(218,175,55,0.1);position:relative}
+.horizontal-scroll{display:flex;align-items:flex-start;gap:60px;overflow-x:auto;overflow-y:visible;padding-left:43px;padding-right:80px;scrollbar-width:none}
+.horizontal-scroll::-webkit-scrollbar{display:none}
+.vertical-title{writing-mode:vertical-rl;transform:rotate(180deg);font-family:'League Spartan',sans-serif;font-weight:600;font-size:1.3rem;letter-spacing:10px;color:#DAAF37;flex:0 0 auto}
+.scroll-card{flex:0 0 380px;text-decoration:none;color:inherit;position:relative}
+.scroll-card img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;filter:brightness(0.8);transition:filter 0.4s,transform 0.4s}
+.scroll-card:hover img{filter:brightness(1);transform:scale(1.02)}
+.scroll-meta{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:12px;border-top:1px solid rgba(218,175,55,0.18);text-transform:uppercase}
+.scroll-title{font-family:'League Spartan',sans-serif;font-weight:900;letter-spacing:1px;color:#DAAF37;font-size:0.8rem}
+.scroll-format{font-size:0.65rem;letter-spacing:1.5px;font-weight:600;color:#EADFCF;opacity:0.5;margin-left:auto}
+.scroll-btn{position:absolute;bottom:10px;background:none;border:none;font-size:1.5rem;cursor:pointer;z-index:20;color:#DAAF37;opacity:0.7;transition:opacity 0.2s}
+.scroll-btn:hover{opacity:1}
+.scroll-left{left:12px}
+.scroll-right{right:12px}
+
+/* ── PROJECT CARDS ── */
+.project-card{position:relative;overflow:hidden;text-decoration:none;color:#EADFCF;background:#0a0a0a;border:1px solid rgba(218,175,55,0.08);transition:transform 0.3s ease,box-shadow 0.3s ease}
+.project-card:hover{transform:translateY(-4px);box-shadow:0 20px 50px rgba(0,0,0,0.5)}
+.project-card::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:#DAAF37;transition:width 0.4s}
+.project-card:hover::after{width:100%}
+.thumb-img{height:320px;width:100%;object-fit:cover;display:block;filter:brightness(0.8) saturate(0.9);transition:filter 0.5s,transform 0.5s}
+.project-card:hover .thumb-img{filter:brightness(1) saturate(1.05);transform:scale(1.03)}
+.project-info{padding:16px 20px 18px;border-top:1px solid rgba(218,175,55,0.08)}
+.project-category{display:block;font-family:'Red Hat Display',sans-serif;font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:rgba(234,223,207,0.35);margin-bottom:5px}
+.project-name{display:block;font-family:'League Spartan',sans-serif;font-weight:900;color:#DAAF37;font-size:0.88rem;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
+.project-year{display:block;font-size:0.68rem;color:rgba(234,223,207,0.35);letter-spacing:1px;text-transform:uppercase}
+
+/* ── CASTING NOW BADGE ── */
+.casting-now-badge{position:absolute;top:14px;left:14px;z-index:5;background:#DAAF37;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;padding:5px 12px}
+
+/* ── FOOTER ── */
+.site-footer-full{background:#040404;border-top:1px solid rgba(218,175,55,0.1);padding:50px 60px 30px}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.footer-brand img{height:32px;margin-bottom:14px}
+.footer-brand p{font-size:0.78rem;color:rgba(234,223,207,0.35);line-height:1.6;max-width:220px}
+.footer-col h4{font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.65rem;letter-spacing:3px;text-transform:uppercase;color:rgba(218,175,55,0.5);margin-bottom:16px}
+.footer-col a{display:block;font-size:0.8rem;color:rgba(234,223,207,0.45);text-decoration:none;margin-bottom:10px;transition:color 0.2s}
+.footer-col a:hover{color:#DAAF37}
+.footer-bottom{border-top:1px solid rgba(218,175,55,0.08);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.footer-bottom p{font-size:0.72rem;color:rgba(234,223,207,0.2)}
+.footer-bottom a{font-size:0.72rem;color:rgba(234,223,207,0.2);text-decoration:none;margin-left:20px}
+.footer-bottom a:hover{color:rgba(218,175,55,0.5)}
+
+/* ── PAGE HERO ── */
+body.productions-page { background: #080808; }
+
+/* ── SECTION INTROS ── */
+.section-intro {
+  padding: 50px 60px 30px;
+  border-bottom: 1px solid rgba(218,175,55,0.08);
+  margin-bottom: 0;
+}
+.section-intro-label {
+  font-family: 'League Spartan', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(218,175,55,0.5);
+  margin-bottom: 8px;
+}
+.section-intro-title {
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 900;
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #EADFCF;
+  margin: 0 0 8px;
+}
+.section-intro-sub {
+  font-size: 0.82rem;
+  color: rgba(234,223,207,0.38);
+  margin: 0;
+  letter-spacing: 0.5px;
+  line-height: 1.6;
+}
+
+/* ── CARD ACTION BUTTONS ── */
+.card-action-btn {
+  display: block;
+  border-top: 1px solid rgba(218,175,55,0.12);
+  padding: 13px 20px;
+  text-align: center;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+.card-action-gold {
+  background: rgba(218,175,55,0.12);
+  color: #DAAF37;
+}
+.card-action-gold:hover { background: rgba(218,175,55,0.22); color: #DAAF37; }
+
+.card-action-dim {
+  background: rgba(218,175,55,0.06);
+  color: rgba(218,175,55,0.6);
+  border-top: 1px solid rgba(218,175,55,0.08);
+}
+.card-action-dim:hover { background: rgba(218,175,55,0.12); color: #DAAF37; }
+
+.card-action-ghost {
+  background: transparent;
+  color: rgba(234,223,207,0.25);
+  border-top: 1px solid rgba(218,175,55,0.07);
+}
+.card-action-ghost:hover { color: rgba(234,223,207,0.5); }
+
+/* ── BADGES ── */
+.preprod-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 5;
+  background: rgba(218,175,55,0.15);
+  color: #DAAF37;
+  border: 1px solid rgba(218,175,55,0.4);
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 800;
+  font-size: 0.58rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 5px 10px;
+}
+.soon-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 5;
+  background: rgba(234,223,207,0.08);
+  color: rgba(234,223,207,0.6);
+  border: 1px solid rgba(234,223,207,0.15);
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 800;
+  font-size: 0.58rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 5px 10px;
+}
+
+/* ── DIM IMAGES / TEXT for In Development ── */
+.dim-img { filter: brightness(0.55) saturate(0.5) !important; }
+.dim-text { color: rgba(218,175,55,0.4) !important; opacity: 1 !important; }
+
+/* ── TAB NAV ── */
+.prod-tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: rgba(234,223,207,0.3);
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 20px 32px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+.prod-tab:hover { color: rgba(234,223,207,0.65); }
+.prod-tab-active {
+  color: #DAAF37 !important;
+  border-bottom: 2px solid #DAAF37 !important;
+}
+.prod-section { min-height: 500px; }
+
+/* ── PROJECT RAIL ── */
+.project-rail {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 40px 60px 100px;
+}
+
+/* ── SCROLL ── */
+.horizontal-scroll { scrollbar-width: none; }
+.horizontal-scroll::-webkit-scrollbar { display: none; }
+
+
+/* NAV */
+.navbar{background:rgba(8,8,8,0.92)!important;backdrop-filter:blur(12px);border-bottom:1px solid rgba(218,175,55,0.08)}
+.navbar-brand span{font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37}
+.nav-link{font-family:'League Spartan',sans-serif;font-weight:600;font-size:0.65rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(234,223,207,0.5)!important;transition:color 0.2s;padding:0.5rem 1rem!important}
+.nav-link:hover,.nav-link.active{color:#DAAF37!important}
+</style>
+  <style>
+    a, a:link, a:visited, a:hover, a:active { text-decoration: none !important; }
+    a { color: inherit; }
+    a:hover { color: #DAAF37; }
+  </style>
+</head>
+
+<body class="productions-page">
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand brand-logo" href="index.html" style="display:flex;align-items:center;gap:10px"><img src="images/bleuskm-logo.png" alt="BLEUSKM Logo"><span style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37">BLEUSKM Studios</span></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="my productions.html" class="nav-link active">Productions</a></li>
+        <li class="nav-item"><a class="nav-link" href="visuals.html">Visuals</a></li>
+        <li class="nav-item"><a class="nav-link" href="echos.html">Echos</a></li>
+        <li class="nav-item"><a class="nav-link" href="casting.html">Casting</a></li>
+        <li class="nav-item"><a class="nav-link" href="bleuskm shop.html">Shop</a></li>
+        <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- ── PAGE HERO HEADER ── -->
+<div style="padding:100px 60px 60px;background:linear-gradient(180deg,rgba(218,175,55,0.06) 0%,transparent 100%);border-bottom:1px solid rgba(218,175,55,0.1)">
+  <p style="font-family:'League Spartan',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:rgba(218,175,55,0.5);margin-bottom:12px">BLEUSKM Studios</p>
+  <h1 style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(2.5rem,6vw,5rem);letter-spacing:5px;text-transform:uppercase;color:#EADFCF;margin:0 0 16px;line-height:1">Productions</h1>
+  <p style="font-size:0.88rem;color:rgba(234,223,207,0.4);max-width:500px;line-height:1.7;margin:0">A growing slate of short films and features grounded in Black imagination, cultural memory, and spiritual cinema.</p>
+</div>
+
+<!-- ── COMING SOON SCROLL ── -->
+<section class="coming-soon-section">
+  <div class="coming-wrapper" style="position:relative">
+    <button class="scroll-btn scroll-left" style="color:#DAAF37">&#10094;</button>
+    <div class="horizontal-scroll" id="scrollContainer">
+      <div class="vertical-title">COMING SOON</div>
+
+      <a href="book-of-beginnings.html" class="scroll-card">
+        <img src="images/book of beginnings poster.png" alt="Book of Beginnings">
+        <div class="scroll-meta">
+          <span class="scroll-title">BOOK OF BEGINNINGS</span>
+          <span class="scroll-format">SHORT</span>
+        </div>
+      </a>
+
+      <a href="liminal-county.html" class="scroll-card">
+        <img src="images/liminal county poster.jpg" alt="Liminal County">
+        <div class="scroll-meta">
+          <span class="scroll-title">LIMINAL COUNTY</span>
+          <span class="scroll-format">FEATURE</span>
+        </div>
+      </a>
+
+      <a href="of-blood-and-dominion.html" class="scroll-card">
+        <img src="images/of blood dominion poster.png" alt="Of Blood and Dominion" style="object-position:center top;">
+        <div class="scroll-meta">
+          <span class="scroll-title">OF BLOOD AND DOMINION</span>
+          <span class="scroll-format">FEATURE</span>
+        </div>
+      </a>
+
+      <a href="as is.html" class="scroll-card">
+        <img src="images/as is poster.jpg" alt="As Is">
+        <div class="scroll-meta">
+          <span class="scroll-title">AS IS</span>
+          <span class="scroll-format">SHORT/FEATURE</span>
+        </div>
+      </a>
+
+      <a href="#" class="scroll-card">
+        <div style="width:100%;aspect-ratio:16/9;background:#0f0f0f;border:1px solid rgba(218,175,55,0.08);display:flex;align-items:center;justify-content:center;">
+          <span style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:rgba(218,175,55,0.25)">TBA</span>
+        </div>
+        <div class="scroll-meta">
+          <span class="scroll-title" style="color:rgba(218,175,55,0.4)">UNTITLED ZARIA LASHAE PROJECT</span>
+          <span class="scroll-format">TBD</span>
+        </div>
+      </a>
+
+      <a href="#" class="scroll-card">
+        <div style="width:100%;aspect-ratio:16/9;background:#0f0f0f;border:1px solid rgba(218,175,55,0.08);display:flex;align-items:center;justify-content:center;">
+          <span style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:rgba(218,175,55,0.25)">TBA</span>
+        </div>
+        <div class="scroll-meta">
+          <span class="scroll-title" style="color:rgba(218,175,55,0.4)">UNTITLED ZARIA LASHAE PROJECT</span>
+          <span class="scroll-format">TBD</span>
+        </div>
+      </a>
+
+      <a href="#" class="scroll-card">
+        <div style="width:100%;aspect-ratio:16/9;background:#0f0f0f;border:1px solid rgba(218,175,55,0.08);display:flex;align-items:center;justify-content:center;">
+          <span style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:rgba(218,175,55,0.25)">TBA</span>
+        </div>
+        <div class="scroll-meta">
+          <span class="scroll-title" style="color:rgba(218,175,55,0.4)">UNTITLED ZARIA LASHAE PROJECT</span>
+          <span class="scroll-format">TBD</span>
+        </div>
+      </a>
+    </div>
+    <button class="scroll-btn scroll-right" style="color:#DAAF37">&#10095;</button>
+  </div>
+</section>
+
+<!-- ── TAB NAV ── -->
+<div id="productions-nav" style="position:sticky;top:60px;z-index:100;background:#080808;border-bottom:1px solid rgba(218,175,55,0.12);padding:0 60px;display:flex;gap:0;overflow-x:auto">
+  <button onclick="showSection('all')" id="tab-all" class="prod-tab prod-tab-active">All Productions</button>
+  <button onclick="showSection('casting')" id="tab-casting" class="prod-tab">Now Casting</button>
+  <button onclick="showSection('preproduction')" id="tab-preproduction" class="prod-tab">Pre-Production</button>
+</div>
+
+<!-- ══════════════════════════════
+     TAB 1 — ALL PRODUCTIONS
+══════════════════════════════ -->
+<div id="section-all" class="prod-section">
+
+  <div class="section-intro">
+    <p class="section-intro-label">Complete Slate</p>
+    <h2 class="section-intro-title">All Productions</h2>
+    <p class="section-intro-sub">Every film in the BLEUSKM universe — from casting now to deep development.</p>
+  </div>
+
+  <div class="project-rail">
+
+    <!-- THE FINAL HAND — CASTING NOW -->
+    <div class="project-card" style="position:relative">
+      <span class="casting-now-badge">&#9679; Casting Now</span>
+      <a href="final-hand.html" style="text-decoration:none;color:inherit;display:block">
+        <img src="images/the final hand poster.png" class="thumb-img" alt="The Final Hand">
+        <div class="project-info">
+          <span class="project-category">SHORT FILM</span>
+          <span class="project-name">THE FINAL HAND</span>
+          <span class="project-year">MAY 2026</span>
+        </div>
+      </a>
+      <a href="casting.html" onclick="sessionStorage.setItem('openModal','final-hand')" class="card-action-btn card-action-gold">Apply to Cast →</a>
+    </div>
+
+    <!-- LOVE ME LIKE THIS — PRE-PRODUCTION -->
+    <div class="project-card" style="position:relative">
+      <span class="preprod-badge">Casting Opens soon</span>
+      <a href="love-me-like-this.html" style="text-decoration:none;color:inherit;display:block">
+        <img src="images/love me like this poster.png" class="thumb-img" alt="Love Me Like This">
+        <div class="project-info">
+          <span class="project-category">SHORT FILM</span>
+          <span class="project-name">LOVE ME LIKE THIS</span>
+          <span class="project-year">2026</span>
+        </div>
+      </a>
+      <a href="casting.html" onclick="sessionStorage.setItem('openModal','love-me-like-this')" class="card-action-btn card-action-dim">Get Notified →</a>
+    </div>
+
+    <!-- OVERSTOOD -->
+    <div class="project-card" style="position:relative">
+      <span class="soon-badge">Casting Soon</span>
+      <a href="overstood.html" style="text-decoration:none;color:inherit;display:block">
+        <img src="images/overstood poster.png" class="thumb-img" alt="Overstood">
+        <div class="project-info">
+          <span class="project-category">SHORT FILM</span>
+          <span class="project-name">OVERSTOOD</span>
+          <span class="project-year">2026</span>
+        </div>
+      </a>
+      <a href="casting.html" onclick="sessionStorage.setItem('openModal','overstood')" class="card-action-btn card-action-ghost">Get Notified When Casting Opens</a>
+    </div>
+
+    <!-- BOOK OF BEGINNINGS -->
+    <a class="project-card" href="book-of-beginnings.html" style="text-decoration:none;color:inherit">
+      <img src="images/book of beginnings poster.png" class="thumb-img dim-img" alt="Book of Beginnings">
+      <div class="project-info">
+        <span class="project-category">SHORT · EXPANDABLE TO FEATURE</span>
+        <span class="project-name">BOOK OF BEGINNINGS</span>
+        <span class="project-year dim-text">IN DEVELOPMENT</span>
+      </div>
+    </a>
+
+    <!-- LIMINAL COUNTY -->
+    <a class="project-card" href="liminal-county.html" style="text-decoration:none;color:inherit">
+      <img src="images/liminal county poster.jpg" class="thumb-img dim-img" alt="Liminal County">
+      <div class="project-info">
+        <span class="project-category">FEATURE FILM</span>
+        <span class="project-name">LIMINAL COUNTY</span>
+        <span class="project-year dim-text">IN DEVELOPMENT</span>
+      </div>
+    </a>
+
+    <!-- OF BLOOD AND DOMINION -->
+    <a class="project-card" href="of-blood-and-dominion.html" style="text-decoration:none;color:inherit">
+      <img src="images/of blood dominion poster.png" class="thumb-img dim-img" alt="Of Blood and Dominion" style="object-position:center top">
+      <div class="project-info">
+        <span class="project-category">FEATURE FILM</span>
+        <span class="project-name">OF BLOOD AND DOMINION</span>
+        <span class="project-year dim-text">IN DEVELOPMENT</span>
+      </div>
+    </a>
+
+    <!-- AS IS -->
+    <a class="project-card" href="as is.html" style="text-decoration:none;color:inherit">
+      <img src="images/as is poster.jpg" class="thumb-img dim-img" alt="As Is">
+      <div class="project-info">
+        <span class="project-category">SHORT / FEATURE</span>
+        <span class="project-name">AS IS</span>
+        <span class="project-year dim-text">IN DEVELOPMENT</span>
+      </div>
+    </a>
+
+    <!-- THE 15TH HOUR — LAST -->
+    <a class="project-card" href="15th-hour.html" style="text-decoration:none;color:inherit">
+      <img src="images/the 15th hour poster.png" class="thumb-img dim-img" alt="The 15th Hour">
+      <div class="project-info">
+        <span class="project-category">SHORT FILM</span>
+        <span class="project-name">THE 15TH HOUR</span>
+        <span class="project-year dim-text">IN DEVELOPMENT</span>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     TAB 2 — NOW CASTING
+══════════════════════════════ -->
+<div id="section-casting" class="prod-section" style="display:none">
+
+  <div class="section-intro" style="border-left:3px solid #DAAF37">
+    <p class="section-intro-label" style="color:#DAAF37">&#9679; Casting Open Now</p>
+    <h2 class="section-intro-title">Now Casting</h2>
+    <p class="section-intro-sub">Submit your audition materials — these productions are actively seeking talent.</p>
+  </div>
+
+  <div class="project-rail" style="grid-template-columns:repeat(3,1fr)">
+
+    <!-- THE FINAL HAND -->
+    <div class="project-card" style="position:relative">
+      <span class="casting-now-badge">&#9679; Casting Now</span>
+      <a href="final-hand.html" style="text-decoration:none;color:inherit;display:block">
+        <img src="images/the final hand poster.png" class="thumb-img" alt="The Final Hand">
+        <div class="project-info">
+          <span class="project-category">SHORT FILM</span>
+          <span class="project-name">THE FINAL HAND</span>
+          <span class="project-year">MAY 2026</span>
+        </div>
+      </a>
+      <a href="casting.html" onclick="sessionStorage.setItem('openModal','final-hand')" class="card-action-btn card-action-gold">Apply to Cast →</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     TAB 3 — PRE-PRODUCTION
+══════════════════════════════ -->
+<div id="section-preproduction" class="prod-section" style="display:none">
+
+  <div class="section-intro">
+    <p class="section-intro-label">Pre-Production / Casting Soon</p>
+    <h2 class="section-intro-title">Coming to Casting</h2>
+    <p class="section-intro-sub">These productions are in pre-production. Get notified when casting opens.</p>
+  </div>
+
+  <div class="project-rail" style="grid-template-columns:repeat(3,1fr)">
+
+    <!-- LOVE ME LIKE THIS -->
+    <div class="project-card" style="position:relative">
+      <span class="preprod-badge">Casting Opens Soon</span>
+      <a href="love-me-like-this.html" style="text-decoration:none;color:inherit;display:block">
+        <img src="images/love me like this poster.png" class="thumb-img" alt="Love Me Like This">
+        <div class="project-info">
+          <span class="project-category">SHORT FILM</span>
+          <span class="project-name">LOVE ME LIKE THIS</span>
+          <span class="project-year">2026</span>
+        </div>
+      </a>
+      <a href="casting.html" onclick="sessionStorage.setItem('openModal','love-me-like-this')" class="card-action-btn card-action-dim">Get Notified →</a>
+    </div>
+
+  </div>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  var sc = document.getElementById("scrollContainer");
+  var bl = document.querySelector(".scroll-left");
+  var br = document.querySelector(".scroll-right");
+  if (bl) bl.addEventListener("click", function() { sc.scrollBy({ left: -400, behavior: "smooth" }); });
+  if (br) br.addEventListener("click", function() { sc.scrollBy({ left: 400, behavior: "smooth" }); });
+
+  function showSection(id) {
+    ['all','casting','preproduction'].forEach(function(s) {
+      var sec = document.getElementById('section-' + s);
+      var tab = document.getElementById('tab-' + s);
+      if (sec) sec.style.display = (s === id) ? 'block' : 'none';
+      if (tab) tab.classList.toggle('prod-tab-active', s === id);
+    });
+    var nav = document.getElementById('productions-nav');
+    if (nav) window.scrollTo({ top: nav.offsetTop - 62, behavior: 'smooth' });
+  }
+</script>
+
+<footer class="site-footer-full">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <img src="images/bleuskm-logo.png" alt="BLEUSKM Logo">
+      <p>A film and visual production house building worlds grounded in Black imagination, history, and cultural memory.</p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Navigate</h4>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="my productions.html">Productions</a>
+      <a href="visuals.html">Visuals</a>
+      <a href="echos.html">Echos</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Work With Us</h4>
+      <a href="contact.html">Project Inquiry</a>
+      <a href="casting.html">Apply to Casting Calls</a>
+      <a href="crew-application.html">Join the Crew</a>
+      <a href="bleuskm shop.html">The Vault — Shop</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms of Use</a>
+      <a href="contact.html">Contact Us</a>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; 2026 BLEUSKM Studios. All rights reserved.</p>
+    <div>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="casting.html">Casting</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<!-- CART POPUP BUTTON -->
+<div id="cartPopupBtn" onclick="toggleCartPopup()" style="position:fixed;top:80px;right:24px;z-index:1100;cursor:pointer;display:none;align-items:center;gap:8px;background:rgba(8,8,8,0.9);border:1px solid rgba(218,175,55,0.3);padding:8px 16px;backdrop-filter:blur(10px)">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DAAF37" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+  <span style="font-family:'League Spartan',sans-serif;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:#DAAF37">Cart</span>
+  <span id="cartPopupBadge" style="display:none;background:#DAAF37;color:#000;font-size:0.55rem;font-weight:900;border-radius:50%;width:16px;height:16px;align-items:center;justify-content:center;font-family:'League Spartan',sans-serif">0</span>
+</div>
+<div id="cartPopup" style="display:none;position:fixed;top:130px;right:24px;z-index:1200;width:360px;max-height:70vh;overflow-y:auto;background:#0d0d0d;border:1px solid rgba(218,175,55,0.2);padding:24px;box-shadow:0 20px 60px rgba(0,0,0,0.8)">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37">Your Cart</span>
+    <button onclick="toggleCartPopup()" style="background:none;border:none;color:rgba(234,223,207,0.4);font-size:1.2rem;cursor:pointer;line-height:1">&times;</button>
+  </div>
+  <div id="cartPopupItems"></div>
+  <div id="cartPopupEmpty" style="text-align:center;padding:30px 0;color:rgba(234,223,207,0.3);font-family:'League Spartan',sans-serif;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase">Cart is empty</div>
+  <div id="cartPopupFooter" style="display:none;border-top:1px solid rgba(218,175,55,0.15);padding-top:16px;margin-top:16px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+      <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:rgba(234,223,207,0.5)">Subtotal</span>
+      <span id="cartPopupTotal" style="color:#DAAF37;font-family:'Red Hat Display',sans-serif;font-weight:600"></span>
+    </div>
+    <a href="cart.html" style="display:block;background:#DAAF37;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;padding:14px;text-align:center;text-decoration:none">View Cart &amp; Checkout</a>
+  </div>
+</div>
+<script>
+function toggleCartPopup() {
+  var popup = document.getElementById('cartPopup');
+  popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
+  if (popup.style.display === 'block') renderCartPopup();
+}
+function renderCartPopup() {
+  var cart = JSON.parse(sessionStorage.getItem('bleuskm_cart') || '[]');
+  var items = document.getElementById('cartPopupItems');
+  var empty = document.getElementById('cartPopupEmpty');
+  var footer = document.getElementById('cartPopupFooter');
+  var badge = document.getElementById('cartPopupBadge');
+  var total = cart.reduce(function(s,i){ return s + parseFloat(i.price)*i.quantity; }, 0);
+  var count = cart.reduce(function(s,i){ return s + i.quantity; }, 0);
+  if (count > 0) { badge.style.display = 'flex'; badge.textContent = count; } else { badge.style.display = 'none'; }
+  if (cart.length === 0) { items.innerHTML = ''; empty.style.display = 'block'; footer.style.display = 'none'; return; }
+  empty.style.display = 'none'; footer.style.display = 'block';
+  document.getElementById('cartPopupTotal').textContent = '$' + total.toFixed(2);
+  items.innerHTML = cart.map(function(item) {
+    return '<div style="display:grid;grid-template-columns:50px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid rgba(218,175,55,0.08)">' +
+      '<img src="' + (item.image||'') + '" style="width:50px;height:50px;object-fit:cover">' +
+      '<div><div style="font-family:League Spartan,sans-serif;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;color:#EADFCF;margin-bottom:2px">' + item.title + '</div>' +
+      '<div style="font-size:0.75rem;color:rgba(234,223,207,0.4)">' + (item.variantTitle !== 'Default Title' ? item.variantTitle : '') + ' &times;' + item.quantity + '</div></div>' +
+      '<span style="color:#DAAF37;font-size:0.85rem">$' + (parseFloat(item.price)*item.quantity).toFixed(2) + '</span></div>';
+  }).join('');
+}
+window.addEventListener('load', function() {
+  var cart = JSON.parse(sessionStorage.getItem('bleuskm_cart') || '[]');
+  var count = cart.reduce(function(s,i){ return s+i.quantity; }, 0);
+  var badge = document.getElementById('cartPopupBadge');
+  if (badge && count > 0) { badge.style.display = 'flex'; badge.textContent = count; }
+});
+document.addEventListener('click', function(e) {
+  var popup = document.getElementById('cartPopup');
+  var btn = document.getElementById('cartPopupBtn');
+  if (popup && btn && popup.style.display === 'block' && !popup.contains(e.target) && !btn.contains(e.target)) {
+    popup.style.display = 'none';
+  }
+});
+</script>
+
+
+<script>
+// Show cart button only if items in cart
+(function() {
+  var cart = JSON.parse(sessionStorage.getItem('bleuskm_cart') || '[]');
+  var count = cart.reduce(function(s,i){ return s+i.quantity; }, 0);
+  if (count > 0) {
+    var btn = document.getElementById('cartPopupBtn');
+    if (btn) btn.style.display = 'flex';
+    var badge = document.getElementById('cartPopupBadge');
+    if (badge) { badge.style.display = 'flex'; badge.textContent = count; }
+  }
+})();
+</script>
+<!-- SOCIAL MEDIA SIDE PULLOUT -->
+<div id="socialTab" onclick="toggleSocial()" style="position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:999;cursor:pointer;background:rgba(8,8,8,0.92);border:1px solid rgba(218,175,55,0.3);border-right:none;padding:14px 10px;backdrop-filter:blur(10px);transition:all 0.2s" onmouseover="openSocial()" onmouseout="scheduleSocialClose()">
+  <span style="font-family:'League Spartan',sans-serif;font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37;writing-mode:vertical-rl;text-orientation:mixed;user-select:none">Follow</span>
+</div>
+
+<div id="socialPanel" style="position:fixed;right:-200px;top:50%;transform:translateY(-50%);z-index:998;background:rgba(8,8,8,0.95);border:1px solid rgba(218,175,55,0.2);border-right:none;padding:24px 20px;backdrop-filter:blur(16px);transition:right 0.3s ease;display:flex;flex-direction:column;gap:18px;min-width:180px" onmouseover="openSocial()" onmouseout="scheduleSocialClose()">
+  <span style="font-family:'League Spartan',sans-serif;font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:rgba(218,175,55,0.5);display:block;margin-bottom:4px">Follow BLEUSKM</span>
+
+  <a href="https://www.instagram.com/bleuskm.studios/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">Instagram</span>
+  </a>
+
+  <a href="https://www.threads.net/@bleuskm.studios" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 1.327-.012 2.5-.235 3.485-.67 1.15-.502 1.953-1.258 2.39-2.248.37-.849.507-1.804.395-2.858-.115-1.08-.478-1.964-1.076-2.623-.467-.518-1.067-.878-1.78-1.07.225 1.593-.044 2.89-.797 3.854-.868 1.107-2.166 1.664-3.858 1.657-1.358-.006-2.484-.44-3.253-1.255-.824-.874-1.128-2.07-.857-3.37.257-1.213.95-2.16 2.007-2.737.966-.527 2.17-.748 3.576-.655.492.031.97.085 1.43.16-.044-.28-.107-.533-.19-.757-.348-.95-1.048-1.45-2.08-1.485-.717-.024-1.396.175-2.02.591l-.923-1.668c.898-.573 1.92-.864 3.039-.864h.043c2.342.08 3.79 1.453 4.226 3.982.107.627.162 1.276.163 1.932.003.16.001.32-.004.48.76.348 1.39.844 1.876 1.48.782 1.02 1.222 2.342 1.308 3.932.1 1.862-.16 3.467-.77 4.77-.77 1.654-2.017 2.833-3.706 3.503C15.139 23.74 13.74 24 12.186 24zm.024-11.87c-.574 0-1.09.07-1.534.207-.742.224-1.18.698-1.302 1.408-.1.58.02 1.077.355 1.432.357.38.913.577 1.652.582 1.019.004 1.742-.31 2.15-.933.45-.686.516-1.72.193-3.074-.5-.093-1.006-.15-1.514-.182l-.003.56z"/></svg>
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">Threads</span>
+  </a>
+
+  <a href="https://www.tiktok.com/@bleuskm.studios" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.27 8.27 0 004.84 1.55V6.79a4.85 4.85 0 01-1.07-.1z"/></svg>
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">TikTok</span>
+  </a>
+
+  <a href="https://www.youtube.com/@BLEUSKMStudios" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">YouTube</span>
+  </a>
+</div>
+
+<script>
+var socialCloseTimer;
+function openSocial() {
+  clearTimeout(socialCloseTimer);
+  document.getElementById('socialPanel').style.right = '0';
+}
+function scheduleSocialClose() {
+  socialCloseTimer = setTimeout(function() {
+    document.getElementById('socialPanel').style.right = '-200px';
+  }, 400);
+}
+function toggleSocial() {
+  var p = document.getElementById('socialPanel');
+  p.style.right = p.style.right === '0px' ? '-200px' : '0';
+}
+</script>
+
+<script src="/js/forms.js"></script>
+</body>
+</html>
+
+
+<!-- CART POPUP BUTTON -->
+<div id="cartPopupBtn" onclick="toggleCartPopup()" style="position:fixed;top:80px;right:24px;z-index:1100;cursor:pointer;display:none;align-items:center;gap:8px;background:rgba(8,8,8,0.9);border:1px solid rgba(218,175,55,0.3);padding:8px 16px;backdrop-filter:blur(10px)">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DAAF37" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+  <span style="font-family:'League Spartan',sans-serif;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:#DAAF37">Cart</span>
+  <span id="cartPopupBadge" style="display:none;background:#DAAF37;color:#000;font-size:0.55rem;font-weight:900;border-radius:50%;width:16px;height:16px;align-items:center;justify-content:center;font-family:'League Spartan',sans-serif">0</span>
+</div>
+<div id="cartPopup" style="display:none;position:fixed;top:130px;right:24px;z-index:1200;width:360px;max-height:70vh;overflow-y:auto;background:#0d0d0d;border:1px solid rgba(218,175,55,0.2);padding:24px;box-shadow:0 20px 60px rgba(0,0,0,0.8)">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37">Your Cart</span>
+    <button onclick="toggleCartPopup()" style="background:none;border:none;color:rgba(234,223,207,0.4);font-size:1.2rem;cursor:pointer;line-height:1">&times;</button>
+  </div>
+  <div id="cartPopupItems"></div>
+  <div id="cartPopupEmpty" style="text-align:center;padding:30px 0;color:rgba(234,223,207,0.3);font-family:'League Spartan',sans-serif;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase">Cart is empty</div>
+  <div id="cartPopupFooter" style="display:none;border-top:1px solid rgba(218,175,55,0.15);padding-top:16px;margin-top:16px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+      <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:rgba(234,223,207,0.5)">Subtotal</span>
+      <span id="cartPopupTotal" style="color:#DAAF37;font-family:'Red Hat Display',sans-serif;font-weight:600"></span>
+    </div>
+    <a href="cart.html" style="display:block;background:#DAAF37;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;padding:14px;text-align:center;text-decoration:none">View Cart &amp; Checkout</a>
+  </div>
+</div>
+<script>
+function toggleCartPopup() {
+  var popup = document.getElementById('cartPopup');
+  popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
+  if (popup.style.display === 'block') renderCartPopup();
+}
+function renderCartPopup() {
+  var cart = JSON.parse(sessionStorage.getItem('bleuskm_cart') || '[]');
+  var items = document.getElementById('cartPopupItems');
+  var empty = document.getElementById('cartPopupEmpty');
+  var footer = document.getElementById('cartPopupFooter');
+  var badge = document.getElementById('cartPopupBadge');
+  var total = cart.reduce(function(s,i){ return s + parseFloat(i.price)*i.quantity; }, 0);
+  var count = cart.reduce(function(s,i){ return s + i.quantity; }, 0);
+  if (count > 0) { badge.style.display = 'flex'; badge.textContent = count; } else { badge.style.display = 'none'; }
+  if (cart.length === 0) { items.innerHTML = ''; empty.style.display = 'block'; footer.style.display = 'none'; return; }
+  empty.style.display = 'none'; footer.style.display = 'block';
+  document.getElementById('cartPopupTotal').textContent = '$' + total.toFixed(2);
+  items.innerHTML = cart.map(function(item) {
+    return '<div style="display:grid;grid-template-columns:50px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid rgba(218,175,55,0.08)">' +
+      '<img src="' + (item.image||'') + '" style="width:50px;height:50px;object-fit:cover">' +
+      '<div><div style="font-family:League Spartan,sans-serif;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;color:#EADFCF;margin-bottom:2px">' + item.title + '</div>' +
+      '<div style="font-size:0.75rem;color:rgba(234,223,207,0.4)">' + (item.variantTitle !== 'Default Title' ? item.variantTitle : '') + ' &times;' + item.quantity + '</div></div>' +
+      '<span style="color:#DAAF37;font-size:0.85rem">$' + (parseFloat(item.price)*item.quantity).toFixed(2) + '</span></div>';
+  }).join('');
+}
+window.addEventListener('load', function() {
+  var cart = JSON.parse(sessionStorage.getItem('bleuskm_cart') || '[]');
+  var count = cart.reduce(function(s,i){ return s+i.quantity; }, 0);
+  var badge = document.getElementById('cartPopupBadge');
+  if (badge && count > 0) { badge.style.display = 'flex'; badge.textContent = count; }
+});
+document.addEventListener('click', function(e) {
+  var popup = document.getElementById('cartPopup');
+  var btn = document.getElementById('cartPopupBtn');
+  if (popup && btn && popup.style.display === 'block' && !popup.contains(e.target) && !btn.contains(e.target)) {
+    popup.style.display = 'none';
+  }
+});
+</script>
+
+
+<script>
+// Show cart button only if items in cart
+(function() {
+  var cart = JSON.parse(sessionStorage.getItem('bleuskm_cart') || '[]');
+  var count = cart.reduce(function(s,i){ return s+i.quantity; }, 0);
+  if (count > 0) {
+    var btn = document.getElementById('cartPopupBtn');
+    if (btn) btn.style.display = 'flex';
+    var badge = document.getElementById('cartPopupBadge');
+    if (badge) { badge.style.display = 'flex'; badge.textContent = count; }
+  }
+})();
+</script>
+<!-- SOCIAL MEDIA SIDE PULLOUT -->
+<div id="socialTab" onclick="toggleSocial()" style="position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:999;cursor:pointer;background:rgba(8,8,8,0.92);border:1px solid rgba(218,175,55,0.3);border-right:none;padding:14px 10px;backdrop-filter:blur(10px);transition:all 0.2s" onmouseover="openSocial()" onmouseout="scheduleSocialClose()">
+  <span style="font-family:'League Spartan',sans-serif;font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37;writing-mode:vertical-rl;text-orientation:mixed;user-select:none">Follow</span>
+</div>
+
+<div id="socialPanel" style="position:fixed;right:-200px;top:50%;transform:translateY(-50%);z-index:998;background:rgba(8,8,8,0.95);border:1px solid rgba(218,175,55,0.2);border-right:none;padding:24px 20px;backdrop-filter:blur(16px);transition:right 0.3s ease;display:flex;flex-direction:column;gap:18px;min-width:180px" onmouseover="openSocial()" onmouseout="scheduleSocialClose()">
+  <span style="font-family:'League Spartan',sans-serif;font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:rgba(218,175,55,0.5);display:block;margin-bottom:4px">Follow BLEUSKM</span>
+
+  <a href="https://www.instagram.com/bleuskm.studios/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">Instagram</span>
+  </a>
+
+  <a href="https://www.threads.net/@bleuskm.studios" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 1.327-.012 2.5-.235 3.485-.67 1.15-.502 1.953-1.258 2.39-2.248.37-.849.507-1.804.395-2.858-.115-1.08-.478-1.964-1.076-2.623-.467-.518-1.067-.878-1.78-1.07.225 1.593-.044 2.89-.797 3.854-.868 1.107-2.166 1.664-3.858 1.657-1.358-.006-2.484-.44-3.253-1.255-.824-.874-1.128-2.07-.857-3.37.257-1.213.95-2.16 2.007-2.737.966-.527 2.17-.748 3.576-.655.492.031.97.085 1.43.16-.044-.28-.107-.533-.19-.757-.348-.95-1.048-1.45-2.08-1.485-.717-.024-1.396.175-2.02.591l-.923-1.668c.898-.573 1.92-.864 3.039-.864h.043c2.342.08 3.79 1.453 4.226 3.982.107.627.162 1.276.163 1.932.003.16.001.32-.004.48.76.348 1.39.844 1.876 1.48.782 1.02 1.222 2.342 1.308 3.932.1 1.862-.16 3.467-.77 4.77-.77 1.654-2.017 2.833-3.706 3.503C15.139 23.74 13.74 24 12.186 24zm.024-11.87c-.574 0-1.09.07-1.534.207-.742.224-1.18.698-1.302 1.408-.1.58.02 1.077.355 1.432.357.38.913.577 1.652.582 1.019.004 1.742-.31 2.15-.933.45-.686.516-1.72.193-3.074-.5-.093-1.006-.15-1.514-.182l-.003.56z"/></svg>
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">Threads</span>
+  </a>
+
+  <a href="https://www.tiktok.com/@bleuskm.studios" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.27 8.27 0 004.84 1.55V6.79a4.85 4.85 0 01-1.07-.1z"/></svg>
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">TikTok</span>
+  </a>
+
+  <a href="https://www.youtube.com/@BLEUSKMStudios" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">YouTube</span>
+  </a>
+</div>
+
+<script>
+var socialCloseTimer;
+function openSocial() {
+  clearTimeout(socialCloseTimer);
+  document.getElementById('socialPanel').style.right = '0';
+}
+function scheduleSocialClose() {
+  socialCloseTimer = setTimeout(function() {
+    document.getElementById('socialPanel').style.right = '-200px';
+  }, 400);
+}
+function toggleSocial() {
+  var p = document.getElementById('socialPanel');
+  p.style.right = p.style.right === '0px' ? '-200px' : '0';
+}
+</script>
+
+<script src="/js/forms.js"></script>
+</body>
+</html>
