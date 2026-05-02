@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,8 +6,8 @@
 <title>Shop | BLEUSKM Studios</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;800;900&family=Red+Hat+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css">
-<link rel="icon" type="image/png" href="images/bleuskm-logo.png">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" type="image/png" href="bleuskm-logo.png">
 <style>
 
 /* ── SHOP GRID PAGE ── */
@@ -258,13 +257,121 @@ body {
 .nav-link{font-family:'League Spartan',sans-serif;font-weight:600;font-size:0.65rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(234,223,207,0.5)!important;transition:color 0.2s;padding:0.5rem 1rem!important}
 .nav-link:hover,.nav-link.active{color:#DAAF37!important}
 </style>
+<style>
+/* ── BLEUSKM MOBILE ── */
+@media (max-width: 767px) {
+  /* NAV */
+  .navbar-collapse { background:rgba(8,8,8,0.97) !important; padding:16px 20px 20px !important; border-top:1px solid rgba(218,175,55,0.12) !important; }
+  .nav-link { padding:10px 0 !important; font-size:0.8rem !important; border-bottom:1px solid rgba(218,175,55,0.07); display:block; }
+
+  /* HERO */
+  .hero-wrapper { height:55vh !important; min-height:320px !important; }
+  .hero-content { padding:0 20px 32px !important; }
+  .hero-title { font-size:clamp(1.8rem,9vw,2.6rem) !important; }
+  .hero-sub { font-size:0.78rem !important; }
+  .hero-counter { left:20px !important; bottom:20px !important; }
+
+  /* INDEX film grid - original 2-col poster layout */
+  .project-rail { grid-template-columns:1fr 1fr !important; gap:12px !important; }
+  .project-card { display:block !important; }
+  .thumb-img { width:100% !important; aspect-ratio:2/3 !important; height:auto !important; object-fit:cover !important; }
+  .project-info { padding:10px 12px 14px !important; }
+  .project-category { font-size:0.48rem !important; }
+  .project-name { font-size:0.78rem !important; line-height:1.2 !important; }
+  .project-year { font-size:0.48rem !important; display:block !important; margin-top:2px !important; }
+
+  /* STATEMENT */
+  .statement-section { grid-template-columns:1fr !important; padding:50px 20px !important; gap:32px !important; }
+  .statement-links { border-left:none !important; padding-left:0 !important; border-top:1px solid rgba(218,175,55,0.12) !important; padding-top:28px !important; }
+
+  /* CREW BANNER */
+  .crew-banner { flex-direction:column !important; padding:36px 20px !important; text-align:center !important; gap:16px !important; }
+  .crew-btn { width:100% !important; text-align:center !important; }
+
+  /* MORE SECTION */
+  .more-section { padding:40px 16px 50px !important; }
+
+  /* PRODUCTIONS hero centered */
+  div[style*="padding:100px 60px 60px"] { padding:86px 20px 28px !important; text-align:center !important; }
+  div[style*="padding:100px 60px 60px"] p:last-child { margin:0 auto !important; max-width:340px !important; }
+
+  /* PRODUCTIONS scroll */
+  .coming-soon-label { display:block !important; }
+  .vertical-title { display:none !important; }
+  .coming-wrapper { padding:20px 0 16px !important; }
+  .horizontal-scroll { gap:12px !important; padding:8px 14px !important; }
+  .scroll-card { flex:0 0 150px !important; }
+  .scroll-card img { width:150px !important; height:84px !important; aspect-ratio:unset !important; object-fit:cover !important; }
+  .scroll-card > div[style*="aspect-ratio"] { width:150px !important; height:84px !important; aspect-ratio:unset !important; }
+  .scroll-meta { margin-top:6px !important; flex-direction:column !important; align-items:flex-start !important; gap:2px !important; }
+  .scroll-title { font-size:0.56rem !important; line-height:1.3 !important; }
+  .scroll-format { font-size:0.5rem !important; margin-left:0 !important; }
+  .scroll-btn { display:none !important; }
+
+  /* PRODUCTIONS tab nav */
+  #productions-nav { position:static !important; top:auto !important; padding:0 !important; overflow-x:auto !important; scrollbar-width:none !important; }
+  #productions-nav::-webkit-scrollbar { display:none; }
+  .prod-tab { padding:11px 14px !important; font-size:0.58rem !important; flex-shrink:0; }
+  .section-intro { padding:20px 16px 12px !important; }
+
+  /* PRODUCTIONS grid */
+  .project-rail { grid-template-columns:1fr 1fr !important; gap:8px !important; padding:12px 10px 70px !important; }
+  .project-info { padding:7px 9px 8px !important; }
+  .project-category { display:none !important; }
+  .project-name { font-size:0.65rem !important; line-height:1.15 !important; margin-bottom:0 !important; display:block !important; }
+  .project-year { font-size:0.46rem !important; display:block !important; margin-top:3px !important; }
+  .card-action-btn { font-size:0.5rem !important; padding:7px 8px !important; text-align:center !important; }
+
+  /* ABOUT */
+  .about-hero { grid-template-columns:1fr !important; padding:80px 20px 24px !important; overflow:visible !important; }
+  .hero-eyebrow { position:static !important; margin-bottom:14px !important; }
+  .hero-headline { font-size:clamp(2rem,10vw,3rem) !important; white-space:normal !important; grid-column:1 !important; }
+  .hero-subline { font-size:0.82rem !important; margin-top:10px !important; grid-column:1 !important; }
+  .hero-services-btn-top { position:static !important; top:auto !important; right:auto !important; margin:18px 0 0 !important; display:flex !important; justify-content:center !important; width:100% !important; grid-column:1 !important; }
+  .hero-services-link { width:100% !important; max-width:100% !important; justify-content:center !important; }
+  .hero-bottom { padding:20px 0 0 !important; margin:20px 0 0 !important; grid-column:1 !important; }
+  .manifesto-section { grid-template-columns:1fr !important; padding:40px 20px !important; }
+  .manifesto-sidebar { position:static !important; border-right:none !important; border-bottom:1px solid rgba(218,175,55,0.1) !important; }
+  .services-section { padding:40px 20px !important; }
+  .stats-bar { grid-template-columns:1fr 1fr !important; }
+  .cta-banner { grid-template-columns:1fr !important; padding:36px 20px !important; text-align:center !important; gap:20px !important; }
+  .cta-banner a { width:100% !important; text-align:center !important; }
+
+  /* CASTING crew banner */
+  div[style*="padding:18px 60px"][style*="justify-content:space-between"] { flex-direction:column !important; align-items:center !important; text-align:center !important; padding:20px !important; gap:14px !important; }
+  div[style*="padding:18px 60px"][style*="justify-content:space-between"] > div { display:flex !important; flex-direction:column !important; align-items:center !important; gap:5px !important; }
+  div[style*="padding:18px 60px"][style*="justify-content:space-between"] span[style*="margin-left"] { margin-left:0 !important; display:block !important; }
+  div[style*="padding:18px 60px"][style*="justify-content:space-between"] > a { width:100% !important; max-width:320px !important; justify-content:center !important; padding:14px 20px !important; }
+  .casting-grid { grid-template-columns:1fr !important; gap:10px !important; margin-bottom:28px !important; }
+  .film-cast-card { display:block !important; width:100% !important; }
+  .film-cast-img { width:100% !important; aspect-ratio:16/9 !important; height:auto !important; }
+  .film-cast-info { padding:14px 16px 16px !important; }
+  .film-cast-title { font-size:0.82rem !important; }
+
+  /* FOOTER */
+  .site-footer-full { padding:36px 20px 24px !important; }
+  .footer-grid { grid-template-columns:1fr 1fr !important; gap:18px !important; }
+  .footer-bottom { flex-direction:column !important; gap:10px !important; text-align:center !important; }
+  .site-footer { padding:20px !important; text-align:center !important; }
+  .legal-wrapper { margin:90px 20px 60px !important; padding:0 !important; }
+
+  /* CART POPUP */
+  #cartPopup { width:calc(100vw - 32px) !important; right:16px !important; top:70px !important; }
+  #cartPopupBtn { top:70px !important; right:16px !important; }
+}
+@media (max-width:380px) {
+  .project-rail { grid-template-columns:1fr !important; }
+}
+html,body { overflow-x:hidden !important; max-width:100vw; }
+img { max-width:100%; }
+</style>
 </head>
 <body>
 
 <!-- NAV -->
 <nav class="navbar navbar-expand-md navbar-dark fixed-top">
   <div class="container-fluid">
-    <a class="navbar-brand brand-logo" href="index.html" style="display:flex;align-items:center;gap:10px"><img src="images/bleuskm-logo.png" alt="BLEUSKM Logo"><span style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37">BLEUSKM Studios</span></a>
+    <a class="navbar-brand brand-logo" href="index.html" style="display:flex;align-items:center;gap:10px"><img src="bleuskm-logo.png" alt="BLEUSKM Logo"><span style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37">BLEUSKM Studios</span></a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -284,7 +391,7 @@ body {
 
 
 <!-- CART POPUP BUTTON -->
-<div id="cartPopupBtn" onclick="toggleCartPopup()" style="position:fixed;top:80px;right:24px;z-index:1100;cursor:pointer;display:flex;align-items:center;gap:8px;background:rgba(8,8,8,0.9);border:1px solid rgba(218,175,55,0.3);padding:8px 16px;backdrop-filter:blur(10px)">
+<div id="cartPopupBtn" onclick="toggleCartPopup()" style="position:fixed;top:80px;right:24px;z-index:1100;cursor:pointer;display:none;align-items:center;gap:8px;background:rgba(8,8,8,0.9);border:1px solid rgba(218,175,55,0.3);padding:8px 16px;backdrop-filter:blur(10px)">
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DAAF37" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
   <span style="font-family:'League Spartan',sans-serif;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:#DAAF37">Cart</span>
   <span id="cartPopupBadge" style="display:none;background:#DAAF37;color:#000;font-size:0.55rem;font-weight:900;border-radius:50%;width:16px;height:16px;align-items:center;justify-content:center;font-family:'League Spartan',sans-serif">0</span>
@@ -441,7 +548,7 @@ loadShop();
 <footer class="site-footer-full">
   <div class="footer-grid">
     <div class="footer-brand">
-      <img src="images/bleuskm-logo.png" alt="BLEUSKM Logo">
+      <img src="bleuskm-logo.png" alt="BLEUSKM Logo">
       <p>A film and visual production house building worlds grounded in Black imagination, history, and cultural memory.</p>
     </div>
 
@@ -577,72 +684,38 @@ function toggleSocial() {
 </script>
 
 <style>
-/* ── MOBILE CONTACT TAB FIX (all pages) ── */
+/* ── CONTACT TAB MOBILE ── */
 @media (max-width: 767px) {
-  /* Reposition to bottom-right corner, horizontal text */
   #socialTab {
-    top: auto !important;
-    bottom: 16px !important;
-    right: 0 !important;
-    transform: none !important;
     padding: 10px 14px !important;
-    z-index: 1050 !important;
-    border-radius: 4px 0 0 4px !important;
   }
   #socialTab span {
     writing-mode: horizontal-tb !important;
-    text-orientation: mixed !important;
-    font-size: 0.58rem !important;
+    text-orientation: initial !important;
+    font-size: 0.55rem !important;
     letter-spacing: 2px !important;
-  }
-  /* Panel slides up from bottom-right */
-  #socialPanel {
-    top: auto !important;
-    bottom: 52px !important;
-    right: -220px !important;
-    transform: none !important;
-    width: 200px !important;
-    z-index: 1049 !important;
-    border-radius: 4px 0 0 4px !important;
-    transition: right 0.3s ease !important;
-  }
-  #socialPanel a:hover {
-    color: #EADFCF !important; /* disable hover color change on mobile */
   }
 }
 </style>
 <script>
-/* Mobile contact tab: replace hover with tap-only toggle */
 (function() {
-  function isMobile() { return window.innerWidth <= 767; }
-  var tab = document.getElementById("socialTab");
-  var panel = document.getElementById("socialPanel");
+  var tab = document.getElementById('socialTab');
+  var panel = document.getElementById('socialPanel');
   if (!tab || !panel) return;
-
-  /* Remove hover listeners on mobile by overriding with no-ops */
-  function noop(e) { if (isMobile()) e.stopImmediatePropagation(); }
-
-  /* Re-wire onclick to always toggle */
+  function isMobile() { return window.innerWidth <= 767; }
   tab.onclick = function(e) {
     e.stopPropagation();
-    var isOpen = panel.style.right === "0px";
-    panel.style.right = isOpen ? (isMobile() ? "-220px" : "-200px") : "0";
+    panel.style.right = panel.style.right === '0px' ? '-200px' : '0';
   };
-
-  /* On mobile only, disable the mouseover/mouseout panel behavior */
-  tab.onmouseover = function() { if (!isMobile()) openSocial && openSocial(); };
-  tab.onmouseout  = function() { if (!isMobile()) scheduleSocialClose && scheduleSocialClose(); };
-  panel.onmouseover = function() { if (!isMobile()) openSocial && openSocial(); };
-  panel.onmouseout  = function() { if (!isMobile()) scheduleSocialClose && scheduleSocialClose(); };
-
-  /* Tap outside to close on mobile */
-  document.addEventListener("click", function(e) {
-    if (isMobile() && panel.style.right === "0px" && !panel.contains(e.target) && !tab.contains(e.target)) {
-      panel.style.right = "-220px";
-    }
+  tab.onmouseover = function() { if (!isMobile() && typeof openSocial==='function') openSocial(); };
+  tab.onmouseout  = function() { if (!isMobile() && typeof scheduleSocialClose==='function') scheduleSocialClose(); };
+  panel.onmouseover = function() { if (!isMobile() && typeof openSocial==='function') openSocial(); };
+  panel.onmouseout  = function() { if (!isMobile() && typeof scheduleSocialClose==='function') scheduleSocialClose(); };
+  document.addEventListener('click', function(e) {
+    if (isMobile() && panel.style.right==='0px' && !panel.contains(e.target) && !tab.contains(e.target))
+      panel.style.right = '-200px';
   });
 })();
 </script>
-
 </body>
 </html>
