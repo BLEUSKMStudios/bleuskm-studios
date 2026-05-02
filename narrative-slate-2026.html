@@ -1,462 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Product | BLEUSKM Studios</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;800;900&family=Red+Hat+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css">
-<link rel="icon" type="image/png" href="images/bleuskm-logo.png">
-<style>
 
-/* ── PRODUCT PAGE ── */
-body { background: #0a0a0a; color: #EADFCF; }
-
-.product-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: calc(100vh - 70px);
-  max-width: 1500px;
-  margin: 0 auto;
-  padding: 60px 60px 100px;
-  gap: 80px;
-  align-items: start;
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>BLEUSKM Expands Narrative Slate | BLEUSKM Studios</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"><link rel="stylesheet" href="css/styles.css"><link rel="icon" type="image/png" href="images/bleuskm-logo.png"><style>
+html,body{height:100%;margin:0}
+body{display:flex;flex-direction:column;background:linear-gradient(to right,#950606,#B24C1E,#DAAF37);background-attachment:fixed;color:#DAAF37;font-family:"Red Hat Display",sans-serif;padding-top:70px}
+main{flex:1}
+.article-wrapper{max-width:780px;margin:80px auto 100px;padding:0 30px}
+.article-back{display:inline-flex;align-items:center;gap:8px;font-family:"League Spartan",sans-serif;font-weight:700;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:rgba(0,0,0,0.4);text-decoration:none;margin-bottom:36px;transition:color 0.2s}
+.article-back:hover{color:#0C0C0C}
+.article-category-tag{display:inline-block;font-family:"League Spartan",sans-serif;font-size:0.6rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;padding:5px 12px;margin-bottom:20px}
+.tag-announcement{background:rgba(0,0,0,0.6);color:#DAAF37;border:1px solid rgba(218,175,55,0.3)}
+.tag-casting{background:#DAAF37;color:#000}
+.tag-archive{background:rgba(0,0,0,0.3);color:rgba(234,223,207,0.5)}
+.article-title{font-family:"Kalnia",serif;font-weight:600;font-size:clamp(1.8rem,4vw,2.8rem);color:#0C0C0C;line-height:1.15;margin-bottom:16px;letter-spacing:-0.5px}
+.article-meta-row{display:flex;flex-direction:column;gap:6px;margin-bottom:36px;padding-bottom:28px;border-bottom:2px solid rgba(0,0,0,0.15)}
+.article-date{font-size:0.8rem;color:rgba(0,0,0,0.45);font-weight:500}
+.article-byline{font-size:0.8rem;color:rgba(0,0,0,0.45)}
+.article-byline strong{color:#0C0C0C}
+.article-body{font-size:1rem;line-height:1.85;color:rgba(0,0,0,0.7)}
+.article-body p{margin-bottom:22px}
+.article-body p:first-of-type{font-size:1.15rem;line-height:1.8;font-weight:500;color:#0C0C0C}
+.article-body strong {
+  color: #DAAF37 !important;
 }
-
-/* ── LEFT: GALLERY ── */
-.gallery-col { position: sticky; top: 90px; }
-
-.main-img-wrap {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  background: #111;
-  overflow: hidden;
-  border: 1px solid rgba(218,175,55,0.1);
-}
-
-.main-img-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: opacity 0.3s ease;
-}
-
-/* Gallery arrows */
-.gallery-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0,0,0,0.6);
-  border: 1px solid rgba(218,175,55,0.3);
-  color: #DAAF37;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 1rem;
-  z-index: 10;
-  transition: background 0.2s ease, border-color 0.2s ease;
-  border-radius: 0;
-}
-
-.gallery-arrow:hover {
-  background: rgba(218,175,55,0.2);
-  border-color: #DAAF37;
-}
-
-.gallery-arrow.prev { left: 14px; }
-.gallery-arrow.next { right: 14px; }
-
-/* Thumbnail strip */
-.thumb-strip {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-  flex-wrap: wrap;
-}
-
-.thumb-strip img {
-  width: 70px;
-  height: 70px;
-  object-fit: cover;
-  cursor: pointer;
-  border: 2px solid transparent;
-  opacity: 0.5;
-  transition: opacity 0.2s, border-color 0.2s;
-}
-
-.thumb-strip img.active,
-.thumb-strip img:hover {
-  border-color: #DAAF37;
-  opacity: 1;
-}
-
-/* ── RIGHT: PRODUCT INFO ── */
-.info-col { padding-top: 10px; }
-
-.back-to-shop {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 700;
-  font-size: 0.75rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: rgba(218,175,55,0.6);
-  text-decoration: none;
-  margin-bottom: 32px;
-  transition: color 0.2s;
-}
-
-.back-to-shop:hover { color: #DAAF37; }
-
-.product-title {
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 900;
-  font-size: 2.4rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: #EADFCF;
-  margin-bottom: 10px;
-  line-height: 1.1;
-}
-
-.product-price {
-  font-family: 'Red Hat Display', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #DAAF37;
-  margin-bottom: 24px;
-}
-
-.product-divider {
-  width: 50px;
-  height: 2px;
-  background: rgba(218,175,55,0.4);
-  margin-bottom: 24px;
-}
-
-.product-desc {
-  font-size: 0.95rem;
-  line-height: 1.7;
-  color: rgba(234,223,207,0.75);
-  margin-bottom: 36px;
-}
-
-/* ── OPTION SELECTORS ── */
-.option-group {
-  margin-bottom: 20px;
-}
-
-.option-label {
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 700;
-  font-size: 0.7rem;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  color: rgba(218,175,55,0.7);
-  margin-bottom: 10px;
-  display: block;
-}
-
-.option-label .selected-val {
-  color: #EADFCF;
-  font-weight: 400;
-  text-transform: none;
-  letter-spacing: 0;
-  font-family: 'Red Hat Display', sans-serif;
-  font-size: 0.85rem;
-}
-
-/* Pill buttons for size/color */
-.option-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.option-pill {
-  padding: 8px 16px;
-  background: transparent;
-  border: 1px solid rgba(218,175,55,0.25);
-  color: rgba(234,223,207,0.7);
-  font-family: 'Red Hat Display', sans-serif;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border-radius: 0;
-}
-
-.option-pill:hover {
-  border-color: rgba(218,175,55,0.6);
-  color: #EADFCF;
-}
-
-.option-pill.active {
-  background: #DAAF37;
-  border-color: #DAAF37;
-  color: #0b0b0b;
-  font-weight: 700;
-}
-
-.option-pill.unavailable {
-  opacity: 0.3;
-  cursor: not-allowed;
-  text-decoration: line-through;
-}
-
-/* ── QUANTITY + ADD TO CART ── */
-.purchase-row {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin-top: 32px;
-}
-
-.qty-wrap {
-  display: flex;
-  align-items: center;
-  border: 1px solid rgba(218,175,55,0.3);
-}
-
-.qty-btn {
-  width: 40px;
-  height: 50px;
-  background: transparent;
-  border: none;
-  color: #DAAF37;
-  font-size: 1.2rem;
-  cursor: pointer;
-  font-family: 'League Spartan', sans-serif;
-  transition: background 0.2s;
-}
-
-.qty-btn:hover { background: rgba(218,175,55,0.1); }
-
-.qty-input {
-  width: 50px;
-  height: 50px;
-  background: transparent;
-  border: none;
-  border-left: 1px solid rgba(218,175,55,0.3);
-  border-right: 1px solid rgba(218,175,55,0.3);
-  color: #EADFCF;
-  text-align: center;
-  font-size: 1rem;
-  font-family: 'Red Hat Display', sans-serif;
-}
-
-.qty-input:focus { outline: none; }
-
-.add-to-cart-btn {
-  flex: 1;
-  height: 50px;
-  background: #DAAF37;
-  border: none;
-  color: #0b0b0b;
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 900;
-  font-size: 0.85rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.add-to-cart-btn:hover { background: #b9892e; }
-.add-to-cart-btn:disabled {
-  background: rgba(218,175,55,0.2);
-  color: rgba(0,0,0,0.4);
-  cursor: not-allowed;
-}
-
-/* ── CART NOTIFICATION ── */
-.cart-toast {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background: #DAAF37;
-  color: #0b0b0b;
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 800;
-  font-size: 0.8rem;
-  letter-spacing: 1px;
-  padding: 14px 22px;
-  border-radius: 0;
-  z-index: 9999;
-  transform: translateY(80px);
-  opacity: 0;
-  transition: all 0.3s ease;
-  pointer-events: none;
-}
-
-.cart-toast.show {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-/* ── VIEW CART BUTTON (appears after add) ── */
-.view-cart-btn {
-  display: none;
-  width: 100%;
-  margin-top: 12px;
-  height: 46px;
-  background: transparent;
-  border: 1px solid rgba(218,175,55,0.4);
-  color: #DAAF37;
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 700;
-  font-size: 0.8rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  cursor: pointer;
-  text-decoration: none;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s, border-color 0.2s;
-}
-
-.view-cart-btn:hover {
-  background: rgba(218,175,55,0.1);
-  border-color: #DAAF37;
-  color: #DAAF37;
-}
-
-/* ── PRODUCT DETAILS SECTION ── */
-.product-details-block {
-  margin-top: 48px;
-  border-top: 1px solid rgba(218,175,55,0.1);
-  padding-top: 32px;
-}
-
-.product-details-block h4 {
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 700;
-  font-size: 0.7rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: rgba(218,175,55,0.6);
-  margin-bottom: 16px;
-}
-
-.product-details-block p {
-  font-size: 0.85rem;
-  color: rgba(234,223,207,0.55);
-  line-height: 1.6;
-}
-
-/* ── LOADING ── */
-.product-loading {
-  min-height: 60vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'League Spartan', sans-serif;
-  letter-spacing: 4px;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  color: rgba(234,223,207,0.3);
-}
-
-/* ── FOOTER ── */
-.site-footer {
-  border-top: 1px solid rgba(218,175,55,0.1);
-  padding: 24px 60px;
-  font-size: 0.8rem;
-  color: rgba(218,175,55,0.5);
-  background: #0a0a0a;
-  margin-top: 0;
-}
-
-/* ── RESPONSIVE ── */
-@media (max-width: 960px) {
-  .product-layout {
-    grid-template-columns: 1fr;
-    padding: 30px 20px 60px;
-    gap: 40px;
-  }
-  .gallery-col { position: static; }
-  .product-title { font-size: 1.8rem; }
-}
-/* ── FOOTER ── */
-.site-footer-full {
-  background: #040404;
-  border-top: 1px solid rgba(218,175,55,0.1);
-  padding: 50px 60px 30px;
-}
-
-.footer-grid {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1fr;
-  gap: 40px;
-  margin-bottom: 40px;
-}
-
-.footer-brand img {
-  height: 32px;
-  margin-bottom: 14px;
-}
-
-.footer-brand p {
-  font-size: 0.78rem;
-  color: rgba(234,223,207,0.35);
-  line-height: 1.6;
-  max-width: 220px;
-}
-
-.footer-col h4 {
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 700;
-  font-size: 0.65rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: rgba(218,175,55,0.5);
-  margin-bottom: 16px;
-}
-
-.footer-col a {
-  display: block;
-  font-size: 0.8rem;
-  color: rgba(234,223,207,0.45);
-  text-decoration: none;
-  margin-bottom: 10px;
-  transition: color 0.2s;
-}
-
-.footer-col a:hover {
-  color: #DAAF37;
-}
-
-.footer-bottom {
-  border-top: 1px solid rgba(218,175,55,0.08);
-  padding-top: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.footer-bottom p {
-  font-size: 0.72rem;
-  color: rgba(234,223,207,0.2);
-}
-
-.footer-bottom a {
-  font-size: 0.72rem;
-  color: rgba(234,223,207,0.2);
-  text-decoration: none;
-  margin-left: 20px;
-}
-
-.footer-bottom a:hover {
-  color: rgba(218,175,55,0.5);
-}
+.article-body p+p{text-indent:0}
+.article-divider{width:60px;height:3px;background:#0C0C0C;margin:36px 0}
+.article-cta{margin-top:48px;padding:28px 32px;background:rgba(0,0,0,0.12);border-left:3px solid #0C0C0C}
+.article-cta p{font-size:0.85rem;color:rgba(0,0,0,0.6);margin:0 0 12px 0}
+.article-cta a{font-family:"League Spartan",sans-serif;font-weight:800;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;color:#0C0C0C;text-decoration:none;border-bottom:1px solid rgba(0,0,0,0.4);padding-bottom:2px}
+.site-footer-full{background:#040404;border-top:1px solid rgba(218,175,55,0.1);padding:50px 60px 30px}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.footer-brand img{height:32px;margin-bottom:14px}
+.footer-brand p{font-size:0.78rem;color:rgba(234,223,207,0.35);line-height:1.6;max-width:220px}
+.footer-col h4{font-family:"League Spartan",sans-serif;font-weight:700;font-size:0.65rem;letter-spacing:3px;text-transform:uppercase;color:rgba(218,175,55,0.5);margin-bottom:16px}
+.footer-col a{display:block;font-size:0.8rem;color:rgba(234,223,207,0.45);text-decoration:none;margin-bottom:10px;transition:color 0.2s}
+.footer-col a:hover{color:#DAAF37}
+.footer-bottom{border-top:1px solid rgba(218,175,55,0.08);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.footer-bottom p{font-size:0.72rem;color:rgba(234,223,207,0.2)}
+.footer-bottom a{font-size:0.72rem;color:rgba(234,223,207,0.2);text-decoration:none;margin-left:20px;transition:color 0.2s}
+.footer-bottom a:hover{color:rgba(218,175,55,0.5)}
+@media(max-width:768px){.article-wrapper{padding:0 20px;margin:60px auto 60px}.footer-grid{grid-template-columns:1fr 1fr}}
 
 /* NAV */
 .navbar{background:rgba(8,8,8,0.92)!important;backdrop-filter:blur(12px);border-bottom:1px solid rgba(218,175,55,0.08)}
@@ -464,409 +45,40 @@ body { background: #0a0a0a; color: #EADFCF; }
 .nav-link{font-family:'League Spartan',sans-serif;font-weight:600;font-size:0.65rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(234,223,207,0.5)!important;transition:color 0.2s;padding:0.5rem 1rem!important}
 .nav-link:hover,.nav-link.active{color:#DAAF37!important}
 </style>
-</head>
-<body>
-
-<!-- NAV -->
-<nav class="navbar navbar-expand-md navbar-dark fixed-top">
-  <div class="container-fluid">
-    <a class="navbar-brand brand-logo" href="index.html" style="display:flex;align-items:center;gap:10px"><img src="images/bleuskm-logo.png" alt="BLEUSKM Logo"><span style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37">BLEUSKM Studios</span></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="mainNav">
-      <ul class="navbar-nav ms-auto">
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;800;900&family=Red+Hat+Display:wght@300;400;500;600;700&family=Kalnia:wght@400;600;800&display=swap" rel="stylesheet"></head><body>
+<nav class="navbar navbar-expand-md navbar-dark fixed-top"><div class="container-fluid"><a class="navbar-brand brand-logo" href="index.html" style="display:flex;align-items:center;gap:10px"><img src="images/bleuskm-logo.png" alt="BLEUSKM Logo"><span style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37">BLEUSKM Studios</span></a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="mainNav"><ul class="navbar-nav ms-auto">
         <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
         <li class="nav-item"><a class="nav-link" href="my productions.html">Productions</a></li>
         <li class="nav-item"><a class="nav-link" href="visuals.html">Visuals</a></li>
         <li class="nav-item"><a class="nav-link" href="echos.html">Echos</a></li>
         <li class="nav-item"><a class="nav-link" href="casting.html">Casting</a></li>
-        <li class="nav-item"><a class="nav-link" href="bleuskm shop.html" class="nav-link active">Shop</a></li>
+        <li class="nav-item"><a class="nav-link" href="bleuskm shop.html">Shop</a></li>
         <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
-      </ul>
-    </div>
+      </ul></div></div></nav>
+<main><div class="article-wrapper">
+  <a href="echos.html" class="article-back">← Back to Echos</a>
+  <span class="article-category-tag tag-announcement">Studio Announcement</span>
+  <h1 class="article-title">BLEUSKM Expands Narrative Slate for 2026</h1>
+  <div class="article-meta-row">
+    <span class="article-date">February 2026</span>
+    <span class="article-byline">By <strong>BLEUSKM Studios</strong></span>
   </div>
-</nav>
-
-<!-- PRODUCT CONTENT -->
-<div id="productRoot">
-  <div class="product-loading">Loading product...</div>
-</div>
-
-<!-- CART TOAST -->
-<div class="cart-toast" id="cartToast">Added to cart</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-const DOMAIN = 'migq28-z2.myshopify.com';
-const TOKEN  = '25385bc47649a3914f1cb6596442c8bc';
-
-// ── GET HANDLE FROM URL ──
-const params = new URLSearchParams(window.location.search);
-const handle = params.get('handle');
-
-if (!handle) {
-  window.location.href = 'bleuskm shop.html';
-}
-
-// ── FETCH PRODUCT BY HANDLE ──
-const PRODUCT_QUERY = `
-{
-  product(handle: "${handle}") {
-    id
-    title
-    handle
-    descriptionHtml
-    images(first: 10) {
-      edges { node { url altText } }
-    }
-    variants(first: 50) {
-      edges {
-        node {
-          id
-          title
-          price { amount currencyCode }
-          selectedOptions { name value }
-          image { url altText }
-          availableForSale
-        }
-      }
-    }
-    options { name values }
-  }
-}`;
-
-// ── STATE ──
-let allImages    = [];
-let allVariants  = [];
-let currentImgIndex = 0;
-let selectedOptions = {};
-let checkoutUrl  = null;
-
-// ── INIT ──
-async function init() {
-  try {
-    const res = await fetch(`https://${DOMAIN}/api/2023-10/graphql.json`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Shopify-Storefront-Access-Token': TOKEN
-      },
-      body: JSON.stringify({ query: PRODUCT_QUERY })
-    });
-    const json = await res.json();
-    const product = json?.data?.product;
-    if (!product) { throw new Error('Product not found'); }
-
-    allImages   = product.images.edges.map(e => e.node);
-    allVariants = product.variants.edges.map(e => e.node);
-    currentProduct = product;
-
-    // Pre-select first option values
-    product.options.forEach(opt => {
-      selectedOptions[opt.name] = opt.values[0];
-    });
-
-    renderProduct(product);
-    updateCartBadge();
-  } catch(err) {
-    document.getElementById('productRoot').innerHTML =
-      `<div class="product-loading" style="color:#950606">Product could not be loaded.</div>`;
-    console.error(err);
-  }
-}
-
-// ── RENDER ──
-function renderProduct(product) {
-  const root = document.getElementById('productRoot');
-  document.title = `${product.title} | BLEUSKM Studios`;
-
-  // Build options HTML
-  let optionsHTML = '';
-  product.options.forEach(opt => {
-    const pills = opt.values.map(val => `
-      <button class="option-pill ${val === selectedOptions[opt.name] ? 'active' : ''}"
-              data-option="${opt.name}" data-value="${val}">
-        ${val}
-      </button>
-    `).join('');
-
-    optionsHTML += `
-      <div class="option-group">
-        <span class="option-label">${opt.name} <span class="selected-val" id="selVal-${opt.name.replace(/\s/g,'_')}">${selectedOptions[opt.name]}</span></span>
-        <div class="option-pills">${pills}</div>
-      </div>
-    `;
-  });
-
-  // Initial matching variant
-  const initVariant = getMatchingVariant();
-  const initPrice = initVariant
-    ? parseFloat(initVariant.price.amount).toFixed(2)
-    : parseFloat(allVariants[0]?.price.amount || 0).toFixed(2);
-
-  // Thumb strip
-  const thumbsHTML = allImages.map((img, i) => `
-    <img src="${img.url}" alt="${img.altText || ''}"
-         class="${i === 0 ? 'active' : ''}"
-         data-idx="${i}" onclick="setMainImage(${i})">
-  `).join('');
-
-  root.innerHTML = `
-    <div class="product-layout">
-
-      <!-- LEFT: GALLERY -->
-      <div class="gallery-col">
-        <div class="main-img-wrap">
-          <img id="mainImg" src="${allImages[0]?.url || ''}" alt="${allImages[0]?.altText || product.title}">
-          ${allImages.length > 1 ? `
-            <button class="gallery-arrow prev" onclick="shiftImage(-1)">&#8592;</button>
-            <button class="gallery-arrow next" onclick="shiftImage(1)">&#8594;</button>
-          ` : ''}
-        </div>
-        ${allImages.length > 1 ? `<div class="thumb-strip" id="thumbStrip">${thumbsHTML}</div>` : ''}
-      </div>
-
-      <!-- RIGHT: INFO -->
-      <div class="info-col">
-        <a href="bleuskm shop.html" class="back-to-shop">&#8592; Back to Shop</a>
-
-        <h1 class="product-title">${product.title}</h1>
-        <div class="product-price" id="productPrice">$${initPrice}</div>
-        <div class="product-divider"></div>
-
-        ${optionsHTML}
-
-        <div class="purchase-row">
-          <div class="qty-wrap">
-            <button class="qty-btn" onclick="changeQty(-1)">−</button>
-            <input class="qty-input" id="qtyInput" type="number" value="1" min="1" max="10" readonly>
-            <button class="qty-btn" onclick="changeQty(1)">+</button>
-          </div>
-          <button class="add-to-cart-btn" id="addToCartBtn" onclick="addToCart()">
-            Add to Cart
-          </button>
-        </div>
-
-        <a href="#" class="view-cart-btn" id="viewCartBtn">
-          View Cart &amp; Checkout &#8594;
-        </a>
-
-        <div class="product-desc" style="margin-top: 32px;">
-          ${product.descriptionHtml || '<p>Premium BLEUSKM Studios merch. Print on demand via Printify.</p>'}
-        </div>
-
-        <div class="product-details-block">
-          <h4>Details</h4>
-          <p>Print on demand · Ships worldwide · Fulfilled by Printify via Shopify</p>
-        </div>
-      </div>
-
-    </div>
-  `;
-
-  // Attach option pill listeners
-  document.querySelectorAll('.option-pill').forEach(pill => {
-    pill.addEventListener('click', () => selectOption(pill));
-  });
-
-  // Update availability on load
-  updateVariantState();
-}
-
-// ── OPTION SELECTION ──
-function selectOption(pill) {
-  const optName = pill.dataset.option;
-  const optVal  = pill.dataset.value;
-
-  // Update selected
-  selectedOptions[optName] = optVal;
-
-  // Update active pills for this option
-  document.querySelectorAll(`.option-pill[data-option="${optName}"]`).forEach(p => {
-    p.classList.toggle('active', p.dataset.value === optVal);
-  });
-
-  // Update label
-  const labelEl = document.getElementById(`selVal-${optName.replace(/\s/g,'_')}`);
-  if (labelEl) labelEl.textContent = optVal;
-
-  updateVariantState();
-}
-
-// ── FIND MATCHING VARIANT ──
-function getMatchingVariant() {
-  return allVariants.find(v =>
-    v.selectedOptions.every(o => selectedOptions[o.name] === o.value)
-  ) || null;
-}
-
-// ── UPDATE PRICE + GALLERY + AVAILABILITY ──
-function updateVariantState() {
-  const variant = getMatchingVariant();
-
-  // Price
-  if (variant) {
-    const price = parseFloat(variant.price.amount).toFixed(2);
-    document.getElementById('productPrice').textContent = `$${price}`;
-  }
-
-  // Image — switch to variant image if it has one
-  if (variant?.image?.url) {
-    const idx = allImages.findIndex(img => img.url === variant.image.url);
-    if (idx >= 0) setMainImage(idx);
-  }
-
-  // Availability
-  const btn = document.getElementById('addToCartBtn');
-  if (btn) {
-    if (!variant || !variant.availableForSale) {
-      btn.textContent = 'Sold Out';
-      btn.disabled = true;
-    } else {
-      btn.textContent = 'Add to Cart';
-      btn.disabled = false;
-    }
-  }
-}
-
-// ── GALLERY CONTROLS ──
-function setMainImage(idx) {
-  currentImgIndex = idx;
-  const mainImg = document.getElementById('mainImg');
-  if (mainImg && allImages[idx]) {
-    mainImg.style.opacity = '0';
-    setTimeout(() => {
-      mainImg.src = allImages[idx].url;
-      mainImg.alt = allImages[idx].altText || '';
-      mainImg.style.opacity = '1';
-    }, 150);
-  }
-  // Update thumbs
-  document.querySelectorAll('#thumbStrip img').forEach((t, i) => {
-    t.classList.toggle('active', i === idx);
-  });
-}
-
-function shiftImage(dir) {
-  const next = (currentImgIndex + dir + allImages.length) % allImages.length;
-  setMainImage(next);
-}
-
-// ── QUANTITY ──
-function changeQty(dir) {
-  const input = document.getElementById('qtyInput');
-  const val = parseInt(input.value) + dir;
-  if (val >= 1 && val <= 10) input.value = val;
-}
-
-// ── ADD TO CART — saves to sessionStorage, links to cart.html ──
-function addToCart() {
-  const variant = getMatchingVariant();
-  if (!variant || !variant.availableForSale) return;
-
-  const qty = parseInt(document.getElementById('qtyInput').value) || 1;
-  const btn = document.getElementById('addToCartBtn');
-
-  // Load existing cart
-  let cart = JSON.parse(sessionStorage.getItem('bleuskm_cart') || '[]');
-
-  // Find if this exact variant already in cart
-  const existing = cart.find(i => i.variantId === variant.id);
-  if (existing) {
-    existing.quantity = Math.min(10, existing.quantity + qty);
-  } else {
-    cart.push({
-      variantId: variant.id,
-      title: currentProduct.title,
-      variantTitle: variant.title,
-      price: variant.price.amount,
-      image: (currentProduct.images.edges[0]?.node?.url) || '',
-      quantity: qty
-    });
-  }
-
-  sessionStorage.setItem('bleuskm_cart', JSON.stringify(cart));
-
-  // Update cart count badge
-  updateCartBadge();
-
-  // Toast
-  const toast = document.getElementById('cartToast');
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2800);
-
-  // Show view cart button
-  const vcBtn = document.getElementById('viewCartBtn');
-  vcBtn.href = 'cart.html';
-  vcBtn.style.display = 'flex';
-
-  // Brief button feedback
-  btn.textContent = '✓ Added';
-  setTimeout(() => { btn.textContent = 'Add to Cart'; }, 1500);
-}
-
-// ── CART BADGE ──
-function updateCartBadge() {
-  const cart = JSON.parse(sessionStorage.getItem('bleuskm_cart') || '[]');
-  const count = cart.reduce((s, i) => s + i.quantity, 0);
-  const badge = document.getElementById('cartBadge');
-  if (badge) {
-    badge.textContent = count;
-    badge.style.display = count > 0 ? 'inline-flex' : 'none';
-  }
-}
-
-// Store product ref globally for cart use
-let currentProduct = null;
-
-// ── START ──
-init();
-</script>
-<footer class="site-footer-full">
-  <div class="footer-grid">
-    <div class="footer-brand">
-      <img src="images/bleuskm-logo.png" alt="BLEUSKM Logo">
-      <p>A film and visual production house building worlds grounded in Black imagination, history, and cultural memory.</p>
-    </div>
-
-    <div class="footer-col">
-      <h4>Navigate</h4>
-      <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="my productions.html">Productions</a>
-      <a href="visuals.html">Visuals</a>
-      <a href="echos.html">Echos</a>
-    </div>
-
-    <div class="footer-col">
-      <h4>Work With Us</h4>
-      <a href="contact.html">Project Inquiry</a>
-      <a href="casting.html">Apply to Casting Calls</a>
-      <a href="crew-application.html">Join the Crew</a>
-      <a href="bleuskm shop.html">The Vault — Shop</a>
-    </div>
-
-    <div class="footer-col">
-      <h4>Legal</h4>
-      <a href="privacy.html">Privacy Policy</a>
-      <a href="terms.html">Terms of Use</a>
-      <a href="contact.html">Contact Us</a>
-    </div>
+  <div class="article-body">
+    <p>BLEUSKM Studios has officially expanded its 2026 narrative slate, announcing a series of psychologically grounded, socially reflective short and feature projects set to enter production throughout the year.</p>
+    <div class="article-divider"></div>
+    <p>The upcoming slate includes <strong>The Final Hand</strong>, a symbolic psychological short exploring power, offering, ego, and consequence through the ritual of a high-stakes card game. <strong>The 15th Hour</strong> examines emotional detachment, systemic replacement, and quiet resistance inside a modern convenience store.</p>
+    <p>Also in development is <strong>Liminal County</strong>, a psychological feature centered on four childhood friends whose lives unravel after a cosmic event reawakens suppressed memories, exposing a larger system built on erasure and control.</p>
+    <p>Completing the slate is <strong>Of Blood and Dominion</strong>, a dystopian feature exploring bodily autonomy, spiritual ownership, and protection disguised as control.</p>
+    <p>Founder and writer-director Zaria Lashae describes the slate as "stories about systems and the quiet moments where people either comply, fracture, or awaken."</p>
+    <p>The 2026 lineup marks BLEUSKM's transition from concept-driven development into active production.</p>
+    <p>"The vault is open," Lashae said. "We're not just building visuals. We're building mythology."</p>
+    <p>Production for multiple projects begins Spring 2026.</p>
+    <div class="article-cta"><p>Casting is now open for <strong>The Final Hand</strong> and <strong>The 15th Hour</strong>.</p><a href="casting.html">View Casting Portal →</a></div>
   </div>
-
-  <div class="footer-bottom">
-    <p>&copy; 2026 BLEUSKM Studios. All rights reserved.</p>
-    <div>
-      <a href="privacy.html">Privacy</a>
-      <a href="terms.html">Terms</a>
-      <a href="casting.html">Casting</a>
-      <a href="contact.html">Contact</a>
-    </div>
-  </div>
-</footer>
-<!-- CART POPUP BUTTON -->
-<div id="cartPopupBtn" onclick="toggleCartPopup()" style="position:fixed;top:80px;right:24px;z-index:1100;cursor:pointer;display:flex;align-items:center;gap:8px;background:rgba(8,8,8,0.9);border:1px solid rgba(218,175,55,0.3);padding:8px 16px;backdrop-filter:blur(10px)">
+</div></main>
+<footer class="site-footer-full"><div class="footer-grid"><div class="footer-brand"><img src="images/bleuskm-logo.png" alt="BLEUSKM Logo"><p>A film and visual production house building worlds grounded in Black imagination, history, and cultural memory.</p></div><div class="footer-col"><h4>Navigate</h4><a href="index.html">Home</a><a href="about.html">About</a><a href="my productions.html">Productions</a><a href="visuals.html">Visuals</a><a href="echos.html">Echos</a></div><div class="footer-col"><h4>Work With Us</h4><a href="contact.html">Project Inquiry</a><a href="casting.html">Apply to Casting Calls</a><a href="crew-application.html">Join the Crew</a><a href="bleuskm shop.html">The Vault — Shop</a></div><div class="footer-col"><h4>Legal</h4><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a><a href="contact.html">Contact Us</a></div></div><div class="footer-bottom"><p>&copy; 2026 BLEUSKM Studios. All rights reserved.</p><div><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="casting.html">Casting</a><a href="contact.html">Contact</a></div></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script><!-- CART POPUP BUTTON -->
+<div id="cartPopupBtn" onclick="toggleCartPopup()" style="position:fixed;top:80px;right:24px;z-index:1100;cursor:pointer;display:none;align-items:center;gap:8px;background:rgba(8,8,8,0.9);border:1px solid rgba(218,175,55,0.3);padding:8px 16px;backdrop-filter:blur(10px)">
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DAAF37" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
   <span style="font-family:'League Spartan',sans-serif;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:#DAAF37">Cart</span>
   <span id="cartPopupBadge" style="display:none;background:#DAAF37;color:#000;font-size:0.55rem;font-weight:900;border-radius:50%;width:16px;height:16px;align-items:center;justify-content:center;font-family:'League Spartan',sans-serif">0</span>
@@ -928,6 +140,19 @@ document.addEventListener('click', function(e) {
 </script>
 
 
+<script>
+// Show cart button only if items in cart
+(function() {
+  var cart = JSON.parse(sessionStorage.getItem('bleuskm_cart') || '[]');
+  var count = cart.reduce(function(s,i){ return s+i.quantity; }, 0);
+  if (count > 0) {
+    var btn = document.getElementById('cartPopupBtn');
+    if (btn) btn.style.display = 'flex';
+    var badge = document.getElementById('cartPopupBadge');
+    if (badge) { badge.style.display = 'flex'; badge.textContent = count; }
+  }
+})();
+</script>
 <!-- SOCIAL MEDIA SIDE PULLOUT -->
 <div id="socialTab" onclick="toggleSocial()" style="position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:999;cursor:pointer;background:rgba(8,8,8,0.92);border:1px solid rgba(218,175,55,0.3);border-right:none;padding:14px 10px;backdrop-filter:blur(10px);transition:all 0.2s" onmouseover="openSocial()" onmouseout="scheduleSocialClose()">
   <span style="font-family:'League Spartan',sans-serif;font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37;writing-mode:vertical-rl;text-orientation:mixed;user-select:none">Contact</span>
@@ -979,43 +204,71 @@ function toggleSocial() {
 </script>
 
 <style>
-/* ── CONTACT TAB: mobile tappable ── */
+/* ── MOBILE CONTACT TAB FIX (all pages) ── */
 @media (max-width: 767px) {
+  /* Reposition to bottom-right corner, horizontal text */
   #socialTab {
-    padding: 18px 12px !important;
+    top: auto !important;
+    bottom: 16px !important;
+    right: 0 !important;
+    transform: none !important;
+    padding: 10px 14px !important;
     z-index: 1050 !important;
+    border-radius: 4px 0 0 4px !important;
   }
   #socialTab span {
+    writing-mode: horizontal-tb !important;
+    text-orientation: mixed !important;
     font-size: 0.58rem !important;
-    letter-spacing: 3px !important;
+    letter-spacing: 2px !important;
   }
+  /* Panel slides up from bottom-right */
   #socialPanel {
+    top: auto !important;
+    bottom: 52px !important;
+    right: -220px !important;
+    transform: none !important;
+    width: 200px !important;
     z-index: 1049 !important;
-    min-width: 200px !important;
+    border-radius: 4px 0 0 4px !important;
+    transition: right 0.3s ease !important;
+  }
+  #socialPanel a:hover {
+    color: #EADFCF !important; /* disable hover color change on mobile */
   }
 }
 </style>
 <script>
+/* Mobile contact tab: replace hover with tap-only toggle */
 (function() {
-  var tab = document.getElementById('socialTab');
-  var panel = document.getElementById('socialPanel');
-  if (!tab || !panel) return;
   function isMobile() { return window.innerWidth <= 767; }
-  // On mobile replace hover with tap toggle
+  var tab = document.getElementById("socialTab");
+  var panel = document.getElementById("socialPanel");
+  if (!tab || !panel) return;
+
+  /* Remove hover listeners on mobile by overriding with no-ops */
+  function noop(e) { if (isMobile()) e.stopImmediatePropagation(); }
+
+  /* Re-wire onclick to always toggle */
   tab.onclick = function(e) {
     e.stopPropagation();
-    panel.style.right = panel.style.right === '0px' ? '-200px' : '0';
+    var isOpen = panel.style.right === "0px";
+    panel.style.right = isOpen ? (isMobile() ? "-220px" : "-200px") : "0";
   };
-  tab.onmouseover = function() { if (!isMobile() && typeof openSocial === 'function') openSocial(); };
-  tab.onmouseout  = function() { if (!isMobile() && typeof scheduleSocialClose === 'function') scheduleSocialClose(); };
-  panel.onmouseover = function() { if (!isMobile() && typeof openSocial === 'function') openSocial(); };
-  panel.onmouseout  = function() { if (!isMobile() && typeof scheduleSocialClose === 'function') scheduleSocialClose(); };
-  document.addEventListener('click', function(e) {
-    if (isMobile() && panel.style.right === '0px' && !panel.contains(e.target) && !tab.contains(e.target)) {
-      panel.style.right = '-200px';
+
+  /* On mobile only, disable the mouseover/mouseout panel behavior */
+  tab.onmouseover = function() { if (!isMobile()) openSocial && openSocial(); };
+  tab.onmouseout  = function() { if (!isMobile()) scheduleSocialClose && scheduleSocialClose(); };
+  panel.onmouseover = function() { if (!isMobile()) openSocial && openSocial(); };
+  panel.onmouseout  = function() { if (!isMobile()) scheduleSocialClose && scheduleSocialClose(); };
+
+  /* Tap outside to close on mobile */
+  document.addEventListener("click", function(e) {
+    if (isMobile() && panel.style.right === "0px" && !panel.contains(e.target) && !tab.contains(e.target)) {
+      panel.style.right = "-220px";
     }
   });
 })();
 </script>
-</body>
-</html>
+
+</body></html>
