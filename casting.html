@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Casting | BLEUSKM Studios</title>
+<title>BLEUSKM Studios</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;800;900&family=Red+Hat+Display:wght@300;400;500;600;700&family=Kalnia:wght@400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css">
@@ -12,82 +12,76 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--gold:#DAAF37;--gold-dim:rgba(218,175,55,0.5);--cream:#EADFCF;--dark:#080808;--red:#950606}
 body{background:var(--dark);color:var(--cream);font-family:'Red Hat Display',sans-serif;overflow-x:hidden}
+
+/* NAV */
 .navbar{background:rgba(8,8,8,0.92)!important;backdrop-filter:blur(12px);border-bottom:1px solid rgba(218,175,55,0.08)}
 .navbar-brand span{font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold)}
 .nav-link{font-family:'League Spartan',sans-serif;font-weight:600;font-size:0.65rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(234,223,207,0.5)!important;transition:color 0.2s;padding:0.5rem 1rem!important}
 .nav-link:hover,.nav-link.active{color:var(--gold)!important}
-.casting-hero{padding:120px 60px 70px;background:linear-gradient(to bottom,rgba(149,6,6,0.08) 0%,var(--dark) 100%);border-bottom:1px solid rgba(218,175,55,0.08);text-align:center}
-.casting-hero-eyebrow{font-family:'League Spartan',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:var(--gold-dim);display:block;margin-bottom:16px}
-.casting-hero-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(2.8rem,6vw,5rem);letter-spacing:4px;text-transform:uppercase;color:var(--cream);line-height:0.95;margin-bottom:20px}
-.casting-hero-sub{font-size:0.9rem;color:rgba(234,223,207,0.4);line-height:1.7;max-width:520px;margin:0 auto}
-.casting-section{padding:70px 60px}
-.casting-section-label{font-family:'League Spartan',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:var(--gold-dim);display:block;margin-bottom:10px}
-.casting-section-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(1.4rem,2.5vw,2rem);letter-spacing:3px;text-transform:uppercase;color:var(--cream);margin-bottom:40px}
-.film-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
-.film-card{position:relative;background:#0d0d0d;border:1px solid rgba(218,175,55,0.08);overflow:hidden;cursor:pointer;transition:transform 0.3s ease,box-shadow 0.3s ease}
-.film-card:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(0,0,0,0.7)}
-.film-card::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--gold);transition:width 0.4s ease}
-.film-card:hover::after{width:100%}
-.film-poster{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;filter:brightness(0.75) saturate(0.85);transition:filter 0.5s ease,transform 0.5s ease}
-.film-card:hover .film-poster{filter:brightness(0.92) saturate(1);transform:scale(1.04)}
-.film-poster-placeholder{width:100%;aspect-ratio:2/3;background:#111;display:flex;align-items:center;justify-content:center;border-bottom:1px solid rgba(218,175,55,0.06)}
-.film-poster-placeholder span{font-family:'League Spartan',sans-serif;font-size:0.6rem;letter-spacing:3px;text-transform:uppercase;color:rgba(218,175,55,0.2)}
-.film-info{padding:18px 20px 22px;border-top:1px solid rgba(218,175,55,0.08)}
-.film-category{display:block;font-size:0.52rem;letter-spacing:2px;text-transform:uppercase;color:rgba(234,223,207,0.3);margin-bottom:4px}
-.film-title{display:block;font-family:'League Spartan',sans-serif;font-weight:900;font-size:1rem;letter-spacing:1px;text-transform:uppercase;color:var(--gold);line-height:1.2;margin-bottom:6px}
-.film-status{display:block;font-size:0.55rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(234,223,207,0.28)}
-.film-action-hint{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid rgba(218,175,55,0.06)}
-.film-action-label{font-family:'League Spartan',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase}
-.status-open{color:var(--gold)}
-.status-soon{color:rgba(218,175,55,0.5)}
-.status-dev{color:rgba(234,223,207,0.2)}
-.film-badge{position:absolute;top:12px;left:12px;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.52rem;letter-spacing:2px;text-transform:uppercase;padding:5px 10px;z-index:5}
-.badge-open{background:var(--gold);color:#0b0b0b}
-.badge-soon{background:rgba(218,175,55,0.12);color:var(--gold);border:1px solid rgba(218,175,55,0.3)}
-.badge-dev{background:rgba(234,223,207,0.04);color:rgba(234,223,207,0.3);border:1px solid rgba(234,223,207,0.1)}
-.casting-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
-.casting-modal-overlay.active{display:flex}
-.casting-modal{background:#0d0d0d;border:1px solid rgba(218,175,55,0.15);max-width:680px;width:100%;max-height:90vh;overflow-y:auto;position:relative}
-.modal-header-bar{padding:28px 32px 24px;border-bottom:1px solid rgba(218,175,55,0.1);display:flex;align-items:flex-start;justify-content:space-between;gap:20px;position:sticky;top:0;background:#0d0d0d;z-index:10}
-.modal-close{background:none;border:none;color:rgba(234,223,207,0.3);font-size:1.6rem;cursor:pointer;line-height:1;transition:color 0.2s;flex-shrink:0;padding:0}
-.modal-close:hover{color:var(--cream)}
-.modal-film-tag{font-family:'League Spartan',sans-serif;font-size:0.55rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:8px}
-.modal-film-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(1.4rem,3vw,2rem);letter-spacing:2px;text-transform:uppercase;color:var(--cream);line-height:1.1}
-.modal-body{padding:28px 32px}
-.modal-synopsis{font-size:0.87rem;color:rgba(234,223,207,0.45);line-height:1.7;margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid rgba(218,175,55,0.08)}
-.modal-roles-label{font-family:'League Spartan',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:14px;display:block}
-.modal-role-item{padding:12px 0;border-bottom:1px solid rgba(218,175,55,0.06);display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start}
-.modal-role-name{font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.82rem;letter-spacing:1px;text-transform:uppercase;color:var(--cream);margin-bottom:4px}
-.modal-role-desc{font-size:0.78rem;color:rgba(234,223,207,0.4);line-height:1.5}
-.modal-role-type{font-family:'League Spartan',sans-serif;font-size:0.5rem;letter-spacing:2px;text-transform:uppercase;padding:3px 8px;border:1px solid rgba(218,175,55,0.25);color:var(--gold-dim);white-space:nowrap;flex-shrink:0}
-.modal-form-section{margin-top:28px;padding-top:28px;border-top:1px solid rgba(218,175,55,0.1)}
-.modal-form-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.9rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
-.modal-form-intro{font-size:0.8rem;color:rgba(234,223,207,0.35);line-height:1.6;margin-bottom:22px}
-.mf-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
-.mf-field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
-.mf-field label{font-family:'League Spartan',sans-serif;font-size:0.58rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(218,175,55,0.5)}
-.mf-field input,.mf-field select,.mf-field textarea{background:rgba(255,255,255,0.04);border:1px solid rgba(218,175,55,0.15);color:var(--cream);padding:11px 14px;font-family:'Red Hat Display',sans-serif;font-size:0.85rem;transition:border-color 0.2s;box-sizing:border-box;width:100%;border-radius:0}
-.mf-field input:focus,.mf-field select:focus,.mf-field textarea:focus{outline:none;border-color:rgba(218,175,55,0.5);background:rgba(255,255,255,0.06)}
-.mf-field input::placeholder,.mf-field textarea::placeholder{color:rgba(234,223,207,0.18)}
-.mf-field select option{background:#111;color:var(--cream)}
-.mf-check{display:flex;align-items:flex-start;gap:10px;font-size:0.78rem;color:rgba(234,223,207,0.4);line-height:1.5;margin-bottom:10px;cursor:pointer}
-.mf-check input[type=checkbox]{margin-top:2px;accent-color:var(--gold);flex-shrink:0}
-.mf-submit{width:100%;height:52px;background:var(--gold);border:none;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.8rem;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:background 0.2s;margin-top:10px}
-.mf-submit:hover{background:#f0c84a}
-.mf-submit:disabled{background:rgba(218,175,55,0.35);cursor:not-allowed}
-.mf-success{display:none;text-align:center;padding:40px 20px}
-.mf-success-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:1.2rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
-.mf-success-text{font-size:0.83rem;color:rgba(234,223,207,0.4);line-height:1.6}
-.notify-form-wrap{margin-top:24px;padding-top:24px;border-top:1px solid rgba(218,175,55,0.08)}
-.newsletter-strip{background:rgba(218,175,55,0.04);border-top:1px solid rgba(218,175,55,0.08);border-bottom:1px solid rgba(218,175,55,0.08);padding:60px;display:flex;gap:60px;align-items:center;flex-wrap:wrap}
-.newsletter-label{font-family:'League Spartan',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:var(--gold-dim);display:block;margin-bottom:10px}
-.newsletter-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(1.2rem,2vw,1.6rem);letter-spacing:3px;text-transform:uppercase;color:var(--cream)}
-.newsletter-form-row{display:flex;gap:0;flex:1;max-width:440px;min-width:280px}
-.newsletter-input{flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(218,175,55,0.2);color:var(--cream);padding:14px 18px;font-family:'Red Hat Display',sans-serif;font-size:0.85rem;border-radius:0}
-.newsletter-input:focus{outline:none;border-color:rgba(218,175,55,0.4)}
-.newsletter-input::placeholder{color:rgba(234,223,207,0.2)}
-.newsletter-btn{background:var(--gold);border:none;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.65rem;letter-spacing:2.5px;text-transform:uppercase;padding:14px 24px;cursor:pointer;white-space:nowrap;transition:background 0.2s}
-.newsletter-btn:hover{background:#f0c84a}
+
+/* HERO */
+.hero-wrapper{position:relative;height:100vh;min-height:600px;overflow:hidden}
+.carousel,.carousel-inner,.carousel-item{height:100%}
+.hero-slide{position:relative;height:100%;width:100%}
+.hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;transform:scale(1.05);transition:transform 8s ease}
+.carousel-item.active .hero-img{transform:scale(1)}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,8,8,0.96) 0%,rgba(8,8,8,0.4) 40%,rgba(8,8,8,0.1) 70%,rgba(8,8,8,0.35) 100%),linear-gradient(to right,rgba(8,8,8,0.75) 0%,transparent 65%);z-index:1}
+.hero-content{position:absolute;bottom:0;left:0;right:0;z-index:2;padding:0 60px 90px;max-width:720px}
+.hero-tag{font-family:'League Spartan',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;opacity:0;transform:translateY(10px);transition:opacity 0.6s 0.2s ease,transform 0.6s 0.2s ease}
+.hero-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(3rem,7vw,6.5rem);letter-spacing:4px;text-transform:uppercase;color:var(--cream);line-height:0.93;margin-bottom:20px;opacity:0;transform:translateY(16px);transition:opacity 0.7s 0.35s ease,transform 0.7s 0.35s ease}
+.hero-sub{font-size:0.9rem;color:rgba(234,223,207,0.55);line-height:1.65;max-width:440px;opacity:0;transform:translateY(10px);transition:opacity 0.6s 0.5s ease,transform 0.6s 0.5s ease}
+.hero-casting-btn{display:inline-block;margin-top:26px;background:var(--gold);color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.72rem;letter-spacing:3px;text-transform:uppercase;padding:14px 32px;text-decoration:none;opacity:0;transform:translateY(10px);transition:opacity 0.6s 0.65s ease,transform 0.6s 0.65s ease,background 0.2s}
+.hero-casting-btn:hover{background:#f0c84a;color:#0b0b0b}
+.carousel-item.active .hero-tag,.carousel-item.active .hero-title,.carousel-item.active .hero-sub,.carousel-item.active .hero-casting-btn{opacity:1;transform:translateY(0)}
+.hero-wrapper .carousel-control-prev,.hero-wrapper .carousel-control-next{width:48px;top:auto;bottom:28px;align-items:flex-end;opacity:0.55;transition:opacity 0.2s}
+.hero-wrapper .carousel-control-prev:hover,.hero-wrapper .carousel-control-next:hover{opacity:1}
+.hero-wrapper .carousel-control-prev{left:auto;right:86px}
+.hero-wrapper .carousel-control-next{right:28px}
+.hero-counter{position:absolute;bottom:38px;left:60px;z-index:10;display:flex;gap:10px;align-items:center}
+.hero-dot{width:22px;height:2px;background:rgba(234,223,207,0.2);transition:background 0.3s,width 0.3s;cursor:pointer;border:none;padding:0}
+.hero-dot.active{background:var(--gold);width:38px}
+
+/* MORE SECTION */
+.more-section{padding:80px 60px 100px;background:var(--dark)}
+.section-eyebrow{font-family:'League Spartan',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:var(--gold-dim);display:block;margin-bottom:10px}
+.section-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(1.6rem,3vw,2.4rem);letter-spacing:4px;text-transform:uppercase;color:var(--cream);margin-bottom:8px}
+.section-sub{font-size:0.83rem;color:rgba(234,223,207,0.35);margin-bottom:48px;line-height:1.6}
+
+/* PROJECT GRID */
+.project-rail{display:grid;grid-template-columns:repeat(4,1fr);gap:28px}
+.project-card{position:relative;overflow:hidden;text-decoration:none;color:var(--cream);background:#0e0e0e;border:1px solid rgba(218,175,55,0.07);display:block;transition:transform 0.35s ease,box-shadow 0.35s ease}
+.project-card:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(0,0,0,0.6);color:var(--cream)}
+.project-card::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--gold);transition:width 0.4s ease}
+.project-card:hover::after{width:100%}
+.thumb-img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;filter:brightness(0.75) saturate(0.85);transition:filter 0.5s ease,transform 0.5s ease}
+.project-card:hover .thumb-img{filter:brightness(0.95) saturate(1.05);transform:scale(1.04)}
+.project-info{padding:18px 20px 22px;border-top:1px solid rgba(218,175,55,0.08);display:flex;flex-direction:column;gap:5px}
+.project-category{display:block;font-size:0.52rem;letter-spacing:2px;text-transform:uppercase;color:rgba(234,223,207,0.3);margin-bottom:2px}
+.project-name{display:block;font-family:'League Spartan',sans-serif;font-weight:900;font-size:1rem;letter-spacing:1px;text-transform:uppercase;color:var(--gold);line-height:1.2;margin-bottom:2px}
+.project-year{display:block;font-size:0.55rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(234,223,207,0.28)}
+.casting-now-badge{position:absolute;top:12px;left:12px;background:var(--gold);color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.55rem;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;z-index:10}
+
+/* STATEMENT SECTION */
+.statement-section{padding:100px 60px;background:linear-gradient(135deg,rgba(149,6,6,0.1) 0%,rgba(8,8,8,0) 50%,rgba(218,175,55,0.04) 100%);border-top:1px solid rgba(218,175,55,0.08);border-bottom:1px solid rgba(218,175,55,0.08);display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.statement-label{font-family:'League Spartan',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:var(--gold-dim);display:block;margin-bottom:24px}
+.statement-text{font-family:'Kalnia',serif;font-size:clamp(1.4rem,2.5vw,2rem);line-height:1.55;color:rgba(234,223,207,0.85);font-weight:400}
+.statement-text em{color:var(--gold);font-style:italic}
+.statement-links{display:flex;flex-direction:column;gap:0;border-left:1px solid rgba(218,175,55,0.12);padding-left:60px}
+.statement-link{display:flex;align-items:center;justify-content:space-between;padding:22px 0;border-bottom:1px solid rgba(218,175,55,0.08);text-decoration:none;transition:padding-left 0.25s ease}
+.statement-link:hover{padding-left:8px}
+.statement-link-label{font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.72rem;letter-spacing:2px;text-transform:uppercase;color:rgba(234,223,207,0.4);transition:color 0.2s}
+.statement-link:hover .statement-link-label{color:var(--gold)}
+.statement-link-arrow{font-size:0.85rem;color:rgba(218,175,55,0.25);transition:color 0.2s,transform 0.2s}
+.statement-link:hover .statement-link-arrow{color:var(--gold);transform:translateX(4px)}
+
+/* CREW BANNER */
+.crew-banner{background:rgba(218,175,55,0.04);border-top:1px solid rgba(218,175,55,0.1);border-bottom:1px solid rgba(218,175,55,0.1);padding:50px 60px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px}
+.crew-banner-label{font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.6rem;letter-spacing:4px;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:10px}
+.crew-banner-text{font-size:0.87rem;color:rgba(234,223,207,0.45);max-width:520px;line-height:1.65;margin:0}
+.crew-btn{background:transparent;color:var(--gold);border:1px solid rgba(218,175,55,0.4);font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.72rem;letter-spacing:3px;text-transform:uppercase;padding:16px 36px;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:background 0.2s,color 0.2s,border-color 0.2s}
+.crew-btn:hover{background:var(--gold);color:#0b0b0b;border-color:var(--gold)}
+
+/* FOOTER */
 .site-footer-full{background:#040404;border-top:1px solid rgba(218,175,55,0.1);padding:50px 60px 30px}
 .footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
 .footer-brand img{height:32px;margin-bottom:14px}
@@ -95,32 +89,27 @@ body{background:var(--dark);color:var(--cream);font-family:'Red Hat Display',san
 .footer-col h4{font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.65rem;letter-spacing:3px;text-transform:uppercase;color:rgba(218,175,55,0.5);margin-bottom:16px}
 .footer-col a{display:block;font-size:0.8rem;color:rgba(234,223,207,0.45);text-decoration:none;margin-bottom:10px;transition:color 0.2s}
 .footer-col a:hover{color:var(--gold)}
-.footer-bottom{border-top:1px solid rgba(218,175,55,0.08);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.footer-bottom{border-top:1px solid rgba(218,175,55,0.08);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
 .footer-bottom p{font-size:0.72rem;color:rgba(234,223,207,0.2)}
 .footer-bottom a{font-size:0.72rem;color:rgba(234,223,207,0.2);text-decoration:none;margin-left:20px;transition:color 0.2s}
 .footer-bottom a:hover{color:rgba(218,175,55,0.5)}
-@media(max-width:900px){.film-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:767px){
-  .casting-hero{padding:100px 20px 50px}
-  .casting-section{padding:50px 20px}
-  .film-grid{grid-template-columns:repeat(2,1fr);gap:12px}
-  .film-info{padding:12px 14px 16px}
-  .film-title{font-size:0.85rem}
-  .modal-header-bar{padding:18px 18px 14px}
-  .modal-body{padding:18px}
-  .mf-row{grid-template-columns:1fr}
-  .newsletter-strip{padding:40px 20px;flex-direction:column;gap:28px}
-  .newsletter-form-row{max-width:100%;width:100%}
-  .footer-grid{grid-template-columns:1fr 1fr;gap:24px}
-  .footer-bottom{flex-direction:column;text-align:center;gap:8px}
-}
+
+@media(max-width:1100px){.project-rail{grid-template-columns:repeat(3,1fr);gap:20px}.statement-section{grid-template-columns:1fr;gap:50px}.statement-links{border-left:none;padding-left:0;border-top:1px solid rgba(218,175,55,0.12);padding-top:40px}}
+@media(max-width:768px){.hero-content{padding:0 24px 80px}.more-section,.crew-banner{padding:60px 24px}.project-rail{grid-template-columns:repeat(2,1fr)}.footer-grid{grid-template-columns:1fr 1fr}.hero-counter{left:24px}.statement-section{padding:70px 24px}}
 </style>
+  <style>
+    a, a:link, a:visited, a:hover, a:active { text-decoration: none !important; }
+    a { color: inherit; }
+    a:hover { color: #DAAF37; }
+  </style>
 </head>
-<body>
+
+<body class="home-page">
+
 <nav class="navbar navbar-expand-md navbar-dark fixed-top">
   <div class="container-fluid">
-    <a class="navbar-brand" href="index.html" style="display:flex;align-items:center;gap:10px">
-      <img src="images/bleuskm-logo.png" alt="BLEUSKM Logo" style="height:32px">
+    <a class="navbar-brand brand-logo" href="index.html" style="display:flex;align-items:center;gap:10px">
+      <img src="images/bleuskm-logo.png" alt="BLEUSKM Logo">
       <span>BLEUSKM Studios</span>
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
@@ -132,7 +121,7 @@ body{background:var(--dark);color:var(--cream);font-family:'Red Hat Display',san
         <li class="nav-item"><a class="nav-link" href="my_productions.html">Productions</a></li>
         <li class="nav-item"><a class="nav-link" href="visuals.html">Visuals</a></li>
         <li class="nav-item"><a class="nav-link" href="echos.html">Echos</a></li>
-        <li class="nav-item"><a class="nav-link active" href="casting.html">Casting</a></li>
+        <li class="nav-item"><a class="nav-link" href="casting.html">Casting</a></li>
         <li class="nav-item"><a class="nav-link" href="bleuskm_shop.html">Shop</a></li>
         <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
       </ul>
@@ -140,150 +129,152 @@ body{background:var(--dark);color:var(--cream);font-family:'Red Hat Display',san
   </div>
 </nav>
 
-<main>
-<section class="casting-hero">
-  <span class="casting-hero-eyebrow">BLEUSKM Studios &middot; Casting Portal</span>
-  <h1 class="casting-hero-title">Open Casting<br>Calls</h1>
-  <p class="casting-hero-sub">Select a project below to view roles and submit your audition materials. All submissions go directly to our casting team.</p>
-</section>
+<!-- HERO -->
+<header class="hero-wrapper">
+  <div id="bleuskmCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="6000">
+    <div class="carousel-inner">
 
-<!-- NOW CASTING -->
-<section class="casting-section">
-  <span class="casting-section-label">Currently Casting</span>
-  <h2 class="casting-section-title">Open Calls</h2>
-  <div class="film-grid">
-    <div class="film-card" onclick="openModal('final-hand')">
-      <div class="film-badge badge-open">Now Casting</div>
-      <img src="images/the final hand poster.png" class="film-poster" alt="The Final Hand" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="film-poster-placeholder" style="display:none"><span>The Final Hand</span></div>
-      <div class="film-info">
-        <span class="film-category">Short Film</span>
-        <span class="film-title">The Final Hand</span>
-        <span class="film-status">Casting Open &middot; Spring 2026</span>
-        <div class="film-action-hint"><span class="film-action-label status-open">Apply Now &rarr;</span></div>
+      <div class="carousel-item active">
+        <div class="hero-slide">
+          <img src="images/the final hand poster.png" class="hero-img" alt="The Final Hand">
+          <div class="hero-overlay"></div>
+          <div class="hero-content">
+            <p class="hero-tag">Pre-Production · Now Casting</p>
+            <h1 class="hero-title">THE FINAL<br>HAND</h1>
+            <p class="hero-sub">Fate. Control. Power. A psychological short where every card played reveals what's already been decided.</p>
+            <a href="#" onclick="cmOpen('final-hand');return false;" class="hero-casting-btn">NOW CASTING →</a>
+          </div>
+        </div>
       </div>
+
+      <div class="carousel-item">
+        <div class="hero-slide">
+          <img src="images/the 15th hour poster.png" class="hero-img" alt="The 15th Hour">
+          <div class="hero-overlay"></div>
+          <div class="hero-content">
+            <p class="hero-tag">In Development</p>
+            <h1 class="hero-title">THE 15TH<br>HOUR</h1>
+            <p class="hero-sub">A psychological short film exploring time distortion, ego death, and awakening.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="carousel-item">
+        <div class="hero-slide">
+          <img src="images/overstood poster.png" class="hero-img" alt="Overstood">
+          <div class="hero-overlay"></div>
+          <div class="hero-content">
+            <p class="hero-tag">In Development</p>
+            <h1 class="hero-title">OVER-<br>STOOD</h1>
+            <p class="hero-sub">A character-driven short film confronting perception, identity, and inner truth.</p>
+          </div>
+        </div>
+      </div>
+
     </div>
+
+    <div class="hero-counter" id="heroCounter">
+      <button class="hero-dot active" data-slide="0"></button>
+      <button class="hero-dot" data-slide="1"></button>
+      <button class="hero-dot" data-slide="2"></button>
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#bleuskmCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#bleuskmCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon"></span>
+    </button>
+  </div>
+</header>
+
+<!-- MORE FROM BLEUSKM -->
+<section class="more-section">
+  <span class="section-eyebrow">The Slate</span>
+  <h2 class="section-title">More From BLEUSKM</h2>
+  <p class="section-sub">Projects in development and early-stage production.</p>
+  <div class="project-rail">
+
+    <a href="#" onclick="cmOpen('book-of-beginnings');return false;" class="project-card">
+      <img src="images/book of beginnings poster.png" class="thumb-img" alt="Book of Beginnings">
+      <div class="project-info">
+        <span class="project-category">Short</span>
+        <span class="project-name">Book of Beginnings</span>
+        <span class="project-year">In Development</span>
+      </div>
+    </a>
+
+    <a href="#" onclick="cmOpen('love-me-like-this');return false;" class="project-card">
+      <img src="images/love me like this poster.png" class="thumb-img" alt="Love Me Like This">
+      <div class="casting-now-badge">Casting opens soon</div>
+      <div class="project-info">
+        <span class="project-category">Short</span>
+        <span class="project-name">Love Me Like This</span>
+        <span class="project-year">Pre-Production</span>
+      </div>
+    </a>
+
+    <a href="#" onclick="cmOpen('liminal-county');return false;" class="project-card">
+      <img src="images/liminal county poster.jpg" class="thumb-img" alt="Liminal County">
+      <div class="project-info">
+        <span class="project-category">Feature</span>
+        <span class="project-name">Liminal County</span>
+        <span class="project-year">In Development</span>
+      </div>
+    </a>
+
+    <a href="#" onclick="cmOpen('of-blood-and-dominion');return false;" class="project-card">
+      <img src="images/of blood dominion poster.png" class="thumb-img" alt="Of Blood and Dominion" style="object-position:center top">
+      <div class="project-info">
+        <span class="project-category">Feature</span>
+        <span class="project-name">Of Blood and Dominion</span>
+        <span class="project-year">In Development</span>
+      </div>
+    </a>
+
+    <a href="#" onclick="cmOpen('as-is');return false;" class="project-card">
+      <img src="images/as is poster.jpg" class="thumb-img" alt="As Is">
+      <div class="project-info">
+        <span class="project-category">Short / Feature</span>
+        <span class="project-name">As Is</span>
+        <span class="project-year">In Development</span>
+      </div>
+    </a>
+
   </div>
 </section>
 
-<!-- CASTING SOON -->
-<section class="casting-section" style="padding-top:0">
-  <span class="casting-section-label">Casting Opens Soon</span>
-  <h2 class="casting-section-title">Coming to Casting</h2>
-  <div class="film-grid">
-    <div class="film-card" onclick="openModal('love-me-like-this')">
-      <div class="film-badge badge-soon">Casting Soon</div>
-      <img src="images/love me like this poster.png" class="film-poster" alt="Love Me Like This" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="film-poster-placeholder" style="display:none"><span>Love Me Like This</span></div>
-      <div class="film-info">
-        <span class="film-category">Short Film</span>
-        <span class="film-title">Love Me Like This</span>
-        <span class="film-status">Pre-Production &middot; Casting TBA</span>
-        <div class="film-action-hint"><span class="film-action-label status-soon">Get Notified &rarr;</span></div>
-      </div>
-    </div>
-    <div class="film-card" onclick="openModal('15th-hour')">
-      <div class="film-badge badge-soon">Casting Soon</div>
-      <img src="images/the 15th hour poster.png" class="film-poster" alt="The 15th Hour" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="film-poster-placeholder" style="display:none"><span>The 15th Hour</span></div>
-      <div class="film-info">
-        <span class="film-category">Short Film</span>
-        <span class="film-title">The 15th Hour</span>
-        <span class="film-status">In Development &middot; Casting TBA</span>
-        <div class="film-action-hint"><span class="film-action-label status-soon">Get Notified &rarr;</span></div>
-      </div>
-    </div>
-    <div class="film-card" onclick="openModal('overstood')">
-      <div class="film-badge badge-soon">Casting Soon</div>
-      <img src="images/overstood poster.png" class="film-poster" alt="Overstood" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="film-poster-placeholder" style="display:none"><span>Overstood</span></div>
-      <div class="film-info">
-        <span class="film-category">Short Film</span>
-        <span class="film-title">Overstood</span>
-        <span class="film-status">In Development &middot; Casting TBA</span>
-        <div class="film-action-hint"><span class="film-action-label status-soon">Get Notified &rarr;</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- IN DEVELOPMENT -->
-<section class="casting-section" style="padding-top:0">
-  <span class="casting-section-label">In Development</span>
-  <h2 class="casting-section-title">Coming Soon</h2>
-  <div class="film-grid">
-    <div class="film-card" onclick="openModal('book-of-beginnings')">
-      <div class="film-badge badge-dev">In Development</div>
-      <img src="images/book of beginnings poster.png" class="film-poster" alt="Book of Beginnings" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="film-poster-placeholder" style="display:none"><span>Book of Beginnings</span></div>
-      <div class="film-info">
-        <span class="film-category">Short Film</span>
-        <span class="film-title">Book of Beginnings</span>
-        <span class="film-status">In Development</span>
-        <div class="film-action-hint"><span class="film-action-label status-dev">Stay Updated &rarr;</span></div>
-      </div>
-    </div>
-    <div class="film-card" onclick="openModal('as-is')">
-      <div class="film-badge badge-dev">In Development</div>
-      <img src="images/as is poster.jpg" class="film-poster" alt="As Is" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="film-poster-placeholder" style="display:none"><span>As Is</span></div>
-      <div class="film-info">
-        <span class="film-category">Short / Feature</span>
-        <span class="film-title">As Is</span>
-        <span class="film-status">In Development</span>
-        <div class="film-action-hint"><span class="film-action-label status-dev">Stay Updated &rarr;</span></div>
-      </div>
-    </div>
-    <div class="film-card" onclick="openModal('liminal-county')">
-      <div class="film-badge badge-dev">In Development</div>
-      <img src="images/liminal county poster.jpg" class="film-poster" alt="Liminal County" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="film-poster-placeholder" style="display:none"><span>Liminal County</span></div>
-      <div class="film-info">
-        <span class="film-category">Feature Film</span>
-        <span class="film-title">Liminal County</span>
-        <span class="film-status">In Development</span>
-        <div class="film-action-hint"><span class="film-action-label status-dev">Stay Updated &rarr;</span></div>
-      </div>
-    </div>
-    <div class="film-card" onclick="openModal('of-blood-and-dominion')">
-      <div class="film-badge badge-dev">In Development</div>
-      <img src="images/of blood dominion poster.png" class="film-poster" alt="Of Blood and Dominion" style="object-position:center top" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="film-poster-placeholder" style="display:none"><span>Of Blood and Dominion</span></div>
-      <div class="film-info">
-        <span class="film-category">Feature Film</span>
-        <span class="film-title">Of Blood and Dominion</span>
-        <span class="film-status">In Development</span>
-        <div class="film-action-hint"><span class="film-action-label status-dev">Stay Updated &rarr;</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- NEWSLETTER -->
-<div class="newsletter-strip">
+<!-- STUDIO STATEMENT -->
+<section class="statement-section">
   <div>
-    <span class="newsletter-label">Stay Connected</span>
-    <p class="newsletter-title">Get Casting Updates<br>Before They Go Public</p>
+    <span class="statement-label">The Vision</span>
+    <p class="statement-text">Building worlds grounded in <em>Black imagination</em>, history, and cultural memory — one frame at a time.</p>
   </div>
-  <form id="newsletterForm" onsubmit="submitNewsletter(event)">
-    <div class="newsletter-form-row">
-      <input name="name" class="newsletter-input" placeholder="Your name" style="width:140px;border-right:none">
-      <input name="email" type="email" class="newsletter-input" placeholder="your@email.com" required>
-      <button type="submit" class="newsletter-btn">Subscribe</button>
-    </div>
-  </form>
-  <div id="nlSuccess" style="display:none;font-family:'League Spartan',sans-serif;font-size:0.8rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold)">You're subscribed ✓</div>
-</div>
+  <div class="statement-links">
+    <a href="my_productions.html" class="statement-link">
+      <span class="statement-link-label">View All Productions</span>
+      <span class="statement-link-arrow">→</span>
+    </a>
+    <a href="casting.html" class="statement-link">
+      <span class="statement-link-label">Open Casting Calls</span>
+      <span class="statement-link-arrow">→</span>
+    </a>
+    <a href="echos.html" class="statement-link">
+      <span class="statement-link-label">Studio Announcements</span>
+      <span class="statement-link-arrow">→</span>
+    </a>
+    <a href="about.html" class="statement-link">
+      <span class="statement-link-label">About BLEUSKM</span>
+      <span class="statement-link-arrow">→</span>
+    </a>
+    <a href="contact.html" class="statement-link">
+      <span class="statement-link-label">Project Inquiries</span>
+      <span class="statement-link-arrow">→</span>
+    </a>
+  </div>
+</section>
 
 <!-- CREW BANNER -->
-<div style="background:rgba(218,175,55,0.03);border-top:1px solid rgba(218,175,55,0.08);border-bottom:1px solid rgba(218,175,55,0.08);padding:50px 60px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px">
-  <div>
-    <span style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.6rem;letter-spacing:4px;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:10px">Crew Positions</span>
-    <p style="font-size:0.87rem;color:rgba(234,223,207,0.4);max-width:520px;line-height:1.65;margin:0">Not an actor? We're also looking for crew — directors of photography, editors, sound designers, and production assistants.</p>
-  </div>
-  <a href="crew-application.html" style="background:transparent;color:var(--gold);border:1px solid rgba(218,175,55,0.4);font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.72rem;letter-spacing:3px;text-transform:uppercase;padding:16px 36px;text-decoration:none;white-space:nowrap;transition:background 0.2s,color 0.2s">Apply for Crew &rarr;</a>
-</div>
-</main>
 
 <footer class="site-footer-full">
   <div class="footer-grid">
@@ -291,15 +282,16 @@ body{background:var(--dark);color:var(--cream);font-family:'Red Hat Display',san
       <img src="images/bleuskm-logo.png" alt="BLEUSKM Logo">
       <p>A film and visual production house building worlds grounded in Black imagination, history, and cultural memory.</p>
     </div>
-    <div class="footer-col"><h4>Navigate</h4>
-      <a href="index.html">Home</a><a href="about.html">About</a>
-      <a href="my_productions.html">Productions</a><a href="visuals.html">Visuals</a><a href="echos.html">Echos</a>
+    <div class="footer-col">
+      <h4>Navigate</h4>
+      <a href="index.html">Home</a><a href="about.html">About</a><a href="my_productions.html">Productions</a><a href="visuals.html">Visuals</a><a href="echos.html">Echos</a>
     </div>
-    <div class="footer-col"><h4>Work With Us</h4>
-      <a href="contact.html">Project Inquiry</a><a href="casting.html">Apply to Casting Calls</a>
-      <a href="crew-application.html">Join the Crew</a><a href="bleuskm_shop.html">The Vault &mdash; Shop</a>
+    <div class="footer-col">
+      <h4>Work With Us</h4>
+      <a href="contact.html">Project Inquiry</a><a href="casting.html">Apply to Casting Calls</a><a href="crew-application.html">Join the Crew</a><a href="bleuskm_shop.html">The Vault — Shop</a>
     </div>
-    <div class="footer-col"><h4>Legal</h4>
+    <div class="footer-col">
+      <h4>Legal</h4>
       <a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a><a href="contact.html">Contact Us</a>
     </div>
   </div>
@@ -309,397 +301,593 @@ body{background:var(--dark);color:var(--cream);font-family:'Red Hat Display',san
   </div>
 </footer>
 
-<!-- MODALS OVERLAY -->
-<div id="castingModalOverlay" class="casting-modal-overlay" onclick="closeModalOnOverlay(event)">
-  <div class="casting-modal" id="castingModal">
+<script>
+var BREVO_KEY = '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';
+async function addToBrevo(listId, email, name, attributes) {
+  try {
+    if (!attributes) attributes = Object.create(null);
+    attributes.FIRSTNAME = name;
+    var payload = JSON.stringify({
+      email: email,
+      attributes: attributes,
+      listIds: [listId],
+      updateEnabled: true
+    });
+    var r = await fetch('https://api.brevo.com/v3/contacts', {
+      method: 'POST',
+      headers: {
+        'api-key': BREVO_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: payload
+    });
+    var j = await r.json();
+    console.log('Brevo:', j);
+    return j;
+  } catch(e) {
+    console.error('Brevo error:', e);
+  }
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+var carousel = document.getElementById('bleuskmCarousel');
+var dots = document.querySelectorAll('.hero-dot');
+carousel.addEventListener('slid.bs.carousel', function(e) {
+  dots.forEach(function(d){d.classList.remove('active')});
+  dots[e.to].classList.add('active');
+});
+dots.forEach(function(dot){
+  dot.addEventListener('click', function(){
+    bootstrap.Carousel.getInstance(carousel).to(parseInt(this.dataset.slide));
+  });
+});
+</script>
 
-    <!-- THE FINAL HAND -->
-    <div id="modal-final-hand" style="display:none">
-      <div class="modal-header-bar">
-        <div><span class="modal-film-tag">Now Casting &middot; Short Film</span><h2 class="modal-film-title">The Final Hand</h2></div>
-        <button class="modal-close" onclick="closeModal()">&times;</button>
-      </div>
-      <div class="modal-body">
-        <p class="modal-synopsis">Set inside a suspended lounge where time feels both present and eternal, a man sits at a table already waiting for him. What begins as a simple game of blackjack slowly reveals itself to be something more ritual than recreation. Directed by Zaria Lashae. Intimate single-location shoot &middot; Spring 2026.</p>
-        <span class="modal-roles-label">Roles Currently Casting</span>
-        <div class="modal-role-item">
-          <div><div class="modal-role-name">High John</div><div class="modal-role-desc">The composed, watchful dealer. Understands the stakes long before the Player does.</div></div>
-          <span class="modal-role-type">Lead</span>
-        </div>
-        <div class="modal-role-item">
-          <div><div class="modal-role-name">The Player</div><div class="modal-role-desc">Drawn to the table by something he can't name. The emotional center of the film.</div></div>
-          <span class="modal-role-type">Lead</span>
-        </div>
-        <div class="modal-role-item">
-          <div><div class="modal-role-name">The Stranger</div><div class="modal-role-desc">Brief but pivotal presence. Appears once — leaves an impression that lingers.</div></div>
-          <span class="modal-role-type">Supporting</span>
-        </div>
-        <div class="modal-form-section">
-          <h3 class="modal-form-title">Submit Audition Materials</h3>
-          <p class="modal-form-intro">Fill out the form below. We review every submission personally.</p>
-          <form id="form-final-hand" onsubmit="submitCasting(event,'The Final Hand')">
-            <div class="mf-row">
-              <div class="mf-field"><label>Full Name *</label><input name="name" placeholder="Your full name" required></div>
-              <div class="mf-field"><label>Email *</label><input name="email" type="email" placeholder="your@email.com" required></div>
-            </div>
-            <div class="mf-row">
-              <div class="mf-field"><label>Phone</label><input name="phone" placeholder="555-123-4567"></div>
-              <div class="mf-field"><label>Age *</label><input name="age" type="number" min="18" placeholder="Your age" required></div>
-            </div>
-            <div class="mf-field"><label>City / Location *</label><input name="location" placeholder="City, State" required></div>
-            <div class="mf-field"><label>Role Applying For *</label>
-              <select name="role" required>
-                <option value="">Select a role</option>
-                <option>High John (Lead)</option>
-                <option>The Player (Lead)</option>
-                <option>The Stranger (Supporting)</option>
-              </select>
-            </div>
-            <div class="mf-field"><label>Reel / Portfolio Link</label><input name="reel" placeholder="Vimeo, YouTube, or website URL"></div>
-            <div class="mf-field"><label>Headshot / Image Link</label><input name="files" placeholder="Google Drive, Dropbox, or direct link"></div>
-            <div class="mf-field"><label>About You *</label><textarea name="about" rows="4" placeholder="Brief note about your experience and why you're right for this role." required></textarea></div>
-            <label class="mf-check"><input type="checkbox" name="newsletter"> Subscribe to BLEUSKM casting updates</label>
-            <button type="submit" class="mf-submit">Submit Audition Materials</button>
-          </form>
-          <div id="final-hand-success" class="mf-success">
-            <div class="mf-success-title">Received.</div>
-            <p class="mf-success-text">We've received your submission for <strong>The Final Hand</strong>. Our casting team reviews every application personally — we'll be in touch.</p>
-          </div>
-        </div>
-      </div>
+
+<!-- CART POPUP BUTTON -->
+<div id="cartPopupBtn" onclick="toggleCartPopup()" style="position:fixed;top:80px;right:24px;z-index:1100;cursor:pointer;display:none;align-items:center;gap:8px;background:rgba(8,8,8,0.9);border:1px solid rgba(218,175,55,0.3);padding:8px 16px;backdrop-filter:blur(10px)">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DAAF37" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+  <span style="font-family:'League Spartan',sans-serif;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:#DAAF37">Cart</span>
+  <span id="cartPopupBadge" style="display:none;background:#DAAF37;color:#000;font-size:0.55rem;font-weight:900;border-radius:50%;width:16px;height:16px;align-items:center;justify-content:center;font-family:'League Spartan',sans-serif">0</span>
+</div>
+<div id="cartPopup" style="display:none;position:fixed;top:130px;right:24px;z-index:1200;width:360px;max-height:70vh;overflow-y:auto;background:#0d0d0d;border:1px solid rgba(218,175,55,0.2);padding:24px;box-shadow:0 20px 60px rgba(0,0,0,0.8)">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37">Your Cart</span>
+    <button onclick="toggleCartPopup()" style="background:none;border:none;color:rgba(234,223,207,0.4);font-size:1.2rem;cursor:pointer;line-height:1">&times;</button>
+  </div>
+  <div id="cartPopupItems"></div>
+  <div id="cartPopupEmpty" style="text-align:center;padding:30px 0;color:rgba(234,223,207,0.3);font-family:'League Spartan',sans-serif;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase">Cart is empty</div>
+  <div id="cartPopupFooter" style="display:none;border-top:1px solid rgba(218,175,55,0.15);padding-top:16px;margin-top:16px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+      <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:rgba(234,223,207,0.5)">Subtotal</span>
+      <span id="cartPopupTotal" style="color:#DAAF37;font-family:'Red Hat Display',sans-serif;font-weight:600"></span>
     </div>
-
-    <!-- LOVE ME LIKE THIS -->
-    <div id="modal-love-me-like-this" style="display:none">
-      <div class="modal-header-bar">
-        <div><span class="modal-film-tag">Casting Soon &middot; Short Film</span><h2 class="modal-film-title">Love Me Like This</h2></div>
-        <button class="modal-close" onclick="closeModal()">&times;</button>
-      </div>
-      <div class="modal-body">
-        <p class="modal-synopsis">A short film in pre-production exploring intimacy, vulnerability, and the complexity of loving without conditions. Casting details will be announced soon.</p>
-        <div class="notify-form-wrap">
-          <span class="modal-roles-label">Get Notified When Casting Opens</span>
-          <form id="form-love-me-like-this" onsubmit="submitNotify(event,'Love Me Like This')">
-            <div class="mf-row">
-              <div class="mf-field"><label>Name</label><input name="name" placeholder="Your name"></div>
-              <div class="mf-field"><label>Email *</label><input name="email" type="email" placeholder="your@email.com" required></div>
-            </div>
-            <div class="mf-field"><label>Role Interest</label><input name="role" placeholder="Ex: Lead, any role, supporting..."></div>
-            <label class="mf-check"><input type="checkbox" name="newsletter"> Subscribe to BLEUSKM casting updates</label>
-            <button type="submit" class="mf-submit">Notify Me When Casting Opens</button>
-          </form>
-          <div id="love-me-like-this-success" class="mf-success">
-            <div class="mf-success-title">You're on the list.</div>
-            <p class="mf-success-text">We'll notify you when casting opens for <strong>Love Me Like This</strong>.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- THE 15TH HOUR -->
-    <div id="modal-15th-hour" style="display:none">
-      <div class="modal-header-bar">
-        <div><span class="modal-film-tag">Casting Soon &middot; Short Film</span><h2 class="modal-film-title">The 15th Hour</h2></div>
-        <button class="modal-close" onclick="closeModal()">&times;</button>
-      </div>
-      <div class="modal-body">
-        <p class="modal-synopsis">A psychological short film exploring time distortion, ego death, and awakening. A mind-bending exploration of the moment between who you were and who you're becoming.</p>
-        <div class="notify-form-wrap">
-          <span class="modal-roles-label">Get Notified When Casting Opens</span>
-          <form id="form-15th-hour" onsubmit="submitNotify(event,'The 15th Hour')">
-            <div class="mf-row">
-              <div class="mf-field"><label>Name</label><input name="name" placeholder="Your name"></div>
-              <div class="mf-field"><label>Email *</label><input name="email" type="email" placeholder="your@email.com" required></div>
-            </div>
-            <div class="mf-field"><label>Role Interest</label><input name="role" placeholder="Ex: Lead, any role, supporting..."></div>
-            <label class="mf-check"><input type="checkbox" name="newsletter"> Subscribe to BLEUSKM casting updates</label>
-            <button type="submit" class="mf-submit">Notify Me When Casting Opens</button>
-          </form>
-          <div id="15th-hour-success" class="mf-success">
-            <div class="mf-success-title">You're on the list.</div>
-            <p class="mf-success-text">We'll notify you when casting opens for <strong>The 15th Hour</strong>.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- OVERSTOOD -->
-    <div id="modal-overstood" style="display:none">
-      <div class="modal-header-bar">
-        <div><span class="modal-film-tag">Casting Soon &middot; Short Film</span><h2 class="modal-film-title">Overstood</h2></div>
-        <button class="modal-close" onclick="closeModal()">&times;</button>
-      </div>
-      <div class="modal-body">
-        <p class="modal-synopsis">A character-driven short film confronting perception, identity, and inner truth. A story about what it means to be seen — and what it costs when you're not.</p>
-        <div class="notify-form-wrap">
-          <span class="modal-roles-label">Get Notified When Casting Opens</span>
-          <form id="form-overstood" onsubmit="submitNotify(event,'Overstood')">
-            <div class="mf-row">
-              <div class="mf-field"><label>Name</label><input name="name" placeholder="Your name"></div>
-              <div class="mf-field"><label>Email *</label><input name="email" type="email" placeholder="your@email.com" required></div>
-            </div>
-            <div class="mf-field"><label>Role Interest</label><input name="role" placeholder="Ex: Lead, any role, supporting..."></div>
-            <label class="mf-check"><input type="checkbox" name="newsletter"> Subscribe to BLEUSKM casting updates</label>
-            <button type="submit" class="mf-submit">Notify Me When Casting Opens</button>
-          </form>
-          <div id="overstood-success" class="mf-success">
-            <div class="mf-success-title">You're on the list.</div>
-            <p class="mf-success-text">We'll notify you when casting opens for <strong>Overstood</strong>.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- BOOK OF BEGINNINGS -->
-    <div id="modal-book-of-beginnings" style="display:none">
-      <div class="modal-header-bar">
-        <div><span class="modal-film-tag">In Development &middot; Short Film</span><h2 class="modal-film-title">Book of Beginnings</h2></div>
-        <button class="modal-close" onclick="closeModal()">&times;</button>
-      </div>
-      <div class="modal-body">
-        <p class="modal-synopsis">A short film in early development. Subscribe below to be among the first notified when this project moves into casting.</p>
-        <div class="notify-form-wrap">
-          <span class="modal-roles-label">Stay Updated</span>
-          <form id="form-book-of-beginnings" onsubmit="submitComingSoon(event,'Book of Beginnings')">
-            <div class="mf-row">
-              <div class="mf-field"><label>Name</label><input name="name" placeholder="Your name"></div>
-              <div class="mf-field"><label>Email *</label><input name="email" type="email" placeholder="your@email.com" required></div>
-            </div>
-            <label class="mf-check"><input type="checkbox" name="newsletter"> Subscribe to BLEUSKM casting updates</label>
-            <button type="submit" class="mf-submit">Keep Me Updated</button>
-          </form>
-          <div id="book-of-beginnings-success" class="mf-success">
-            <div class="mf-success-title">Got it.</div>
-            <p class="mf-success-text">We'll reach out when <strong>Book of Beginnings</strong> moves into casting.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- AS IS -->
-    <div id="modal-as-is" style="display:none">
-      <div class="modal-header-bar">
-        <div><span class="modal-film-tag">In Development &middot; Short / Feature</span><h2 class="modal-film-title">As Is</h2></div>
-        <button class="modal-close" onclick="closeModal()">&times;</button>
-      </div>
-      <div class="modal-body">
-        <p class="modal-synopsis">A project in early development. Subscribe below to be notified when casting opens.</p>
-        <div class="notify-form-wrap">
-          <span class="modal-roles-label">Stay Updated</span>
-          <form id="form-as-is" onsubmit="submitComingSoon(event,'As Is')">
-            <div class="mf-row">
-              <div class="mf-field"><label>Name</label><input name="name" placeholder="Your name"></div>
-              <div class="mf-field"><label>Email *</label><input name="email" type="email" placeholder="your@email.com" required></div>
-            </div>
-            <label class="mf-check"><input type="checkbox" name="newsletter"> Subscribe to BLEUSKM casting updates</label>
-            <button type="submit" class="mf-submit">Keep Me Updated</button>
-          </form>
-          <div id="as-is-success" class="mf-success">
-            <div class="mf-success-title">Got it.</div>
-            <p class="mf-success-text">We'll reach out when <strong>As Is</strong> moves into casting.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- LIMINAL COUNTY -->
-    <div id="modal-liminal-county" style="display:none">
-      <div class="modal-header-bar">
-        <div><span class="modal-film-tag">In Development &middot; Feature Film</span><h2 class="modal-film-title">Liminal County</h2></div>
-        <button class="modal-close" onclick="closeModal()">&times;</button>
-      </div>
-      <div class="modal-body">
-        <p class="modal-synopsis">A feature film in early development. Subscribe below to be notified when casting opens.</p>
-        <div class="notify-form-wrap">
-          <span class="modal-roles-label">Stay Updated</span>
-          <form id="form-liminal-county" onsubmit="submitComingSoon(event,'Liminal County')">
-            <div class="mf-row">
-              <div class="mf-field"><label>Name</label><input name="name" placeholder="Your name"></div>
-              <div class="mf-field"><label>Email *</label><input name="email" type="email" placeholder="your@email.com" required></div>
-            </div>
-            <label class="mf-check"><input type="checkbox" name="newsletter"> Subscribe to BLEUSKM casting updates</label>
-            <button type="submit" class="mf-submit">Keep Me Updated</button>
-          </form>
-          <div id="liminal-county-success" class="mf-success">
-            <div class="mf-success-title">Got it.</div>
-            <p class="mf-success-text">We'll reach out when <strong>Liminal County</strong> moves into casting.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- OF BLOOD AND DOMINION -->
-    <div id="modal-of-blood-and-dominion" style="display:none">
-      <div class="modal-header-bar">
-        <div><span class="modal-film-tag">In Development &middot; Feature Film</span><h2 class="modal-film-title">Of Blood and Dominion</h2></div>
-        <button class="modal-close" onclick="closeModal()">&times;</button>
-      </div>
-      <div class="modal-body">
-        <p class="modal-synopsis">A feature film in early development. Subscribe below to be notified when casting opens.</p>
-        <div class="notify-form-wrap">
-          <span class="modal-roles-label">Stay Updated</span>
-          <form id="form-of-blood-and-dominion" onsubmit="submitComingSoon(event,'Of Blood and Dominion')">
-            <div class="mf-row">
-              <div class="mf-field"><label>Name</label><input name="name" placeholder="Your name"></div>
-              <div class="mf-field"><label>Email *</label><input name="email" type="email" placeholder="your@email.com" required></div>
-            </div>
-            <label class="mf-check"><input type="checkbox" name="newsletter"> Subscribe to BLEUSKM casting updates</label>
-            <button type="submit" class="mf-submit">Keep Me Updated</button>
-          </form>
-          <div id="of-blood-and-dominion-success" class="mf-success">
-            <div class="mf-success-title">Got it.</div>
-            <p class="mf-success-text">We'll reach out when <strong>Of Blood and Dominion</strong> moves into casting.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
+    <a href="cart.html" style="display:block;background:#DAAF37;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;padding:14px;text-align:center;text-decoration:none">View Cart &amp; Checkout</a>
   </div>
 </div>
-
-<!-- CONTACT SIDE TAB -->
+<script>
+function toggleCartPopup() {
+  var popup = document.getElementById('cartPopup');
+  popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
+  if (popup.style.display === 'block') renderCartPopup();
+}
+function renderCartPopup() {
+  var cart = JSON.parse(sessionStorage.getItem('bleuskm_cart') || '[]');
+  var items = document.getElementById('cartPopupItems');
+  var empty = document.getElementById('cartPopupEmpty');
+  var footer = document.getElementById('cartPopupFooter');
+  var badge = document.getElementById('cartPopupBadge');
+  var total = cart.reduce(function(s,i){ return s + parseFloat(i.price)*i.quantity; }, 0);
+  var count = cart.reduce(function(s,i){ return s + i.quantity; }, 0);
+  if (count > 0) { badge.style.display = 'flex'; badge.textContent = count; } else { badge.style.display = 'none'; }
+  if (cart.length === 0) { items.innerHTML = ''; empty.style.display = 'block'; footer.style.display = 'none'; return; }
+  empty.style.display = 'none'; footer.style.display = 'block';
+  document.getElementById('cartPopupTotal').textContent = '$' + total.toFixed(2);
+  items.innerHTML = cart.map(function(item) {
+    return '<div style="display:grid;grid-template-columns:50px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid rgba(218,175,55,0.08)">' +
+      '<img src="' + (item.image||'') + '" style="width:50px;height:50px;object-fit:cover">' +
+      '<div><div style="font-family:League Spartan,sans-serif;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;color:#EADFCF;margin-bottom:2px">' + item.title + '</div>' +
+      '<div style="font-size:0.75rem;color:rgba(234,223,207,0.4)">' + (item.variantTitle !== 'Default Title' ? item.variantTitle : '') + ' &times;' + item.quantity + '</div></div>' +
+      '<span style="color:#DAAF37;font-size:0.85rem">$' + (parseFloat(item.price)*item.quantity).toFixed(2) + '</span></div>';
+  }).join('');
+}
+window.addEventListener('load', function() {
+  var cart = JSON.parse(sessionStorage.getItem('bleuskm_cart') || '[]');
+  var count = cart.reduce(function(s,i){ return s+i.quantity; }, 0);
+  var badge = document.getElementById('cartPopupBadge');
+  if (badge && count > 0) { badge.style.display = 'flex'; badge.textContent = count; }
+});
+document.addEventListener('click', function(e) {
+  var popup = document.getElementById('cartPopup');
+  var btn = document.getElementById('cartPopupBtn');
+  if (popup && btn && popup.style.display === 'block' && !popup.contains(e.target) && !btn.contains(e.target)) {
+    popup.style.display = 'none';
+  }
+});
+</script>
+<script>
+// Show cart button only if items in cart
+(function() {
+  var cart = JSON.parse(sessionStorage.getItem('bleuskm_cart') || '[]');
+  var count = cart.reduce(function(s,i){ return s+i.quantity; }, 0);
+  if (count > 0) {
+    var btn = document.getElementById('cartPopupBtn');
+    if (btn) btn.style.display = 'flex';
+    var badge = document.getElementById('cartPopupBadge');
+    if (badge) { badge.style.display = 'flex'; badge.textContent = count; }
+  }
+})();
+</script>
+<!-- SOCIAL MEDIA SIDE PULLOUT -->
 <div id="socialTab" onclick="toggleSocial()" style="position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:999;cursor:pointer;background:rgba(8,8,8,0.92);border:1px solid rgba(218,175,55,0.3);border-right:none;padding:14px 10px;backdrop-filter:blur(10px);transition:all 0.2s" onmouseover="openSocial()" onmouseout="scheduleSocialClose()">
   <span style="font-family:'League Spartan',sans-serif;font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37;writing-mode:vertical-rl;text-orientation:mixed;user-select:none">Contact</span>
 </div>
-<div id="socialPanel" style="position:fixed;right:-220px;top:50%;transform:translateY(-50%);z-index:998;background:rgba(8,8,8,0.95);border:1px solid rgba(218,175,55,0.2);border-right:none;padding:24px 20px;backdrop-filter:blur(16px);transition:right 0.3s ease;display:flex;flex-direction:column;gap:18px;min-width:200px" onmouseover="openSocial()" onmouseout="scheduleSocialClose()">
+
+<div id="socialPanel" style="position:fixed;right:-220px;top:50%;transform:translateY(-50%);z-index:998;background:rgba(8,8,8,0.95);border:1px solid rgba(218,175,55,0.2);border-right:none;padding:24px 20px;backdrop-filter:blur(16px);transition:right 0.3s ease;display:flex;flex-direction:column;gap:18px;min-width:180px" onmouseover="openSocial()" onmouseout="scheduleSocialClose()">
   <span style="font-family:'League Spartan',sans-serif;font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:rgba(218,175,55,0.5);display:block;margin-bottom:4px">Contact BLEUSKM</span>
+
   <a href="https://www.instagram.com/bleuskm.studios/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
     <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">Instagram</span>
   </a>
+
   <a href="https://www.threads.net/@bleuskm.studios" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 1.327-.012 2.5-.235 3.485-.67 1.15-.502 1.953-1.258 2.39-2.248.37-.849.507-1.804.395-2.858-.115-1.08-.478-1.964-1.076-2.623-.467-.518-1.067-.878-1.78-1.07.225 1.593-.044 2.89-.797 3.854-.868 1.107-2.166 1.664-3.858 1.657-1.358-.006-2.484-.44-3.253-1.255-.824-.874-1.128-2.07-.857-3.37.257-1.213.95-2.16 2.007-2.737.966-.527 2.17-.748 3.576-.655.492.031.97.085 1.43.16-.044-.28-.107-.533-.19-.757-.348-.95-1.048-1.45-2.08-1.485-.717-.024-1.396.175-2.02.591l-.923-1.668c.898-.573 1.92-.864 3.039-.864h.043c2.342.08 3.79 1.453 4.226 3.982.107.627.162 1.276.163 1.932.003.16.001.32-.004.48.76.348 1.39.844 1.876 1.48.782 1.02 1.222 2.342 1.308 3.932.1 1.862-.16 3.467-.77 4.77-.77 1.654-2.017 2.833-3.706 3.503C15.139 23.74 13.74 24 12.186 24zm.024-11.87c-.574 0-1.09.07-1.534.207-.742.224-1.18.698-1.302 1.408-.1.58.02 1.077.355 1.432.357.38.913.577 1.652.582 1.019.004 1.742-.31 2.15-.933.45-.686.516-1.72.193-3.074-.5-.093-1.006-.15-1.514-.182l-.003.56z"/></svg>
     <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">Threads</span>
   </a>
+
   <a href="https://www.tiktok.com/@bleuskm.studios" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.27 8.27 0 004.84 1.55V6.79a4.85 4.85 0 01-1.07-.1z"/></svg>
     <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">TikTok</span>
   </a>
+
   <a href="https://www.youtube.com/@BLEUSKMStudios" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
     <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">YouTube</span>
   </a>
-  <a href="mailto:casting@bleuskm.com" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+  <a href="mailto:studio@bleuskm.com" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg>
-    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">casting@bleuskm.com</span>
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">studio@bleuskm.com</span>
   </a>
 </div>
 
+<script>
+var socialCloseTimer;
+function openSocial() {
+  clearTimeout(socialCloseTimer);
+  document.getElementById('socialPanel').style.right = '0';
+}
+function scheduleSocialClose() {
+  socialCloseTimer = setTimeout(function() {
+    document.getElementById('socialPanel').style.right = '-220px';
+  }, 400);
+}
+function toggleSocial() {
+  var p = document.getElementById('socialPanel');
+  p.style.right = p.style.right === '0px' ? '-220px' : '0';
+}
+</script>
+
 <style>
-/* CONTACT TAB MOBILE */
+/* ── CONTACT TAB MOBILE ── */
+@media (max-width: 767px) {
+  #socialTab {
+    padding: 10px 14px !important;
+    top: 50% !important;
+  }
+  #socialTab span {
+    writing-mode: horizontal-tb !important;
+    text-orientation: initial !important;
+    font-size: 0.55rem !important;
+    letter-spacing: 2px !important;
+  }
+}
+</style>
+<script>
+(function() {
+  var tab = document.getElementById('socialTab');
+  var panel = document.getElementById('socialPanel');
+  if (!tab || !panel) return;
+  function isMobile() { return window.innerWidth <= 767; }
+  tab.onclick = function(e) {
+    e.stopPropagation();
+    panel.style.right = panel.style.right === '0px' ? '-220px' : '0';
+  };
+  tab.onmouseover = function() { if (!isMobile() && typeof openSocial === 'function') openSocial(); };
+  tab.onmouseout  = function() { if (!isMobile() && typeof scheduleSocialClose === 'function') scheduleSocialClose(); };
+  panel.onmouseover = function() { if (!isMobile() && typeof openSocial === 'function') openSocial(); };
+  panel.onmouseout  = function() { if (!isMobile() && typeof scheduleSocialClose === 'function') scheduleSocialClose(); };
+  document.addEventListener('click', function(e) {
+    if (isMobile() && panel.style.right === '0px' && !panel.contains(e.target) && !tab.contains(e.target)) {
+      panel.style.right = '-220px';
+    }
+  });
+})();
+</script>
+
+<!-- ═══════════════════ CASTING MODALS ═══════════════════ -->
+<style>
+.cm-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:3000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.cm-overlay.active{display:flex}
+.cm-box{background:#0d0d0d;border:1px solid rgba(218,175,55,0.18);max-width:900px;width:100%;max-height:92vh;overflow-y:auto;position:relative;display:flex;flex-direction:column}
+.cm-tabs{display:flex;border-bottom:1px solid rgba(218,175,55,0.12);position:sticky;top:0;background:#0d0d0d;z-index:10;flex-shrink:0}
+.cm-tab{flex:1;padding:18px 24px;font-family:'League Spartan',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(234,223,207,0.35);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:color 0.2s,border-color 0.2s;text-align:center}
+.cm-tab.active{color:var(--gold,#DAAF37);border-bottom-color:var(--gold,#DAAF37)}
+.cm-close{position:absolute;top:14px;right:18px;background:none;border:none;color:rgba(234,223,207,0.3);font-size:1.5rem;cursor:pointer;z-index:20;line-height:1;transition:color 0.2s}
+.cm-close:hover{color:#EADFCF}
+.cm-panel{display:none;padding:32px 40px 40px}
+.cm-panel.active{display:block}
+
+/* DETAILS PANEL */
+.cm-status-tag{display:inline-block;font-family:'League Spartan',sans-serif;font-size:0.55rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;padding:5px 12px;margin-bottom:20px;background:#DAAF37;color:#000}
+.cm-film-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(1.8rem,4vw,3rem);letter-spacing:3px;text-transform:uppercase;color:#EADFCF;line-height:1;margin-bottom:8px}
+.cm-film-meta{font-family:'League Spartan',sans-serif;font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:rgba(218,175,55,0.5);margin-bottom:28px}
+.cm-logline{font-family:'Kalnia',serif;font-size:1.05rem;line-height:1.75;color:rgba(234,223,207,0.75);font-style:italic;margin-bottom:32px;padding-bottom:28px;border-bottom:1px solid rgba(218,175,55,0.1)}
+.cm-roles-label{font-family:'League Spartan',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:rgba(218,175,55,0.5);display:block;margin-bottom:20px}
+.cm-role{padding:20px 0;border-bottom:1px solid rgba(218,175,55,0.07)}
+.cm-role-name{font-family:'League Spartan',sans-serif;font-weight:900;font-size:1rem;letter-spacing:1px;text-transform:uppercase;color:#DAAF37;margin-bottom:5px}
+.cm-role-meta{font-family:'League Spartan',sans-serif;font-size:0.52rem;letter-spacing:2px;text-transform:uppercase;color:rgba(218,175,55,0.4);margin-bottom:8px}
+.cm-role-desc{font-size:0.87rem;color:rgba(234,223,207,0.55);line-height:1.65}
+.cm-breakdown-toggle{display:flex;align-items:center;gap:6px;margin-top:10px;font-family:'League Spartan',sans-serif;font-size:0.55rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(218,175,55,0.5);cursor:pointer;border:none;background:none;padding:0;transition:color 0.2s}
+.cm-breakdown-toggle:hover{color:#DAAF37}
+.cm-breakdown-content{display:none;margin-top:12px;padding:14px 18px;background:rgba(218,175,55,0.04);border-left:2px solid rgba(218,175,55,0.2);font-size:0.83rem;color:rgba(234,223,207,0.5);line-height:1.7}
+.cm-apply-cta{margin-top:36px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.cm-apply-btn{background:#DAAF37;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;padding:16px 32px;border:none;cursor:pointer;transition:background 0.2s}
+.cm-apply-btn:hover{background:#f0c84a}
+.cm-crew-link{font-family:'League Spartan',sans-serif;font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:rgba(218,175,55,0.5);text-decoration:none;transition:color 0.2s}
+.cm-crew-link:hover{color:#DAAF37}
+
+/* APPLY PANEL */
+.cm-form-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:1.2rem;letter-spacing:2px;text-transform:uppercase;color:#DAAF37;margin-bottom:4px}
+.cm-form-sub{font-size:0.82rem;color:rgba(234,223,207,0.35);line-height:1.6;margin-bottom:28px}
+.cm-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.cm-field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.cm-field label{font-family:'League Spartan',sans-serif;font-size:0.56rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(218,175,55,0.55)}
+.cm-field input,.cm-field select,.cm-field textarea{background:rgba(255,255,255,0.04);border:1px solid rgba(218,175,55,0.15);color:#EADFCF;padding:12px 16px;font-family:'Red Hat Display',sans-serif;font-size:0.87rem;transition:border-color 0.2s;width:100%;border-radius:0;box-sizing:border-box}
+.cm-field input:focus,.cm-field select:focus,.cm-field textarea:focus{outline:none;border-color:rgba(218,175,55,0.5);background:rgba(255,255,255,0.06)}
+.cm-field input::placeholder,.cm-field textarea::placeholder{color:rgba(234,223,207,0.18)}
+.cm-field select option{background:#111;color:#EADFCF}
+.cm-check{display:flex;align-items:flex-start;gap:10px;font-size:0.8rem;color:rgba(234,223,207,0.4);line-height:1.5;margin-bottom:12px;cursor:pointer}
+.cm-check input[type=checkbox]{margin-top:2px;accent-color:#DAAF37;flex-shrink:0}
+.cm-submit{width:100%;height:54px;background:#DAAF37;border:none;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.82rem;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:background 0.2s;margin-top:8px}
+.cm-submit:hover{background:#f0c84a}
+.cm-submit:disabled{background:rgba(218,175,55,0.35);cursor:not-allowed}
+.cm-disclaimer{text-align:center;font-size:0.72rem;color:rgba(234,223,207,0.25);margin-top:14px;line-height:1.5}
+.cm-success{display:none;text-align:center;padding:60px 20px}
+.cm-success-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:1.4rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37;margin-bottom:12px}
+.cm-success-text{font-size:0.87rem;color:rgba(234,223,207,0.4);line-height:1.65}
+
+/* NOTIFY / COMING SOON PANELS */
+.cm-notify-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:1.1rem;letter-spacing:2px;text-transform:uppercase;color:#DAAF37;margin-bottom:6px}
+.cm-notify-sub{font-size:0.83rem;color:rgba(234,223,207,0.35);margin-bottom:28px;line-height:1.6}
+
+/* CONTACT TAB FIX */
+#socialPanel{overflow:hidden!important}
 @media(max-width:767px){
-  #socialPanel{right:-260px!important;top:auto!important;bottom:0!important;transform:none!important;min-width:220px!important;border-radius:4px 0 0 0}
-  #socialTab{top:auto!important;bottom:80px!important;transform:none!important;border-radius:4px 0 0 4px}
+  #socialPanel{right:-260px!important;top:auto!important;bottom:0!important;transform:none!important;min-width:220px!important;max-width:220px!important;border-radius:4px 0 0 0!important}
+  #socialTab{top:auto!important;bottom:80px!important;transform:none!important;border-radius:4px 0 0 4px!important}
   #socialTab span{writing-mode:horizontal-tb!important;text-orientation:initial!important;font-size:0.5rem!important}
+  .cm-box{max-height:96vh}
+  .cm-panel{padding:20px 20px 32px}
+  .cm-row{grid-template-columns:1fr}
 }
 </style>
 
-<script>
-var socialCloseTimer;
-function openSocial(){clearTimeout(socialCloseTimer);document.getElementById('socialPanel').style.right='0'}
-function scheduleSocialClose(){socialCloseTimer=setTimeout(function(){document.getElementById('socialPanel').style.right='-220px'},400)}
-function toggleSocial(){var p=document.getElementById('socialPanel');var isMob=window.innerWidth<=767;var hidden=isMob?'-260px':'-220px';p.style.right=p.style.right==='0px'?hidden:'0'}
-document.addEventListener('click',function(e){var p=document.getElementById('socialPanel');if(p.style.right==='0px'&&!p.contains(e.target)&&!document.getElementById('socialTab').contains(e.target)){p.style.right=window.innerWidth<=767?'-260px':'-220px'}});
-</script>
+<div id="cmOverlay" class="cm-overlay" onclick="cmCloseOnOverlay(event)">
+<div class="cm-box" id="cmBox">
+  <button class="cm-close" onclick="cmClose()">&times;</button>
+  <div class="cm-tabs">
+    <button class="cm-tab active" id="cmTabDetails" onclick="cmTab('details')">Film Details</button>
+    <button class="cm-tab" id="cmTabApply" onclick="cmTab('apply')">Apply Now</button>
+  </div>
+
+  <!-- DETAILS PANEL -->
+  <div class="cm-panel active" id="cmPanelDetails">
+    <div id="cmDetailsContent"></div>
+  </div>
+
+  <!-- APPLY PANEL -->
+  <div class="cm-panel" id="cmPanelApply">
+    <div id="cmApplyContent"></div>
+  </div>
+</div>
+</div>
 
 <script>
-function openModal(filmId){
-  var overlay=document.getElementById('castingModalOverlay');
-  document.querySelectorAll('#castingModal>div').forEach(function(b){b.style.display='none'});
-  var t=document.getElementById('modal-'+filmId);
-  if(t){t.style.display='block';overlay.classList.add('active');document.body.style.overflow='hidden';document.getElementById('castingModal').scrollTop=0}
+/* ══════════ FILM DATA ══════════ */
+var CM_FILMS = {
+  'final-hand': {
+    status: 'Casting Open · May 2026',
+    title: 'The Final Hand',
+    meta: 'Short Film · Pre-Production · Director: Zaria Lashae',
+    logline: 'During a game of blackjack, a gambler attempts to outplay High John the Conqueror by mimicking his every move, only to realize too late that the game is testing something deeper than skill—and that true power cannot be learned through observation alone.',
+    formTitle: 'The Final Hand',
+    formSub: 'Casting open — Apply below to be considered.',
+    roles: [
+      { name: 'High John', meta: 'Lead · Black American Male · 35–60', desc: 'The Conqueror. High John is calm, observant, and deeply self-assured — the kind of man who carries quiet authority without ever demanding it. He is the dealer, but more than that: he is the House.', breakdown: 'Physicality: Commanding presence, measured movement. Tone: Still, deliberate. Speak as if every word has already been weighed. Think: elegance over intensity — he doesn\'t need to raise his voice.' },
+      { name: 'The Player', meta: 'Lead · Caucasian Male · 25–40', desc: 'The Challenger. A confident, intelligent man who believes power can be decoded through observation — and spends the film learning he was wrong.', breakdown: 'Arc: Starts cocky, ends shaken. Must carry both charm and fragility without losing credibility. The audience should root for him before the film is done rooting against him.' },
+      { name: 'The Stranger', meta: 'Supporting · Any Ethnicity Male · 25–40', desc: 'The Messenger. Appears briefly at the start of the film — a quiet gatekeeper who sets everything in motion with a single gesture.', breakdown: 'Small role, large presence. One or two scenes. Must convey weight without words.' },
+      { name: 'Waitress / Bartender', meta: 'Background · Female · 25–45', desc: '1–2 background roles set within a period backroom gambling parlor.', breakdown: 'Period-appropriate appearance. Comfortable in atmospheric, non-speaking background role.' },
+      { name: 'Table Patrons', meta: 'Background · Male or Female · 21+', desc: '3–5 seated background players for the gambling parlor environment.', breakdown: 'No lines. Must be comfortable with a slow, atmospheric set. Period-conscious look preferred.' },
+      { name: 'Couple', meta: 'Background · Black Male + Black Female · 21+', desc: 'One couple in the background of the gambling parlor — two roles, cast together.', breakdown: 'Cast as a pair. Natural chemistry preferred. No lines.' }
+    ],
+    type: 'casting',
+    roleOptions: ['High John (Lead)', 'The Player (Lead)', 'The Stranger (Supporting)', 'Waitress / Bartender (Background)', 'Table Patron (Background)', 'Couple — Background (2 roles)']
+  },
+  'love-me-like-this': {
+    status: 'Casting Opens Soon',
+    title: 'Love Me Like This',
+    meta: 'Short Film · Pre-Production',
+    logline: 'A short film exploring intimacy, vulnerability, and the complexity of loving without conditions.',
+    type: 'notify'
+  },
+  '15th-hour': {
+    status: 'In Development',
+    title: 'The 15th Hour',
+    meta: 'Short Film · In Development',
+    logline: 'A psychological short film exploring time distortion, ego death, and awakening.',
+    type: 'notify'
+  },
+  'overstood': {
+    status: 'In Development',
+    title: 'Overstood',
+    meta: 'Short Film · In Development',
+    logline: 'A character-driven short film confronting perception, identity, and inner truth.',
+    type: 'notify'
+  },
+  'book-of-beginnings': {
+    status: 'In Development',
+    title: 'Book of Beginnings',
+    meta: 'Short Film · In Development',
+    logline: 'A short film in early development.',
+    type: 'soon'
+  },
+  'as-is': {
+    status: 'In Development',
+    title: 'As Is',
+    meta: 'Short / Feature · In Development',
+    logline: 'A project in early development.',
+    type: 'soon'
+  },
+  'liminal-county': {
+    status: 'In Development',
+    title: 'Liminal County',
+    meta: 'Feature Film · In Development',
+    logline: 'A feature film in early development.',
+    type: 'soon'
+  },
+  'of-blood-and-dominion': {
+    status: 'In Development',
+    title: 'Of Blood and Dominion',
+    meta: 'Feature Film · In Development',
+    logline: 'A feature film in early development.',
+    type: 'soon'
+  }
+};
+
+var cmCurrentFilm = null;
+
+function cmOpen(filmId) {
+  cmCurrentFilm = filmId;
+  var film = CM_FILMS[filmId];
+  if (!film) return;
+  cmTab('details');
+  cmRenderDetails(film);
+  cmRenderApply(film);
+  document.getElementById('cmOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('cmBox').scrollTop = 0;
 }
-function closeModal(){document.getElementById('castingModalOverlay').classList.remove('active');document.body.style.overflow=''}
-function closeModalOnOverlay(e){if(e.target===document.getElementById('castingModalOverlay'))closeModal()}
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal()});
-(function(){var film=sessionStorage.getItem('openModal');if(film){sessionStorage.removeItem('openModal');openModal(film)}})();
-</script>
+function cmClose() {
+  document.getElementById('cmOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+function cmCloseOnOverlay(e) { if (e.target === document.getElementById('cmOverlay')) cmClose(); }
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') cmClose(); });
 
-<script>
-var AIRTABLE_TOKEN='pat4zUowRMotxgqVA.415605c7a68e67cff288f42f8c2b75f48653ef33d98f6b895bd3a4da59931fb4';
-var AIRTABLE_BASE='appXf1NxIVhYbuV4j';
+function cmTab(which) {
+  document.getElementById('cmTabDetails').classList.toggle('active', which==='details');
+  document.getElementById('cmTabApply').classList.toggle('active', which==='apply');
+  document.getElementById('cmPanelDetails').classList.toggle('active', which==='details');
+  document.getElementById('cmPanelApply').classList.toggle('active', which==='apply');
+  document.getElementById('cmBox').scrollTop = 0;
+}
+
+function cmToggleBreakdown(btn) {
+  var c = btn.nextElementSibling;
+  var open = c.style.display === 'block';
+  c.style.display = open ? 'none' : 'block';
+  btn.querySelector('span').textContent = open ? '▾' : '▴';
+}
+
+function cmRenderDetails(film) {
+  var rolesHTML = '';
+  if (film.roles) {
+    film.roles.forEach(function(r) {
+      rolesHTML += '<div class="cm-role">' +
+        '<div class="cm-role-name">' + r.name + '</div>' +
+        '<div class="cm-role-meta">' + r.meta + '</div>' +
+        '<div class="cm-role-desc">' + r.desc + '</div>';
+      if (r.breakdown) {
+        rolesHTML += '<button class="cm-breakdown-toggle" onclick="cmToggleBreakdown(this)">Character Breakdown <span>▾</span></button>' +
+          '<div class="cm-breakdown-content">' + r.breakdown + '</div>';
+      }
+      rolesHTML += '</div>';
+    });
+  }
+
+  var applyOrNotify = '';
+  if (film.type === 'casting') {
+    applyOrNotify = '<div class="cm-apply-cta">' +
+      '<button class="cm-apply-btn" onclick="cmTab(\'apply\')">Apply for This Film &rarr;</button>' +
+      '<a href="crew-application.html" class="cm-crew-link">Not an actor? Apply for crew &rarr;</a>' +
+      '</div>';
+  } else if (film.type === 'notify') {
+    applyOrNotify = '<div class="cm-apply-cta"><button class="cm-apply-btn" onclick="cmTab(\'apply\')">Get Notified When Casting Opens &rarr;</button></div>';
+  } else {
+    applyOrNotify = '<div class="cm-apply-cta"><button class="cm-apply-btn" onclick="cmTab(\'apply\')">Stay Updated &rarr;</button></div>';
+  }
+
+  document.getElementById('cmDetailsContent').innerHTML =
+    '<div class="cm-status-tag">' + film.status + '</div>' +
+    '<h2 class="cm-film-title">' + film.title + '</h2>' +
+    '<div class="cm-film-meta">' + film.meta + '</div>' +
+    '<p class="cm-logline">' + film.logline + '</p>' +
+    (film.roles ? '<span class="cm-roles-label">Roles Currently Casting</span>' + rolesHTML : '') +
+    applyOrNotify;
+}
+
+function cmRenderApply(film) {
+  var html = '';
+  var successId = 'cmSuccess_' + (cmCurrentFilm || 'film');
+
+  if (film.type === 'casting') {
+    var opts = film.roleOptions.map(function(r){ return '<option>' + r + '</option>'; }).join('');
+    html = '<h3 class="cm-form-title">' + film.title + '</h3>' +
+      '<p class="cm-form-sub">' + film.formSub + '</p>' +
+      '<form id="cmForm" onsubmit="cmSubmitCasting(event,\'' + film.title + '\')">' +
+      '<div class="cm-row"><div class="cm-field"><label>Full Name *</label><input name="name" placeholder="Your full name" required></div>' +
+      '<div class="cm-field"><label>Email *</label><input name="email" type="email" placeholder="name@email.com" required></div></div>' +
+      '<div class="cm-row"><div class="cm-field"><label>Phone</label><input name="phone" placeholder="5551234567"></div>' +
+      '<div class="cm-field"><label>Age</label><input name="age" type="number" min="18" placeholder="Age"></div></div>' +
+      '<div class="cm-row"><div class="cm-field"><label>City / Location *</label><input name="location" placeholder="City, State" required></div>' +
+      '<div class="cm-field"><label>Role Applying For *</label><select name="role" required><option value="">Select role</option>' + opts + '</select></div></div>' +
+      '<div class="cm-field"><label>Reel / Demo Link</label><input name="reel" placeholder="https://vimeo.com/yourwork"></div>' +
+      '<div class="cm-field"><label>Headshot + Resume Link *</label><input name="files" placeholder="Google Drive or Dropbox link to your headshot &amp; resume" required></div>' +
+      '<div class="cm-field"><label>Tell Us About Yourself &amp; Why You\'re Right for This Role *</label><textarea name="about" rows="5" placeholder="Acting background, relevant experience, why this role..." required></textarea></div>' +
+      '<label class="cm-check"><input type="checkbox" name="newsletter"> Subscribe to casting call updates</label>' +
+      '<button type="submit" class="cm-submit">Submit Audition Materials</button>' +
+      '<p class="cm-disclaimer">All submissions are confidential and reviewed by the director. You will be contacted if selected for a callback.</p>' +
+      '</form>' +
+      '<div id="' + successId + '" class="cm-success"><div class="cm-success-title">Received.</div><p class="cm-success-text">We\'ve received your submission for <strong>' + film.title + '</strong>. Our casting team reviews every application personally — we\'ll be in touch.</p></div>';
+  } else if (film.type === 'notify') {
+    html = '<h3 class="cm-notify-title">Get Notified When Casting Opens</h3>' +
+      '<p class="cm-notify-sub">Casting for <strong>' + film.title + '</strong> hasn\'t opened yet. Drop your info below and we\'ll reach out when it does.</p>' +
+      '<form id="cmForm" onsubmit="cmSubmitNotify(event,\'' + film.title + '\')">' +
+      '<div class="cm-row"><div class="cm-field"><label>Name</label><input name="name" placeholder="Your name"></div>' +
+      '<div class="cm-field"><label>Email *</label><input name="email" type="email" placeholder="name@email.com" required></div></div>' +
+      '<div class="cm-field"><label>Role Interest</label><input name="role" placeholder="Lead, supporting, any role..."></div>' +
+      '<label class="cm-check"><input type="checkbox" name="newsletter"> Subscribe to BLEUSKM casting updates</label>' +
+      '<button type="submit" class="cm-submit">Notify Me When Casting Opens</button>' +
+      '</form>' +
+      '<div id="' + successId + '" class="cm-success"><div class="cm-success-title">You\'re on the list.</div><p class="cm-success-text">We\'ll notify you when casting opens for <strong>' + film.title + '</strong>.</p></div>';
+  } else {
+    html = '<h3 class="cm-notify-title">Stay Updated</h3>' +
+      '<p class="cm-notify-sub"><strong>' + film.title + '</strong> is in early development. Be the first to know when casting opens.</p>' +
+      '<form id="cmForm" onsubmit="cmSubmitSoon(event,\'' + film.title + '\')">' +
+      '<div class="cm-row"><div class="cm-field"><label>Name</label><input name="name" placeholder="Your name"></div>' +
+      '<div class="cm-field"><label>Email *</label><input name="email" type="email" placeholder="name@email.com" required></div></div>' +
+      '<label class="cm-check"><input type="checkbox" name="newsletter"> Subscribe to BLEUSKM casting updates</label>' +
+      '<button type="submit" class="cm-submit">Keep Me Updated</button>' +
+      '</form>' +
+      '<div id="' + successId + '" class="cm-success"><div class="cm-success-title">Got it.</div><p class="cm-success-text">We\'ll reach out when <strong>' + film.title + '</strong> moves into casting.</p></div>';
+  }
+  document.getElementById('cmApplyContent').innerHTML = html;
+}
+
+/* ══════════ AIRTABLE + BREVO ══════════ */
+var AT_TOKEN='pat4zUowRMotxgqVA.415605c7a68e67cff288f42f8c2b75f48653ef33d98f6b895bd3a4da59931fb4';
+var AT_BASE='appXf1NxIVhYbuV4j';
 var TBL_CASTING='tblLGmXULNb9ebFxH';
 var TBL_NEWSLETTER='tblSMb3y7vrvjbONx';
 var TBL_NOTIFY='tblcSHay5dfYcbDKC';
-var BREVO_KEY='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';
+var BREVO='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';
 
-async function sendToAirtable(tableId,fields){try{var r=await fetch('https://api.airtable.com/v0/'+AIRTABLE_BASE+'/'+tableId,{method:'POST',headers:{'Authorization':'Bearer '+AIRTABLE_TOKEN,'Content-Type':'application/json'},body:JSON.stringify({fields:fields})});return await r.json()}catch(e){console.error('Airtable:',e)}}
-async function sendToBrevo(listId,email,name,attrs){try{var r=await fetch('https://api.brevo.com/v3/contacts',{method:'POST',headers:{'api-key':BREVO_KEY,'Content-Type':'application/json'},body:JSON.stringify({email:email,attributes:Object.assign({FIRSTNAME:name},attrs||{}),listIds:[listId],updateEnabled:true})});return await r.json()}catch(e){console.error('Brevo:',e)}}
-async function sendEmail(templateId,email,name,params){try{var r=await fetch('https://api.brevo.com/v3/smtp/email',{method:'POST',headers:{'api-key':BREVO_KEY,'Content-Type':'application/json'},body:JSON.stringify({sender:{email:'casting@bleuskm.com',name:'BLEUSKM Studios'},to:[{email:email,name:name}],templateId:templateId,params:params||{}})});return await r.json()}catch(e){console.error('Brevo email:',e)}}
+async function atSend(tbl,fields){try{await fetch('https://api.airtable.com/v0/'+AT_BASE+'/'+tbl,{method:'POST',headers:{'Authorization':'Bearer '+AT_TOKEN,'Content-Type':'application/json'},body:JSON.stringify({fields:fields})})}catch(e){console.error(e)}}
+async function brevoAdd(list,email,name,attrs){try{await fetch('https://api.brevo.com/v3/contacts',{method:'POST',headers:{'api-key':BREVO,'Content-Type':'application/json'},body:JSON.stringify({email:email,attributes:Object.assign({FIRSTNAME:name},attrs||{}),listIds:[list],updateEnabled:true})})}catch(e){console.error(e)}}
+async function brevoEmail(tpl,email,name,params){try{await fetch('https://api.brevo.com/v3/smtp/email',{method:'POST',headers:{'api-key':BREVO,'Content-Type':'application/json'},body:JSON.stringify({sender:{email:'casting@bleuskm.com',name:'BLEUSKM Studios'},to:[{email:email,name:name}],templateId:tpl,params:params||{}})})}catch(e){console.error(e)}}
 
-async function submitCasting(e,filmTitle){
-  e.preventDefault();var form=e.target;var btn=form.querySelector('button[type="submit"]');
-  btn.textContent='Submitting...';btn.disabled=true;
-  var name=form.querySelector('[name="name"]').value.trim();
-  var email=form.querySelector('[name="email"]').value.trim();
-  var phone=(form.querySelector('[name="phone"]')||{}).value||'';
-  var age=(form.querySelector('[name="age"]')||{}).value||'';
-  var location=(form.querySelector('[name="location"]')||{}).value||'';
-  var role=(form.querySelector('[name="role"]')||{}).value||'';
-  var reel=(form.querySelector('[name="reel"]')||{}).value||'';
-  var headshot=(form.querySelector('[name="files"]')||{}).value||'';
-  var about=(form.querySelector('[name="about"]')||{}).value||'';
-  var nlCheck=form.querySelector('[name="newsletter"]');
+function cmShowSuccess() {
+  var form = document.getElementById('cmForm');
+  var sId = 'cmSuccess_' + cmCurrentFilm;
+  if (form) form.style.display = 'none';
+  var s = document.getElementById(sId);
+  if (s) s.style.display = 'block';
+}
+
+async function cmSubmitCasting(e, filmTitle) {
+  e.preventDefault();
+  var form = e.target;
+  var btn = form.querySelector('.cm-submit');
+  btn.textContent = 'Submitting...'; btn.disabled = true;
+  var g = function(n){ var el=form.querySelector('[name="'+n+'"]'); return el ? el.value.trim() : ''; };
+  var name=g('name'), email=g('email'), phone=g('phone'), age=g('age'), loc=g('location'), role=g('role'), reel=g('reel'), files=g('files'), about=g('about');
+  var nl = form.querySelector('[name="newsletter"]');
   var fields={'Name':name,'Email':email,'Film':filmTitle,'Role':role,'Casting Status':'Reviewing'};
-  if(phone)fields['Phone']=phone;if(age)fields['Age']=parseFloat(age);if(location)fields['Location']=location;if(reel)fields['Reel/Portfolio Link']=reel;if(headshot)fields['Headshot']=headshot;if(about)fields['About']=about;
-  try{
-    await sendToAirtable(TBL_CASTING,fields);
-    await sendToBrevo(4,email,name,{FILM:filmTitle,ROLE:role});
-    await sendEmail(1,email,name,{FIRSTNAME:name,FILM:filmTitle,ROLE:role});
-    if(nlCheck&&nlCheck.checked){await sendToAirtable(TBL_NEWSLETTER,{'Name':name,'Email':email});await sendToBrevo(2,email,name,{})}
-    var filmId=form.id.replace('form-','');form.style.display='none';
-    var s=document.getElementById(filmId+'-success');if(s)s.style.display='block';
-  }catch(err){console.error(err);btn.textContent='Submit Audition Materials';btn.disabled=false;alert('Submission failed. Please try again.')}
+  if(phone)fields['Phone']=phone; if(age)fields['Age']=parseFloat(age); if(loc)fields['Location']=loc;
+  if(reel)fields['Reel/Portfolio Link']=reel; if(files)fields['Headshot']=files; if(about)fields['About']=about;
+  try {
+    await atSend(TBL_CASTING, fields);
+    await brevoAdd(4,email,name,{FILM:filmTitle,ROLE:role});
+    await brevoEmail(1,email,name,{FIRSTNAME:name,FILM:filmTitle,ROLE:role});
+    if(nl&&nl.checked){await atSend(TBL_NEWSLETTER,{'Name':name,'Email':email});await brevoAdd(2,email,name,{});}
+    cmShowSuccess();
+  } catch(err) { console.error(err); btn.textContent='Submit Audition Materials'; btn.disabled=false; alert('Submission failed. Please try again.'); }
 }
 
-async function submitNotify(e,filmTitle){
-  e.preventDefault();var form=e.target;var btn=form.querySelector('button[type="submit"]');
-  btn.textContent='Submitting...';btn.disabled=true;
+async function cmSubmitNotify(e, filmTitle) {
+  e.preventDefault();
+  var form = e.target; var btn = form.querySelector('.cm-submit');
+  btn.textContent='Submitting...'; btn.disabled=true;
   var name=(form.querySelector('[name="name"]')||{}).value||'';
   var email=form.querySelector('[name="email"]').value.trim();
-  var roleInt=(form.querySelector('[name="role"]')||{}).value||'';
-  var nlCheck=form.querySelector('[name="newsletter"]');
+  var role=(form.querySelector('[name="role"]')||{}).value||'';
+  var nl=form.querySelector('[name="newsletter"]');
   var fields={'Name':name,'Email':email,'Film':filmTitle,'Type':'Casting Soon'};
-  if(roleInt)fields['Role Interested In']=roleInt;
-  try{
-    await sendToAirtable(TBL_NOTIFY,fields);
-    await sendToBrevo(2,email,name,{FILM:filmTitle});
-    await sendEmail(4,email,name,{FIRSTNAME:name,FILM:filmTitle});
-    if(nlCheck&&nlCheck.checked){await sendToAirtable(TBL_NEWSLETTER,{'Name':name,'Email':email});await sendToBrevo(2,email,name,{})}
-    form.style.display='none';var filmId=form.id.replace('form-','');
-    var s=document.getElementById(filmId+'-success');if(s)s.style.display='block';
-  }catch(err){console.error(err);btn.textContent='Notify Me When Casting Opens';btn.disabled=false;alert('Submission failed. Please try again.')}
+  if(role)fields['Role Interested In']=role;
+  try {
+    await atSend(TBL_NOTIFY,fields);
+    await brevoAdd(2,email,name,{FILM:filmTitle});
+    await brevoEmail(4,email,name,{FIRSTNAME:name,FILM:filmTitle});
+    if(nl&&nl.checked){await atSend(TBL_NEWSLETTER,{'Name':name,'Email':email});await brevoAdd(2,email,name,{});}
+    cmShowSuccess();
+  } catch(err) { console.error(err); btn.textContent='Notify Me When Casting Opens'; btn.disabled=false; alert('Submission failed.'); }
 }
 
-async function submitComingSoon(e,filmTitle){
-  e.preventDefault();var form=e.target;var btn=form.querySelector('button[type="submit"]');
-  btn.textContent='Submitting...';btn.disabled=true;
+async function cmSubmitSoon(e, filmTitle) {
+  e.preventDefault();
+  var form=e.target; var btn=form.querySelector('.cm-submit');
+  btn.textContent='Submitting...'; btn.disabled=true;
   var name=(form.querySelector('[name="name"]')||{}).value||'';
   var email=form.querySelector('[name="email"]').value.trim();
-  var nlCheck=form.querySelector('[name="newsletter"]');
-  var fields={'Name':name,'Email':email,'Film':filmTitle,'Type':'Coming Soon'};
-  try{
-    await sendToAirtable(TBL_NOTIFY,fields);
-    await sendToBrevo(2,email,name,{FILM:filmTitle});
-    if(nlCheck&&nlCheck.checked){await sendToAirtable(TBL_NEWSLETTER,{'Name':name,'Email':email})}
-    form.style.display='none';var filmId=form.id.replace('form-','');
-    var s=document.getElementById(filmId+'-success');if(s)s.style.display='block';
-  }catch(err){console.error(err);btn.textContent='Keep Me Updated';btn.disabled=false;alert('Submission failed. Please try again.')}
+  var nl=form.querySelector('[name="newsletter"]');
+  try {
+    await atSend(TBL_NOTIFY,{'Name':name,'Email':email,'Film':filmTitle,'Type':'Coming Soon'});
+    await brevoAdd(2,email,name,{FILM:filmTitle});
+    if(nl&&nl.checked){await atSend(TBL_NEWSLETTER,{'Name':name,'Email':email});}
+    cmShowSuccess();
+  } catch(err) { console.error(err); btn.textContent='Keep Me Updated'; btn.disabled=false; alert('Submission failed.'); }
 }
 
-async function submitNewsletter(e){
-  e.preventDefault();var form=e.target;
-  var email=(form.querySelector('[name="email"]')||{}).value.trim();
-  var name=(form.querySelector('[name="name"]')||{}).value||'';
-  if(!email)return;
-  try{
-    await sendToAirtable(TBL_NEWSLETTER,{'Name':name,'Email':email});
-    await sendToBrevo(2,email,name,{});
-    form.style.display='none';document.getElementById('nlSuccess').style.display='block';
-  }catch(err){console.error(err)}
-}
+/* Open modal from sessionStorage (links from echos/other pages) */
+(function(){
+  var film = sessionStorage.getItem('openModal');
+  if(film){ sessionStorage.removeItem('openModal'); setTimeout(function(){ cmOpen(film); }, 300); }
+})();
+
+/* Override the old hero button onclick */
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('[onclick*="openModal"]').forEach(function(el){
+    var match = el.getAttribute('onclick').match(/openModal\('([^']+)'\)/);
+    if(match){ el.removeAttribute('onclick'); el.addEventListener('click', function(e){ e.preventDefault(); cmOpen(match[1]); }); }
+  });
+});
+
+/* Contact tab fix */
+(function(){
+  var tab=document.getElementById('socialTab');
+  var panel=document.getElementById('socialPanel');
+  if(!tab||!panel)return;
+  function hid(){return window.innerWidth<=767?'-260px':'-220px'}
+  tab.onclick=function(e){e.stopPropagation();panel.style.right=panel.style.right==='0px'?hid():'0'};
+  tab.onmouseover=function(){if(window.innerWidth>767){clearTimeout(window._sct);panel.style.right='0'}};
+  tab.onmouseout=function(){if(window.innerWidth>767){window._sct=setTimeout(function(){panel.style.right=hid()},400)}};
+  panel.onmouseover=function(){if(window.innerWidth>767)clearTimeout(window._sct)};
+  panel.onmouseout=function(){if(window.innerWidth>767){window._sct=setTimeout(function(){panel.style.right=hid()},400)}};
+  document.addEventListener('click',function(e){if(panel.style.right==='0px'&&!panel.contains(e.target)&&!tab.contains(e.target)){panel.style.right=hid()}});
+})();
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
