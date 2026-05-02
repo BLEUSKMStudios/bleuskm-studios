@@ -616,5 +616,27 @@ function toggleSocial() {
   document.addEventListener('click',function(e){if(panel.style.right==='0px'&&!panel.contains(e.target)&&!tab.contains(e.target)){panel.style.right=hidden()}});
 })();
 </script>
+<style>
+#socialPanel{overflow:hidden!important}
+@media(max-width:767px){
+  #socialPanel{right:-260px!important;top:auto!important;bottom:0!important;transform:none!important;min-width:220px!important;border-radius:4px 0 0 0!important}
+  #socialTab{top:auto!important;bottom:80px!important;transform:none!important;border-radius:4px 0 0 4px!important}
+  #socialTab span{writing-mode:horizontal-tb!important;font-size:0.5rem!important}
+}
+</style>
+<script>
+(function(){
+  var tab=document.getElementById('socialTab');
+  var panel=document.getElementById('socialPanel');
+  if(!tab||!panel)return;
+  function hid(){return window.innerWidth<=767?'-260px':'-220px'}
+  tab.onclick=function(e){e.stopPropagation();panel.style.right=panel.style.right==='0px'?hid():'0'};
+  tab.onmouseover=function(){if(window.innerWidth>767){clearTimeout(window._sct);panel.style.right='0'}};
+  tab.onmouseout=function(){if(window.innerWidth>767){window._sct=setTimeout(function(){panel.style.right=hid()},400)}};
+  panel.onmouseover=function(){if(window.innerWidth>767)clearTimeout(window._sct)};
+  panel.onmouseout=function(){if(window.innerWidth>767){window._sct=setTimeout(function(){panel.style.right=hid()},400)}};
+  document.addEventListener('click',function(e){if(panel.style.right==='0px'&&!panel.contains(e.target)&&!tab.contains(e.target)){panel.style.right=hid()}});
+})();
+</script>
 </body>
 </html>
