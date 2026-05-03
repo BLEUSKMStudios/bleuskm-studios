@@ -2188,7 +2188,6 @@ function toggleBreakdown(btn) {
 <style>
 /* ── MOBILE CONTACT TAB FIX (all pages) ── */
 @media (max-width: 767px) {
-  /* Reposition to bottom-right corner, horizontal text */
   #socialTab {
     top: auto !important;
     bottom: 16px !important;
@@ -2204,7 +2203,6 @@ function toggleBreakdown(btn) {
     font-size: 0.58rem !important;
     letter-spacing: 2px !important;
   }
-  /* Panel slides up from bottom-right */
   #socialPanel {
     top: auto !important;
     bottom: 52px !important;
@@ -2216,38 +2214,34 @@ function toggleBreakdown(btn) {
     transition: right 0.3s ease !important;
   }
   #socialPanel a:hover {
-    color: #EADFCF !important; /* disable hover color change on mobile */
+    color: #EADFCF !important;
   }
 }
 </style>
 <script>
-/* Mobile contact tab: replace hover with tap-only toggle */
 (function() {
   function isMobile() { return window.innerWidth <= 767; }
   var tab = document.getElementById("socialTab");
   var panel = document.getElementById("socialPanel");
   if (!tab || !panel) return;
 
-  /* Remove hover listeners on mobile by overriding with no-ops */
-  function noop(e) { if (isMobile()) e.stopImmediatePropagation(); }
+  // Remove inline onclick to avoid double-firing
+  tab.removeAttribute("onclick");
 
-  /* Re-wire onclick to always toggle */
-  tab.onclick = function(e) {
+  tab.addEventListener("click", function(e) {
     e.stopPropagation();
     var isOpen = panel.style.right === "0px";
-    panel.style.right = isOpen ? (isMobile() ? "-260px" : "-260px") : "0";
-  };
+    panel.style.right = isOpen ? "-260px" : "0";
+  });
 
-  /* On mobile only, disable the mouseover/mouseout panel behavior */
   tab.onmouseover = function() { if (!isMobile()) openSocial && openSocial(); };
   tab.onmouseout  = function() { if (!isMobile()) scheduleSocialClose && scheduleSocialClose(); };
   panel.onmouseover = function() { if (!isMobile()) openSocial && openSocial(); };
   panel.onmouseout  = function() { if (!isMobile()) scheduleSocialClose && scheduleSocialClose(); };
 
-  /* Tap outside to close on mobile */
   document.addEventListener("click", function(e) {
-    if (isMobile() && panel.style.right === "0px" && !panel.contains(e.target) && !tab.contains(e.target)) {
-      panel.style.right = "-220px";
+    if (panel.style.right === "0px" && !panel.contains(e.target) && !tab.contains(e.target)) {
+      panel.style.right = "-260px";
     }
   });
 })();
