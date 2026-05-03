@@ -715,68 +715,64 @@ function toggleSocial() {
 </script>
 
 <style>
-/* ── MOBILE CONTACT TAB FIX (all pages) ── */
+/* ── MOBILE CONTACT TAB FIX ── */
+#socialTab { top: 50%; transform: translateY(-50%); }
+#socialPanel { top: 50%; transform: translateY(-50%); }
 @media (max-width: 767px) {
-  /* Reposition to bottom-right corner, horizontal text */
   #socialTab {
     top: auto !important;
     bottom: 16px !important;
-    right: 0 !important;
     transform: none !important;
-    padding: 10px 14px !important;
-    z-index: 1050 !important;
-    border-radius: 4px 0 0 4px !important;
+    z-index: 1100 !important;
   }
-  #socialTab span {
-    writing-mode: horizontal-tb !important;
-    text-orientation: mixed !important;
-    font-size: 0.58rem !important;
-    letter-spacing: 2px !important;
-  }
-  /* Panel slides up from bottom-right */
   #socialPanel {
     top: auto !important;
     bottom: 52px !important;
-    right: -260px !important;
     transform: none !important;
-    width: 200px !important;
-    z-index: 1049 !important;
-    border-radius: 4px 0 0 4px !important;
-    transition: right 0.3s ease !important;
-  }
-  #socialPanel a:hover {
-    color: #EADFCF !important; /* disable hover color change on mobile */
+    right: -260px !important;
+    z-index: 1099 !important;
   }
 }
 </style>
 <script>
-/* Mobile contact tab: replace hover with tap-only toggle */
 (function() {
-  function isMobile() { return window.innerWidth <= 767; }
   var tab = document.getElementById("socialTab");
   var panel = document.getElementById("socialPanel");
   if (!tab || !panel) return;
 
-  /* Remove hover listeners on mobile by overriding with no-ops */
-  function noop(e) { if (isMobile()) e.stopImmediatePropagation(); }
+  // Strip inline top/transform so CSS can control positioning
+  tab.style.removeProperty("top");
+  tab.style.removeProperty("transform");
 
-  /* Re-wire onclick to always toggle */
-  tab.onclick = function(e) {
+  // Remove all inline event handlers
+  tab.removeAttribute("onclick");
+  tab.removeAttribute("onmouseover");
+  tab.removeAttribute("onmouseout");
+
+  function isMobile() { return window.innerWidth <= 767; }
+
+  // Single click handler — no conflict
+  tab.addEventListener("click", function(e) {
     e.stopPropagation();
-    var isOpen = panel.style.right === "0px";
-    panel.style.right = isOpen ? "-260px" : "0";
-  };
+    panel.style.right = (panel.style.right === "0px") ? "-260px" : "0px";
+  });
 
-  /* On mobile only, disable the mouseover/mouseout panel behavior */
-  tab.onmouseover = function() { if (!isMobile()) openSocial && openSocial(); };
-  tab.onmouseout  = function() { if (!isMobile()) scheduleSocialClose && scheduleSocialClose(); };
-  panel.onmouseover = function() { if (!isMobile()) openSocial && openSocial(); };
-  panel.onmouseout  = function() { if (!isMobile()) scheduleSocialClose && scheduleSocialClose(); };
+  // Desktop hover
+  tab.addEventListener("mouseover", function() {
+    if (!isMobile()) { clearTimeout(window._st); panel.style.right = "0px"; }
+  });
+  tab.addEventListener("mouseout", function() {
+    if (!isMobile()) { window._st = setTimeout(function(){ panel.style.right = "-260px"; }, 400); }
+  });
+  panel.addEventListener("mouseover", function() { if (!isMobile()) clearTimeout(window._st); });
+  panel.addEventListener("mouseout", function() {
+    if (!isMobile()) { window._st = setTimeout(function(){ panel.style.right = "-260px"; }, 400); }
+  });
 
-  /* Tap outside to close on mobile */
+  // Tap outside to close
   document.addEventListener("click", function(e) {
-    if (isMobile() && panel.style.right === "0px" && !panel.contains(e.target) && !tab.contains(e.target)) {
-      panel.style.right = "-220px";
+    if (panel.style.right === "0px" && !panel.contains(e.target) && !tab.contains(e.target)) {
+      panel.style.right = "-260px";
     }
   });
 })();
