@@ -185,7 +185,7 @@ body.productions-page { background: #080808; }
   color: #DAAF37 !important;
   border-bottom: 2px solid #DAAF37 !important;
 }
-.prod-section { min-height: 500px; }
+.prod-section { min-height: 0; }
 
 /* ── PROJECT RAIL ── */
 .project-rail {
@@ -219,6 +219,7 @@ body.productions-page { background: #080808; }
   .prod-hero {
     padding: 86px 20px 28px !important;
     text-align: center !important;
+    text-align: left !important;
   }
   .prod-hero-sub { margin: 0 auto !important; max-width: 340px !important; }
 
@@ -307,7 +308,7 @@ html, body { overflow-x: hidden !important; max-width: 100vw; }
 </nav>
 
 <!-- ── PAGE HERO HEADER ── -->
-<div style="padding:100px 60px 60px;background:linear-gradient(180deg,rgba(218,175,55,0.06) 0%,transparent 100%);border-bottom:1px solid rgba(218,175,55,0.1)">
+<div style="padding:100px 60px 60px;background:linear-gradient(180deg,rgba(218,175,55,0.06) 0%,transparent 100%);border-bottom:1px solid rgba(218,175,55,0.1);text-align:left">
   <p style="font-family:'League Spartan',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:rgba(218,175,55,0.5);margin-bottom:12px">BLEUSKM Studios</p>
   <h1 style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(2.5rem,6vw,5rem);letter-spacing:5px;text-transform:uppercase;color:#EADFCF;margin:0 0 16px;line-height:1">Productions</h1>
   <p style="font-size:0.88rem;color:rgba(234,223,207,0.4);max-width:500px;line-height:1.7;margin:0">A growing slate of short films and features grounded in Black imagination, cultural memory, and spiritual cinema.</p>
@@ -1291,7 +1292,7 @@ document.addEventListener('click', function(e) {
 })();
 </script>
 <!-- SOCIAL MEDIA SIDE PULLOUT -->
-<div id="socialTab" onclick="toggleSocial()" style="position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:999;cursor:pointer;background:rgba(8,8,8,0.92);border:1px solid rgba(218,175,55,0.3);border-right:none;padding:14px 10px;backdrop-filter:blur(10px);transition:all 0.2s" onmouseover="openSocial()" onmouseout="scheduleSocialClose()">
+<div id="socialTab" onclick="toggleSocial()" style="position:fixed;right:0;z-index:999;cursor:pointer;background:rgba(8,8,8,0.92);border:1px solid rgba(218,175,55,0.3);border-right:none;padding:14px 10px;backdrop-filter:blur(10px);transition:all 0.2s" onmouseover="openSocial()" onmouseout="scheduleSocialClose()">
   <span style="font-family:'League Spartan',sans-serif;font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37;writing-mode:vertical-rl;text-orientation:mixed;user-select:none">Contact</span>
 </div>
 
@@ -1366,36 +1367,21 @@ function toggleSocial() {
   var panel = document.getElementById("socialPanel");
   if (!tab || !panel) return;
 
-  // Strip inline top/transform so CSS can control positioning
-  tab.style.removeProperty("top");
-  tab.style.removeProperty("transform");
-
-  // Remove all inline event handlers
   tab.removeAttribute("onclick");
   tab.removeAttribute("onmouseover");
   tab.removeAttribute("onmouseout");
 
-  function isMobile() { return window.innerWidth <= 767; }
-
-  // Single click handler — no conflict
   tab.addEventListener("click", function(e) {
     e.stopPropagation();
     panel.style.right = (panel.style.right === "0px") ? "-260px" : "0px";
   });
 
-  // Desktop hover
-  tab.addEventListener("mouseover", function() {
-    if (!isMobile()) { clearTimeout(window._st); panel.style.right = "0px"; }
-  });
-  tab.addEventListener("mouseout", function() {
-    if (!isMobile()) { window._st = setTimeout(function(){ panel.style.right = "-260px"; }, 400); }
-  });
+  function isMobile() { return window.innerWidth <= 767; }
+  tab.addEventListener("mouseover", function() { if (!isMobile()) { clearTimeout(window._st); panel.style.right = "0px"; } });
+  tab.addEventListener("mouseout",  function() { if (!isMobile()) { window._st = setTimeout(function(){ panel.style.right = "-260px"; }, 400); } });
   panel.addEventListener("mouseover", function() { if (!isMobile()) clearTimeout(window._st); });
-  panel.addEventListener("mouseout", function() {
-    if (!isMobile()) { window._st = setTimeout(function(){ panel.style.right = "-260px"; }, 400); }
-  });
+  panel.addEventListener("mouseout",  function() { if (!isMobile()) { window._st = setTimeout(function(){ panel.style.right = "-260px"; }, 400); } });
 
-  // Tap outside to close
   document.addEventListener("click", function(e) {
     if (panel.style.right === "0px" && !panel.contains(e.target) && !tab.contains(e.target)) {
       panel.style.right = "-260px";
