@@ -38,6 +38,7 @@ body.productions-page{background:#080808;color:#EADFCF}
 .project-card:hover::after{width:100%}
 .thumb-img{width:100%;height:280px;object-fit:cover;display:block;filter:brightness(0.8) saturate(0.9);transition:filter 0.5s,transform 0.5s}
 .project-card:hover .thumb-img{filter:brightness(1) saturate(1.05);transform:scale(1.03)}
+.project-card>a{flex-shrink:0}
 .project-info{padding:16px 20px 10px;border-top:1px solid rgba(218,175,55,0.08)}
 .project-category{display:block;font-family:'Red Hat Display',sans-serif;font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:rgba(234,223,207,0.35);margin-bottom:5px}
 .project-name{display:block;font-family:'League Spartan',sans-serif;font-weight:900;color:#DAAF37;font-size:0.88rem;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
@@ -256,7 +257,7 @@ body.productions-page { background: #080808; }
   }
 
   /* Card text — fix year crowding title: put them on separate clear lines */
-  .project-info { padding: 7px 9px 8px !important; }
+  .project-info { padding: 6px 9px 6px !important; }
   .project-category { display: none !important; }
   .project-name {
     font-size: 0.65rem !important;
@@ -273,7 +274,7 @@ body.productions-page { background: #080808; }
     margin-top: 3px !important;
     color: rgba(234,223,207,0.4) !important;
   }
-  .card-action-btn { font-size: 0.5rem !important; padding: 7px 8px !important; text-align: center !important; }
+  .card-action-btn { font-size: 0.5rem !important; padding: 7px 8px !important; text-align: center !important; margin-top: 0 !important; }
 
   .site-footer-full { padding: 36px 20px 70px !important; }
   .footer-grid { grid-template-columns: 1fr 1fr !important; gap: 18px !important; }
