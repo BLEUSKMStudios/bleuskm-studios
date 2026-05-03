@@ -968,103 +968,54 @@ document.addEventListener('click', function(e) {
   }
 })();
 </script>
-<!-- SOCIAL MEDIA SIDE PULLOUT -->
-<div id="socialTab" onclick="toggleSocial()" style="position:fixed;right:0;z-index:999;cursor:pointer;background:rgba(8,8,8,0.92);border:1px solid rgba(218,175,55,0.3);border-right:none;padding:14px 10px;backdrop-filter:blur(10px);transition:all 0.2s" onmouseover="openSocial()" onmouseout="scheduleSocialClose()">
+
+<!-- ── CONTACT CHANNELS POPUP ── -->
+<div id="channelsBtn" onclick="toggleChannels()" style="position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:1100;cursor:pointer;background:rgba(8,8,8,0.92);border:1px solid rgba(218,175,55,0.3);border-right:none;padding:14px 10px;backdrop-filter:blur(10px)">
   <span style="font-family:'League Spartan',sans-serif;font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37;writing-mode:vertical-rl;text-orientation:mixed;user-select:none">Contact</span>
 </div>
 
-<div id="socialPanel" style="position:fixed;right:-260px;top:50%;transform:translateY(-50%);z-index:998;background:rgba(8,8,8,0.95);border:1px solid rgba(218,175,55,0.2);border-right:none;padding:24px 20px;backdrop-filter:blur(16px);transition:right 0.3s ease;display:flex;flex-direction:column;gap:18px;width:220px" onmouseover="openSocial()" onmouseout="scheduleSocialClose()">
-  <span style="font-family:'League Spartan',sans-serif;font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:rgba(218,175,55,0.5);display:block;margin-bottom:4px">Contact BLEUSKM</span>
-
-  <a href="https://www.instagram.com/bleuskm.studios/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
-    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">Instagram</span>
-  </a>
-
-  <a href="https://www.threads.net/@bleuskm.studios" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 1.327-.012 2.5-.235 3.485-.67 1.15-.502 1.953-1.258 2.39-2.248.37-.849.507-1.804.395-2.858-.115-1.08-.478-1.964-1.076-2.623-.467-.518-1.067-.878-1.78-1.07.225 1.593-.044 2.89-.797 3.854-.868 1.107-2.166 1.664-3.858 1.657-1.358-.006-2.484-.44-3.253-1.255-.824-.874-1.128-2.07-.857-3.37.257-1.213.95-2.16 2.007-2.737.966-.527 2.17-.748 3.576-.655.492.031.97.085 1.43.16-.044-.28-.107-.533-.19-.757-.348-.95-1.048-1.45-2.08-1.485-.717-.024-1.396.175-2.02.591l-.923-1.668c.898-.573 1.92-.864 3.039-.864h.043c2.342.08 3.79 1.453 4.226 3.982.107.627.162 1.276.163 1.932.003.16.001.32-.004.48.76.348 1.39.844 1.876 1.48.782 1.02 1.222 2.342 1.308 3.932.1 1.862-.16 3.467-.77 4.77-.77 1.654-2.017 2.833-3.706 3.503C15.139 23.74 13.74 24 12.186 24zm.024-11.87c-.574 0-1.09.07-1.534.207-.742.224-1.18.698-1.302 1.408-.1.58.02 1.077.355 1.432.357.38.913.577 1.652.582 1.019.004 1.742-.31 2.15-.933.45-.686.516-1.72.193-3.074-.5-.093-1.006-.15-1.514-.182l-.003.56z"/></svg>
-    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">Threads</span>
-  </a>
-
-  <a href="https://www.tiktok.com/@bleuskm.studios" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.27 8.27 0 004.84 1.55V6.79a4.85 4.85 0 01-1.07-.1z"/></svg>
-    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">TikTok</span>
-  </a>
-
-  <a href="https://www.youtube.com/@BLEUSKMStudios" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">YouTube</span>
-  </a>
-  <a href="mailto:studio@bleuskm.com" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg>
-    <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase">studio@bleuskm.com</span>
-  </a>
+<div id="channelsPopup" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.75);align-items:center;justify-content:center">
+  <div style="background:#0d0d0d;border:1px solid rgba(218,175,55,0.2);padding:40px 48px;max-width:420px;width:90%;position:relative;text-align:center">
+    <button onclick="toggleChannels()" style="position:absolute;top:14px;right:18px;background:none;border:none;color:rgba(234,223,207,0.4);font-size:1.4rem;cursor:pointer;line-height:1">&times;</button>
+    <p style="font-family:'League Spartan',sans-serif;font-size:0.6rem;letter-spacing:4px;text-transform:uppercase;color:rgba(218,175,55,0.5);margin-bottom:6px">BLEUSKM Studios</p>
+    <h2 style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:1.4rem;letter-spacing:3px;text-transform:uppercase;color:#EADFCF;margin:0 0 24px">Official Channels</h2>
+    <div style="display:flex;justify-content:center;gap:28px;margin-bottom:28px">
+      <a href="https://www.instagram.com/bleuskm.studios/" target="_blank" style="color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+      </a>
+      <a href="https://www.threads.net/@bleuskm.studios" target="_blank" style="color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 1.327-.012 2.5-.235 3.485-.67 1.15-.502 1.953-1.258 2.39-2.248.37-.849.507-1.804.395-2.858-.115-1.08-.478-1.964-1.076-2.623-.467-.518-1.067-.878-1.78-1.07.225 1.593-.044 2.89-.797 3.854-.868 1.107-2.166 1.664-3.858 1.657-1.358-.006-2.484-.44-3.253-1.255-.824-.874-1.128-2.07-.857-3.37.257-1.213.95-2.16 2.007-2.737.966-.527 2.17-.748 3.576-.655.492.031.97.085 1.43.16-.044-.28-.107-.533-.19-.757-.348-.95-1.048-1.45-2.08-1.485-.717-.024-1.396.175-2.02.591l-.923-1.668c.898-.573 1.92-.864 3.039-.864h.043c2.342.08 3.79 1.453 4.226 3.982.107.627.162 1.276.163 1.932.003.16.001.32-.004.48.76.348 1.39.844 1.876 1.48.782 1.02 1.222 2.342 1.308 3.932.1 1.862-.16 3.467-.77 4.77-.77 1.654-2.017 2.833-3.706 3.503C15.139 23.74 13.74 24 12.186 24z"/></svg>
+      </a>
+      <a href="https://www.tiktok.com/@bleuskm.studios" target="_blank" style="color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.27 8.27 0 004.84 1.55V6.79a4.85 4.85 0 01-1.07-.1z"/></svg>
+      </a>
+      <a href="https://www.youtube.com/@BLEUSKMStudios" target="_blank" style="color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+      </a>
+      <a href="mailto:studio@bleuskm.com" style="color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg>
+      </a>
+    </div>
+    <p style="font-size:0.78rem;color:rgba(234,223,207,0.4);line-height:1.7;margin:0">Follow us for casting announcements, production updates, and studio news.</p>
+    <a href="contact.html" style="display:inline-block;margin-top:20px;background:#DAAF37;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.68rem;letter-spacing:3px;text-transform:uppercase;padding:12px 28px;text-decoration:none">Project Inquiry &rarr;</a>
+  </div>
 </div>
 
 <script>
-var socialCloseTimer;
-function openSocial() {
-  clearTimeout(socialCloseTimer);
-  document.getElementById('socialPanel').style.right = '0';
+function toggleChannels() {
+  var popup = document.getElementById('channelsPopup');
+  popup.style.display = popup.style.display === 'flex' ? 'none' : 'flex';
+  document.body.style.overflow = popup.style.display === 'flex' ? 'hidden' : '';
 }
-function scheduleSocialClose() {
-  socialCloseTimer = setTimeout(function() {
-    document.getElementById('socialPanel').style.right = '-260px';
-  }, 400);
-}
-function toggleSocial() {
-  var p = document.getElementById('socialPanel');
-  p.style.right = p.style.right === '0px' ? '-200px' : '0';
-}
-</script>
-
-<style>
-/* ── MOBILE CONTACT TAB FIX ── */
-#socialTab { top: 50%; transform: translateY(-50%); }
-#socialPanel { top: 50%; transform: translateY(-50%); }
-@media (max-width: 767px) {
-  #socialTab {
-    top: auto !important;
-    bottom: 16px !important;
-    transform: none !important;
-    z-index: 1100 !important;
+document.addEventListener('click', function(e) {
+  var popup = document.getElementById('channelsPopup');
+  var btn = document.getElementById('channelsBtn');
+  if (popup && popup.style.display === 'flex') {
+    var inner = popup.querySelector('div');
+    if (!inner.contains(e.target) && !btn.contains(e.target)) toggleChannels();
   }
-  #socialPanel {
-    top: auto !important;
-    bottom: 52px !important;
-    transform: none !important;
-    right: -260px !important;
-    z-index: 1099 !important;
-  }
-}
-</style>
-<script>
-(function() {
-  var tab = document.getElementById("socialTab");
-  var panel = document.getElementById("socialPanel");
-  if (!tab || !panel) return;
-
-  tab.removeAttribute("onclick");
-  tab.removeAttribute("onmouseover");
-  tab.removeAttribute("onmouseout");
-
-  tab.addEventListener("click", function(e) {
-    e.stopPropagation();
-    panel.style.right = (panel.style.right === "0px") ? "-260px" : "0px";
-  });
-
-  function isMobile() { return window.innerWidth <= 767; }
-  tab.addEventListener("mouseover", function() { if (!isMobile()) { clearTimeout(window._st); panel.style.right = "0px"; } });
-  tab.addEventListener("mouseout",  function() { if (!isMobile()) { window._st = setTimeout(function(){ panel.style.right = "-260px"; }, 400); } });
-  panel.addEventListener("mouseover", function() { if (!isMobile()) clearTimeout(window._st); });
-  panel.addEventListener("mouseout",  function() { if (!isMobile()) { window._st = setTimeout(function(){ panel.style.right = "-260px"; }, 400); } });
-
-  document.addEventListener("click", function(e) {
-    if (panel.style.right === "0px" && !panel.contains(e.target) && !tab.contains(e.target)) {
-      panel.style.right = "-260px";
-    }
-  });
-})();
+});
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { var p = document.getElementById('channelsPopup'); if (p && p.style.display === 'flex') toggleChannels(); } });
 </script>
 
 </body>
