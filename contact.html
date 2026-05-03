@@ -883,7 +883,7 @@ document.addEventListener('click', function(e) {
 })();
 </script>
 <!-- SOCIAL MEDIA SIDE PULLOUT -->
-<div id="socialTab" onclick="toggleSocial()" style="position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:999;cursor:pointer;background:rgba(8,8,8,0.92);border:1px solid rgba(218,175,55,0.3);border-right:none;padding:14px 10px;backdrop-filter:blur(10px);transition:all 0.2s" onmouseover="openSocial()" onmouseout="scheduleSocialClose()">
+<div id="socialTab" onclick="toggleSocial()" style="position:fixed;right:0;z-index:999;cursor:pointer;background:rgba(8,8,8,0.92);border:1px solid rgba(218,175,55,0.3);border-right:none;padding:14px 10px;backdrop-filter:blur(10px);transition:all 0.2s" onmouseover="openSocial()" onmouseout="scheduleSocialClose()">
   <span style="font-family:'League Spartan',sans-serif;font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37;writing-mode:vertical-rl;text-orientation:mixed;user-select:none">Contact</span>
 </div>
 
@@ -979,36 +979,21 @@ function toggleSocial() {
   var panel = document.getElementById("socialPanel");
   if (!tab || !panel) return;
 
-  // Strip inline top/transform so CSS can control positioning
-  tab.style.removeProperty("top");
-  tab.style.removeProperty("transform");
-
-  // Remove all inline event handlers
   tab.removeAttribute("onclick");
   tab.removeAttribute("onmouseover");
   tab.removeAttribute("onmouseout");
 
-  function isMobile() { return window.innerWidth <= 767; }
-
-  // Single click handler — no conflict
   tab.addEventListener("click", function(e) {
     e.stopPropagation();
     panel.style.right = (panel.style.right === "0px") ? "-260px" : "0px";
   });
 
-  // Desktop hover
-  tab.addEventListener("mouseover", function() {
-    if (!isMobile()) { clearTimeout(window._st); panel.style.right = "0px"; }
-  });
-  tab.addEventListener("mouseout", function() {
-    if (!isMobile()) { window._st = setTimeout(function(){ panel.style.right = "-260px"; }, 400); }
-  });
+  function isMobile() { return window.innerWidth <= 767; }
+  tab.addEventListener("mouseover", function() { if (!isMobile()) { clearTimeout(window._st); panel.style.right = "0px"; } });
+  tab.addEventListener("mouseout",  function() { if (!isMobile()) { window._st = setTimeout(function(){ panel.style.right = "-260px"; }, 400); } });
   panel.addEventListener("mouseover", function() { if (!isMobile()) clearTimeout(window._st); });
-  panel.addEventListener("mouseout", function() {
-    if (!isMobile()) { window._st = setTimeout(function(){ panel.style.right = "-260px"; }, 400); }
-  });
+  panel.addEventListener("mouseout",  function() { if (!isMobile()) { window._st = setTimeout(function(){ panel.style.right = "-260px"; }, 400); } });
 
-  // Tap outside to close
   document.addEventListener("click", function(e) {
     if (panel.style.right === "0px" && !panel.contains(e.target) && !tab.contains(e.target)) {
       panel.style.right = "-260px";
