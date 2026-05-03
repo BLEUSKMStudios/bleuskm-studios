@@ -141,7 +141,8 @@ async function submitCasting(e, filmTitle) {
   try {
     await sendToAirtable(TBL_CASTING, fields);
     await sendToBrevo(4, email, name, { FILM: filmTitle, ROLE: role });
-    if (nlCheck && nlCheck.checked) await sendToBrevo(2, email, name, {});
+    await sendEmail(1, email, name, { FIRSTNAME: name, FILM: filmTitle, ROLE: role });
+    if (nlCheck && nlCheck.checked) { await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
 
     var formId = form.id;
     form.style.display = 'none';
@@ -173,7 +174,8 @@ async function submitNotify(e, filmTitle) {
   try {
     await sendToAirtable(TBL_NOTIFY, fields);
     await sendToBrevo(2, email, name, { FILM: filmTitle, ROLE_INTEREST: roleInt });
-    if (nlCheck && nlCheck.checked) await sendToBrevo(2, email, name, {});
+    await sendEmail(4, email, name, { FIRSTNAME: name, FILM: filmTitle });
+    if (nlCheck && nlCheck.checked) { await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
 
     form.style.display = 'none';
     var s = form.nextElementSibling;
@@ -201,7 +203,8 @@ async function submitComingSoon(e, filmTitle) {
   try {
     await sendToAirtable(TBL_NOTIFY, fields);
     await sendToBrevo(2, email, name, { FILM: filmTitle });
-    if (nlCheck && nlCheck.checked) await sendToBrevo(2, email, name, {});
+    await sendEmail(4, email, name, { FIRSTNAME: name, FILM: filmTitle });
+    if (nlCheck && nlCheck.checked) { await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
 
     form.style.display = 'none';
     var s = form.nextElementSibling;
@@ -304,7 +307,7 @@ async function submitContact() {
   try {
     await sendToAirtable(TBL_INQUIRIES, fields);
     await sendToBrevo(5, email, name, { PROJECT_TYPE: projType });
-    if (nlCheck && nlCheck.checked) await sendToBrevo(2, email, name, {});
+    if (nlCheck && nlCheck.checked) { await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
 
     var form = document.getElementById('contactForm') || document.querySelector('form');
     if (form) form.style.display = 'none';
@@ -411,7 +414,8 @@ async function submitCasting(e, filmTitle) {
   try {
     await sendToAirtable(TBL_CASTING, fields);
     await sendToBrevo(4, email, name, { FILM: filmTitle, ROLE: role });
-    if (nlCheck && nlCheck.checked) await sendToBrevo(2, email, name, {});
+    await sendEmail(1, email, name, { FIRSTNAME: name, FILM: filmTitle, ROLE: role });
+    if (nlCheck && nlCheck.checked) { await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
     form.style.display = 'none';
     var filmId = form.id.replace('form-', '');
     var s = document.getElementById(filmId + '-success');
@@ -437,7 +441,8 @@ async function submitNotify(e, filmTitle) {
   try {
     await sendToAirtable(TBL_NOTIFY, fields);
     await sendToBrevo(2, email, name, { FILM: filmTitle, ROLE_INTEREST: roleInt });
-    if (nlCheck && nlCheck.checked) await sendToBrevo(2, email, name, {});
+    await sendEmail(4, email, name, { FIRSTNAME: name, FILM: filmTitle });
+    if (nlCheck && nlCheck.checked) { await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
     form.style.display = 'none';
     var s = form.nextElementSibling; if (s) s.style.display = 'block';
   } catch(err) {
@@ -459,7 +464,8 @@ async function submitComingSoon(e, filmTitle) {
   try {
     await sendToAirtable(TBL_NOTIFY, fields);
     await sendToBrevo(2, email, name, { FILM: filmTitle });
-    if (nlCheck && nlCheck.checked) await sendToBrevo(2, email, name, {});
+    await sendEmail(4, email, name, { FIRSTNAME: name, FILM: filmTitle });
+    if (nlCheck && nlCheck.checked) { await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
     form.style.display = 'none';
     var s = form.nextElementSibling; if (s) s.style.display = 'block';
   } catch(err) {
@@ -566,7 +572,7 @@ async function submitContact() {
   try {
     await sendToAirtable(TBL_INQUIRIES, fields);
     await sendToBrevo(5, email, name, { PROJECT_TYPE: projType });
-    if (nlCheck && nlCheck.checked) await sendToBrevo(2, email, name, {});
+    if (nlCheck && nlCheck.checked) { await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
     var form = document.getElementById('contactForm');
     if (form) form.style.display = 'none';
     var s = document.getElementById('contactSuccess');
