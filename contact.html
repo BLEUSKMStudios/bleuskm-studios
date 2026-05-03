@@ -938,7 +938,6 @@ function prefillService() {
   if (!service) return;
   var select = document.getElementById('cf-type');
   if (!select) return;
-  // URLSearchParams.get() already decodes — use directly
   var target = service.trim();
   for (var i = 0; i < select.options.length; i++) {
     if (select.options[i].value === target || select.options[i].text === target) {
@@ -947,61 +946,11 @@ function prefillService() {
     }
   }
 }
-// Run immediately if DOM ready, otherwise wait
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', prefillService);
 } else {
   prefillService();
-} }, 300); }
-});
-</script>
-<style>
-/* ── MOBILE CONTACT TAB FIX ── */
-#socialTab { top: 50%; transform: translateY(-50%); }
-#socialPanel { top: 50%; transform: translateY(-50%); }
-@media (max-width: 767px) {
-  #socialTab {
-    top: auto !important;
-    bottom: 16px !important;
-    transform: none !important;
-    z-index: 1100 !important;
-  }
-  #socialPanel {
-    top: auto !important;
-    bottom: 52px !important;
-    transform: none !important;
-    right: -260px !important;
-    z-index: 1099 !important;
-  }
 }
-</style>
-<script>
-(function() {
-  var tab = document.getElementById("socialTab");
-  var panel = document.getElementById("socialPanel");
-  if (!tab || !panel) return;
-
-  tab.removeAttribute("onclick");
-  tab.removeAttribute("onmouseover");
-  tab.removeAttribute("onmouseout");
-
-  tab.addEventListener("click", function(e) {
-    e.stopPropagation();
-    panel.style.right = (panel.style.right === "0px") ? "-260px" : "0px";
-  });
-
-  function isMobile() { return window.innerWidth <= 767; }
-  tab.addEventListener("mouseover", function() { if (!isMobile()) { clearTimeout(window._st); panel.style.right = "0px"; } });
-  tab.addEventListener("mouseout",  function() { if (!isMobile()) { window._st = setTimeout(function(){ panel.style.right = "-260px"; }, 400); } });
-  panel.addEventListener("mouseover", function() { if (!isMobile()) clearTimeout(window._st); });
-  panel.addEventListener("mouseout",  function() { if (!isMobile()) { window._st = setTimeout(function(){ panel.style.right = "-260px"; }, 400); } });
-
-  document.addEventListener("click", function(e) {
-    if (panel.style.right === "0px" && !panel.contains(e.target) && !tab.contains(e.target)) {
-      panel.style.right = "-260px";
-    }
-  });
-})();
 </script>
 
 </body>
