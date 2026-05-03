@@ -932,13 +932,12 @@ document.addEventListener('click', function(e) {
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { var p = document.getElementById('channelsPopup'); if (p && p.style.display === 'flex') toggleChannels(); } });
 </script><script>
 // Pre-select Project Type dropdown from URL ?service= param
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
   var params = new URLSearchParams(window.location.search);
   var service = params.get('service');
   if (!service) return;
   var select = document.getElementById('cf-type');
   if (!select) return;
-  // Decode and normalize
   var target = decodeURIComponent(service).replace(/\+/g, ' ').trim().toLowerCase();
   for (var i = 0; i < select.options.length; i++) {
     if (select.options[i].text.trim().toLowerCase() === target) {
@@ -946,10 +945,9 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { var
       break;
     }
   }
-  // Scroll to the form smoothly
   var form = document.querySelector('.project-form, .contact-form, #cf-type');
   if (form) { setTimeout(function(){ form.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300); }
-})();
+});
 </script>
 <style>
 /* ── MOBILE CONTACT TAB FIX ── */
