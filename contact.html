@@ -143,16 +143,16 @@ main{flex:1}
         <div class="form-field"><label>Project Type *</label>
           <select id="cf-type" required>
             <option value="">Select one</option>
-            <option>Creative Direction</option>
-            <option>Music Video Production</option>
-            <option>Short Film Production</option>
-            <option>Feature Film</option>
-            <option>Photography + Visuals</option>
-            <option>Editing + Post-Production</option>
-            <option>Brand Development + Content</option>
-            <option>Branded Film / Commercial</option>
-            <option>Documentary</option>
-            <option>Other</option>
+            <option value="Creative Direction">Creative Direction</option>
+            <option value="Music Video Production">Music Video Production</option>
+            <option value="Short Film Production">Short Film Production</option>
+            <option value="Feature Film">Feature Film</option>
+            <option value="Photography + Visuals">Photography + Visuals</option>
+            <option value="Editing + Post-Production">Editing + Post-Production</option>
+            <option value="Brand Development + Content">Brand Development + Content</option>
+            <option value="Branded Film / Commercial">Branded Film / Commercial</option>
+            <option value="Documentary">Documentary</option>
+            <option value="Other">Other</option>
           </select>
         </div>
       </div>
@@ -932,21 +932,27 @@ document.addEventListener('click', function(e) {
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { var p = document.getElementById('channelsPopup'); if (p && p.style.display === 'flex') toggleChannels(); } });
 </script><script>
 // Pre-select Project Type dropdown from URL ?service= param
-document.addEventListener('DOMContentLoaded', function() {
+function prefillService() {
   var params = new URLSearchParams(window.location.search);
   var service = params.get('service');
   if (!service) return;
   var select = document.getElementById('cf-type');
   if (!select) return;
-  var target = decodeURIComponent(service).replace(/\+/g, ' ').trim().toLowerCase();
+  // URLSearchParams.get() already decodes — use directly
+  var target = service.trim();
   for (var i = 0; i < select.options.length; i++) {
-    if (select.options[i].text.trim().toLowerCase() === target) {
+    if (select.options[i].value === target || select.options[i].text === target) {
       select.selectedIndex = i;
       break;
     }
   }
-  var form = document.querySelector('.project-form, .contact-form, #cf-type');
-  if (form) { setTimeout(function(){ form.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300); }
+}
+// Run immediately if DOM ready, otherwise wait
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', prefillService);
+} else {
+  prefillService();
+} }, 300); }
 });
 </script>
 <style>
