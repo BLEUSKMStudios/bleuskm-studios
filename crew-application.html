@@ -75,12 +75,14 @@ body { background: #080808; color: #EADFCF; font-family: 'Red Hat Display', sans
 }
 
 .dept-role::before {
-  content: '—';
+  content: '▸';
   position: absolute;
   left: 0;
-  color: rgba(218,175,55,0.3);
-  font-size: 0.7rem;
+  color: rgba(218,175,55,0.5);
+  font-size: 0.65rem;
+  transition: transform 0.2s;
 }
+.dept-role.open::before { content: '▾'; color: #DAAF37; }
 
 .dept-role:hover { color: #DAAF37; }
 .dept-role.selected { color: #DAAF37; font-weight: 600; }
@@ -249,6 +251,18 @@ option {
 .navbar-brand span{font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37}
 .nav-link{font-family:'League Spartan',sans-serif;font-weight:600;font-size:0.65rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(234,223,207,0.5)!important;transition:color 0.2s;padding:0.5rem 1rem!important}
 .nav-link:hover,.nav-link.active{color:#DAAF37!important}
+
+/* ── ROLE DESCRIPTION DROPDOWNS ── */
+.role-item { display: block; }
+.role-desc-dropdown {
+  font-size: 0.78rem;
+  color: rgba(234,223,207,0.55);
+  line-height: 1.5;
+  padding: 8px 12px 12px 20px;
+  border-left: 2px solid rgba(218,175,55,0.25);
+  margin: 4px 0 8px 0;
+  background: rgba(218,175,55,0.03);
+}
 </style>
   <style>
     a { color: inherit; text-decoration: none; }
@@ -291,51 +305,35 @@ option {
 
     <div class="dept-section">
       <div class="dept-title">Production</div>
-      <span class="dept-role" onclick="selectRole(this)">Producer</span>
-      <span class="dept-role" onclick="selectRole(this)">Director of Photography (DP)</span>
-      <span class="dept-role" onclick="selectRole(this)">Sound Mixer / Boom Operator</span>
-      <span class="dept-role" onclick="selectRole(this)">Production Assistant (PA)</span>
-      <span class="dept-role" onclick="selectRole(this)">Makeup</span>
-      <span class="dept-role" onclick="selectRole(this)">Production Designer / Set Dresser</span>
-      <span class="dept-role" onclick="selectRole(this)">Composer</span>
-    </div>
-
-  <!-- ROLE DESCRIPTIONS — inside left col -->
-  <div style="margin-top:32px;border:1px solid rgba(218,175,55,0.12);background:rgba(218,175,55,0.03)">
-    <div style="padding:14px 20px;border-bottom:1px solid rgba(218,175,55,0.1)">
-      <span style="font-family:'League Spartan',sans-serif;font-size:0.6rem;letter-spacing:3px;text-transform:uppercase;color:rgba(218,175,55,0.5)">Role Descriptions</span>
-    </div>
-    <div style="padding:20px">
-      <div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(218,175,55,0.08)">
-        <div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:1px;color:#DAAF37;margin-bottom:4px">Producer</div>
-        <div style="font-size:0.82rem;color:rgba(234,223,207,0.55);line-height:1.5">Manages logistics, location scouting, scheduling, and keeps production on track. You're the backbone of the set.</div>
+      <div class="role-item">
+        <span class="dept-role" onclick="selectRole(this);toggleDesc('producer')">Producer</span>
+        <div id="desc-producer" class="role-desc-dropdown" style="display:none">Manages logistics, location scouting, scheduling, and keeps production on track. You're the backbone of the set.</div>
       </div>
-      <div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(218,175,55,0.08)">
-        <div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:1px;color:#DAAF37;margin-bottom:4px">Director of Photography (DP)</div>
-        <div style="font-size:0.82rem;color:rgba(234,223,207,0.55);line-height:1.5">Operates camera, manages shot composition and lighting setup. Experience shooting narrative film or short form content.</div>
+      <div class="role-item">
+        <span class="dept-role" onclick="selectRole(this);toggleDesc('director-of-photography-dp')">Director of Photography (DP)</span>
+        <div id="desc-director-of-photography-dp" class="role-desc-dropdown" style="display:none">Operates camera, manages shot composition and lighting setup. Experience shooting narrative film or short form content.</div>
       </div>
-      <div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(218,175,55,0.08)">
-        <div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:1px;color:#DAAF37;margin-bottom:4px">Sound Mixer / Boom Operator</div>
-        <div style="font-size:0.82rem;color:rgba(234,223,207,0.55);line-height:1.5">Records clean on-set audio. Must own or have access to basic sound equipment. Some equipment will be available on set. Experience on narrative sets a plus.</div>
+      <div class="role-item">
+        <span class="dept-role" onclick="selectRole(this);toggleDesc('sound-mixer---boom-operator')">Sound Mixer / Boom Operator</span>
+        <div id="desc-sound-mixer---boom-operator" class="role-desc-dropdown" style="display:none">Records clean on-set audio. Must own or have access to basic sound equipment. Some equipment will be available on set. Experience on narrative sets a plus.</div>
       </div>
-      <div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(218,175,55,0.08)">
-        <div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:1px;color:#DAAF37;margin-bottom:4px">Production Assistant (PA)</div>
-        <div style="font-size:0.82rem;color:rgba(234,223,207,0.55);line-height:1.5">General on-set support. No experience required — just reliability, a strong work ethic, and a willingness to learn.</div>
+      <div class="role-item">
+        <span class="dept-role" onclick="selectRole(this);toggleDesc('production-assistant-pa')">Production Assistant (PA)</span>
+        <div id="desc-production-assistant-pa" class="role-desc-dropdown" style="display:none">General on-set support. No experience required — just reliability, a strong work ethic, and a willingness to learn.</div>
       </div>
-      <div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(218,175,55,0.08)">
-        <div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:1px;color:#DAAF37;margin-bottom:4px">Makeup</div>
-        <div style="font-size:0.82rem;color:rgba(234,223,207,0.55);line-height:1.5">Handles talent makeup for camera. Must have your own kit and experience working under film lighting conditions.</div>
+      <div class="role-item">
+        <span class="dept-role" onclick="selectRole(this);toggleDesc('makeup')">Makeup</span>
+        <div id="desc-makeup" class="role-desc-dropdown" style="display:none">Handles talent makeup for camera. Must have your own kit and experience working under film lighting conditions.</div>
       </div>
-      <div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(218,175,55,0.08)">
-        <div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:1px;color:#DAAF37;margin-bottom:4px">Production Designer / Set Dresser</div>
-        <div style="font-size:0.82rem;color:rgba(234,223,207,0.55);line-height:1.5">Builds and maintains the visual world of the film. Manages props, set details, and the overall physical aesthetic.</div>
+      <div class="role-item">
+        <span class="dept-role" onclick="selectRole(this);toggleDesc('production-designer---set-dresser')">Production Designer / Set Dresser</span>
+        <div id="desc-production-designer---set-dresser" class="role-desc-dropdown" style="display:none">Builds and maintains the visual world of the film. Manages props, set details, and the overall physical aesthetic.</div>
       </div>
-      <div>
-        <div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:1px;color:#DAAF37;margin-bottom:4px">Composer</div>
-        <div style="font-size:0.82rem;color:rgba(234,223,207,0.55);line-height:1.5">Creates original score or sound design for the film.</div>
+      <div class="role-item">
+        <span class="dept-role" onclick="selectRole(this);toggleDesc('composer')">Composer</span>
+        <div id="desc-composer" class="role-desc-dropdown" style="display:none">Creates original score or sound design for the film.</div>
       </div>
     </div>
-  </div>
 
   </div><!-- end dept-list -->
 
@@ -630,6 +628,26 @@ async function submitNewsletter(e) {
 
 
 // ── ROLE AUTOFILL ──
+
+function toggleDesc(id) {
+  // Close all other dropdowns and remove open class
+  document.querySelectorAll('.role-desc-dropdown').forEach(function(d) {
+    if (d.id !== 'desc-' + id) d.style.display = 'none';
+  });
+  document.querySelectorAll('.dept-role').forEach(function(r) {
+    if (r.getAttribute('onclick') && r.getAttribute('onclick').indexOf(id) === -1) {
+      r.classList.remove('open');
+    }
+  });
+  var el = document.getElementById('desc-' + id);
+  if (!el) return;
+  var isOpen = el.style.display !== 'none';
+  el.style.display = isOpen ? 'none' : 'block';
+  // Toggle open class on the clicked role
+  var role = el.previousElementSibling;
+  if (role) role.classList.toggle('open', !isOpen);
+}
+
 function selectRole(el) {
   var role = el.textContent.trim();
   var select = document.getElementById('crew-role');
@@ -645,7 +663,7 @@ function selectRole(el) {
   el.classList.add('selected');
   // Scroll to form on mobile
   var form = document.getElementById('crewForm');
-  if (form && window.innerWidth < 768) form.scrollIntoView({ behavior: 'smooth' });
+  // description shown inline — no scroll needed
 }
 
 // ── CREW APPLICATION ──
@@ -922,7 +940,7 @@ function selectRole(el) {
   }
   document.querySelectorAll('.dept-role').forEach(function(r) { r.classList.remove('selected'); });
   el.classList.add('selected');
-  if (window.innerWidth < 768) { var f = document.getElementById('crewForm'); if (f) f.scrollIntoView({ behavior: 'smooth' }); }
+  // description shown inline — no scroll needed
 }
 
 async function submitCrewForm(e) {
