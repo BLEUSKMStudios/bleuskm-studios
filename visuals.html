@@ -313,35 +313,22 @@ function toggleSocial() {
 </script>
 
 <style>
-/* ── MOBILE CONTACT TAB FIX (all pages) ── */
+/* ── MOBILE CONTACT TAB FIX ── */
+#socialTab { top: 50%; transform: translateY(-50%); }
+#socialPanel { top: 50%; transform: translateY(-50%); }
 @media (max-width: 767px) {
   #socialTab {
     top: auto !important;
     bottom: 16px !important;
-    right: 0 !important;
     transform: none !important;
-    padding: 10px 14px !important;
-    z-index: 1050 !important;
-    border-radius: 4px 0 0 4px !important;
-  }
-  #socialTab span {
-    writing-mode: horizontal-tb !important;
-    text-orientation: mixed !important;
-    font-size: 0.58rem !important;
-    letter-spacing: 2px !important;
+    z-index: 1100 !important;
   }
   #socialPanel {
     top: auto !important;
     bottom: 52px !important;
-    right: -260px !important;
     transform: none !important;
-    width: 200px !important;
-    z-index: 1049 !important;
-    border-radius: 4px 0 0 4px !important;
-    transition: right 0.3s ease !important;
-  }
-  #socialPanel a:hover {
-    color: #EADFCF !important;
+    right: -260px !important;
+    z-index: 1099 !important;
   }
 }
 </style>
@@ -351,31 +338,41 @@ function toggleSocial() {
   var panel = document.getElementById("socialPanel");
   if (!tab || !panel) return;
 
-  function isMobile() { return window.innerWidth <= 767; }
+  // Strip inline top/transform so CSS can control positioning
+  tab.style.removeProperty("top");
+  tab.style.removeProperty("transform");
 
-  // Remove inline handlers to prevent double-firing
+  // Remove all inline event handlers
   tab.removeAttribute("onclick");
   tab.removeAttribute("onmouseover");
   tab.removeAttribute("onmouseout");
 
+  function isMobile() { return window.innerWidth <= 767; }
+
+  // Single click handler — no conflict
   tab.addEventListener("click", function(e) {
     e.stopPropagation();
-    e.preventDefault();
-    var isOpen = panel.style.right === "0px";
-    panel.style.right = isOpen ? "-260px" : "0px";
+    panel.style.right = (panel.style.right === "0px") ? "-260px" : "0px";
   });
 
-  tab.addEventListener("mouseover", function() { if (!isMobile()) { clearTimeout(window._socialTimer); panel.style.right = "0px"; } });
-  tab.addEventListener("mouseout", function() { if (!isMobile()) { window._socialTimer = setTimeout(function(){ panel.style.right = "-260px"; }, 400); } });
-  panel.addEventListener("mouseover", function() { if (!isMobile()) clearTimeout(window._socialTimer); });
-  panel.addEventListener("mouseout", function() { if (!isMobile()) { window._socialTimer = setTimeout(function(){ panel.style.right = "-260px"; }, 400); } });
+  // Desktop hover
+  tab.addEventListener("mouseover", function() {
+    if (!isMobile()) { clearTimeout(window._st); panel.style.right = "0px"; }
+  });
+  tab.addEventListener("mouseout", function() {
+    if (!isMobile()) { window._st = setTimeout(function(){ panel.style.right = "-260px"; }, 400); }
+  });
+  panel.addEventListener("mouseover", function() { if (!isMobile()) clearTimeout(window._st); });
+  panel.addEventListener("mouseout", function() {
+    if (!isMobile()) { window._st = setTimeout(function(){ panel.style.right = "-260px"; }, 400); }
+  });
 
-  // Close when tapping outside — use capture so it runs before tab click
+  // Tap outside to close
   document.addEventListener("click", function(e) {
     if (panel.style.right === "0px" && !panel.contains(e.target) && !tab.contains(e.target)) {
       panel.style.right = "-260px";
     }
-  }, true);
+  });
 })();
 </script>
 </body>
