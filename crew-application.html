@@ -398,6 +398,10 @@ option {
             <option value="The 15th Hour">The 15th Hour</option>
           </select>
         </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+          <input type="checkbox" id="crew-newsletter" name="newsletter" style="width:auto;accent-color:#DAAF37">
+          <label for="crew-newsletter" style="font-size:0.78rem;color:rgba(234,223,207,0.5);text-transform:none;letter-spacing:0;cursor:pointer;margin:0">Subscribe to the BLEUSKM Studios newsletter</label>
+        </div>
         <button type="submit" class="submit-btn">Submit Crew Application</button>
       <p class="form-note">All positions are volunteer-based. Join the team, build something real, and grow with BLEUSKM Studios.<br>Questions? <a href="mailto:crew@bleuskm.com" style="color:rgba(218,175,55,0.5)">crew@bleuskm.com</a></p>
     </form>
@@ -672,6 +676,10 @@ async function submitCrewForm(e) {
 
   try {
     await sendToAirtable(TBL_CREW, fields);
+    var nlCheck = document.getElementById('crew-newsletter');
+    if (nlCheck && nlCheck.checked) {
+      await sendToAirtable(TBL_NEWSLETTER, { 'Name': name, 'Email': email });
+    }
     await sendToBrevo(6, email, name, { CREW_ROLE: role });
     await sendEmail(2, email, name, { FIRSTNAME: name, ROLE: role });
 
