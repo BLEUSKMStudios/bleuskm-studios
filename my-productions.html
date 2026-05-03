@@ -20,7 +20,7 @@ body.productions-page{background:#080808;color:#EADFCF}
 .horizontal-scroll{display:flex;align-items:flex-start;gap:60px;overflow-x:auto;overflow-y:hidden;padding-left:43px;padding-right:80px;scrollbar-width:none}
 .horizontal-scroll::-webkit-scrollbar{display:none}
 .vertical-title{writing-mode:vertical-rl;transform:rotate(180deg);font-family:'League Spartan',sans-serif;font-weight:600;font-size:1.3rem;letter-spacing:10px;color:#DAAF37;flex:0 0 auto}
-.scroll-card{flex:0 0 380px;text-decoration:none;color:inherit;position:relative}
+.scroll-card{flex:0 0 380px;text-decoration:none;color:inherit;position:relative;display:flex;flex-direction:column;justify-content:flex-start}
 .scroll-card img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;filter:brightness(0.8);transition:filter 0.4s,transform 0.4s}
 .scroll-card:hover img{filter:brightness(1);transform:scale(1.02)}
 .scroll-meta{display:flex;flex-direction:column;align-items:flex-start;gap:3px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(218,175,55,0.18);text-transform:uppercase}
@@ -229,7 +229,7 @@ body.productions-page { background: #080808; }
   .vertical-title { display: none !important; }
   .coming-wrapper { padding: 0 0 16px !important; }
   .horizontal-scroll { gap: 10px !important; padding: 12px 14px 8px !important; }
-    .scroll-card { flex: 0 0 120px !important; width: 120px !important; }
+    .scroll-card { flex: 0 0 120px !important; width: 120px !important; display: flex !important; flex-direction: column !important; justify-content: flex-start !important; align-self: flex-start !important; }
   .scroll-card img { width: 120px !important; height: 120px !important; aspect-ratio: unset !important; object-fit: cover !important; display: block !important; }
   .scroll-card > div { width: 120px !important; height: 120px !important; aspect-ratio: unset !important; min-height: unset !important; flex-shrink: 0 !important; }
   .scroll-card > div[style] { width: 120px !important; height: 120px !important; aspect-ratio: unset !important; min-height: unset !important; }
