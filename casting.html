@@ -10,301 +10,45 @@
 <link rel="icon" type="image/png" href="images/bleuskm-logo.png">
 <style>
 body { background: #080808; color: #EADFCF; }
-
-/* ── PAGE HEADER ── */
-.casting-page-header {
-  padding: 70px 60px 50px;
-  border-bottom: 1px solid rgba(218,175,55,0.1);
-}
-
-.casting-page-header h1 {
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 900;
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  letter-spacing: 6px;
-  text-transform: uppercase;
-  color: #DAAF37;
-  margin-bottom: 8px;
-}
-
-.casting-page-header p {
-  font-size: 0.85rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: rgba(234,223,207,0.4);
-  max-width: 600px;
-}
-
-/* ── FILM GRID ── */
-.casting-grid-section {
-  padding: 60px 60px 0;
-}
-
-.casting-section-label {
-  font-family: 'Red Hat Display', sans-serif;
-  font-size: 0.65rem;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: rgba(218,175,55,0.5);
-  margin-bottom: 30px;
-  display: block;
-  border-bottom: 1px solid rgba(218,175,55,0.1);
-  padding-bottom: 14px;
-}
-
-.casting-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2px;
-  margin-bottom: 60px;
-}
-
-/* ── FILM CARD ── */
-.film-cast-card {
-  position: relative;
-  background: #0d0d0d;
-  border: 1px solid rgba(218,175,55,0.07);
-  overflow: hidden;
-  cursor: pointer;
-  transition: background 0.25s;
-}
-
+.casting-page-header { padding: 70px 60px 50px; border-bottom: 1px solid rgba(218,175,55,0.1); }
+.casting-page-header h1 { font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: clamp(2rem, 5vw, 3.5rem); letter-spacing: 6px; text-transform: uppercase; color: #DAAF37; margin-bottom: 8px; }
+.casting-page-header p { font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(234,223,207,0.4); max-width: 600px; }
+.casting-grid-section { padding: 60px 60px 0; }
+.casting-section-label { font-family: 'Red Hat Display', sans-serif; font-size: 0.65rem; letter-spacing: 4px; text-transform: uppercase; color: rgba(218,175,55,0.5); margin-bottom: 30px; display: block; border-bottom: 1px solid rgba(218,175,55,0.1); padding-bottom: 14px; }
+.casting-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-bottom: 60px; }
+.film-cast-card { position: relative; background: #0d0d0d; border: 1px solid rgba(218,175,55,0.07); overflow: hidden; cursor: pointer; transition: background 0.25s; }
 .film-cast-card:hover { background: #111; }
 .film-cast-card.closed-card:hover .film-cast-img { filter: brightness(0.75); }
-.film-cast-card.closed-card { transition: background 0.25s; }
-
-.film-cast-card.open-card { cursor: pointer; }
-.film-cast-card.closed-card { cursor: pointer; }
-
-.film-cast-img {
-  width: 100%;
-  aspect-ratio: 16/9;
-  object-fit: cover;
-  display: block;
-  filter: brightness(0.6);
-  transition: filter 0.4s;
-}
-
+.film-cast-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; filter: brightness(0.6); transition: filter 0.4s; }
 .film-cast-card.open-card:hover .film-cast-img { filter: brightness(0.8); }
-
-.film-cast-overlay {
-  position: absolute;
-  top: 12px;
-  left: 14px;
-}
-
-.cast-status-badge {
-  font-family: 'League Spartan', sans-serif;
-  font-size: 0.6rem;
-  font-weight: 800;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  padding: 5px 10px;
-}
-
-.badge-open {
-  background: #DAAF37;
-  color: #000;
-}
-
-.badge-closed {
-  background: rgba(0,0,0,0.6);
-  color: rgba(234,223,207,0.5);
-  border: 1px solid rgba(218,175,55,0.2);
-}
-
-.badge-soon {
-  background: rgba(218,175,55,0.15);
-  color: #DAAF37;
-  border: 1px solid rgba(218,175,55,0.4);
-}
-
-.film-cast-info {
-  padding: 18px 20px 22px;
-  border-top: 1px solid rgba(218,175,55,0.08);
-}
-
-.film-cast-format {
-  font-size: 0.6rem;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  color: rgba(234,223,207,0.35);
-  margin-bottom: 4px;
-  display: block;
-}
-
-.film-cast-title {
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 800;
-  font-size: 0.85rem;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: #EADFCF;
-  margin-bottom: 6px;
-}
-
-.film-cast-action {
-  font-size: 0.7rem;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: #DAAF37;
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 700;
-}
-
+.film-cast-overlay { position: absolute; top: 12px; left: 14px; }
+.cast-status-badge { font-family: 'League Spartan', sans-serif; font-size: 0.6rem; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; padding: 5px 10px; }
+.badge-open { background: #DAAF37; color: #000; }
+.badge-closed { background: rgba(0,0,0,0.6); color: rgba(234,223,207,0.5); border: 1px solid rgba(218,175,55,0.2); }
+.badge-soon { background: rgba(218,175,55,0.15); color: #DAAF37; border: 1px solid rgba(218,175,55,0.4); }
+.film-cast-info { padding: 18px 20px 22px; border-top: 1px solid rgba(218,175,55,0.08); }
+.film-cast-format { font-size: 0.6rem; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(234,223,207,0.35); margin-bottom: 4px; display: block; }
+.film-cast-title { font-family: 'League Spartan', sans-serif; font-weight: 800; font-size: 0.85rem; letter-spacing: 1.5px; text-transform: uppercase; color: #EADFCF; margin-bottom: 6px; }
+.film-cast-action { font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; color: #DAAF37; font-family: 'League Spartan', sans-serif; font-weight: 700; }
 .film-cast-action.dimmed { color: rgba(234,223,207,0.25); }
-
-/* ── MODAL OVERLAY ── */
-.modal-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.85);
-  z-index: 2000;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  overflow-y: auto;
-  backdrop-filter: blur(4px);
-}
-
-.modal-overlay.active {
-  display: flex;
-}
-
-.modal-box {
-  background: #0d0d0d;
-  border: 1px solid rgba(218,175,55,0.15);
-  max-width: 760px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-  transform: translateY(20px);
-  transition: transform 0.3s ease;
-}
-
-.modal-overlay.active .modal-box { transform: translateY(0); }
-
-.modal-close {
-  position: absolute;
-  top: 20px;
-  right: 24px;
-  background: none;
-  border: none;
-  color: rgba(234,223,207,0.4);
-  font-size: 1.4rem;
-  cursor: pointer;
-  z-index: 10;
-  transition: color 0.2s;
-}
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; backdrop-filter: blur(4px); }
+.modal-box { background: #0d0d0d; border: 1px solid rgba(218,175,55,0.15); max-width: 760px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; transform: translateY(20px); transition: transform 0.3s ease; }
+.modal-close { position: absolute; top: 20px; right: 24px; background: none; border: none; color: rgba(234,223,207,0.4); font-size: 1.4rem; cursor: pointer; z-index: 10; transition: color 0.2s; }
 .modal-close:hover { color: #DAAF37; }
-
-/* Modal tabs: Info / Apply */
-.modal-tabs {
-  display: flex;
-  border-bottom: 1px solid rgba(218,175,55,0.1);
-}
-
-.modal-tab {
-  flex: 1;
-  padding: 20px;
-  background: none;
-  border: none;
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 700;
-  font-size: 0.75rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: rgba(234,223,207,0.35);
-  cursor: pointer;
-  transition: color 0.2s, border-bottom 0.2s;
-  border-bottom: 2px solid transparent;
-}
-
-.modal-tab.active {
-  color: #DAAF37;
-  border-bottom: 2px solid #DAAF37;
-}
-
+.modal-tabs { display: flex; border-bottom: 1px solid rgba(218,175,55,0.1); }
+.modal-tab { flex: 1; padding: 20px; background: none; border: none; font-family: 'League Spartan', sans-serif; font-weight: 700; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(234,223,207,0.35); cursor: pointer; transition: color 0.2s, border-bottom 0.2s; border-bottom: 2px solid transparent; }
+.modal-tab.active { color: #DAAF37; border-bottom: 2px solid #DAAF37; }
 .modal-tab-content { display: none; padding: 36px; }
 .modal-tab-content.active { display: block; }
-
-/* Modal info panel */
-.modal-film-title {
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 900;
-  font-size: 2rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: #EADFCF;
-  margin-bottom: 6px;
-}
-
-.modal-film-meta {
-  font-size: 0.75rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: rgba(218,175,55,0.5);
-  margin-bottom: 24px;
-}
-
-.modal-logline {
-  font-family: 'Kalnia', serif;
-  font-style: italic;
-  font-size: 1rem;
-  line-height: 1.7;
-  color: rgba(234,223,207,0.75);
-  margin-bottom: 28px;
-  padding-bottom: 28px;
-  border-bottom: 1px solid rgba(218,175,55,0.1);
-}
-
-.modal-roles-title {
-  font-family: 'Red Hat Display', sans-serif;
-  font-size: 0.65rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: rgba(218,175,55,0.5);
-  margin-bottom: 16px;
-  display: block;
-}
-
-.role-row {
-  padding: 14px 0;
-  border-bottom: 1px solid rgba(218,175,55,0.07);
-}
-
-.role-name {
-  display:flex;flex-direction:column;
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 700;
-  font-size: 0.85rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: #DAAF37;
-  margin-bottom: 3px;
-}
-
-.role-desc {
-  font-size: 0.82rem;
-  color: rgba(234,223,207,0.55);
-  line-height: 1.5;
-}
-.role-summary {
-  font-size: 0.82rem;
-  color: rgba(234,223,207,0.6);
-  line-height: 1.6;
-  margin-bottom: 10px;
-}
-.breakdown-toggle {
-  display: inline-flex; align-items: center; gap: 7px;
-  font-family: 'League Spartan', sans-serif; font-weight: 700;
-  font-size: 0.62rem; letter-spacing: 2px; text-transform: uppercase;
-  color: rgba(218,175,55,0.6); cursor: pointer; border: none;
-  background: none; padding: 0; margin-top: 6px;
-  transition: color 0.2s;
-}
+.modal-film-title { font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: 2rem; letter-spacing: 3px; text-transform: uppercase; color: #EADFCF; margin-bottom: 6px; }
+.modal-film-meta { font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(218,175,55,0.5); margin-bottom: 24px; }
+.modal-logline { font-family: 'Kalnia', serif; font-style: italic; font-size: 1rem; line-height: 1.7; color: rgba(234,223,207,0.75); margin-bottom: 28px; padding-bottom: 28px; border-bottom: 1px solid rgba(218,175,55,0.1); }
+.modal-roles-title { font-family: 'Red Hat Display', sans-serif; font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase; color: rgba(218,175,55,0.5); margin-bottom: 16px; display: block; }
+.role-row { padding: 14px 0; border-bottom: 1px solid rgba(218,175,55,0.07); }
+.role-name { display:flex; flex-direction:column; font-family: 'League Spartan', sans-serif; font-weight: 700; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; color: #DAAF37; margin-bottom: 3px; }
+.role-desc { font-size: 0.82rem; color: rgba(234,223,207,0.55); line-height: 1.5; }
+.role-summary { font-size: 0.82rem; color: rgba(234,223,207,0.6); line-height: 1.6; margin-bottom: 10px; }
+.breakdown-toggle { display: inline-flex; align-items: center; gap: 7px; font-family: 'League Spartan', sans-serif; font-weight: 700; font-size: 0.62rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(218,175,55,0.6); cursor: pointer; border: none; background: none; padding: 0; margin-top: 6px; transition: color 0.2s; }
 .breakdown-toggle:hover { color: #DAAF37; }
 .breakdown-toggle .toggle-arrow { display: inline-block; transition: transform 0.25s; font-size: 0.7rem; }
 .breakdown-toggle.open .toggle-arrow { transform: rotate(180deg); }
@@ -314,298 +58,43 @@ body { background: #080808; color: #EADFCF; }
 .breakdown-body ul { margin: 0 0 10px; padding-left: 18px; font-size: 0.82rem; color: rgba(234,223,207,0.55); line-height: 1.9; }
 .bd-label { font-family: 'League Spartan', sans-serif; font-weight: 700; font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(218,175,55,0.5); display: block; margin: 12px 0 6px; }
 .bd-label:first-child { margin-top: 0; }
-
-/* ── Character breakdown accordion ── */
-.role-summary {
-  font-size: 0.82rem;
-  color: rgba(234,223,207,0.6);
-  line-height: 1.6;
-  margin-bottom: 10px;
-}
-.breakdown-toggle {
-  display: inline-flex; align-items: center; gap: 7px;
-  font-family: 'League Spartan', sans-serif; font-weight: 700;
-  font-size: 0.62rem; letter-spacing: 2px; text-transform: uppercase;
-  color: rgba(218,175,55,0.6); cursor: pointer; border: none;
-  background: none; padding: 0; margin-top: 4px;
-  transition: color 0.2s;
-}
-.breakdown-toggle:hover { color: #DAAF37; }
-.breakdown-toggle .toggle-arrow {
-  display: inline-block; transition: transform 0.25s;
-  font-size: 0.7rem;
-}
-.breakdown-toggle.open .toggle-arrow { transform: rotate(180deg); }
-.breakdown-body {
-  display: none; margin-top: 14px;
-  border-left: 2px solid rgba(218,175,55,0.2);
-  padding-left: 16px;
-}
-.breakdown-body.open { display: block; }
-.breakdown-body p {
-  font-size: 0.82rem; color: rgba(234,223,207,0.55);
-  line-height: 1.7; margin: 0 0 12px;
-}
-.breakdown-body ul {
-  margin: 0 0 12px; padding-left: 18px;
-  font-size: 0.82rem; color: rgba(234,223,207,0.55); line-height: 1.8;
-}
-.breakdown-body .bd-label {
-  font-family: 'League Spartan', sans-serif; font-weight: 700;
-  font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase;
-  color: rgba(218,175,55,0.5); display: block; margin: 14px 0 6px;
-}
-
-.apply-from-info-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 28px;
-  background: #DAAF37;
-  color: #0b0b0b;
-  border: none;
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 900;
-  font-size: 0.8rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 12px 24px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
+.apply-from-info-btn { display: inline-flex; align-items: center; gap: 8px; margin-top: 28px; background: #DAAF37; color: #0b0b0b; border: none; font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; padding: 12px 24px; cursor: pointer; transition: background 0.2s; }
 .apply-from-info-btn:hover { background: #b9892e; }
-
-/* Closed state in modal */
-.modal-closed-notice {
-  background: rgba(218,175,55,0.04);
-  border: 1px solid rgba(218,175,55,0.12);
-  padding: 28px;
-  margin-top: 20px;
-}
-
-.modal-closed-notice p {
-  font-size: 0.85rem;
-  color: rgba(234,223,207,0.5);
-  line-height: 1.6;
-  margin-bottom: 20px;
-}
-
-/* ── CASTING SUBMISSION FORM ── */
-
-.casting-form h3 {
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 900;
-  font-size: 1.2rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: #EADFCF;
-  margin-bottom: 4px;
-}
-
-.casting-form .form-sub {
-  font-size: 0.75rem;
-  letter-spacing: 1px;
-  color: rgba(218,175,55,0.5);
-  margin-bottom: 28px;
-}
-
-.form-row-two {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 16px;
-}
-
-.form-field label {
-  font-family: 'Red Hat Display', sans-serif;
-  font-size: 0.65rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: rgba(218,175,55,0.6);
-}
-
-.form-field input,
-.form-field select,
-.form-field textarea {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(218,175,55,0.2);
-  color: #EADFCF;
-  padding: 10px 14px;
-  font-family: 'Red Hat Display', sans-serif;
-  font-size: 0.85rem;
-  border-radius: 0;
-  transition: border-color 0.2s;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.form-field input:focus,
-.form-field select:focus,
-.form-field textarea:focus {
-  outline: none;
-  border-color: rgba(218,175,55,0.6);
-}
-
+.casting-form h3 { font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; color: #EADFCF; margin-bottom: 4px; }
+.casting-form .form-sub { font-size: 0.75rem; letter-spacing: 1px; color: rgba(218,175,55,0.5); margin-bottom: 28px; }
+.form-row-two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.form-field label { font-family: 'Red Hat Display', sans-serif; font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(218,175,55,0.6); }
+.form-field input, .form-field select, .form-field textarea { background: rgba(255,255,255,0.04); border: 1px solid rgba(218,175,55,0.2); color: #EADFCF; padding: 10px 14px; font-family: 'Red Hat Display', sans-serif; font-size: 0.85rem; border-radius: 0; transition: border-color 0.2s; width: 100%; box-sizing: border-box; }
+.form-field input:focus, .form-field select:focus, .form-field textarea:focus { outline: none; border-color: rgba(218,175,55,0.6); }
 .form-field select option { background: #111; color: #EADFCF; }
-
-.form-field input[type="file"] {
-  padding: 8px;
-  color: rgba(234,223,207,0.5);
-  font-size: 0.8rem;
-}
-
-.form-submit-btn {
-  width: 100%;
-  height: 50px;
-  background: #DAAF37;
-  border: none;
-  color: #0b0b0b;
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 900;
-  font-size: 0.85rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background 0.2s;
-}
-
+.form-submit-btn { width: 100%; height: 50px; background: #DAAF37; border: none; color: #0b0b0b; font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
 .form-submit-btn:hover { background: #b9892e; }
-
-.form-note {
-  font-size: 0.72rem;
-  color: rgba(234,223,207,0.3);
-  margin-top: 12px;
-  line-height: 1.5;
-  text-align: center;
-}
-
-/* Success message */
-.form-success {
-  display: none;
-  text-align: center;
-  padding: 40px 20px;
-}
-
-.form-success h4 {
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 900;
-  font-size: 1.4rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: #DAAF37;
-  margin-bottom: 12px;
-}
-
-.form-success p {
-  font-size: 0.85rem;
-  color: rgba(234,223,207,0.5);
-  line-height: 1.6;
-}
-
-/* ── NEWSLETTER SECTION ── */
-.newsletter-section {
-  margin: 0 60px 80px;
-  padding: 50px 60px;
-  border: 1px solid rgba(218,175,55,0.12);
-  background: rgba(218,175,55,0.03);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
-  align-items: center;
-}
-
-.newsletter-copy h2 {
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 900;
-  font-size: 1.5rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: #DAAF37;
-  margin-bottom: 10px;
-}
-
-.newsletter-copy p {
-  font-size: 0.85rem;
-  color: rgba(234,223,207,0.55);
-  line-height: 1.6;
-}
-
-/* ── FOOTER ── */
-.site-footer-full {
-  background: #040404;
-  border-top: 1px solid rgba(218,175,55,0.1);
-  padding: 50px 60px 30px;
-}
-
-.footer-grid {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1fr;
-  gap: 40px;
-  margin-bottom: 40px;
-}
-
+.form-note { font-size: 0.72rem; color: rgba(234,223,207,0.3); margin-top: 12px; line-height: 1.5; text-align: center; }
+.form-success { display: none; text-align: center; padding: 40px 20px; }
+.form-success h4 { font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: 1.4rem; letter-spacing: 3px; text-transform: uppercase; color: #DAAF37; margin-bottom: 12px; }
+.form-success p { font-size: 0.85rem; color: rgba(234,223,207,0.5); line-height: 1.6; }
+.newsletter-section { margin: 0 60px 80px; padding: 50px 60px; border: 1px solid rgba(218,175,55,0.12); background: rgba(218,175,55,0.03); display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+.newsletter-copy h2 { font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: 1.5rem; letter-spacing: 3px; text-transform: uppercase; color: #DAAF37; margin-bottom: 10px; }
+.newsletter-copy p { font-size: 0.85rem; color: rgba(234,223,207,0.55); line-height: 1.6; }
+.site-footer-full { background: #040404; border-top: 1px solid rgba(218,175,55,0.1); padding: 50px 60px 30px; }
+.footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
 .footer-brand img { height: 32px; margin-bottom: 14px; }
-
-.footer-brand p {
-  font-size: 0.78rem;
-  color: rgba(234,223,207,0.35);
-  line-height: 1.6;
-  max-width: 220px;
-}
-
-.footer-col h4 {
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 700;
-  font-size: 0.65rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: rgba(218,175,55,0.5);
-  margin-bottom: 16px;
-}
-
-.footer-col a {
-  display: block;
-  font-size: 0.8rem;
-  color: rgba(234,223,207,0.45);
-  text-decoration: none;
-  margin-bottom: 10px;
-  transition: color 0.2s;
-}
-
+.footer-brand p { font-size: 0.78rem; color: rgba(234,223,207,0.35); line-height: 1.6; max-width: 220px; }
+.footer-col h4 { font-family: 'League Spartan', sans-serif; font-weight: 700; font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase; color: rgba(218,175,55,0.5); margin-bottom: 16px; }
+.footer-col a { display: block; font-size: 0.8rem; color: rgba(234,223,207,0.45); text-decoration: none; margin-bottom: 10px; transition: color 0.2s; }
 .footer-col a:hover { color: #DAAF37; }
-
-.footer-bottom {
-  border-top: 1px solid rgba(218,175,55,0.08);
-  padding-top: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.footer-bottom p {
-  font-size: 0.72rem;
-  color: rgba(234,223,207,0.2);
-}
-
-.footer-bottom a {
-  font-size: 0.72rem;
-  color: rgba(234,223,207,0.2);
-  text-decoration: none;
-  margin-left: 20px;
-  transition: color 0.2s;
-}
-
+.footer-bottom { border-top: 1px solid rgba(218,175,55,0.08); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+.footer-bottom p { font-size: 0.72rem; color: rgba(234,223,207,0.2); }
+.footer-bottom a { font-size: 0.72rem; color: rgba(234,223,207,0.2); text-decoration: none; margin-left: 20px; transition: color 0.2s; }
 .footer-bottom a:hover { color: rgba(218,175,55,0.5); }
-
+.not-actor-link { font-family: 'Red Hat Display', sans-serif; font-size: 0.82rem; color: rgba(234,223,207,0.45); letter-spacing: 0.5px; display: block; text-align: center; margin-top: 18px; }
+.not-actor-link:hover { color: rgba(234,223,207,0.75); }
+.navbar{background:rgba(8,8,8,0.92)!important;backdrop-filter:blur(12px);border-bottom:1px solid rgba(218,175,55,0.08)}
+.navbar-brand span{font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37}
+.nav-link{font-family:'League Spartan',sans-serif;font-weight:600;font-size:0.65rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(234,223,207,0.5)!important;transition:color 0.2s;padding:0.5rem 1rem!important}
+.nav-link:hover,.nav-link.active{color:#DAAF37!important}
+.role-type{display:block;font-family:'Red Hat Display',sans-serif;font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:rgba(218,175,55,0.5);font-weight:400;margin-top:2px}
 @media (max-width: 900px) {
   .casting-grid { grid-template-columns: repeat(2, 1fr); }
   .casting-grid-section { padding: 40px 20px 0; }
@@ -615,155 +104,13 @@ body { background: #080808; color: #EADFCF; }
   .form-row-two { grid-template-columns: 1fr; }
   .modal-tab-content { padding: 24px; }
 }
-
 @media (max-width: 540px) {
   .casting-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; }
 }
-/* ── FOOTER ── */
-.site-footer-full {
-  background: #040404;
-  border-top: 1px solid rgba(218,175,55,0.1);
-  padding: 50px 60px 30px;
-}
-
-.footer-grid {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1fr;
-  gap: 40px;
-  margin-bottom: 40px;
-}
-
-.footer-brand img {
-  height: 32px;
-  margin-bottom: 14px;
-}
-
-.footer-brand p {
-  font-size: 0.78rem;
-  color: rgba(234,223,207,0.35);
-  line-height: 1.6;
-  max-width: 220px;
-}
-
-.footer-col h4 {
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 700;
-  font-size: 0.65rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: rgba(218,175,55,0.5);
-  margin-bottom: 16px;
-}
-
-.footer-col a {
-  display: block;
-  font-size: 0.8rem;
-  color: rgba(234,223,207,0.45);
-  text-decoration: none;
-  margin-bottom: 10px;
-  transition: color 0.2s;
-}
-
-.footer-col a:hover {
-  color: #DAAF37;
-}
-
-.footer-bottom {
-  border-top: 1px solid rgba(218,175,55,0.08);
-  padding-top: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.footer-bottom p {
-  font-size: 0.72rem;
-  color: rgba(234,223,207,0.2);
-}
-
-.footer-bottom a {
-  font-size: 0.72rem;
-  color: rgba(234,223,207,0.2);
-  text-decoration: none;
-  margin-left: 20px;
-}
-
-.footer-bottom a:hover {
-  color: rgba(218,175,55,0.5);
-}
-/* ── TEXT LINK (NOT A BUTTON) ── */
-.not-actor-link {
-  font-family: 'Red Hat Display', sans-serif;
-  font-size: 0.82rem;
-  color: rgba(234,223,207,0.45);
-  letter-spacing: 0.5px;
-  display: block;
-  text-align: center;
-  margin-top: 18px;
-}
-
-.not-actor-link:hover {
-  color: rgba(234,223,207,0.75);
-}
-
-/* ── GOLD BUTTON SYSTEM ── */
-.gold-btn {
-  background: #DAAF37;
-  color: #0b0b0b;
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 900;
-  font-size: 0.8rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 14px 28px;
-  border: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-
-.gold-btn:hover {
-  background: #b9892e;
-}
-
-.gold-btn-outline {
-  background: transparent;
-  color: #EADFCF;
-  border: 1px solid rgba(218,175,55,0.4);
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 900;
-  font-size: 0.8rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 14px 28px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-
-.gold-btn-outline:hover {
-  border-color: #DAAF37;
-  color: #DAAF37;
-}
-
-/* NAV */
-.navbar{background:rgba(8,8,8,0.92)!important;backdrop-filter:blur(12px);border-bottom:1px solid rgba(218,175,55,0.08)}
-.navbar-brand span{font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37}
-.nav-link{font-family:'League Spartan',sans-serif;font-weight:600;font-size:0.65rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(234,223,207,0.5)!important;transition:color 0.2s;padding:0.5rem 1rem!important}
-.nav-link:hover,.nav-link.active{color:#DAAF37!important}
-.role-type{display:block;font-family:'Red Hat Display',sans-serif;font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:rgba(218,175,55,0.5);font-weight:400;margin-top:2px}
 </style>
-  <style>
-    a { color: inherit; text-decoration: none; }
-    a:hover { color: #DAAF37; text-decoration: none; }
-  </style>
-  <style>
-    a, a:link, a:visited, a:active, a:hover { text-decoration: none !important; }
-  </style>
+<style>a { color: inherit; text-decoration: none; } a:hover { color: #DAAF37; text-decoration: none; }</style>
+<style>a, a:link, a:visited, a:active, a:hover { text-decoration: none !important; }</style>
 </head>
 <body>
 
@@ -771,23 +118,20 @@ body { background: #080808; color: #EADFCF; }
 <nav class="navbar navbar-expand-md navbar-dark fixed-top">
   <div class="container-fluid">
     <a class="navbar-brand brand-logo" href="index.html" style="display:flex;align-items:center;gap:10px"><img src="images/bleuskm-logo.png" alt="BLEUSKM Logo" style="height:32px;width:auto;"><span style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37">BLEUSKM Studios</span></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"><span class="navbar-toggler-icon"></span></button>
     <div class="collapse navbar-collapse" id="mainNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
         <li class="nav-item"><a class="nav-link" href="my-productions.html">Productions</a></li>
         <li class="nav-item"><a class="nav-link" href="visuals.html">Visuals</a></li>
         <li class="nav-item"><a class="nav-link" href="echos.html">Echos</a></li>
-        <li class="nav-item"><a class="nav-link" href="casting.html" class="nav-link active">Casting</a></li>
+        <li class="nav-item"><a class="nav-link active" href="casting.html">Casting</a></li>
         <li class="nav-item"><a class="nav-link" href="bleuskm shop.html">Shop</a></li>
         <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
       </ul>
     </div>
   </div>
 </nav>
-
 
 <!-- CREW APPLICATION BANNER -->
 <div style="background:rgba(218,175,55,0.05);border-bottom:1px solid rgba(218,175,55,0.12);padding:18px 60px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
@@ -804,12 +148,10 @@ body { background: #080808; color: #EADFCF; }
   <p>Select a production below to view roles and submit your audition materials.</p>
 </div>
 
-<!-- OPEN CASTINGS -->
+<!-- NOW CASTING -->
 <div class="casting-grid-section">
   <span class="casting-section-label">Now Casting</span>
   <div class="casting-grid">
-
-    <!-- THE FINAL HAND — OPEN -->
     <div class="film-cast-card open-card" onclick="openModal('final-hand')">
       <img class="film-cast-img" src="images/the_final_hand_poster.png" alt="The Final Hand">
       <div class="film-cast-overlay"><span class="cast-status-badge badge-open">Casting Open</span></div>
@@ -819,30 +161,25 @@ body { background: #080808; color: #EADFCF; }
         <span class="film-cast-action">View Roles &amp; Apply →</span>
       </div>
     </div>
-
-
   </div>
+</div>
+
 <!-- CASTING SOON -->
-</div>
-</div>
 <div class="casting-grid-section">
   <span class="casting-section-label">Casting Soon</span>
   <div class="casting-grid">
-
-  <!-- LOVE ME LIKE THIS — SOON -->
-  <div class="film-cast-card closed-card" onclick="openModal('love-me-like-this')">
-    <img class="film-cast-img" src="images/love-me-like-this-poster.png" alt="Love Me Like This">
-    <div class="film-cast-overlay"><span class="cast-status-badge badge-soon">Opens Soon</span></div>
-    <div class="film-cast-info">
-      <span class="film-cast-format">Short Film · Pre-Production</span>
-      <div class="film-cast-title">Love Me Like This</div>
+    <div class="film-cast-card closed-card" onclick="openModal('love-me-like-this')">
+      <img class="film-cast-img" src="images/love-me-like-this-poster.png" alt="Love Me Like This">
+      <div class="film-cast-overlay"><span class="cast-status-badge badge-soon">Opens Soon</span></div>
+      <div class="film-cast-info">
+        <span class="film-cast-format">Short Film · Pre-Production</span>
+        <div class="film-cast-title">Love Me Like This</div>
+      </div>
     </div>
   </div>
+</div>
 
-</div>
-  <!-- COMING SOON PRODUCTIONS -->
-  </div>
-</div>
+<!-- COMING SOON -->
 <div class="casting-grid-section">
   <span class="casting-section-label">Coming Soon — Subscribe below for Updates</span>
   <div class="casting-grid" style="margin-bottom:80px">
@@ -897,7 +234,8 @@ body { background: #080808; color: #EADFCF; }
       </div>
     </div>
 
-    <div class="film-cast-card closed-card" onclick="openModal('As Is')">
+    <!-- FIXED: id and onclick now use 'as-is' -->
+    <div class="film-cast-card closed-card" onclick="openModal('as-is')">
       <img class="film-cast-img" src="images/as-is-poster.jpg" alt="As Is">
       <div class="film-cast-overlay"><span class="cast-status-badge badge-soon">Not Yet Open</span></div>
       <div class="film-cast-info">
@@ -917,23 +255,12 @@ body { background: #080808; color: #EADFCF; }
     <p>Subscribe to receive casting call announcements, production updates, and BLEUSKM news directly to your inbox. Be the first to know when submissions open.</p>
   </div>
   <div>
-    <!-- Netlify Form: newsletter -->
     <form id="newsletterForm" onsubmit="submitNewsletterFooter(event)">
-        <div class="form-field">
-          <label>Your Name</label>
-          <input type="text" id="nl-name" placeholder="Full name">
-        </div>
-        <div class="form-field">
-          <label>Email Address</label>
-          <input type="email" id="nl-email" placeholder="name@email.com" required>
-        </div>
-        <button type="submit" class="form-submit-btn">Subscribe to Updates</button>
-        <p class="form-note">No spam. Casting calls, announcements, and production news only.</p>
-      </form>
-      <div id="newsletterSuccess" style="display:none;text-align:center;padding:20px">
-        <p style="color:#DAAF37;font-family:'League Spartan',sans-serif;letter-spacing:2px;font-size:0.85rem">YOU'RE ON THE LIST</p>
-        <p style="color:rgba(234,223,207,0.4);font-size:0.8rem;margin-top:8px">We'll be in touch when castings open.</p>
-      </div>
+      <div class="form-field"><label>Your Name</label><input type="text" id="nl-name" placeholder="Full name"></div>
+      <div class="form-field"><label>Email Address</label><input type="email" id="nl-email" placeholder="name@email.com" required></div>
+      <button type="submit" class="form-submit-btn">Subscribe to Updates</button>
+      <p class="form-note">No spam. Casting calls, announcements, and production news only.</p>
+    </form>
     <div id="newsletterSuccess" style="display:none;text-align:center;padding:20px">
       <p style="color:#DAAF37;font-family:'League Spartan',sans-serif;letter-spacing:2px;font-size:0.85rem">YOU'RE ON THE LIST</p>
       <p style="color:rgba(234,223,207,0.4);font-size:0.8rem;margin-top:8px">We'll be in touch when castings open.</p>
@@ -941,26 +268,22 @@ body { background: #080808; color: #EADFCF; }
   </div>
 </div>
 
-<!-- ═══════════════════════════════
-     MODALS
-═══════════════════════════════ -->
+<!-- ═══════════ MODALS ═══════════ -->
 
-<!-- FINAL HAND MODAL — OPEN -->
+<!-- FINAL HAND MODAL -->
 <div class="modal-overlay" id="modal-final-hand">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('final-hand')">&times;</button>
     <div class="modal-tabs">
-      <button class="modal-tab active" onclick="switchTab('final-hand', 'info')">Film Details</button>
-      <button class="modal-tab" onclick="switchTab('final-hand', 'apply')">Apply Now</button>
+      <button class="modal-tab active" onclick="switchTab('final-hand','info')">Film Details</button>
+      <button class="modal-tab" onclick="switchTab('final-hand','apply')">Apply Now</button>
     </div>
     <div class="modal-tab-content active" id="final-hand-info">
       <span class="cast-status-badge badge-open" style="margin-bottom:20px;display:inline-block">Casting Open · May 2026</span>
-      <div style="margin:20px 0 24px;padding:16px 22px;background:rgba(218,175,55,0.07);border-left:3px solid #DAAF37;display:flex;align-items:center;gap:14px">
-      <div>
-        <div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:2px;text-transform:uppercase;color:#DAAF37">&#9651; Submissions Close &mdash; May 17th, 2026</div>
+      <div style="margin:20px 0 24px;padding:16px 22px;background:rgba(218,175,55,0.07);border-left:3px solid #DAAF37">
+        <div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:2px;text-transform:uppercase;color:#DAAF37">&#9651; Submissions Close — May 17th, 2026</div>
         <div style="font-size:0.68rem;color:rgba(234,223,207,0.4);letter-spacing:1px;text-transform:uppercase;margin-top:3px">All applications must be submitted before this date</div>
       </div>
-    </div>
       <div class="modal-film-title">The Final Hand</div>
       <div class="modal-film-meta">Short Film · Pre-Production · Director: Zaria Lashae</div>
       <p class="modal-logline">During a game of blackjack, a gambler attempts to outplay High John the Conqueror by mimicking his every move, only to realize too late that the game is testing something deeper than skill—and that true power cannot be learned through observation alone.</p>
@@ -974,7 +297,7 @@ body { background: #080808; color: #EADFCF; }
           <span class="bd-label">Character</span>
           <p>He speaks little, but every gesture holds intention. His movements feel ritualistic rather than performative, suggesting a connection to something far older than the room itself. His power is almost entirely non-verbal — the performance lives in the hands, the stillness, the weight of a look.</p>
           <span class="bd-label">Dialogue</span>
-          <p>Very Minimal. He is a man of few words — but when he speaks, every word lands like a full stop. His presence does the rest.</p>
+          <p>He is a man of few words — but when he speaks, every word lands like a full stop. His presence does the rest.</p>
           <span class="bd-label">Seeking</span>
           <ul>
             <li>Black American male, 35–60</li>
@@ -1030,8 +353,7 @@ body { background: #080808; color: #EADFCF; }
         <div class="role-summary">1–2 background roles set within a period backroom gambling parlor.</div>
         <button class="breakdown-toggle" onclick="toggleBreakdown(this)">Character Breakdown <span class="toggle-arrow">▾</span></button>
         <div class="breakdown-body">
-          <span class="bd-label">Dialogue</span>
-          <p>No dialogue required.</p>
+          <span class="bd-label">Dialogue</span><p>No dialogue required.</p>
           <span class="bd-label">Seeking</span>
           <ul>
             <li>Female, 25–45, any ethnicity</li>
@@ -1047,8 +369,7 @@ body { background: #080808; color: #EADFCF; }
         <div class="role-summary">3–5 seated background players for the gambling parlor environment.</div>
         <button class="breakdown-toggle" onclick="toggleBreakdown(this)">Character Breakdown <span class="toggle-arrow">▾</span></button>
         <div class="breakdown-body">
-          <span class="bd-label">Dialogue</span>
-          <p>No dialogue required.</p>
+          <span class="bd-label">Dialogue</span><p>No dialogue required.</p>
           <span class="bd-label">Seeking</span>
           <ul>
             <li>Male or female, 21+, any ethnicity</li>
@@ -1063,8 +384,7 @@ body { background: #080808; color: #EADFCF; }
         <div class="role-summary">One couple in the background of the gambling parlor — two roles, cast together.</div>
         <button class="breakdown-toggle" onclick="toggleBreakdown(this)">Character Breakdown <span class="toggle-arrow">▾</span></button>
         <div class="breakdown-body">
-          <span class="bd-label">Dialogue</span>
-          <p>No dialogue required.</p>
+          <span class="bd-label">Dialogue</span><p>No dialogue required.</p>
           <span class="bd-label">Seeking</span>
           <ul>
             <li>One Black male and one Black female, 21+</li>
@@ -1074,20 +394,17 @@ body { background: #080808; color: #EADFCF; }
         </div>
       </div>
 
-      <button class="apply-from-info-btn" onclick="switchTab('final-hand', 'apply')">Apply for this film →</button>
-      <a href="crew-application.html" style="display:block;margin-top:10px;text-align:center;font-family:'League Spartan',sans-serif;font-size:0.62rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(234,223,207,0.35);text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='rgba(218,175,55,0.6)'" onmouseout="this.style.color='rgba(234,223,207,0.35)'"><a href="crew-application.html" class="not-actor-link">
-  Not an actor? Apply for crew →</a>
+      <button class="apply-from-info-btn" onclick="switchTab('final-hand','apply')">Apply for this film →</button>
+      <a href="crew-application.html" class="not-actor-link">Not an actor? Apply for crew →</a>
     </div>
     <div class="modal-tab-content" id="final-hand-apply">
       <div class="casting-form">
         <h3>The Final Hand</h3>
         <p class="form-sub">Casting open — Apply below to be considered.</p>
-        <div style="margin:20px 0 24px;padding:16px 22px;background:rgba(218,175,55,0.07);border-left:3px solid #DAAF37;display:flex;align-items:center;gap:14px">
-      <div>
-        <div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:2px;text-transform:uppercase;color:#DAAF37">&#9651; Submissions Close &mdash; May 17th, 2026</div>
-        <div style="font-size:0.68rem;color:rgba(234,223,207,0.4);letter-spacing:1px;text-transform:uppercase;margin-top:3px">All applications must be submitted before this date</div>
-      </div>
-    </div>
+        <div style="margin:20px 0 24px;padding:16px 22px;background:rgba(218,175,55,0.07);border-left:3px solid #DAAF37">
+          <div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:2px;text-transform:uppercase;color:#DAAF37">&#9651; Submissions Close — May 17th, 2026</div>
+          <div style="font-size:0.68rem;color:rgba(234,223,207,0.4);letter-spacing:1px;text-transform:uppercase;margin-top:3px">All applications must be submitted before this date</div>
+        </div>
         <form id="form-final-hand" onsubmit="submitCasting(event,'The Final Hand')">
           <div class="form-row-two">
             <div class="form-field"><label>Full Name *</label><input type="text" name="name" placeholder="Your full name" required></div>
@@ -1100,7 +417,8 @@ body { background: #080808; color: #EADFCF; }
           <div class="form-row-two">
             <div class="form-field"><label>City / Location *</label><input type="text" name="location" placeholder="City, State" required></div>
             <div class="form-field"><label>Role Applying For *</label>
-              <select name="role" required><option value="">Select role</option>
+              <select name="role" required>
+                <option value="">Select role</option>
                 <option>High John — Lead (Black American Male, 35–60)</option>
                 <option>The Player — Lead (Caucasian Male, 25–40)</option>
                 <option>The Stranger — Supporting (Any Ethnicity Male, 25–40)</option>
@@ -1126,8 +444,9 @@ body { background: #080808; color: #EADFCF; }
           <p>Your materials have been submitted for The Final Hand. You'll be contacted if selected.</p>
         </div>
       </div>
-    </div></div>
+    </div>
   </div>
+</div>
 
 <!-- 15TH HOUR MODAL -->
 <div class="modal-overlay" id="modal-15th-hour">
@@ -1144,7 +463,7 @@ body { background: #080808; color: #EADFCF; }
       <p class="modal-logline">The 15th Hour is a contained psychological drama set over the course of a single retail shift. The film follows a quiet employee as they move through a routine workday alongside coworkers and customers, observing the subtle rhythms of the store as time passes. As the shift continues, small changes begin to reveal a deeper pattern about routine, presence, and what it means to be replaced.</p>
       <span class="modal-roles-title">Roles Currently Casting</span>
       <div class="role-row"><div class="role-name">Diana<span class="role-type">Supporting</span></div><div class="role-desc">A coworker who has learned how to survive within the system. Diana understands the routine, the customers, and the unspoken rules of the job. She is more emotionally adjusted than Zero and serves as a quiet guide to the environment, but there are hints of exhaustion underneath her composure. The actor should balance natural conversation with an underlying sense of fatigue and detachment.</div></div>
-      <div class="role-row"><div class="role-name">Floyd<span class="role-type">Supporting — Non-Speaking / Minimal Dialogue</span></div><div class="role-desc">A new employee who silently takes Diana’s place. Floyd has little to no dialogue but must mirror the behavior and routine of the other workers with eerie familiarity. The performance should feel practiced, routine, and emotionally neutral - not robotic, just absorbed into the system. Floyd represents the cycle of replacement and the system continuing without interruption.</div></div>
+      <div class="role-row"><div class="role-name">Floyd<span class="role-type">Supporting — Non-Speaking / Minimal Dialogue</span></div><div class="role-desc">A new employee who silently takes Diana's place. Floyd has little to no dialogue but must mirror the behavior and routine of the other workers with eerie familiarity. The performance should feel practiced, routine, and emotionally neutral - not robotic, just absorbed into the system. Floyd represents the cycle of replacement and the system continuing without interruption.</div></div>
       <div class="role-row"><div class="role-name">NPC Customer #3<span class="role-type">Day Player — 1 Scene</span></div><div class="role-desc">A regular customer. Casual, natural conversation. Represents the everyday normalcy of the store and how routine the environment is for customers compared to the workers. Performance should feel completely natural and unscripted.</div></div>
       <button class="apply-from-info-btn" onclick="switchTab('15th-hour','subscribe')" style="margin-top:24px">Get Casting Updates →</button>
     </div>
@@ -1155,15 +474,11 @@ body { background: #080808; color: #EADFCF; }
         <form id="form-15th-hour" onsubmit="submitComingSoon(event,'The 15th Hour')">
           <div class="form-field"><label>Full Name</label><input type="text" name="name" placeholder="Your full name"></div>
           <div class="form-field"><label>Email *</label><input type="email" name="email" placeholder="name@email.com" required></div>
-          
           <div class="form-field" style="flex-direction:row;align-items:center;gap:10px;margin-top:4px"><input type="checkbox" name="newsletter" style="width:auto;accent-color:#DAAF37"><label style="font-size:0.75rem;color:rgba(234,223,207,0.45);text-transform:none;letter-spacing:0">Also subscribe to all BLEUSKM casting updates</label></div>
           <button type="submit" class="form-submit-btn">Notify Me When Casting Opens</button>
           <p class="form-note">No spam. You'll only hear from us when casting opens for this production.</p>
         </form>
-        <div id="15th-hour-success" class="form-success" style="display:none">
-          <h4>You're on the list</h4>
-          <p>We'll notify you when casting opens for The 15th Hour.</p>
-        </div>
+        <div id="15th-hour-success" class="form-success" style="display:none"><h4>You're on the list</h4><p>We'll notify you when casting opens for The 15th Hour.</p></div>
       </div>
     </div>
   </div>
@@ -1174,8 +489,8 @@ body { background: #080808; color: #EADFCF; }
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('overstood')">&times;</button>
     <div class="modal-tabs">
-      <button class="modal-tab active" onclick="switchTab('overstood', 'info')">Film Details</button>
-      <button class="modal-tab" onclick="switchTab('overstood', 'subscribe')">Stay Updated</button>
+      <button class="modal-tab active" onclick="switchTab('overstood','info')">Film Details</button>
+      <button class="modal-tab" onclick="switchTab('overstood','subscribe')">Stay Updated</button>
     </div>
     <div class="modal-tab-content active" id="overstood-info">
       <span class="cast-status-badge badge-soon" style="margin-bottom:20px;display:inline-block">Casting Not Yet Open</span>
@@ -1186,7 +501,7 @@ body { background: #080808; color: #EADFCF; }
       <div class="role-row"><div class="role-desc">Collective Instinct · Silent Communication · Cultural Pattern Recognition · Survival as Reflex</div></div>
       <span class="modal-roles-title" style="margin-top:20px;display:block">Visual Tone</span>
       <div class="role-row"><div class="role-desc">Observational · Dry Humor · Grounded · Subtle Absurdity</div></div>
-      <button class="apply-from-info-btn" onclick="switchTab('overstood', 'subscribe')" style="margin-top:24px">Get Casting Updates →</button>
+      <button class="apply-from-info-btn" onclick="switchTab('overstood','subscribe')" style="margin-top:24px">Get Casting Updates →</button>
     </div>
     <div class="modal-tab-content" id="overstood-subscribe">
       <div class="casting-form">
@@ -1195,27 +510,23 @@ body { background: #080808; color: #EADFCF; }
         <form id="form-overstood" onsubmit="submitComingSoon(event,'Overstood')">
           <div class="form-field"><label>Full Name</label><input type="text" name="name" placeholder="Your full name"></div>
           <div class="form-field"><label>Email *</label><input type="email" name="email" placeholder="name@email.com" required></div>
-          
           <div class="form-field" style="flex-direction:row;align-items:center;gap:10px;margin-top:4px"><input type="checkbox" name="newsletter" style="width:auto;accent-color:#DAAF37"><label style="font-size:0.75rem;color:rgba(234,223,207,0.45);text-transform:none;letter-spacing:0">Also subscribe to all BLEUSKM casting updates</label></div>
           <button type="submit" class="form-submit-btn">Notify Me When Casting Opens</button>
           <p class="form-note">No spam. You'll only hear from us when casting opens for this production.</p>
         </form>
-        <div id="overstood-success" class="form-success" style="display:none">
-          <h4>You're on the list</h4>
-          <p>We'll notify you when casting opens for Overstood.</p>
-        </div>
+        <div id="overstood-success" class="form-success" style="display:none"><h4>You're on the list</h4><p>We'll notify you when casting opens for Overstood.</p></div>
       </div>
     </div>
   </div>
 </div>
 
-<!--  BOOK OF BEGINNINGS MODAL -->
+<!-- BOOK OF BEGINNINGS MODAL -->
 <div class="modal-overlay" id="modal-book-of-beginnings">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('book-of-beginnings')">&times;</button>
     <div class="modal-tabs">
-      <button class="modal-tab active" onclick="switchTab('book-of-beginnings', 'info')">Film Details</button>
-      <button class="modal-tab" onclick="switchTab('book-of-beginnings', 'subscribe')">Stay Updated</button>
+      <button class="modal-tab active" onclick="switchTab('book-of-beginnings','info')">Film Details</button>
+      <button class="modal-tab" onclick="switchTab('book-of-beginnings','subscribe')">Stay Updated</button>
     </div>
     <div class="modal-tab-content active" id="book-of-beginnings-info">
       <span class="cast-status-badge badge-soon" style="margin-bottom:20px;display:inline-block">Casting Not Yet Open</span>
@@ -1226,7 +537,7 @@ body { background: #080808; color: #EADFCF; }
       <div class="role-row"><div class="role-desc">Cultural Memory · Erasure · Institutional Control · Ancestral Awakening</div></div>
       <span class="modal-roles-title" style="margin-top:20px;display:block">Visual Tone</span>
       <div class="role-row"><div class="role-desc">Warm Minimalism · Intellectual Thriller · Subtle Surrealism</div></div>
-      <button class="apply-from-info-btn" onclick="switchTab('book-of-beginnings', 'subscribe')" style="margin-top:24px">Get Casting Updates →</button>
+      <button class="apply-from-info-btn" onclick="switchTab('book-of-beginnings','subscribe')" style="margin-top:24px">Get Casting Updates →</button>
     </div>
     <div class="modal-tab-content" id="book-of-beginnings-subscribe">
       <div class="casting-form">
@@ -1235,15 +546,11 @@ body { background: #080808; color: #EADFCF; }
         <form id="form-book-of-beginnings" onsubmit="submitComingSoon(event,'Book of Beginnings')">
           <div class="form-field"><label>Full Name</label><input type="text" name="name" placeholder="Your full name"></div>
           <div class="form-field"><label>Email *</label><input type="email" name="email" placeholder="name@email.com" required></div>
-          
           <div class="form-field" style="flex-direction:row;align-items:center;gap:10px;margin-top:4px"><input type="checkbox" name="newsletter" style="width:auto;accent-color:#DAAF37"><label style="font-size:0.75rem;color:rgba(234,223,207,0.45);text-transform:none;letter-spacing:0">Also subscribe to all BLEUSKM casting updates</label></div>
           <button type="submit" class="form-submit-btn">Notify Me When Casting Opens</button>
           <p class="form-note">No spam. You'll only hear from us when casting opens for this production.</p>
         </form>
-        <div id="book-of-beginnings-success" class="form-success" style="display:none">
-          <h4>You're on the list</h4>
-          <p>We'll notify you when casting opens for Book of Beginnings.</p>
-        </div>
+        <div id="book-of-beginnings-success" class="form-success" style="display:none"><h4>You're on the list</h4><p>We'll notify you when casting opens for Book of Beginnings.</p></div>
       </div>
     </div>
   </div>
@@ -1254,21 +561,19 @@ body { background: #080808; color: #EADFCF; }
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('love-me-like-this')">&times;</button>
     <div class="modal-tabs">
-      <button class="modal-tab active" onclick="switchTab('love-me-like-this', 'info')">Film Details</button>
-      <button class="modal-tab" onclick="switchTab('love-me-like-this', 'subscribe')">Stay Updated</button>
+      <button class="modal-tab active" onclick="switchTab('love-me-like-this','info')">Film Details</button>
+      <button class="modal-tab" onclick="switchTab('love-me-like-this','subscribe')">Stay Updated</button>
     </div>
     <div class="modal-tab-content active" id="love-me-like-this-info">
       <span class="cast-status-badge badge-soon" style="margin-bottom:20px;display:inline-block">Casting Opens Soon</span>
       <div class="modal-film-title">Love Me Like This</div>
       <div class="modal-film-meta">Short Film · Pre-Production · Director: Zaria Lashae</div>
-      <p class="modal-logline">Over the course of one night, a man set on making a woman fall in love with him connects with someone who isn’t looking for anything, and through a series of intimate questions, they discover something real that isn’t meant to last.</p>
+      <p class="modal-logline">Over the course of one night, a man set on making a woman fall in love with him connects with someone who isn't looking for anything, and through a series of intimate questions, they discover something real that isn't meant to last.</p>
       <span class="modal-roles-title">Roles Currently Casting</span>
       <div class="role-row">
         <div class="role-name">Sosa<span class="role-type">Male Lead · Black American Male · 20–27</span></div>
         <div class="role-summary">The emotional driver of the film. Sosa is intentional, grounded, and quietly persistent. He knows what he wants the moment he sees it — and he does not hide it.</div>
-        <button class="breakdown-toggle" onclick="toggleBreakdown(this)">
-          Character Breakdown <span class="toggle-arrow">▾</span>
-        </button>
+        <button class="breakdown-toggle" onclick="toggleBreakdown(this)">Character Breakdown <span class="toggle-arrow">▾</span></button>
         <div class="breakdown-body">
           <span class="bd-label">Character</span>
           <p>Sosa does not play games or hide behind detachment. He listens closely, observes deeply, and shows care through presence rather than performance. His vulnerability is direct but controlled, never forced. He is not chasing recklessly — he is choosing, and standing in that choice.</p>
@@ -1286,9 +591,7 @@ body { background: #080808; color: #EADFCF; }
       <div class="role-row">
         <div class="role-name">Alanna<span class="role-type">Female Lead · Black American Female · 20–27</span></div>
         <div class="role-summary">The emotional center of the film. Alanna is perceptive, self-aware, and secure in her direction. She is not looking for love — nor is she avoiding it. She simply is not building her life around it.</div>
-        <button class="breakdown-toggle" onclick="toggleBreakdown(this)">
-          Character Breakdown <span class="toggle-arrow">▾</span>
-        </button>
+        <button class="breakdown-toggle" onclick="toggleBreakdown(this)">Character Breakdown <span class="toggle-arrow">▾</span></button>
         <div class="breakdown-body">
           <span class="bd-label">Character</span>
           <p>Alanna engages with Sosa openly and is intrigued by him, but remains grounded in her reality and future. She holds space without fully stepping into it — warm but measured. Present in the moment, yet never losing sight of the bigger picture.</p>
@@ -1303,8 +606,8 @@ body { background: #080808; color: #EADFCF; }
           </ul>
         </div>
       </div>
-      <button class="apply-from-info-btn" onclick="switchTab('love-me-like-this', 'subscribe')">Notify Me When Casting Opens →</button>
-      <a href="crew-application.html" style="display:block;margin-top:10px;text-align:center;font-family:'League Spartan',sans-serif;font-size:0.62rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(234,223,207,0.35);text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='rgba(218,175,55,0.6)'" onmouseout="this.style.color='rgba(234,223,207,0.35)'">Not an actor? Apply for crew →</a>
+      <button class="apply-from-info-btn" onclick="switchTab('love-me-like-this','subscribe')">Notify Me When Casting Opens →</button>
+      <a href="crew-application.html" class="not-actor-link">Not an actor? Apply for crew →</a>
     </div>
     <div class="modal-tab-content" id="love-me-like-this-subscribe">
       <div class="casting-form">
@@ -1312,37 +615,31 @@ body { background: #080808; color: #EADFCF; }
         <p class="form-sub">Casting opens soon — subscribe to be notified first.</p>
         <form id="form-love-me-like-this" onsubmit="submitNotify(event,'Love Me Like This')">
           <div class="form-field"><label>Role Interested In *</label>
-              <select name="role" required>
-                <option value="">Select role</option>
-                <option>Sosa (Male Lead)</option>
-                <option>Alanna (Female Lead)</option>
-              </select>
-            </div>
+            <select name="role" required>
+              <option value="">Select role</option>
+              <option>Sosa (Male Lead)</option>
+              <option>Alanna (Female Lead)</option>
+            </select>
+          </div>
           <div class="form-field"><label>Full Name *</label><input type="text" name="name" placeholder="Your full name" required></div>
           <div class="form-field"><label>Email *</label><input type="email" name="email" placeholder="name@email.com" required></div>
-          
           <div class="form-field" style="flex-direction:row;align-items:center;gap:10px;margin-top:4px"><input type="checkbox" name="newsletter" style="width:auto;accent-color:#DAAF37"><label style="font-size:0.75rem;color:rgba(234,223,207,0.45);text-transform:none;letter-spacing:0">Also subscribe to all BLEUSKM casting updates</label></div>
           <button type="submit" class="form-submit-btn">Notify Me When Casting Opens</button>
           <p class="form-note">No spam. You'll only hear from us when casting opens for this production.</p>
         </form>
-        <div id="love-me-like-this-success" class="form-success" style="display:none">
-          <h4>You're on the list</h4>
-          <p>We'll notify you when casting opens for Love Me Like This.</p>
-        </div>
+        <div id="love-me-like-this-success" class="form-success" style="display:none"><h4>You're on the list</h4><p>We'll notify you when casting opens for Love Me Like This.</p></div>
       </div>
     </div>
   </div>
 </div>
-            
-          </div>
 
-<!-- <!-- LIMINAL COUNTY MODAL -->
+<!-- LIMINAL COUNTY MODAL -->
 <div class="modal-overlay" id="modal-liminal-county">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('liminal-county')">&times;</button>
     <div class="modal-tabs">
-      <button class="modal-tab active" onclick="switchTab('liminal-county', 'info')">Film Details</button>
-      <button class="modal-tab" onclick="switchTab('liminal-county', 'subscribe')">Stay Updated</button>
+      <button class="modal-tab active" onclick="switchTab('liminal-county','info')">Film Details</button>
+      <button class="modal-tab" onclick="switchTab('liminal-county','subscribe')">Stay Updated</button>
     </div>
     <div class="modal-tab-content active" id="liminal-county-info">
       <span class="cast-status-badge badge-soon" style="margin-bottom:20px;display:inline-block">Casting Not Yet Open</span>
@@ -1353,7 +650,7 @@ body { background: #080808; color: #EADFCF; }
       <div class="role-row"><div class="role-desc">Isolation · Spiritual Warfare · Collective Forgetting</div></div>
       <span class="modal-roles-title" style="margin-top:20px;display:block">Visual Tone</span>
       <div class="role-row"><div class="role-desc">Foggy · Dreamlike · Unsettling</div></div>
-      <button class="apply-from-info-btn" onclick="switchTab('liminal-county', 'subscribe')" style="margin-top:24px">Get Casting Updates →</button>
+      <button class="apply-from-info-btn" onclick="switchTab('liminal-county','subscribe')" style="margin-top:24px">Get Casting Updates →</button>
     </div>
     <div class="modal-tab-content" id="liminal-county-subscribe">
       <div class="casting-form">
@@ -1362,27 +659,23 @@ body { background: #080808; color: #EADFCF; }
         <form id="form-liminal-county" onsubmit="submitComingSoon(event,'Liminal County')">
           <div class="form-field"><label>Full Name *</label><input type="text" name="name" placeholder="Your full name" required></div>
           <div class="form-field"><label>Email *</label><input type="email" name="email" placeholder="name@email.com" required></div>
-          
           <div class="form-field" style="flex-direction:row;align-items:center;gap:10px;margin-top:4px"><input type="checkbox" name="newsletter" style="width:auto;accent-color:#DAAF37"><label style="font-size:0.75rem;color:rgba(234,223,207,0.45);text-transform:none;letter-spacing:0">Also subscribe to all BLEUSKM casting updates</label></div>
           <button type="submit" class="form-submit-btn">Notify Me When Casting Opens</button>
           <p class="form-note">No spam. You'll only hear from us when casting opens for this production.</p>
         </form>
-        <div id="liminal-county-success" class="form-success" style="display:none">
-          <h4>You're on the list</h4>
-          <p>We'll notify you when casting opens for Liminal County.</p>
-        </div>
+        <div id="liminal-county-success" class="form-success" style="display:none"><h4>You're on the list</h4><p>We'll notify you when casting opens for Liminal County.</p></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- <!-- OF BLOOD AND DOMINION MODAL -->
+<!-- OF BLOOD AND DOMINION MODAL -->
 <div class="modal-overlay" id="modal-of-blood-and-dominion">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('of-blood-and-dominion')">&times;</button>
     <div class="modal-tabs">
-      <button class="modal-tab active" onclick="switchTab('of-blood-and-dominion', 'info')">Film Details</button>
-      <button class="modal-tab" onclick="switchTab('of-blood-and-dominion', 'subscribe')">Stay Updated</button>
+      <button class="modal-tab active" onclick="switchTab('of-blood-and-dominion','info')">Film Details</button>
+      <button class="modal-tab" onclick="switchTab('of-blood-and-dominion','subscribe')">Stay Updated</button>
     </div>
     <div class="modal-tab-content active" id="of-blood-and-dominion-info">
       <span class="cast-status-badge badge-soon" style="margin-bottom:20px;display:inline-block">Casting Not Yet Open</span>
@@ -1390,10 +683,10 @@ body { background: #080808; color: #EADFCF; }
       <div class="modal-film-meta">Feature Film · In Development · Director: Zaria Lashae</div>
       <p class="modal-logline">In a society governed by blood classification, a young man discovers the horrifying truth behind the system designed to control identity and power.</p>
       <span class="modal-roles-title">Themes</span>
-      <div class="role-row"><div class="role-desc">Genetic Hierarchy · Power & Control · Systemic Oppression · Rebellion</div></div>
+      <div class="role-row"><div class="role-desc">Genetic Hierarchy · Power &amp; Control · Systemic Oppression · Rebellion</div></div>
       <span class="modal-roles-title" style="margin-top:20px;display:block">Visual Tone</span>
       <div class="role-row"><div class="role-desc">Clinical · High Contrast · Dystopian · Stylized</div></div>
-      <button class="apply-from-info-btn" onclick="switchTab('of-blood-and-dominion', 'subscribe')" style="margin-top:24px">Get Casting Updates →</button>
+      <button class="apply-from-info-btn" onclick="switchTab('of-blood-and-dominion','subscribe')" style="margin-top:24px">Get Casting Updates →</button>
     </div>
     <div class="modal-tab-content" id="of-blood-and-dominion-subscribe">
       <div class="casting-form">
@@ -1402,55 +695,47 @@ body { background: #080808; color: #EADFCF; }
         <form id="form-of-blood-and-dominion" onsubmit="submitComingSoon(event,'Of Blood and Dominion')">
           <div class="form-field"><label>Full Name *</label><input type="text" name="name" placeholder="Your full name" required></div>
           <div class="form-field"><label>Email *</label><input type="email" name="email" placeholder="name@email.com" required></div>
-          
           <div class="form-field" style="flex-direction:row;align-items:center;gap:10px;margin-top:4px"><input type="checkbox" name="newsletter" style="width:auto;accent-color:#DAAF37"><label style="font-size:0.75rem;color:rgba(234,223,207,0.45);text-transform:none;letter-spacing:0">Also subscribe to all BLEUSKM casting updates</label></div>
           <button type="submit" class="form-submit-btn">Notify Me When Casting Opens</button>
           <p class="form-note">No spam. You'll only hear from us when casting opens for this production.</p>
         </form>
-        <div id="of-blood-and-dominion-success" class="form-success" style="display:none">
-          <h4>You're on the list</h4>
-          <p>We'll notify you when casting opens for Of Blood and Dominion.</p>
-        </div>
+        <div id="of-blood-and-dominion-success" class="form-success" style="display:none"><h4>You're on the list</h4><p>We'll notify you when casting opens for Of Blood and Dominion.</p></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- <!-- As Is MODAL -->
-<div class="modal-overlay" id="modal-As IS">
+<!-- AS IS MODAL — FIXED -->
+<div class="modal-overlay" id="modal-as-is">
   <div class="modal-box">
-    <button class="modal-close" onclick="closeModal('As Is')">&times;</button>
+    <button class="modal-close" onclick="closeModal('as-is')">&times;</button>
     <div class="modal-tabs">
-      <button class="modal-tab active" onclick="switchTab('As Is', 'info')">Film Details</button>
-      <button class="modal-tab" onclick="switchTab('As Is', 'subscribe')">Stay Updated</button>
+      <button class="modal-tab active" onclick="switchTab('as-is','info')">Film Details</button>
+      <button class="modal-tab" onclick="switchTab('as-is','subscribe')">Stay Updated</button>
     </div>
-    <div class="modal-tab-content active" id="As Is-info">
+    <div class="modal-tab-content active" id="as-is-info">
       <span class="cast-status-badge badge-soon" style="margin-bottom:20px;display:inline-block">Casting Not Yet Open</span>
       <div class="modal-film-title">As Is</div>
       <div class="modal-film-meta">Short / Feature · In Development · Director: Zaria Lashae</div>
-      <p class="modal-logline">In a Black neighborhood sold “as is,” a teen begins to notice that the constant noise and tension around them follow strange patterns—while a quiet buyout program offers residents a way out, revealing a system that wears the community down from within.</p>
+      <p class="modal-logline">In a Black neighborhood sold "as is," a teen begins to notice that the constant noise and tension around them follow strange patterns—while a quiet buyout program offers residents a way out, revealing a system that wears the community down from within.</p>
       <span class="modal-roles-title">Themes</span>
-      <div class="role-row"><div class="role-desc">Historical Erasure · Land & Legacy · Displacement · Ancestral Memory</div></div>
+      <div class="role-row"><div class="role-desc">Historical Erasure · Land &amp; Legacy · Displacement · Ancestral Memory</div></div>
       <span class="modal-roles-title" style="margin-top:20px;display:block">Visual Tone</span>
       <div class="role-row"><div class="role-desc">Documentary-Realism · Haunting · Muted · Grounded</div></div>
-      <button class="apply-from-info-btn" onclick="switchTab('As Is', 'subscribe')" style="margin-top:24px">Get Casting Updates →</button>
+      <button class="apply-from-info-btn" onclick="switchTab('as-is','subscribe')" style="margin-top:24px">Get Casting Updates →</button>
     </div>
-    <div class="modal-tab-content" id="As Is-subscribe">
+    <div class="modal-tab-content" id="as-is-subscribe">
       <div class="casting-form">
         <h3>As Is</h3>
         <p class="form-sub">Casting not yet open — subscribe to be notified first.</p>
-        <form id="form-As Is" onsubmit="submitComingSoon(event,'As Is')">
+        <form id="form-as-is" onsubmit="submitComingSoon(event,'As Is')">
           <div class="form-field"><label>Full Name *</label><input type="text" name="name" placeholder="Your full name" required></div>
           <div class="form-field"><label>Email *</label><input type="email" name="email" placeholder="name@email.com" required></div>
-          
           <div class="form-field" style="flex-direction:row;align-items:center;gap:10px;margin-top:4px"><input type="checkbox" name="newsletter" style="width:auto;accent-color:#DAAF37"><label style="font-size:0.75rem;color:rgba(234,223,207,0.45);text-transform:none;letter-spacing:0">Also subscribe to all BLEUSKM casting updates</label></div>
           <button type="submit" class="form-submit-btn">Notify Me When Casting Opens</button>
           <p class="form-note">No spam. You'll only hear from us when casting opens for this production.</p>
         </form>
-        <div id="As Is-success" class="form-success" style="display:none">
-          <h4>You're on the list</h4>
-          <p>We'll notify you when casting opens for As Is.</p>
-        </div>
+        <div id="as-is-success" class="form-success" style="display:none"><h4>You're on the list</h4><p>We'll notify you when casting opens for As Is.</p></div>
       </div>
     </div>
   </div>
@@ -1464,7 +749,6 @@ body { background: #080808; color: #EADFCF; }
       <img src="images/bleuskm-logo.png" alt="BLEUSKM Logo" style="height:32px;width:auto;">
       <p>A film and visual production house building worlds grounded in Black imagination, history, and cultural memory.</p>
     </div>
-
     <div class="footer-col">
       <h4>Navigate</h4>
       <a href="index.html">Home</a>
@@ -1473,7 +757,6 @@ body { background: #080808; color: #EADFCF; }
       <a href="visuals.html">Visuals</a>
       <a href="echos.html">Echos</a>
     </div>
-
     <div class="footer-col">
       <h4>Work With Us</h4>
       <a href="contact.html">Project Inquiry</a>
@@ -1481,7 +764,6 @@ body { background: #080808; color: #EADFCF; }
       <a href="crew-application.html">Join the Crew</a>
       <a href="bleuskm shop.html">The Vault — Shop</a>
     </div>
-
     <div class="footer-col">
       <h4>Legal</h4>
       <a href="privacy.html">Privacy Policy</a>
@@ -1489,7 +771,6 @@ body { background: #080808; color: #EADFCF; }
       <a href="contact.html">Contact Us</a>
     </div>
   </div>
-
   <div class="footer-bottom">
     <p>&copy; 2026 BLEUSKM Studios. All rights reserved.</p>
     <div>
@@ -1500,290 +781,7 @@ body { background: #080808; color: #EADFCF; }
     </div>
   </div>
 </footer>
-<script>
-// ── BLEUSKM STUDIOS · UNIFIED SUBMISSION HANDLER ──
-// Airtable: all submissions organized by table
-// Brevo: confirmation emails only
 
-var AIRTABLE_TOKEN = 'pat4zUowRMotxgqVA.415605c7a68e67cff288f42f8c2b75f48653ef33d98f6b895bd3a4da59931fb4';
-var AIRTABLE_BASE  = 'appXf1NxIVhYbuV4j';
-var TBL_CASTING    = 'tblLGmXULNb9ebFxH';
-var TBL_NEWSLETTER = 'tblSMb3y7vrvjbONx';
-var TBL_INQUIRIES  = 'tblwfk7tmoFhGIia5';
-var TBL_CREW       = 'tblCR7Cg3WugORlwO';
-var TBL_NOTIFY     = 'tblcSHay5dfYcbDKC';    // ← you will replace this after creating the table
-
-var BREVO_KEY = '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';
-
-// ── AIRTABLE ──
-async function sendToAirtable(tableId, fields) {
-  try {
-    var r = await fetch('https://api.airtable.com/v0/' + AIRTABLE_BASE + '/' + tableId, {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + AIRTABLE_TOKEN,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ fields: fields })
-    });
-    var j = await r.json();
-    console.log('Airtable:', j);
-    return j;
-  } catch(e) {
-    console.error('Airtable error:', e);
-  }
-}
-
-// ── BREVO (add to list) ──
-async function sendToBrevo(listId, email, name, extraAttrs) {
-  try {
-    var attrs = Object.assign({ FIRSTNAME: name }, extraAttrs || {});
-    var r = await fetch('https://api.brevo.com/v3/contacts', {
-      method: 'POST',
-      headers: { 'api-key': BREVO_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email, attributes: attrs, listIds: [listId], updateEnabled: true })
-    });
-    var j = await r.json();
-    console.log('Brevo contact:', j);
-    return j;
-  } catch(e) {
-    console.error('Brevo contact error:', e);
-  }
-}
-
-// ── BREVO (send transactional email) ──
-async function sendEmail(templateId, email, name, params) {
-  try {
-    var r = await fetch('https://api.brevo.com/v3/smtp/email', {
-      method: 'POST',
-      headers: { 'api-key': BREVO_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        sender: { email: 'clients@bleuskm.com', name: 'BLEUSKM Studios' },
-        to: [{ email: email, name: name }],
-        templateId: templateId,
-        params: params || {}
-      })
-    });
-    var j = await r.json();
-    console.log('Brevo email:', j);
-    return j;
-  } catch(e) {
-    console.error('Brevo email error:', e);
-  }
-}
-
-// ── CASTING SUBMISSION ──
-async function submitCasting(event, filmTitle) {
-  e.preventDefault();
-  var form = e.target;
-  var btn  = form.querySelector('button[type="submit"]');
-  btn.textContent = 'Submitting...'; btn.disabled = true;
-
-  var name     = form.querySelector('[name="name"]').value.trim();
-  var email    = form.querySelector('[name="email"]').value.trim();
-  var phone    = (form.querySelector('[name="phone"]') || {}).value || '';
-  var age      = (form.querySelector('[name="age"]') || {}).value || '';
-  var location = (form.querySelector('[name="location"]') || {}).value || '';
-  var role     = (form.querySelector('[name="role"]') || {}).value || '';
-  var reel     = (form.querySelector('[name="reel"]') || {}).value || '';
-  var headshot = (form.querySelector('[name="files"]') || {}).value || '';
-  var about    = (form.querySelector('[name="about"]') || {}).value || '';
-  var nlCheck  = form.querySelector('[name="newsletter"]');
-
-  var fields = { 'Name': name, 'Email': email, 'Film': filmTitle, 'Role': role };
-  if (phone)    fields['Phone']    = phone;
-  if (age)      fields['Age']      = parseFloat(age);
-  if (location) fields['Location'] = location;
-  if (reel)     fields['Reel/Portfolio Link'] = reel;
-  if (headshot) fields['Headshot'] = headshot;
-  if (about)    fields['About']    = about;
-  fields['Casting Status'] = 'Reviewing';
-
-  try {
-    await sendToAirtable(TBL_CASTING, fields);
-    await sendToBrevo(4, email, name, { FILM: filmTitle, ROLE: role });
-    await sendEmail(1, email, name, { FIRSTNAME: name, FILM: filmTitle, ROLE: role });
-    if (nlCheck && nlCheck.checked) { await sendToAirtable(TBL_NEWSLETTER, {'Name': name, 'Email': email}); await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
-
-    var formId = form.id;
-    form.style.display = 'none';
-    var filmId = formId.replace('form-', '');
-    var s = document.getElementById(filmId + '-success');
-    if (s) s.style.display = 'block';
-  } catch(err) {
-    console.error(err);
-    btn.textContent = 'Submit Audition Materials'; btn.disabled = false;
-    alert('Submission failed. Please try again.');
-  }
-}
-
-// ── FILM NOTIFICATION (casting soon — has role interest) ──
-async function submitNotify(event, filmTitle) {
-  e.preventDefault();
-  var form    = e.target;
-  var btn     = form.querySelector('button[type="submit"]');
-  btn.textContent = 'Submitting...'; btn.disabled = true;
-
-  var name       = (form.querySelector('[name="name"]') || {}).value || '';
-  var email      = form.querySelector('[name="email"]').value.trim();
-  var roleInt    = (form.querySelector('[name="role"]') || {}).value || '';
-  var nlCheck    = form.querySelector('[name="newsletter"]');
-
-  var fields = { 'Name': name, 'Email': email, 'Film': filmTitle, 'Type': 'Casting Soon' };
-  if (roleInt) fields['Role Interested In'] = roleInt;
-
-  try {
-    await sendToAirtable(TBL_NOTIFY, fields);
-    await sendToBrevo(2, email, name, { FILM: filmTitle, ROLE_INTEREST: roleInt });
-    await sendEmail(4, email, name, { FIRSTNAME: name, FILM: filmTitle });
-    if (nlCheck && nlCheck.checked) { await sendToAirtable(TBL_NEWSLETTER, {'Name': name, 'Email': email}); await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
-
-    form.style.display = 'none';
-    var s = form.nextElementSibling;
-    if (s) s.style.display = 'block';
-  } catch(err) {
-    console.error(err);
-    btn.textContent = 'Notify Me When Casting Opens'; btn.disabled = false;
-    alert('Submission failed. Please try again.');
-  }
-}
-
-// ── FILM NOTIFICATION (coming soon — just name + email) ──
-async function submitComingSoon(event, filmTitle) {
-  e.preventDefault();
-  var form  = e.target;
-  var btn   = form.querySelector('button[type="submit"]');
-  btn.textContent = 'Submitting...'; btn.disabled = true;
-
-  var name    = (form.querySelector('[name="name"]') || {}).value || '';
-  var email   = form.querySelector('[name="email"]').value.trim();
-  var nlCheck = form.querySelector('[name="newsletter"]');
-
-  var fields = { 'Name': name, 'Email': email, 'Film': filmTitle, 'Type': 'Coming Soon' };
-
-  try {
-    await sendToAirtable(TBL_NOTIFY, fields);
-    await sendToBrevo(2, email, name, { FILM: filmTitle });
-    await sendEmail(4, email, name, { FIRSTNAME: name, FILM: filmTitle });
-    if (nlCheck && nlCheck.checked) { await sendToAirtable(TBL_NEWSLETTER, {'Name': name, 'Email': email}); await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
-
-    form.style.display = 'none';
-    var s = form.nextElementSibling;
-    if (s) s.style.display = 'block';
-  } catch(err) {
-    console.error(err);
-    btn.textContent = 'Notify Me When Casting Opens'; btn.disabled = false;
-    alert('Submission failed. Please try again.');
-  }
-}
-
-// ── NEWSLETTER ONLY ──
-async function submitNewsletter(e) {
-  e.preventDefault();
-  var form  = e.target;
-  var btn   = form.querySelector('button[type="submit"]');
-  btn.textContent = 'Subscribing...'; btn.disabled = true;
-
-  var name  = (form.querySelector('[name="name"]') || document.getElementById('fnl-name') || {}).value || '';
-  var email = (form.querySelector('[name="email"]') || document.getElementById('fnl-email') || {}).value.trim();
-  if (!email) return;
-
-  try {
-    await sendToAirtable(TBL_NEWSLETTER, { 'Name': name, 'Email': email });
-    await sendToBrevo(2, email, name, {});
-    await sendEmail(3, email, name, { FIRSTNAME: name });
-
-    form.style.display = 'none';
-    var s = document.getElementById('fnl-success') || form.nextElementSibling;
-    if (s) s.style.display = 'block';
-  } catch(err) {
-    console.error(err);
-    btn.textContent = 'Subscribe'; btn.disabled = false;
-  }
-}
-
-// ── CREW APPLICATION ──
-async function submitCrewForm(e) {
-  e.preventDefault();
-  var btn = document.querySelector('#crewForm button[type="submit"]');
-  if (btn) { btn.textContent = 'Submitting...'; btn.disabled = true; }
-
-  var name         = document.getElementById('crew-name').value.trim();
-  var email        = document.getElementById('crew-email').value.trim();
-  var phone        = (document.getElementById('crew-phone') || {}).value || '';
-  var city         = (document.getElementById('crew-city') || {}).value || '';
-  var role         = (document.getElementById('crew-role') || {}).value || '';
-  var resume       = (document.getElementById('crew-resume') || {}).value || '';
-  var reel         = (document.getElementById('crew-reel') || {}).value || '';
-  var gear         = (document.getElementById('crew-gear') || {}).value || '';
-  var availability = (document.getElementById('crew-availability') || {}).value || '';
-  var filmInterest = (document.getElementById('crew-film-interest') || {}).value || '';
-
-  var fields = { 'Name': name, 'Email': email, 'Role': role };
-  if (phone)        fields['Phone']             = phone;
-  if (city)         fields['City']              = city;
-  if (resume)       fields['Resume / Portfolio Link'] = resume;
-  if (reel)         fields['Reel / Work Samples'] = reel;
-  if (gear)         fields['Gear List']          = gear;
-  if (availability) fields['Availability']       = availability;
-  if (filmInterest) fields['Film Interest']       = filmInterest;
-
-  try {
-    await sendToAirtable(TBL_CREW, fields);
-    await sendToBrevo(6, email, name, { CREW_ROLE: role });
-    await sendEmail(2, email, name, { FIRSTNAME: name, ROLE: role });
-
-    document.getElementById('crewForm').style.display = 'none';
-    document.getElementById('crewSuccess').style.display = 'block';
-  } catch(err) {
-    console.error(err);
-    if (btn) { btn.textContent = 'Submit Crew Application'; btn.disabled = false; }
-    alert('Submission failed. Please try again.');
-  }
-}
-
-// ── PROJECT INQUIRY ──
-async function submitContact() {
-  var name      = (document.getElementById('contact-name') || {}).value || '';
-  var email     = (document.getElementById('contact-email') || {}).value || '';
-  var phone     = (document.getElementById('contact-phone') || {}).value || '';
-  var projType  = (document.getElementById('contact-type') || {}).value || '';
-  var budget    = (document.getElementById('contact-budget') || {}).value || '';
-  var concept   = (document.getElementById('contact-concept') || {}).value || '';
-  var timeline  = (document.getElementById('contact-timeline') || {}).value || '';
-  var nlCheck   = document.getElementById('contact-newsletter');
-  var understood = document.getElementById('contact-understood');
-
-  if (!email) { alert('Email is required.'); return; }
-  if (understood && !understood.checked) { alert('Please confirm you understand this is an inquiry.'); return; }
-
-  var btn = document.querySelector('.submit-btn');
-  if (btn) { btn.textContent = 'Submitting...'; btn.disabled = true; }
-
-  var fields = { 'Name': name, 'Email': email };
-  if (phone)    fields['Phone number']      = phone;
-  if (projType) fields['Project Type']      = projType;
-  if (budget)   fields['Budget']            = budget;
-  if (concept)  fields['Concept']           = concept;
-  if (timeline) fields['Timeline']          = timeline;
-
-  try {
-    await sendToAirtable(TBL_INQUIRIES, fields);
-    await sendToBrevo(5, email, name, { PROJECT_TYPE: projType });
-    if (nlCheck && nlCheck.checked) { await sendToAirtable(TBL_NEWSLETTER, {'Name': name, 'Email': email}); await sendToBrevo(2, email, name, {}); }
-
-    var form = document.getElementById('contactForm') || document.querySelector('form');
-    if (form) form.style.display = 'none';
-    var s = document.getElementById('contactSuccess');
-    if (s) s.style.display = 'block';
-  } catch(err) {
-    console.error(err);
-    if (btn) { btn.textContent = 'Submit Project Inquiry'; btn.disabled = false; }
-    alert('Submission failed. Please try again.');
-  }
-}
-
-</script>
 <script>
 var AIRTABLE_TOKEN = 'pat4zUowRMotxgqVA.415605c7a68e67cff288f42f8c2b75f48653ef33d98f6b895bd3a4da59931fb4';
 var AIRTABLE_BASE  = 'appXf1NxIVhYbuV4j';
@@ -1817,7 +815,17 @@ async function sendToBrevo(listId, email, name, extraAttrs) {
   } catch(e) { console.error('Brevo error:', e); }
 }
 
-// ── MODAL CONTROLS ──
+async function sendEmail(templateId, email, name, params) {
+  try {
+    var r = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: { 'api-key': BREVO_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sender: { email: 'clients@bleuskm.com', name: 'BLEUSKM Studios' }, to: [{ email: email, name: name }], templateId: templateId, params: params || {} })
+    });
+    var j = await r.json(); console.log('Brevo email:', j); return j;
+  } catch(e) { console.error('Brevo email error:', e); }
+}
+
 function openModal(id) {
   document.querySelectorAll('.modal-overlay').forEach(function(m) { m.style.display = 'none'; });
   var modal = document.getElementById('modal-' + id);
@@ -1845,35 +853,32 @@ function switchTab(modalId, tab) {
   if (tabs[idx]) tabs[idx].classList.add('active');
   if (conts[idx]) conts[idx].classList.add('active');
 }
-// Auto-open modal from sessionStorage (used by film pages)
 window.addEventListener('load', function() {
   var id = sessionStorage.getItem('openModal');
   if (id) { sessionStorage.removeItem('openModal'); openModal(id); }
 });
 
-// ── CASTING SUBMISSION ──
 async function submitCasting(e, filmTitle) {
   e.preventDefault();
-  var form = e.target;
-  var btn  = form.querySelector('button[type="submit"]');
+  var form = e.target; var btn = form.querySelector('button[type="submit"]');
   btn.textContent = 'Submitting...'; btn.disabled = true;
-  var name     = form.querySelector('[name="name"]').value.trim();
-  var email    = form.querySelector('[name="email"]').value.trim();
-  var phone    = (form.querySelector('[name="phone"]') || {}).value || '';
-  var age      = (form.querySelector('[name="age"]') || {}).value || '';
+  var name = form.querySelector('[name="name"]').value.trim();
+  var email = form.querySelector('[name="email"]').value.trim();
+  var phone = (form.querySelector('[name="phone"]') || {}).value || '';
+  var age = (form.querySelector('[name="age"]') || {}).value || '';
   var location = (form.querySelector('[name="location"]') || {}).value || '';
-  var role     = (form.querySelector('[name="role"]') || {}).value || '';
-  var reel     = (form.querySelector('[name="reel"]') || {}).value || '';
+  var role = (form.querySelector('[name="role"]') || {}).value || '';
+  var reel = (form.querySelector('[name="reel"]') || {}).value || '';
   var headshot = (form.querySelector('[name="files"]') || {}).value || '';
-  var about    = (form.querySelector('[name="about"]') || {}).value || '';
-  var nlCheck  = form.querySelector('[name="newsletter"]');
+  var about = (form.querySelector('[name="about"]') || {}).value || '';
+  var nlCheck = form.querySelector('[name="newsletter"]');
   var fields = { 'Name': name, 'Email': email, 'Film': filmTitle, 'Role': role, 'Casting Status': 'Reviewing' };
-  if (phone)    fields['Phone']    = phone;
-  if (age)      fields['Age']      = parseFloat(age);
+  if (phone) fields['Phone'] = phone;
+  if (age) fields['Age'] = parseFloat(age);
   if (location) fields['Location'] = location;
-  if (reel)     fields['Reel/Portfolio Link'] = reel;
+  if (reel) fields['Reel/Portfolio Link'] = reel;
   if (headshot) fields['Headshot'] = headshot;
-  if (about)    fields['About']    = about;
+  if (about) fields['About'] = about;
   try {
     await sendToAirtable(TBL_CASTING, fields);
     await sendToBrevo(4, email, name, { FILM: filmTitle, ROLE: role });
@@ -1883,20 +888,15 @@ async function submitCasting(e, filmTitle) {
     var filmId = form.id.replace('form-', '');
     var s = document.getElementById(filmId + '-success');
     if (s) s.style.display = 'block';
-  } catch(err) {
-    console.error(err); btn.textContent = 'Submit Audition Materials'; btn.disabled = false;
-    alert('Submission failed. Please try again.');
-  }
+  } catch(err) { console.error(err); btn.textContent = 'Submit Audition Materials'; btn.disabled = false; alert('Submission failed. Please try again.'); }
 }
 
-// ── FILM NOTIFICATION (casting soon — has role interest) ──
 async function submitNotify(e, filmTitle) {
   e.preventDefault();
-  var form = e.target;
-  var btn  = form.querySelector('button[type="submit"]');
+  var form = e.target; var btn = form.querySelector('button[type="submit"]');
   btn.textContent = 'Submitting...'; btn.disabled = true;
-  var name    = (form.querySelector('[name="name"]') || {}).value || '';
-  var email   = form.querySelector('[name="email"]').value.trim();
+  var name = (form.querySelector('[name="name"]') || {}).value || '';
+  var email = form.querySelector('[name="email"]').value.trim();
   var roleInt = (form.querySelector('[name="role"]') || {}).value || '';
   var nlCheck = form.querySelector('[name="newsletter"]');
   var fields = { 'Name': name, 'Email': email, 'Film': filmTitle, 'Type': 'Casting Soon' };
@@ -1908,20 +908,15 @@ async function submitNotify(e, filmTitle) {
     if (nlCheck && nlCheck.checked) { await sendToAirtable(TBL_NEWSLETTER, {'Name': name, 'Email': email}); await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
     form.style.display = 'none';
     var s = form.nextElementSibling; if (s) s.style.display = 'block';
-  } catch(err) {
-    console.error(err); btn.textContent = 'Notify Me When Casting Opens'; btn.disabled = false;
-    alert('Submission failed. Please try again.');
-  }
+  } catch(err) { console.error(err); btn.textContent = 'Notify Me When Casting Opens'; btn.disabled = false; alert('Submission failed. Please try again.'); }
 }
 
-// ── FILM NOTIFICATION (coming soon) ──
 async function submitComingSoon(e, filmTitle) {
   e.preventDefault();
-  var form = e.target;
-  var btn  = form.querySelector('button[type="submit"]');
+  var form = e.target; var btn = form.querySelector('button[type="submit"]');
   btn.textContent = 'Submitting...'; btn.disabled = true;
-  var name    = (form.querySelector('[name="name"]') || {}).value || '';
-  var email   = form.querySelector('[name="email"]').value.trim();
+  var name = (form.querySelector('[name="name"]') || {}).value || '';
+  var email = form.querySelector('[name="email"]').value.trim();
   var nlCheck = form.querySelector('[name="newsletter"]');
   var fields = { 'Name': name, 'Email': email, 'Film': filmTitle, 'Type': 'Coming Soon' };
   try {
@@ -1931,128 +926,39 @@ async function submitComingSoon(e, filmTitle) {
     if (nlCheck && nlCheck.checked) { await sendToAirtable(TBL_NEWSLETTER, {'Name': name, 'Email': email}); await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
     form.style.display = 'none';
     var s = form.nextElementSibling; if (s) s.style.display = 'block';
-  } catch(err) {
-    console.error(err); btn.textContent = 'Notify Me When Casting Opens'; btn.disabled = false;
-    alert('Submission failed. Please try again.');
-  }
+  } catch(err) { console.error(err); btn.textContent = 'Notify Me When Casting Opens'; btn.disabled = false; alert('Submission failed. Please try again.'); }
 }
 
-// ── NEWSLETTER (generic — used by footer forms, echos, casting stay-in-loop) ──
 async function submitNewsletter(e) {
   e.preventDefault();
-  var form = e.target;
-  var btn  = form.querySelector('button[type="submit"]');
+  var form = e.target; var btn = form.querySelector('button[type="submit"]');
   if (btn) { btn.textContent = 'Subscribing...'; btn.disabled = true; }
-  var name  = (form.querySelector('[name="name"]') || form.querySelector('input[type="text"]') || {}).value || '';
-  var email = (form.querySelector('[name="email"]') || form.querySelector('input[type="email"]') || {}).value || '';
-  email = email.trim();
+  var name = (form.querySelector('[name="name"]') || form.querySelector('input[type="text"]') || {}).value || '';
+  var email = ((form.querySelector('[name="email"]') || form.querySelector('input[type="email"]') || {}).value || '').trim();
   if (!email) { if (btn) { btn.textContent = 'Subscribe'; btn.disabled = false; } return; }
   try {
     await sendToAirtable(TBL_NEWSLETTER, { 'Name': name, 'Email': email });
     await sendToBrevo(2, email, name, {});
     await sendEmail(3, email, name, { FIRSTNAME: name });
     form.style.display = 'none';
-    var successId = form.id ? form.id.replace('Form', 'Success').replace('form', 'Success') : null;
-    var s = (successId && document.getElementById(successId)) || document.getElementById('fnl-success') || form.nextElementSibling;
+    var s = document.getElementById('newsletterSuccess') || form.nextElementSibling;
     if (s) s.style.display = 'block';
   } catch(err) { console.error(err); if (btn) { btn.textContent = 'Subscribe'; btn.disabled = false; } }
 }
-
-// aliases
 var submitNewsletterFooter = submitNewsletter;
-var submitEchosNewsletter  = submitNewsletter;
-var submitFilmNewsletter   = submitNewsletter;
+var submitEchosNewsletter = submitNewsletter;
+var submitFilmNewsletter = submitNewsletter;
 
-// ── CREW APPLICATION ──
-function selectRole(el) {
-  var role = el.textContent.trim();
-  var select = document.getElementById('crew-role');
-  if (select) {
-    for (var i = 0; i < select.options.length; i++) {
-      if (select.options[i].text === role) { select.selectedIndex = i; break; }
-    }
-  }
-  document.querySelectorAll('.dept-role').forEach(function(r) { r.classList.remove('selected'); });
-  el.classList.add('selected');
-  if (window.innerWidth < 768) { var f = document.getElementById('crewForm'); if (f) f.scrollIntoView({ behavior: 'smooth' }); }
+function toggleBreakdown(btn) {
+  var body = btn.nextElementSibling;
+  var isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+  btn.querySelector('.toggle-arrow').style.transform = isOpen ? '' : 'rotate(180deg)';
 }
-
-async function submitCrewForm(e) {
-  e.preventDefault();
-  var btn = document.querySelector('#crewForm button[type="submit"]');
-  if (btn) { btn.textContent = 'Submitting...'; btn.disabled = true; }
-  var name         = document.getElementById('crew-name').value.trim();
-  var email        = document.getElementById('crew-email').value.trim();
-  var phone        = (document.getElementById('crew-phone') || {}).value || '';
-  var city         = (document.getElementById('crew-city') || {}).value || '';
-  var role         = (document.getElementById('crew-role') || {}).value || '';
-  var resume       = (document.getElementById('crew-resume') || {}).value || '';
-  var reel         = (document.getElementById('crew-reel') || {}).value || '';
-  var gear         = (document.getElementById('crew-gear') || {}).value || '';
-  var availability = (document.getElementById('crew-availability') || {}).value || '';
-  var filmInterest = (document.getElementById('crew-film-interest') || {}).value || '';
-  var fields = { 'Name': name, 'Email': email, 'Role': role };
-  if (phone)        fields['Phone']                  = phone;
-  if (city)         fields['City']                   = city;
-  if (resume)       fields['Resume / Portfolio Link'] = resume;
-  if (reel)         fields['Reel / Work Samples']     = reel;
-  if (gear)         fields['Gear List']               = gear;
-  if (availability) fields['Availability']            = availability;
-  if (filmInterest) fields['Film Interest']           = filmInterest;
-  try {
-    await sendToAirtable(TBL_CREW, fields);
-    await sendToBrevo(6, email, name, { CREW_ROLE: role });
-    await sendEmail(2, email, name, { FIRSTNAME: name, ROLE: role });
-    document.getElementById('crewForm').style.display = 'none';
-    document.getElementById('crewSuccess').style.display = 'block';
-  } catch(err) {
-    console.error(err);
-    if (btn) { btn.textContent = 'Submit Crew Application'; btn.disabled = false; }
-    alert('Submission failed. Please try again.');
-  }
-}
-
-// ── PROJECT INQUIRY ──
-async function submitContact() {
-  var name     = (document.getElementById('cf-name') || {}).value || '';
-  var email    = (document.getElementById('cf-email') || {}).value || '';
-  var phone    = (document.getElementById('cf-phone') || {}).value || '';
-  var projType = (document.getElementById('cf-type') || {}).value || '';
-  var budget   = (document.getElementById('cf-budget') || {}).value || '';
-  var concept  = (document.getElementById('cf-concept') || {}).value || '';
-  var timeline = (document.getElementById('cf-timeline') || {}).value || '';
-  var nlCheck  = document.getElementById('cf-newsletter');
-  var agree    = document.getElementById('cf-agree');
-  email = email.trim();
-  if (!email) { alert('Email is required.'); return; }
-  if (agree && !agree.checked) { alert('Please confirm you understand this is an inquiry.'); return; }
-  var btn = document.querySelector('.submit-btn');
-  if (btn) { btn.textContent = 'Submitting...'; btn.disabled = true; }
-  var fields = { 'Name': name, 'Email': email };
-  if (phone)    fields['Phone number'] = phone;
-  if (projType) fields['Project Type'] = projType;
-  if (budget)   fields['Budget']       = budget;
-  if (concept)  fields['Concept']      = concept;
-  if (timeline) fields['Timeline']     = timeline;
-  try {
-    await sendToAirtable(TBL_INQUIRIES, fields);
-    await sendToBrevo(5, email, name, { PROJECT_TYPE: projType });
-    if (nlCheck && nlCheck.checked) { await sendToAirtable(TBL_NEWSLETTER, {'Name': name, 'Email': email}); await sendToBrevo(2, email, name, {}); }
-    var form = document.getElementById('contactForm');
-    if (form) form.style.display = 'none';
-    var s = document.getElementById('contactSuccess');
-    if (s) s.style.display = 'block';
-  } catch(err) {
-    console.error(err);
-    if (btn) { btn.textContent = 'Submit Project Inquiry'; btn.disabled = false; }
-    alert('Submission failed. Please try again.');
-  }
-}
-
 </script>
 
-
-<!-- CART POPUP BUTTON -->
+<!-- CART POPUP -->
 <div id="cartPopupBtn" onclick="toggleCartPopup()" style="position:fixed;top:80px;right:24px;z-index:1100;cursor:pointer;display:none;align-items:center;gap:8px;background:rgba(8,8,8,0.9);border:1px solid rgba(218,175,55,0.3);padding:8px 16px;backdrop-filter:blur(10px)">
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DAAF37" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
   <span style="font-family:'League Spartan',sans-serif;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:#DAAF37">Cart</span>
@@ -2092,11 +998,7 @@ function renderCartPopup() {
   empty.style.display = 'none'; footer.style.display = 'block';
   document.getElementById('cartPopupTotal').textContent = '$' + total.toFixed(2);
   items.innerHTML = cart.map(function(item) {
-    return '<div style="display:grid;grid-template-columns:50px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid rgba(218,175,55,0.08)">' +
-      '<img src="' + (item.image||'') + '" style="width:50px;height:50px;object-fit:cover">' +
-      '<div><div style="font-family:League Spartan,sans-serif;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;color:#EADFCF;margin-bottom:2px">' + item.title + '</div>' +
-      '<div style="font-size:0.75rem;color:rgba(234,223,207,0.4)">' + (item.variantTitle !== 'Default Title' ? item.variantTitle : '') + ' &times;' + item.quantity + '</div></div>' +
-      '<span style="color:#DAAF37;font-size:0.85rem">$' + (parseFloat(item.price)*item.quantity).toFixed(2) + '</span></div>';
+    return '<div style="display:grid;grid-template-columns:50px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid rgba(218,175,55,0.08)"><img src="' + (item.image||'') + '" style="width:50px;height:50px;object-fit:cover"><div><div style="font-family:League Spartan,sans-serif;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;color:#EADFCF;margin-bottom:2px">' + item.title + '</div><div style="font-size:0.75rem;color:rgba(234,223,207,0.4)">' + (item.variantTitle !== 'Default Title' ? item.variantTitle : '') + ' &times;' + item.quantity + '</div></div><span style="color:#DAAF37;font-size:0.85rem">$' + (parseFloat(item.price)*item.quantity).toFixed(2) + '</span></div>';
   }).join('');
 }
 window.addEventListener('load', function() {
@@ -2108,13 +1010,8 @@ window.addEventListener('load', function() {
 document.addEventListener('click', function(e) {
   var popup = document.getElementById('cartPopup');
   var btn = document.getElementById('cartPopupBtn');
-  if (popup && btn && popup.style.display === 'block' && !popup.contains(e.target) && !btn.contains(e.target)) {
-    popup.style.display = 'none';
-  }
+  if (popup && btn && popup.style.display === 'block' && !popup.contains(e.target) && !btn.contains(e.target)) popup.style.display = 'none';
 });
-</script>
-<script>
-// Show cart button only if items in cart
 (function() {
   var cart = JSON.parse(sessionStorage.getItem('bleuskm_cart') || '[]');
   var count = cart.reduce(function(s,i){ return s+i.quantity; }, 0);
@@ -2127,38 +1024,26 @@ document.addEventListener('click', function(e) {
 })();
 </script>
 
-<!-- ── CONTACT CHANNELS POPUP ── -->
+<!-- CONTACT CHANNELS -->
 <div id="channelsBtn" onclick="toggleChannels()" style="position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:1100;cursor:pointer;background:rgba(8,8,8,0.92);border:1px solid rgba(218,175,55,0.3);border-right:none;padding:14px 10px;backdrop-filter:blur(10px)">
   <span style="font-family:'League Spartan',sans-serif;font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37;writing-mode:vertical-rl;text-orientation:mixed;user-select:none">Contact</span>
 </div>
-
 <div id="channelsPopup" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.75);align-items:center;justify-content:center">
   <div style="background:#0d0d0d;border:1px solid rgba(218,175,55,0.2);padding:40px 48px;max-width:420px;width:90%;position:relative;text-align:center">
     <button onclick="toggleChannels()" style="position:absolute;top:14px;right:18px;background:none;border:none;color:rgba(234,223,207,0.4);font-size:1.4rem;cursor:pointer;line-height:1">&times;</button>
     <p style="font-family:'League Spartan',sans-serif;font-size:0.6rem;letter-spacing:4px;text-transform:uppercase;color:rgba(218,175,55,0.5);margin-bottom:6px">BLEUSKM Studios</p>
     <h2 style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:1.4rem;letter-spacing:3px;text-transform:uppercase;color:#EADFCF;margin:0 0 24px">Official Channels</h2>
     <div style="display:flex;justify-content:center;gap:28px;margin-bottom:28px">
-      <a href="https://www.instagram.com/bleuskm.studios/" target="_blank" style="color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
-      </a>
-      <a href="https://www.threads.net/@bleuskm.studios" target="_blank" style="color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 1.327-.012 2.5-.235 3.485-.67 1.15-.502 1.953-1.258 2.39-2.248.37-.849.507-1.804.395-2.858-.115-1.08-.478-1.964-1.076-2.623-.467-.518-1.067-.878-1.78-1.07.225 1.593-.044 2.89-.797 3.854-.868 1.107-2.166 1.664-3.858 1.657-1.358-.006-2.484-.44-3.253-1.255-.824-.874-1.128-2.07-.857-3.37.257-1.213.95-2.16 2.007-2.737.966-.527 2.17-.748 3.576-.655.492.031.97.085 1.43.16-.044-.28-.107-.533-.19-.757-.348-.95-1.048-1.45-2.08-1.485-.717-.024-1.396.175-2.02.591l-.923-1.668c.898-.573 1.92-.864 3.039-.864h.043c2.342.08 3.79 1.453 4.226 3.982.107.627.162 1.276.163 1.932.003.16.001.32-.004.48.76.348 1.39.844 1.876 1.48.782 1.02 1.222 2.342 1.308 3.932.1 1.862-.16 3.467-.77 4.77-.77 1.654-2.017 2.833-3.706 3.503C15.139 23.74 13.74 24 12.186 24z"/></svg>
-      </a>
-      <a href="https://www.tiktok.com/@bleuskm.studios" target="_blank" style="color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.27 8.27 0 004.84 1.55V6.79a4.85 4.85 0 01-1.07-.1z"/></svg>
-      </a>
-      <a href="https://www.youtube.com/@BLEUSKMStudios" target="_blank" style="color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-      </a>
-      <a href="mailto:studio@bleuskm.com" style="color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg>
-      </a>
+      <a href="https://www.instagram.com/bleuskm.studios/" target="_blank" style="color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+      <a href="https://www.threads.net/@bleuskm.studios" target="_blank" style="color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 1.327-.012 2.5-.235 3.485-.67 1.15-.502 1.953-1.258 2.39-2.248.37-.849.507-1.804.395-2.858-.115-1.08-.478-1.964-1.076-2.623-.467-.518-1.067-.878-1.78-1.07.225 1.593-.044 2.89-.797 3.854-.868 1.107-2.166 1.664-3.858 1.657-1.358-.006-2.484-.44-3.253-1.255-.824-.874-1.128-2.07-.857-3.37.257-1.213.95-2.16 2.007-2.737.966-.527 2.17-.748 3.576-.655.492.031.97.085 1.43.16-.044-.28-.107-.533-.19-.757-.348-.95-1.048-1.45-2.08-1.485-.717-.024-1.396.175-2.02.591l-.923-1.668c.898-.573 1.92-.864 3.039-.864h.043c2.342.08 3.79 1.453 4.226 3.982.107.627.162 1.276.163 1.932.003.16.001.32-.004.48.76.348 1.39.844 1.876 1.48.782 1.02 1.222 2.342 1.308 3.932.1 1.862-.16 3.467-.77 4.77-.77 1.654-2.017 2.833-3.706 3.503C15.139 23.74 13.74 24 12.186 24z"/></svg></a>
+      <a href="https://www.tiktok.com/@bleuskm.studios" target="_blank" style="color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.27 8.27 0 004.84 1.55V6.79a4.85 4.85 0 01-1.07-.1z"/></svg></a>
+      <a href="https://www.youtube.com/@BLEUSKMStudios" target="_blank" style="color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+      <a href="mailto:studio@bleuskm.com" style="color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg></a>
     </div>
     <p style="font-size:0.78rem;color:rgba(234,223,207,0.4);line-height:1.7;margin:0">Follow us for casting announcements, production updates, and studio news.</p>
     <a href="contact.html" style="display:inline-block;margin-top:20px;background:#DAAF37;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.68rem;letter-spacing:3px;text-transform:uppercase;padding:12px 28px;text-decoration:none">Project Inquiry &rarr;</a>
   </div>
 </div>
-
 <script>
 function toggleChannels() {
   var popup = document.getElementById('channelsPopup');
@@ -2174,62 +1059,6 @@ document.addEventListener('click', function(e) {
   }
 });
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { var p = document.getElementById('channelsPopup'); if (p && p.style.display === 'flex') toggleChannels(); } });
-</script><script>
-function toggleBreakdown(btn) {
-  var body = btn.nextElementSibling;
-  var isOpen = body.classList.contains('open');
-  body.classList.toggle('open', !isOpen);
-  btn.classList.toggle('open', !isOpen);
-  btn.querySelector('.toggle-arrow').style.transform = isOpen ? '' : 'rotate(180deg)';
-}
-</script>
-<style>
-/* ── MOBILE CONTACT TAB FIX ── */
-#socialTab { top: 50%; transform: translateY(-50%); }
-#socialPanel { top: 50%; transform: translateY(-50%); }
-@media (max-width: 767px) {
-  #socialTab {
-    top: auto !important;
-    bottom: 16px !important;
-    transform: none !important;
-    z-index: 1100 !important;
-  }
-  #socialPanel {
-    top: auto !important;
-    bottom: 52px !important;
-    transform: none !important;
-    right: -260px !important;
-    z-index: 1099 !important;
-  }
-}
-</style>
-<script>
-(function() {
-  var tab = document.getElementById("socialTab");
-  var panel = document.getElementById("socialPanel");
-  if (!tab || !panel) return;
-
-  tab.removeAttribute("onclick");
-  tab.removeAttribute("onmouseover");
-  tab.removeAttribute("onmouseout");
-
-  tab.addEventListener("click", function(e) {
-    e.stopPropagation();
-    panel.style.right = (panel.style.right === "0px") ? "-260px" : "0px";
-  });
-
-  function isMobile() { return window.innerWidth <= 767; }
-  tab.addEventListener("mouseover", function() { if (!isMobile()) { clearTimeout(window._st); panel.style.right = "0px"; } });
-  tab.addEventListener("mouseout",  function() { if (!isMobile()) { window._st = setTimeout(function(){ panel.style.right = "-260px"; }, 400); } });
-  panel.addEventListener("mouseover", function() { if (!isMobile()) clearTimeout(window._st); });
-  panel.addEventListener("mouseout",  function() { if (!isMobile()) { window._st = setTimeout(function(){ panel.style.right = "-260px"; }, 400); } });
-
-  document.addEventListener("click", function(e) {
-    if (panel.style.right === "0px" && !panel.contains(e.target) && !tab.contains(e.target)) {
-      panel.style.right = "-260px";
-    }
-  });
-})();
 </script>
 
 </body>
