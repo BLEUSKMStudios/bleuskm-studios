@@ -356,7 +356,7 @@ option {
         <select id="crew-role" required>
           <option value="">Select a role</option>
             <option>Producer</option>
-            <option>Director of Photography (DP)</option>
+            <option>Cinematographer (Director of Photography)</option>
             <option>Sound Mixer / Boom Operator</option>
             <option>Production Assistant (PA)</option>
             <option>Makeup</option>
@@ -661,9 +661,6 @@ function selectRole(el) {
   }
   document.querySelectorAll('.dept-role').forEach(function(r) { r.classList.remove('selected'); });
   el.classList.add('selected');
-  // Scroll to form on mobile
-  var form = document.getElementById('crewForm');
-  // description shown inline — no scroll needed
 }
 
 // ── CREW APPLICATION ──
@@ -940,7 +937,6 @@ function selectRole(el) {
   }
   document.querySelectorAll('.dept-role').forEach(function(r) { r.classList.remove('selected'); });
   el.classList.add('selected');
-  // description shown inline — no scroll needed
 }
 
 async function submitCrewForm(e) {
@@ -1077,7 +1073,6 @@ document.addEventListener('click', function(e) {
   }
 });
 </script>
-
 
 <script>
 // Show cart button only if items in cart
