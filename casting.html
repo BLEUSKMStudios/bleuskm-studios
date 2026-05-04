@@ -26,10 +26,12 @@ body { background: #080808; color: #EADFCF; }
 .badge-open { background: #DAAF37; color: #000; }
 .badge-closed { background: rgba(0,0,0,0.6); color: rgba(234,223,207,0.5); border: 1px solid rgba(218,175,55,0.2); }
 .badge-soon { background: rgba(218,175,55,0.15); color: #DAAF37; border: 1px solid rgba(218,175,55,0.4); }
-.film-cast-info { padding: 18px 20px 22px; border-top: 1px solid rgba(218,175,55,0.08); }
+.film-cast-info { padding: 18px 20px 22px; border-top: 1px solid rgba(218,175,55,0.08); display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.film-cast-info-left { flex: 1; min-width: 0; }
 .film-cast-format { font-size: 0.6rem; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(234,223,207,0.35); margin-bottom: 4px; display: block; }
-.film-cast-title { font-family: 'League Spartan', sans-serif; font-weight: 800; font-size: 0.85rem; letter-spacing: 1.5px; text-transform: uppercase; color: #EADFCF; margin-bottom: 6px; }
-.film-cast-action { font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; color: #DAAF37; font-family: 'League Spartan', sans-serif; font-weight: 700; }
+.film-cast-title { font-family: 'League Spartan', sans-serif; font-weight: 800; font-size: 0.85rem; letter-spacing: 1.5px; text-transform: uppercase; color: #EADFCF; margin-bottom: 4px; }
+.film-cast-subtitle { font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase; color: rgba(234,223,207,0.3); }
+.film-cast-action { font-size: 0.62rem; letter-spacing: 1.5px; text-transform: uppercase; color: #DAAF37; font-family: 'League Spartan', sans-serif; font-weight: 700; text-align: right; flex-shrink: 0; max-width: 120px; line-height: 1.4; }
 .film-cast-action.dimmed { color: rgba(234,223,207,0.25); }
 .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; backdrop-filter: blur(4px); }
 .modal-box { background: #0d0d0d; border: 1px solid rgba(218,175,55,0.15); max-width: 760px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; transform: translateY(20px); transition: transform 0.3s ease; }
@@ -156,8 +158,11 @@ body { background: #080808; color: #EADFCF; }
       <img class="film-cast-img" src="images/the_final_hand_poster.png" alt="The Final Hand">
       <div class="film-cast-overlay"><span class="cast-status-badge badge-open">Casting Open</span></div>
       <div class="film-cast-info">
-        <span class="film-cast-format">Short Film · Pre-Production</span>
-        <div class="film-cast-title">The Final Hand</div>
+        <div class="film-cast-info-left">
+          <span class="film-cast-format">Short Film · Pre-Production</span>
+          <div class="film-cast-title">The Final Hand</div>
+          <span class="film-cast-subtitle">Casting Open</span>
+        </div>
         <span class="film-cast-action">View Roles &amp; Apply →</span>
       </div>
     </div>
@@ -172,8 +177,12 @@ body { background: #080808; color: #EADFCF; }
       <img class="film-cast-img" src="images/love-me-like-this-poster.png" alt="Love Me Like This">
       <div class="film-cast-overlay"><span class="cast-status-badge badge-soon">Opens Soon</span></div>
       <div class="film-cast-info">
-        <span class="film-cast-format">Short Film · Pre-Production</span>
-        <div class="film-cast-title">Love Me Like This</div>
+        <div class="film-cast-info-left">
+          <span class="film-cast-format">Short Film · Pre-Production</span>
+          <div class="film-cast-title">Love Me Like This</div>
+          <span class="film-cast-subtitle">In Development</span>
+        </div>
+        <span class="film-cast-action dimmed">Get Notified When Casting Opens</span>
       </div>
     </div>
   </div>
@@ -188,9 +197,12 @@ body { background: #080808; color: #EADFCF; }
       <img class="film-cast-img" src="images/overstood-poster.png" alt="Overstood">
       <div class="film-cast-overlay"><span class="cast-status-badge badge-soon">Not Yet Open</span></div>
       <div class="film-cast-info">
-        <span class="film-cast-format">Short Film · In Development</span>
-        <div class="film-cast-title">Overstood</div>
-        <span class="film-cast-action dimmed">Subscribe for Casting Alerts</span>
+        <div class="film-cast-info-left">
+          <span class="film-cast-format">Short Film · In Development</span>
+          <div class="film-cast-title">Overstood</div>
+          <span class="film-cast-subtitle">In Development</span>
+        </div>
+        <span class="film-cast-action dimmed">Get Notified When Casting Opens</span>
       </div>
     </div>
 
@@ -198,9 +210,12 @@ body { background: #080808; color: #EADFCF; }
       <img class="film-cast-img" src="images/book-of-beginnings-poster.png" alt="Book of Beginnings">
       <div class="film-cast-overlay"><span class="cast-status-badge badge-soon">Not Yet Open</span></div>
       <div class="film-cast-info">
-        <span class="film-cast-format">Short · Expandable to Feature</span>
-        <div class="film-cast-title">Book of Beginnings</div>
-        <span class="film-cast-action dimmed">Subscribe for Casting Alerts</span>
+        <div class="film-cast-info-left">
+          <span class="film-cast-format">Short · Expandable to Feature</span>
+          <div class="film-cast-title">Book of Beginnings</div>
+          <span class="film-cast-subtitle">In Development</span>
+        </div>
+        <span class="film-cast-action dimmed">Get Notified When Casting Opens</span>
       </div>
     </div>
 
@@ -208,9 +223,12 @@ body { background: #080808; color: #EADFCF; }
       <img class="film-cast-img" src="images/the-15th-hour-poster.png" alt="The 15th Hour">
       <div class="film-cast-overlay"><span class="cast-status-badge badge-soon">Not Yet Open</span></div>
       <div class="film-cast-info">
-        <span class="film-cast-format">Short Film · In Development</span>
-        <div class="film-cast-title">The 15th Hour</div>
-        <span class="film-cast-action dimmed">Subscribe for Casting Alerts</span>
+        <div class="film-cast-info-left">
+          <span class="film-cast-format">Short Film · In Development</span>
+          <div class="film-cast-title">The 15th Hour</div>
+          <span class="film-cast-subtitle">In Development</span>
+        </div>
+        <span class="film-cast-action dimmed">Get Notified When Casting Opens</span>
       </div>
     </div>
 
@@ -218,9 +236,12 @@ body { background: #080808; color: #EADFCF; }
       <img class="film-cast-img" src="images/liminal-county-poster.jpg" alt="Liminal County">
       <div class="film-cast-overlay"><span class="cast-status-badge badge-soon">Not Yet Open</span></div>
       <div class="film-cast-info">
-        <span class="film-cast-format">Feature Film · In Development</span>
-        <div class="film-cast-title">Liminal County</div>
-        <span class="film-cast-action dimmed">Subscribe for Casting Alerts</span>
+        <div class="film-cast-info-left">
+          <span class="film-cast-format">Feature Film · In Development</span>
+          <div class="film-cast-title">Liminal County</div>
+          <span class="film-cast-subtitle">In Development</span>
+        </div>
+        <span class="film-cast-action dimmed">Get Notified When Casting Opens</span>
       </div>
     </div>
 
@@ -228,9 +249,12 @@ body { background: #080808; color: #EADFCF; }
       <img class="film-cast-img" src="images/of-blood-dominion-poster.png" alt="Of Blood and Dominion">
       <div class="film-cast-overlay"><span class="cast-status-badge badge-soon">Not Yet Open</span></div>
       <div class="film-cast-info">
-        <span class="film-cast-format">Feature Film · In Development</span>
-        <div class="film-cast-title">Of Blood and Dominion</div>
-        <span class="film-cast-action dimmed">Subscribe for Casting Alerts</span>
+        <div class="film-cast-info-left">
+          <span class="film-cast-format">Feature Film · In Development</span>
+          <div class="film-cast-title">Of Blood and Dominion</div>
+          <span class="film-cast-subtitle">In Development</span>
+        </div>
+        <span class="film-cast-action dimmed">Get Notified When Casting Opens</span>
       </div>
     </div>
 
@@ -239,9 +263,13 @@ body { background: #080808; color: #EADFCF; }
       <img class="film-cast-img" src="images/as-is-poster.jpg" alt="As Is">
       <div class="film-cast-overlay"><span class="cast-status-badge badge-soon">Not Yet Open</span></div>
       <div class="film-cast-info">
-        <span class="film-cast-format">Short / Feature · In Development</span>
-        <div class="film-cast-title">As Is</div>
-        <span class="film-cast-action dimmed">Subscribe for Casting Alerts</span>
+        <div class="film-cast-info-left">
+          <span class="film-cast-format">Short / Feature · In Development</span>
+          <div class="film-cast-title">As Is</div>
+          <span class="film-cast-subtitle">In Development</span>
+          <span style="display:block;font-size:0.58rem;letter-spacing:1px;color:rgba(234,223,207,0.2);margin-top:5px;font-style:italic">Loosely based on the real story of Kinloch, Missouri</span>
+        </div>
+        <span class="film-cast-action dimmed">Get Notified When Casting Opens</span>
       </div>
     </div>
 
