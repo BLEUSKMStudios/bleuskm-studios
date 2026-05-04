@@ -10,47 +10,301 @@
 <link rel="icon" type="image/png" href="images/bleuskm-logo.png">
 <style>
 body { background: #080808; color: #EADFCF; }
-.casting-page-header { padding: 70px 60px 50px; border-bottom: 1px solid rgba(218,175,55,0.1); }
-.casting-page-header h1 { font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: clamp(2rem, 5vw, 3.5rem); letter-spacing: 6px; text-transform: uppercase; color: #DAAF37; margin-bottom: 8px; }
-.casting-page-header p { font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(234,223,207,0.4); max-width: 600px; }
-.casting-grid-section { padding: 60px 60px 0; }
-.casting-section-label { font-family: 'Red Hat Display', sans-serif; font-size: 0.65rem; letter-spacing: 4px; text-transform: uppercase; color: rgba(218,175,55,0.5); margin-bottom: 30px; display: block; border-bottom: 1px solid rgba(218,175,55,0.1); padding-bottom: 14px; }
-.casting-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-bottom: 60px; }
-.film-cast-card { position: relative; background: #0d0d0d; border: 1px solid rgba(218,175,55,0.07); overflow: hidden; cursor: pointer; transition: background 0.25s; }
+
+/* ── PAGE HEADER ── */
+.casting-page-header {
+  padding: 70px 60px 50px;
+  border-bottom: 1px solid rgba(218,175,55,0.1);
+}
+
+.casting-page-header h1 {
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 900;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: #DAAF37;
+  margin-bottom: 8px;
+}
+
+.casting-page-header p {
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(234,223,207,0.4);
+  max-width: 600px;
+}
+
+/* ── FILM GRID ── */
+.casting-grid-section {
+  padding: 60px 60px 0;
+}
+
+.casting-section-label {
+  font-family: 'Red Hat Display', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(218,175,55,0.5);
+  margin-bottom: 30px;
+  display: block;
+  border-bottom: 1px solid rgba(218,175,55,0.1);
+  padding-bottom: 14px;
+}
+
+.casting-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  margin-bottom: 60px;
+}
+
+/* ── FILM CARD ── */
+.film-cast-card {
+  position: relative;
+  background: #0d0d0d;
+  border: 1px solid rgba(218,175,55,0.07);
+  overflow: hidden;
+  cursor: pointer;
+  transition: background 0.25s;
+}
+
 .film-cast-card:hover { background: #111; }
 .film-cast-card.closed-card:hover .film-cast-img { filter: brightness(0.75); }
-.film-cast-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; filter: brightness(0.6); transition: filter 0.4s; }
+.film-cast-card.closed-card { transition: background 0.25s; }
+
+.film-cast-card.open-card { cursor: pointer; }
+.film-cast-card.closed-card { cursor: pointer; }
+
+.film-cast-img {
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.6);
+  transition: filter 0.4s;
+}
+
 .film-cast-card.open-card:hover .film-cast-img { filter: brightness(0.8); }
-.film-cast-overlay { position: absolute; top: 12px; left: 14px; }
-.cast-status-badge { font-family: 'League Spartan', sans-serif; font-size: 0.6rem; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; padding: 5px 10px; }
-.badge-open { background: #DAAF37; color: #000; }
-.badge-closed { background: rgba(0,0,0,0.6); color: rgba(234,223,207,0.5); border: 1px solid rgba(218,175,55,0.2); }
-.badge-soon { background: rgba(218,175,55,0.15); color: #DAAF37; border: 1px solid rgba(218,175,55,0.4); }
-.film-cast-info { padding: 18px 20px 22px; border-top: 1px solid rgba(218,175,55,0.08); display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
-.film-cast-info-left { flex: 1; min-width: 0; }
-.film-cast-format { font-size: 0.6rem; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(234,223,207,0.35); margin-bottom: 4px; display: block; }
-.film-cast-title { font-family: 'League Spartan', sans-serif; font-weight: 800; font-size: 0.85rem; letter-spacing: 1.5px; text-transform: uppercase; color: #EADFCF; margin-bottom: 4px; }
-.film-cast-subtitle { font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase; color: rgba(234,223,207,0.3); }
-.film-cast-action { font-size: 0.62rem; letter-spacing: 1.5px; text-transform: uppercase; color: #DAAF37; font-family: 'League Spartan', sans-serif; font-weight: 700; text-align: right; flex-shrink: 0; max-width: 120px; line-height: 1.4; }
+
+.film-cast-overlay {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+}
+
+.cast-status-badge {
+  font-family: 'League Spartan', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  padding: 5px 10px;
+}
+
+.badge-open {
+  background: #DAAF37;
+  color: #000;
+}
+
+.badge-closed {
+  background: rgba(0,0,0,0.6);
+  color: rgba(234,223,207,0.5);
+  border: 1px solid rgba(218,175,55,0.2);
+}
+
+.badge-soon {
+  background: rgba(218,175,55,0.15);
+  color: #DAAF37;
+  border: 1px solid rgba(218,175,55,0.4);
+}
+
+.film-cast-info {
+  padding: 18px 20px 22px;
+  border-top: 1px solid rgba(218,175,55,0.08);
+}
+
+.film-cast-format {
+  font-size: 0.6rem;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(234,223,207,0.35);
+  margin-bottom: 4px;
+  display: block;
+}
+
+.film-cast-title {
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #EADFCF;
+  margin-bottom: 6px;
+}
+
+.film-cast-action {
+  font-size: 0.7rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #DAAF37;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 700;
+}
+
 .film-cast-action.dimmed { color: rgba(234,223,207,0.25); }
-.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; backdrop-filter: blur(4px); }
-.modal-box { background: #0d0d0d; border: 1px solid rgba(218,175,55,0.15); max-width: 760px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; transform: translateY(20px); transition: transform 0.3s ease; }
-.modal-close { position: absolute; top: 20px; right: 24px; background: none; border: none; color: rgba(234,223,207,0.4); font-size: 1.4rem; cursor: pointer; z-index: 10; transition: color 0.2s; }
+
+/* ── MODAL OVERLAY ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+  backdrop-filter: blur(4px);
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-box {
+  background: #0d0d0d;
+  border: 1px solid rgba(218,175,55,0.15);
+  max-width: 760px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-box { transform: translateY(0); }
+
+.modal-close {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  background: none;
+  border: none;
+  color: rgba(234,223,207,0.4);
+  font-size: 1.4rem;
+  cursor: pointer;
+  z-index: 10;
+  transition: color 0.2s;
+}
 .modal-close:hover { color: #DAAF37; }
-.modal-tabs { display: flex; border-bottom: 1px solid rgba(218,175,55,0.1); }
-.modal-tab { flex: 1; padding: 20px; background: none; border: none; font-family: 'League Spartan', sans-serif; font-weight: 700; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(234,223,207,0.35); cursor: pointer; transition: color 0.2s, border-bottom 0.2s; border-bottom: 2px solid transparent; }
-.modal-tab.active { color: #DAAF37; border-bottom: 2px solid #DAAF37; }
+
+/* Modal tabs: Info / Apply */
+.modal-tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(218,175,55,0.1);
+}
+
+.modal-tab {
+  flex: 1;
+  padding: 20px;
+  background: none;
+  border: none;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(234,223,207,0.35);
+  cursor: pointer;
+  transition: color 0.2s, border-bottom 0.2s;
+  border-bottom: 2px solid transparent;
+}
+
+.modal-tab.active {
+  color: #DAAF37;
+  border-bottom: 2px solid #DAAF37;
+}
+
 .modal-tab-content { display: none; padding: 36px; }
 .modal-tab-content.active { display: block; }
-.modal-film-title { font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: 2rem; letter-spacing: 3px; text-transform: uppercase; color: #EADFCF; margin-bottom: 6px; }
-.modal-film-meta { font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(218,175,55,0.5); margin-bottom: 24px; }
-.modal-logline { font-family: 'Kalnia', serif; font-style: italic; font-size: 1rem; line-height: 1.7; color: rgba(234,223,207,0.75); margin-bottom: 28px; padding-bottom: 28px; border-bottom: 1px solid rgba(218,175,55,0.1); }
-.modal-roles-title { font-family: 'Red Hat Display', sans-serif; font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase; color: rgba(218,175,55,0.5); margin-bottom: 16px; display: block; }
-.role-row { padding: 14px 0; border-bottom: 1px solid rgba(218,175,55,0.07); }
-.role-name { display:flex; flex-direction:column; font-family: 'League Spartan', sans-serif; font-weight: 700; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; color: #DAAF37; margin-bottom: 3px; }
-.role-desc { font-size: 0.82rem; color: rgba(234,223,207,0.55); line-height: 1.5; }
-.role-summary { font-size: 0.82rem; color: rgba(234,223,207,0.6); line-height: 1.6; margin-bottom: 10px; }
-.breakdown-toggle { display: inline-flex; align-items: center; gap: 7px; font-family: 'League Spartan', sans-serif; font-weight: 700; font-size: 0.62rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(218,175,55,0.6); cursor: pointer; border: none; background: none; padding: 0; margin-top: 6px; transition: color 0.2s; }
+
+/* Modal info panel */
+.modal-film-title {
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 900;
+  font-size: 2rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #EADFCF;
+  margin-bottom: 6px;
+}
+
+.modal-film-meta {
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(218,175,55,0.5);
+  margin-bottom: 24px;
+}
+
+.modal-logline {
+  font-family: 'Kalnia', serif;
+  font-style: italic;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: rgba(234,223,207,0.75);
+  margin-bottom: 28px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid rgba(218,175,55,0.1);
+}
+
+.modal-roles-title {
+  font-family: 'Red Hat Display', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(218,175,55,0.5);
+  margin-bottom: 16px;
+  display: block;
+}
+
+.role-row {
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(218,175,55,0.07);
+}
+
+.role-name {
+  display:flex;flex-direction:column;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #DAAF37;
+  margin-bottom: 3px;
+}
+
+.role-desc {
+  font-size: 0.82rem;
+  color: rgba(234,223,207,0.55);
+  line-height: 1.5;
+}
+.role-summary {
+  font-size: 0.82rem;
+  color: rgba(234,223,207,0.6);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+.breakdown-toggle {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: 'League Spartan', sans-serif; font-weight: 700;
+  font-size: 0.62rem; letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(218,175,55,0.6); cursor: pointer; border: none;
+  background: none; padding: 0; margin-top: 6px;
+  transition: color 0.2s;
+}
 .breakdown-toggle:hover { color: #DAAF37; }
 .breakdown-toggle .toggle-arrow { display: inline-block; transition: transform 0.25s; font-size: 0.7rem; }
 .breakdown-toggle.open .toggle-arrow { transform: rotate(180deg); }
@@ -60,43 +314,292 @@ body { background: #080808; color: #EADFCF; }
 .breakdown-body ul { margin: 0 0 10px; padding-left: 18px; font-size: 0.82rem; color: rgba(234,223,207,0.55); line-height: 1.9; }
 .bd-label { font-family: 'League Spartan', sans-serif; font-weight: 700; font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(218,175,55,0.5); display: block; margin: 12px 0 6px; }
 .bd-label:first-child { margin-top: 0; }
-.apply-from-info-btn { display: inline-flex; align-items: center; gap: 8px; margin-top: 28px; background: #DAAF37; color: #0b0b0b; border: none; font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; padding: 12px 24px; cursor: pointer; transition: background 0.2s; }
+
+/* ── Character breakdown accordion ── */
+.breakdown-toggle {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: 'League Spartan', sans-serif; font-weight: 700;
+  font-size: 0.62rem; letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(218,175,55,0.6); cursor: pointer; border: none;
+  background: none; padding: 0; margin-top: 4px;
+  transition: color 0.2s;
+}
+.breakdown-toggle:hover { color: #DAAF37; }
+.breakdown-toggle .toggle-arrow {
+  display: inline-block; transition: transform 0.25s;
+  font-size: 0.7rem;
+}
+.breakdown-toggle.open .toggle-arrow { transform: rotate(180deg); }
+.breakdown-body {
+  display: none; margin-top: 14px;
+  border-left: 2px solid rgba(218,175,55,0.2);
+  padding-left: 16px;
+}
+.breakdown-body.open { display: block; }
+.breakdown-body p {
+  font-size: 0.82rem; color: rgba(234,223,207,0.55);
+  line-height: 1.7; margin: 0 0 12px;
+}
+.breakdown-body ul {
+  margin: 0 0 12px; padding-left: 18px;
+  font-size: 0.82rem; color: rgba(234,223,207,0.55); line-height: 1.8;
+}
+.breakdown-body .bd-label {
+  font-family: 'League Spartan', sans-serif; font-weight: 700;
+  font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(218,175,55,0.5); display: block; margin: 14px 0 6px;
+}
+
+.apply-from-info-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 28px;
+  background: #DAAF37;
+  color: #0b0b0b;
+  border: none;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 900;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
 .apply-from-info-btn:hover { background: #b9892e; }
-.casting-form h3 { font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; color: #EADFCF; margin-bottom: 4px; }
-.casting-form .form-sub { font-size: 0.75rem; letter-spacing: 1px; color: rgba(218,175,55,0.5); margin-bottom: 28px; }
-.form-row-two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.form-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
-.form-field label { font-family: 'Red Hat Display', sans-serif; font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(218,175,55,0.6); }
-.form-field input, .form-field select, .form-field textarea { background: rgba(255,255,255,0.04); border: 1px solid rgba(218,175,55,0.2); color: #EADFCF; padding: 10px 14px; font-family: 'Red Hat Display', sans-serif; font-size: 0.85rem; border-radius: 0; transition: border-color 0.2s; width: 100%; box-sizing: border-box; }
-.form-field input:focus, .form-field select:focus, .form-field textarea:focus { outline: none; border-color: rgba(218,175,55,0.6); }
+
+/* Closed state in modal */
+.modal-closed-notice {
+  background: rgba(218,175,55,0.04);
+  border: 1px solid rgba(218,175,55,0.12);
+  padding: 28px;
+  margin-top: 20px;
+}
+
+.modal-closed-notice p {
+  font-size: 0.85rem;
+  color: rgba(234,223,207,0.5);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+/* ── CASTING SUBMISSION FORM ── */
+
+.casting-form h3 {
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 900;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #EADFCF;
+  margin-bottom: 4px;
+}
+
+.casting-form .form-sub {
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  color: rgba(218,175,55,0.5);
+  margin-bottom: 28px;
+}
+
+.form-row-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.form-field label {
+  font-family: 'Red Hat Display', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(218,175,55,0.6);
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(218,175,55,0.2);
+  color: #EADFCF;
+  padding: 10px 14px;
+  font-family: 'Red Hat Display', sans-serif;
+  font-size: 0.85rem;
+  border-radius: 0;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: rgba(218,175,55,0.6);
+}
+
 .form-field select option { background: #111; color: #EADFCF; }
-.form-submit-btn { width: 100%; height: 50px; background: #DAAF37; border: none; color: #0b0b0b; font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
+
+.form-field input[type="file"] {
+  padding: 8px;
+  color: rgba(234,223,207,0.5);
+  font-size: 0.8rem;
+}
+
+.form-submit-btn {
+  width: 100%;
+  height: 50px;
+  background: #DAAF37;
+  border: none;
+  color: #0b0b0b;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 900;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.2s;
+}
+
 .form-submit-btn:hover { background: #b9892e; }
-.form-note { font-size: 0.72rem; color: rgba(234,223,207,0.3); margin-top: 12px; line-height: 1.5; text-align: center; }
-.form-success { display: none; text-align: center; padding: 40px 20px; }
-.form-success h4 { font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: 1.4rem; letter-spacing: 3px; text-transform: uppercase; color: #DAAF37; margin-bottom: 12px; }
-.form-success p { font-size: 0.85rem; color: rgba(234,223,207,0.5); line-height: 1.6; }
-.newsletter-section { margin: 0 60px 80px; padding: 50px 60px; border: 1px solid rgba(218,175,55,0.12); background: rgba(218,175,55,0.03); display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
-.newsletter-copy h2 { font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: 1.5rem; letter-spacing: 3px; text-transform: uppercase; color: #DAAF37; margin-bottom: 10px; }
-.newsletter-copy p { font-size: 0.85rem; color: rgba(234,223,207,0.55); line-height: 1.6; }
-.site-footer-full { background: #040404; border-top: 1px solid rgba(218,175,55,0.1); padding: 50px 60px 30px; }
-.footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+
+.form-note {
+  font-size: 0.72rem;
+  color: rgba(234,223,207,0.3);
+  margin-top: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+/* Success message */
+.form-success {
+  display: none;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.form-success h4 {
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 900;
+  font-size: 1.4rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #DAAF37;
+  margin-bottom: 12px;
+}
+
+.form-success p {
+  font-size: 0.85rem;
+  color: rgba(234,223,207,0.5);
+  line-height: 1.6;
+}
+
+/* ── NEWSLETTER SECTION ── */
+.newsletter-section {
+  margin: 0 60px 80px;
+  padding: 50px 60px;
+  border: 1px solid rgba(218,175,55,0.12);
+  background: rgba(218,175,55,0.03);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.newsletter-copy h2 {
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 900;
+  font-size: 1.5rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #DAAF37;
+  margin-bottom: 10px;
+}
+
+.newsletter-copy p {
+  font-size: 0.85rem;
+  color: rgba(234,223,207,0.55);
+  line-height: 1.6;
+}
+
+/* ── FOOTER ── */
+.site-footer-full {
+  background: #040404;
+  border-top: 1px solid rgba(218,175,55,0.1);
+  padding: 50px 60px 30px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
 .footer-brand img { height: 32px; margin-bottom: 14px; }
-.footer-brand p { font-size: 0.78rem; color: rgba(234,223,207,0.35); line-height: 1.6; max-width: 220px; }
-.footer-col h4 { font-family: 'League Spartan', sans-serif; font-weight: 700; font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase; color: rgba(218,175,55,0.5); margin-bottom: 16px; }
-.footer-col a { display: block; font-size: 0.8rem; color: rgba(234,223,207,0.45); text-decoration: none; margin-bottom: 10px; transition: color 0.2s; }
+
+.footer-brand p {
+  font-size: 0.78rem;
+  color: rgba(234,223,207,0.35);
+  line-height: 1.6;
+  max-width: 220px;
+}
+
+.footer-col h4 {
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 700;
+  font-size: 0.65rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(218,175,55,0.5);
+  margin-bottom: 16px;
+}
+
+.footer-col a {
+  display: block;
+  font-size: 0.8rem;
+  color: rgba(234,223,207,0.45);
+  text-decoration: none;
+  margin-bottom: 10px;
+  transition: color 0.2s;
+}
+
 .footer-col a:hover { color: #DAAF37; }
-.footer-bottom { border-top: 1px solid rgba(218,175,55,0.08); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-.footer-bottom p { font-size: 0.72rem; color: rgba(234,223,207,0.2); }
-.footer-bottom a { font-size: 0.72rem; color: rgba(234,223,207,0.2); text-decoration: none; margin-left: 20px; transition: color 0.2s; }
+
+.footer-bottom {
+  border-top: 1px solid rgba(218,175,55,0.08);
+  padding-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.footer-bottom p {
+  font-size: 0.72rem;
+  color: rgba(234,223,207,0.2);
+}
+
+.footer-bottom a {
+  font-size: 0.72rem;
+  color: rgba(234,223,207,0.2);
+  text-decoration: none;
+  margin-left: 20px;
+  transition: color 0.2s;
+}
+
 .footer-bottom a:hover { color: rgba(218,175,55,0.5); }
-.not-actor-link { font-family: 'Red Hat Display', sans-serif; font-size: 0.82rem; color: rgba(234,223,207,0.45); letter-spacing: 0.5px; display: block; text-align: center; margin-top: 18px; }
-.not-actor-link:hover { color: rgba(234,223,207,0.75); }
-.navbar{background:rgba(8,8,8,0.92)!important;backdrop-filter:blur(12px);border-bottom:1px solid rgba(218,175,55,0.08)}
-.navbar-brand span{font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37}
-.nav-link{font-family:'League Spartan',sans-serif;font-weight:600;font-size:0.65rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(234,223,207,0.5)!important;transition:color 0.2s;padding:0.5rem 1rem!important}
-.nav-link:hover,.nav-link.active{color:#DAAF37!important}
-.role-type{display:block;font-family:'Red Hat Display',sans-serif;font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:rgba(218,175,55,0.5);font-weight:400;margin-top:2px}
+
 @media (max-width: 900px) {
   .casting-grid { grid-template-columns: repeat(2, 1fr); }
   .casting-grid-section { padding: 40px 20px 0; }
@@ -106,13 +609,81 @@ body { background: #080808; color: #EADFCF; }
   .form-row-two { grid-template-columns: 1fr; }
   .modal-tab-content { padding: 24px; }
 }
+
 @media (max-width: 540px) {
   .casting-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; }
 }
+
+/* ── TEXT LINK (NOT A BUTTON) ── */
+.not-actor-link {
+  font-family: 'Red Hat Display', sans-serif;
+  font-size: 0.82rem;
+  color: rgba(234,223,207,0.45);
+  letter-spacing: 0.5px;
+  display: block;
+  text-align: center;
+  margin-top: 18px;
+}
+
+.not-actor-link:hover {
+  color: rgba(234,223,207,0.75);
+}
+
+/* ── GOLD BUTTON SYSTEM ── */
+.gold-btn {
+  background: #DAAF37;
+  color: #0b0b0b;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 900;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.gold-btn:hover { background: #b9892e; }
+
+.gold-btn-outline {
+  background: transparent;
+  color: #EADFCF;
+  border: 1px solid rgba(218,175,55,0.4);
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 900;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.gold-btn-outline:hover {
+  border-color: #DAAF37;
+  color: #DAAF37;
+}
+
+/* NAV */
+.navbar{background:rgba(8,8,8,0.92)!important;backdrop-filter:blur(12px);border-bottom:1px solid rgba(218,175,55,0.08)}
+.navbar-brand span{font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37}
+.nav-link{font-family:'League Spartan',sans-serif;font-weight:600;font-size:0.65rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(234,223,207,0.5)!important;transition:color 0.2s;padding:0.5rem 1rem!important}
+.nav-link:hover,.nav-link.active{color:#DAAF37!important}
+.role-type{display:block;font-family:'Red Hat Display',sans-serif;font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:rgba(218,175,55,0.5);font-weight:400;margin-top:2px}
 </style>
-<style>a { color: inherit; text-decoration: none; } a:hover { color: #DAAF37; text-decoration: none; }</style>
-<style>a, a:link, a:visited, a:active, a:hover { text-decoration: none !important; }</style>
+  <style>
+    a { color: inherit; text-decoration: none; }
+    a:hover { color: #DAAF37; text-decoration: none; }
+  </style>
+  <style>
+    a, a:link, a:visited, a:active, a:hover { text-decoration: none !important; }
+  </style>
 </head>
 <body>
 
@@ -120,20 +691,23 @@ body { background: #080808; color: #EADFCF; }
 <nav class="navbar navbar-expand-md navbar-dark fixed-top">
   <div class="container-fluid">
     <a class="navbar-brand brand-logo" href="index.html" style="display:flex;align-items:center;gap:10px"><img src="images/bleuskm-logo.png" alt="BLEUSKM Logo" style="height:32px;width:auto;"><span style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37">BLEUSKM Studios</span></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"><span class="navbar-toggler-icon"></span></button>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
     <div class="collapse navbar-collapse" id="mainNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
         <li class="nav-item"><a class="nav-link" href="my-productions.html">Productions</a></li>
         <li class="nav-item"><a class="nav-link" href="visuals.html">Visuals</a></li>
         <li class="nav-item"><a class="nav-link" href="echos.html">Echos</a></li>
-        <li class="nav-item"><a class="nav-link active" href="casting.html">Casting</a></li>
+        <li class="nav-item"><a class="nav-link" href="casting.html" class="nav-link active">Casting</a></li>
         <li class="nav-item"><a class="nav-link" href="bleuskm shop.html">Shop</a></li>
         <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
       </ul>
     </div>
   </div>
 </nav>
+
 
 <!-- CREW APPLICATION BANNER -->
 <div style="background:rgba(218,175,55,0.05);border-bottom:1px solid rgba(218,175,55,0.12);padding:18px 60px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
@@ -150,22 +724,22 @@ body { background: #080808; color: #EADFCF; }
   <p>Select a production below to view roles and submit your audition materials.</p>
 </div>
 
-<!-- NOW CASTING -->
+<!-- OPEN CASTINGS -->
 <div class="casting-grid-section">
   <span class="casting-section-label">Now Casting</span>
   <div class="casting-grid">
+
+    <!-- THE FINAL HAND — OPEN -->
     <div class="film-cast-card open-card" onclick="openModal('final-hand')">
       <img class="film-cast-img" src="images/the_final_hand_poster.png" alt="The Final Hand">
       <div class="film-cast-overlay"><span class="cast-status-badge badge-open">Casting Open</span></div>
       <div class="film-cast-info">
-        <div class="film-cast-info-left">
-          <span class="film-cast-format">Short Film · Pre-Production</span>
-          <div class="film-cast-title">The Final Hand</div>
-          <span class="film-cast-subtitle">Casting Open</span>
-        </div>
+        <span class="film-cast-format">Short Film · Pre-Production</span>
+        <div class="film-cast-title">The Final Hand</div>
         <span class="film-cast-action">View Roles &amp; Apply →</span>
       </div>
     </div>
+
   </div>
 </div>
 
@@ -173,22 +747,21 @@ body { background: #080808; color: #EADFCF; }
 <div class="casting-grid-section">
   <span class="casting-section-label">Casting Soon</span>
   <div class="casting-grid">
-    <div class="film-cast-card closed-card" onclick="openModal('love-me-like-this')">
-      <img class="film-cast-img" src="images/love-me-like-this-poster.png" alt="Love Me Like This">
-      <div class="film-cast-overlay"><span class="cast-status-badge badge-soon">Opens Soon</span></div>
-      <div class="film-cast-info">
-        <div class="film-cast-info-left">
-          <span class="film-cast-format">Short Film · Pre-Production</span>
-          <div class="film-cast-title">Love Me Like This</div>
-          <span class="film-cast-subtitle">In Development</span>
-        </div>
-        <span class="film-cast-action dimmed">Get Notified When Casting Opens</span>
-      </div>
+
+  <!-- LOVE ME LIKE THIS — SOON -->
+  <div class="film-cast-card closed-card" onclick="openModal('love-me-like-this')">
+    <img class="film-cast-img" src="images/love-me-like-this-poster.png" alt="Love Me Like This">
+    <div class="film-cast-overlay"><span class="cast-status-badge badge-soon">Opens Soon</span></div>
+    <div class="film-cast-info">
+      <span class="film-cast-format">Short Film · Pre-Production</span>
+      <div class="film-cast-title">Love Me Like This</div>
     </div>
+  </div>
+
   </div>
 </div>
 
-<!-- COMING SOON -->
+<!-- COMING SOON PRODUCTIONS -->
 <div class="casting-grid-section">
   <span class="casting-section-label">Coming Soon — Subscribe below for Updates</span>
   <div class="casting-grid" style="margin-bottom:80px">
@@ -197,12 +770,9 @@ body { background: #080808; color: #EADFCF; }
       <img class="film-cast-img" src="images/overstood-poster.png" alt="Overstood">
       <div class="film-cast-overlay"><span class="cast-status-badge badge-soon">Not Yet Open</span></div>
       <div class="film-cast-info">
-        <div class="film-cast-info-left">
-          <span class="film-cast-format">Short Film · In Development</span>
-          <div class="film-cast-title">Overstood</div>
-          <span class="film-cast-subtitle">In Development</span>
-        </div>
-        <span class="film-cast-action dimmed">Get Notified When Casting Opens</span>
+        <span class="film-cast-format">Short Film · In Development</span>
+        <div class="film-cast-title">Overstood</div>
+        <span class="film-cast-action dimmed">Subscribe for Casting Alerts</span>
       </div>
     </div>
 
@@ -210,12 +780,9 @@ body { background: #080808; color: #EADFCF; }
       <img class="film-cast-img" src="images/book-of-beginnings-poster.png" alt="Book of Beginnings">
       <div class="film-cast-overlay"><span class="cast-status-badge badge-soon">Not Yet Open</span></div>
       <div class="film-cast-info">
-        <div class="film-cast-info-left">
-          <span class="film-cast-format">Short · Expandable to Feature</span>
-          <div class="film-cast-title">Book of Beginnings</div>
-          <span class="film-cast-subtitle">In Development</span>
-        </div>
-        <span class="film-cast-action dimmed">Get Notified When Casting Opens</span>
+        <span class="film-cast-format">Short · Expandable to Feature</span>
+        <div class="film-cast-title">Book of Beginnings</div>
+        <span class="film-cast-action dimmed">Subscribe for Casting Alerts</span>
       </div>
     </div>
 
@@ -223,12 +790,9 @@ body { background: #080808; color: #EADFCF; }
       <img class="film-cast-img" src="images/the-15th-hour-poster.png" alt="The 15th Hour">
       <div class="film-cast-overlay"><span class="cast-status-badge badge-soon">Not Yet Open</span></div>
       <div class="film-cast-info">
-        <div class="film-cast-info-left">
-          <span class="film-cast-format">Short Film · In Development</span>
-          <div class="film-cast-title">The 15th Hour</div>
-          <span class="film-cast-subtitle">In Development</span>
-        </div>
-        <span class="film-cast-action dimmed">Get Notified When Casting Opens</span>
+        <span class="film-cast-format">Short Film · In Development</span>
+        <div class="film-cast-title">The 15th Hour</div>
+        <span class="film-cast-action dimmed">Subscribe for Casting Alerts</span>
       </div>
     </div>
 
@@ -236,12 +800,9 @@ body { background: #080808; color: #EADFCF; }
       <img class="film-cast-img" src="images/liminal-county-poster.jpg" alt="Liminal County">
       <div class="film-cast-overlay"><span class="cast-status-badge badge-soon">Not Yet Open</span></div>
       <div class="film-cast-info">
-        <div class="film-cast-info-left">
-          <span class="film-cast-format">Feature Film · In Development</span>
-          <div class="film-cast-title">Liminal County</div>
-          <span class="film-cast-subtitle">In Development</span>
-        </div>
-        <span class="film-cast-action dimmed">Get Notified When Casting Opens</span>
+        <span class="film-cast-format">Feature Film · In Development</span>
+        <div class="film-cast-title">Liminal County</div>
+        <span class="film-cast-action dimmed">Subscribe for Casting Alerts</span>
       </div>
     </div>
 
@@ -249,27 +810,21 @@ body { background: #080808; color: #EADFCF; }
       <img class="film-cast-img" src="images/of-blood-dominion-poster.png" alt="Of Blood and Dominion">
       <div class="film-cast-overlay"><span class="cast-status-badge badge-soon">Not Yet Open</span></div>
       <div class="film-cast-info">
-        <div class="film-cast-info-left">
-          <span class="film-cast-format">Feature Film · In Development</span>
-          <div class="film-cast-title">Of Blood and Dominion</div>
-          <span class="film-cast-subtitle">In Development</span>
-        </div>
-        <span class="film-cast-action dimmed">Get Notified When Casting Opens</span>
+        <span class="film-cast-format">Feature Film · In Development</span>
+        <div class="film-cast-title">Of Blood and Dominion</div>
+        <span class="film-cast-action dimmed">Subscribe for Casting Alerts</span>
       </div>
     </div>
 
-    <!-- FIXED: id and onclick now use 'as-is' -->
+    <!-- FIXED: was onclick="openModal('As Is')" with broken id="modal-As IS" -->
     <div class="film-cast-card closed-card" onclick="openModal('as-is')">
       <img class="film-cast-img" src="images/as-is-poster.jpg" alt="As Is">
       <div class="film-cast-overlay"><span class="cast-status-badge badge-soon">Not Yet Open</span></div>
       <div class="film-cast-info">
-        <div class="film-cast-info-left">
-          <span class="film-cast-format">Short / Feature · In Development</span>
-          <div class="film-cast-title">As Is</div>
-          <span class="film-cast-subtitle">In Development</span>
-          <span style="display:block;font-size:0.58rem;letter-spacing:1px;color:rgba(234,223,207,0.2);margin-top:5px;font-style:italic">Loosely based on the real story of Kinloch, Missouri</span>
-        </div>
-        <span class="film-cast-action dimmed">Get Notified When Casting Opens</span>
+        <span class="film-cast-format">Short / Feature · In Development</span>
+        <div class="film-cast-title">As Is</div>
+        <span class="film-cast-action dimmed">Subscribe for Casting Alerts</span>
+        <span style="display:block;font-size:0.6rem;color:rgba(234,223,207,0.2);font-style:italic;margin-top:4px;letter-spacing:0.5px">Loosely based on the real story of Kinloch, Missouri</span>
       </div>
     </div>
 
@@ -284,34 +839,44 @@ body { background: #080808; color: #EADFCF; }
   </div>
   <div>
     <form id="newsletterForm" onsubmit="submitNewsletterFooter(event)">
-      <div class="form-field"><label>Your Name</label><input type="text" id="nl-name" placeholder="Full name"></div>
-      <div class="form-field"><label>Email Address</label><input type="email" id="nl-email" placeholder="name@email.com" required></div>
-      <button type="submit" class="form-submit-btn">Subscribe to Updates</button>
-      <p class="form-note">No spam. Casting calls, announcements, and production news only.</p>
-    </form>
-    <div id="newsletterSuccess" style="display:none;text-align:center;padding:20px">
-      <p style="color:#DAAF37;font-family:'League Spartan',sans-serif;letter-spacing:2px;font-size:0.85rem">YOU'RE ON THE LIST</p>
-      <p style="color:rgba(234,223,207,0.4);font-size:0.8rem;margin-top:8px">We'll be in touch when castings open.</p>
-    </div>
+        <div class="form-field">
+          <label>Your Name</label>
+          <input type="text" id="nl-name" placeholder="Full name">
+        </div>
+        <div class="form-field">
+          <label>Email Address</label>
+          <input type="email" id="nl-email" placeholder="name@email.com" required>
+        </div>
+        <button type="submit" class="form-submit-btn">Subscribe to Updates</button>
+        <p class="form-note">No spam. Casting calls, announcements, and production news only.</p>
+      </form>
+      <div id="newsletterSuccess" style="display:none;text-align:center;padding:20px">
+        <p style="color:#DAAF37;font-family:'League Spartan',sans-serif;letter-spacing:2px;font-size:0.85rem">YOU'RE ON THE LIST</p>
+        <p style="color:rgba(234,223,207,0.4);font-size:0.8rem;margin-top:8px">We'll be in touch when castings open.</p>
+      </div>
   </div>
 </div>
 
-<!-- ═══════════ MODALS ═══════════ -->
+<!-- ═══════════════════════════════
+     MODALS
+═══════════════════════════════ -->
 
-<!-- FINAL HAND MODAL -->
+<!-- FINAL HAND MODAL — OPEN -->
 <div class="modal-overlay" id="modal-final-hand">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('final-hand')">&times;</button>
     <div class="modal-tabs">
-      <button class="modal-tab active" onclick="switchTab('final-hand','info')">Film Details</button>
-      <button class="modal-tab" onclick="switchTab('final-hand','apply')">Apply Now</button>
+      <button class="modal-tab active" onclick="switchTab('final-hand', 'info')">Film Details</button>
+      <button class="modal-tab" onclick="switchTab('final-hand', 'apply')">Apply Now</button>
     </div>
     <div class="modal-tab-content active" id="final-hand-info">
       <span class="cast-status-badge badge-open" style="margin-bottom:20px;display:inline-block">Casting Open · May 2026</span>
-      <div style="margin:20px 0 24px;padding:16px 22px;background:rgba(218,175,55,0.07);border-left:3px solid #DAAF37">
-        <div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:2px;text-transform:uppercase;color:#DAAF37">&#9651; Submissions Close — May 17th, 2026</div>
+      <div style="margin:20px 0 24px;padding:16px 22px;background:rgba(218,175,55,0.07);border-left:3px solid #DAAF37;display:flex;align-items:center;gap:14px">
+      <div>
+        <div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:2px;text-transform:uppercase;color:#DAAF37">&#9651; Submissions Close &mdash; May 17th, 2026</div>
         <div style="font-size:0.68rem;color:rgba(234,223,207,0.4);letter-spacing:1px;text-transform:uppercase;margin-top:3px">All applications must be submitted before this date</div>
       </div>
+    </div>
       <div class="modal-film-title">The Final Hand</div>
       <div class="modal-film-meta">Short Film · Pre-Production · Director: Zaria Lashae</div>
       <p class="modal-logline">During a game of blackjack, a gambler attempts to outplay High John the Conqueror by mimicking his every move, only to realize too late that the game is testing something deeper than skill—and that true power cannot be learned through observation alone.</p>
@@ -325,7 +890,7 @@ body { background: #080808; color: #EADFCF; }
           <span class="bd-label">Character</span>
           <p>He speaks little, but every gesture holds intention. His movements feel ritualistic rather than performative, suggesting a connection to something far older than the room itself. His power is almost entirely non-verbal — the performance lives in the hands, the stillness, the weight of a look.</p>
           <span class="bd-label">Dialogue</span>
-          <p>He is a man of few words — but when he speaks, every word lands like a full stop. His presence does the rest.</p>
+          <p>Very Minimal. He is a man of few words — but when he speaks, every word lands like a full stop. His presence does the rest.</p>
           <span class="bd-label">Seeking</span>
           <ul>
             <li>Black American male, 35–60</li>
@@ -381,7 +946,8 @@ body { background: #080808; color: #EADFCF; }
         <div class="role-summary">1–2 background roles set within a period backroom gambling parlor.</div>
         <button class="breakdown-toggle" onclick="toggleBreakdown(this)">Character Breakdown <span class="toggle-arrow">▾</span></button>
         <div class="breakdown-body">
-          <span class="bd-label">Dialogue</span><p>No dialogue required.</p>
+          <span class="bd-label">Dialogue</span>
+          <p>No dialogue required.</p>
           <span class="bd-label">Seeking</span>
           <ul>
             <li>Female, 25–45, any ethnicity</li>
@@ -397,7 +963,8 @@ body { background: #080808; color: #EADFCF; }
         <div class="role-summary">3–5 seated background players for the gambling parlor environment.</div>
         <button class="breakdown-toggle" onclick="toggleBreakdown(this)">Character Breakdown <span class="toggle-arrow">▾</span></button>
         <div class="breakdown-body">
-          <span class="bd-label">Dialogue</span><p>No dialogue required.</p>
+          <span class="bd-label">Dialogue</span>
+          <p>No dialogue required.</p>
           <span class="bd-label">Seeking</span>
           <ul>
             <li>Male or female, 21+, any ethnicity</li>
@@ -412,7 +979,8 @@ body { background: #080808; color: #EADFCF; }
         <div class="role-summary">One couple in the background of the gambling parlor — two roles, cast together.</div>
         <button class="breakdown-toggle" onclick="toggleBreakdown(this)">Character Breakdown <span class="toggle-arrow">▾</span></button>
         <div class="breakdown-body">
-          <span class="bd-label">Dialogue</span><p>No dialogue required.</p>
+          <span class="bd-label">Dialogue</span>
+          <p>No dialogue required.</p>
           <span class="bd-label">Seeking</span>
           <ul>
             <li>One Black male and one Black female, 21+</li>
@@ -422,16 +990,18 @@ body { background: #080808; color: #EADFCF; }
         </div>
       </div>
 
-      <button class="apply-from-info-btn" onclick="switchTab('final-hand','apply')">Apply for this film →</button>
+      <button class="apply-from-info-btn" onclick="switchTab('final-hand', 'apply')">Apply for this film →</button>
       <a href="crew-application.html" class="not-actor-link">Not an actor? Apply for crew →</a>
     </div>
     <div class="modal-tab-content" id="final-hand-apply">
       <div class="casting-form">
         <h3>The Final Hand</h3>
         <p class="form-sub">Casting open — Apply below to be considered.</p>
-        <div style="margin:20px 0 24px;padding:16px 22px;background:rgba(218,175,55,0.07);border-left:3px solid #DAAF37">
-          <div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:2px;text-transform:uppercase;color:#DAAF37">&#9651; Submissions Close — May 17th, 2026</div>
-          <div style="font-size:0.68rem;color:rgba(234,223,207,0.4);letter-spacing:1px;text-transform:uppercase;margin-top:3px">All applications must be submitted before this date</div>
+        <div style="margin:20px 0 24px;padding:16px 22px;background:rgba(218,175,55,0.07);border-left:3px solid #DAAF37;display:flex;align-items:center;gap:14px">
+          <div>
+            <div style="font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:2px;text-transform:uppercase;color:#DAAF37">&#9651; Submissions Close &mdash; May 17th, 2026</div>
+            <div style="font-size:0.68rem;color:rgba(234,223,207,0.4);letter-spacing:1px;text-transform:uppercase;margin-top:3px">All applications must be submitted before this date</div>
+          </div>
         </div>
         <form id="form-final-hand" onsubmit="submitCasting(event,'The Final Hand')">
           <div class="form-row-two">
@@ -445,8 +1015,7 @@ body { background: #080808; color: #EADFCF; }
           <div class="form-row-two">
             <div class="form-field"><label>City / Location *</label><input type="text" name="location" placeholder="City, State" required></div>
             <div class="form-field"><label>Role Applying For *</label>
-              <select name="role" required>
-                <option value="">Select role</option>
+              <select name="role" required><option value="">Select role</option>
                 <option>High John — Lead (Black American Male, 35–60)</option>
                 <option>The Player — Lead (Caucasian Male, 25–40)</option>
                 <option>The Stranger — Supporting (Any Ethnicity Male, 25–40)</option>
@@ -506,7 +1075,10 @@ body { background: #080808; color: #EADFCF; }
           <button type="submit" class="form-submit-btn">Notify Me When Casting Opens</button>
           <p class="form-note">No spam. You'll only hear from us when casting opens for this production.</p>
         </form>
-        <div id="15th-hour-success" class="form-success" style="display:none"><h4>You're on the list</h4><p>We'll notify you when casting opens for The 15th Hour.</p></div>
+        <div id="15th-hour-success" class="form-success" style="display:none">
+          <h4>You're on the list</h4>
+          <p>We'll notify you when casting opens for The 15th Hour.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -517,8 +1089,8 @@ body { background: #080808; color: #EADFCF; }
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('overstood')">&times;</button>
     <div class="modal-tabs">
-      <button class="modal-tab active" onclick="switchTab('overstood','info')">Film Details</button>
-      <button class="modal-tab" onclick="switchTab('overstood','subscribe')">Stay Updated</button>
+      <button class="modal-tab active" onclick="switchTab('overstood', 'info')">Film Details</button>
+      <button class="modal-tab" onclick="switchTab('overstood', 'subscribe')">Stay Updated</button>
     </div>
     <div class="modal-tab-content active" id="overstood-info">
       <span class="cast-status-badge badge-soon" style="margin-bottom:20px;display:inline-block">Casting Not Yet Open</span>
@@ -529,7 +1101,7 @@ body { background: #080808; color: #EADFCF; }
       <div class="role-row"><div class="role-desc">Collective Instinct · Silent Communication · Cultural Pattern Recognition · Survival as Reflex</div></div>
       <span class="modal-roles-title" style="margin-top:20px;display:block">Visual Tone</span>
       <div class="role-row"><div class="role-desc">Observational · Dry Humor · Grounded · Subtle Absurdity</div></div>
-      <button class="apply-from-info-btn" onclick="switchTab('overstood','subscribe')" style="margin-top:24px">Get Casting Updates →</button>
+      <button class="apply-from-info-btn" onclick="switchTab('overstood', 'subscribe')" style="margin-top:24px">Get Casting Updates →</button>
     </div>
     <div class="modal-tab-content" id="overstood-subscribe">
       <div class="casting-form">
@@ -542,19 +1114,22 @@ body { background: #080808; color: #EADFCF; }
           <button type="submit" class="form-submit-btn">Notify Me When Casting Opens</button>
           <p class="form-note">No spam. You'll only hear from us when casting opens for this production.</p>
         </form>
-        <div id="overstood-success" class="form-success" style="display:none"><h4>You're on the list</h4><p>We'll notify you when casting opens for Overstood.</p></div>
+        <div id="overstood-success" class="form-success" style="display:none">
+          <h4>You're on the list</h4>
+          <p>We'll notify you when casting opens for Overstood.</p>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- BOOK OF BEGINNINGS MODAL -->
+<!--  BOOK OF BEGINNINGS MODAL -->
 <div class="modal-overlay" id="modal-book-of-beginnings">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('book-of-beginnings')">&times;</button>
     <div class="modal-tabs">
-      <button class="modal-tab active" onclick="switchTab('book-of-beginnings','info')">Film Details</button>
-      <button class="modal-tab" onclick="switchTab('book-of-beginnings','subscribe')">Stay Updated</button>
+      <button class="modal-tab active" onclick="switchTab('book-of-beginnings', 'info')">Film Details</button>
+      <button class="modal-tab" onclick="switchTab('book-of-beginnings', 'subscribe')">Stay Updated</button>
     </div>
     <div class="modal-tab-content active" id="book-of-beginnings-info">
       <span class="cast-status-badge badge-soon" style="margin-bottom:20px;display:inline-block">Casting Not Yet Open</span>
@@ -565,7 +1140,7 @@ body { background: #080808; color: #EADFCF; }
       <div class="role-row"><div class="role-desc">Cultural Memory · Erasure · Institutional Control · Ancestral Awakening</div></div>
       <span class="modal-roles-title" style="margin-top:20px;display:block">Visual Tone</span>
       <div class="role-row"><div class="role-desc">Warm Minimalism · Intellectual Thriller · Subtle Surrealism</div></div>
-      <button class="apply-from-info-btn" onclick="switchTab('book-of-beginnings','subscribe')" style="margin-top:24px">Get Casting Updates →</button>
+      <button class="apply-from-info-btn" onclick="switchTab('book-of-beginnings', 'subscribe')" style="margin-top:24px">Get Casting Updates →</button>
     </div>
     <div class="modal-tab-content" id="book-of-beginnings-subscribe">
       <div class="casting-form">
@@ -578,7 +1153,10 @@ body { background: #080808; color: #EADFCF; }
           <button type="submit" class="form-submit-btn">Notify Me When Casting Opens</button>
           <p class="form-note">No spam. You'll only hear from us when casting opens for this production.</p>
         </form>
-        <div id="book-of-beginnings-success" class="form-success" style="display:none"><h4>You're on the list</h4><p>We'll notify you when casting opens for Book of Beginnings.</p></div>
+        <div id="book-of-beginnings-success" class="form-success" style="display:none">
+          <h4>You're on the list</h4>
+          <p>We'll notify you when casting opens for Book of Beginnings.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -589,8 +1167,8 @@ body { background: #080808; color: #EADFCF; }
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('love-me-like-this')">&times;</button>
     <div class="modal-tabs">
-      <button class="modal-tab active" onclick="switchTab('love-me-like-this','info')">Film Details</button>
-      <button class="modal-tab" onclick="switchTab('love-me-like-this','subscribe')">Stay Updated</button>
+      <button class="modal-tab active" onclick="switchTab('love-me-like-this', 'info')">Film Details</button>
+      <button class="modal-tab" onclick="switchTab('love-me-like-this', 'subscribe')">Stay Updated</button>
     </div>
     <div class="modal-tab-content active" id="love-me-like-this-info">
       <span class="cast-status-badge badge-soon" style="margin-bottom:20px;display:inline-block">Casting Opens Soon</span>
@@ -601,7 +1179,9 @@ body { background: #080808; color: #EADFCF; }
       <div class="role-row">
         <div class="role-name">Sosa<span class="role-type">Male Lead · Black American Male · 20–27</span></div>
         <div class="role-summary">The emotional driver of the film. Sosa is intentional, grounded, and quietly persistent. He knows what he wants the moment he sees it — and he does not hide it.</div>
-        <button class="breakdown-toggle" onclick="toggleBreakdown(this)">Character Breakdown <span class="toggle-arrow">▾</span></button>
+        <button class="breakdown-toggle" onclick="toggleBreakdown(this)">
+          Character Breakdown <span class="toggle-arrow">▾</span>
+        </button>
         <div class="breakdown-body">
           <span class="bd-label">Character</span>
           <p>Sosa does not play games or hide behind detachment. He listens closely, observes deeply, and shows care through presence rather than performance. His vulnerability is direct but controlled, never forced. He is not chasing recklessly — he is choosing, and standing in that choice.</p>
@@ -619,7 +1199,9 @@ body { background: #080808; color: #EADFCF; }
       <div class="role-row">
         <div class="role-name">Alanna<span class="role-type">Female Lead · Black American Female · 20–27</span></div>
         <div class="role-summary">The emotional center of the film. Alanna is perceptive, self-aware, and secure in her direction. She is not looking for love — nor is she avoiding it. She simply is not building her life around it.</div>
-        <button class="breakdown-toggle" onclick="toggleBreakdown(this)">Character Breakdown <span class="toggle-arrow">▾</span></button>
+        <button class="breakdown-toggle" onclick="toggleBreakdown(this)">
+          Character Breakdown <span class="toggle-arrow">▾</span>
+        </button>
         <div class="breakdown-body">
           <span class="bd-label">Character</span>
           <p>Alanna engages with Sosa openly and is intrigued by him, but remains grounded in her reality and future. She holds space without fully stepping into it — warm but measured. Present in the moment, yet never losing sight of the bigger picture.</p>
@@ -634,8 +1216,8 @@ body { background: #080808; color: #EADFCF; }
           </ul>
         </div>
       </div>
-      <button class="apply-from-info-btn" onclick="switchTab('love-me-like-this','subscribe')">Notify Me When Casting Opens →</button>
-      <a href="crew-application.html" class="not-actor-link">Not an actor? Apply for crew →</a>
+      <button class="apply-from-info-btn" onclick="switchTab('love-me-like-this', 'subscribe')">Notify Me When Casting Opens →</button>
+      <a href="crew-application.html" style="display:block;margin-top:10px;text-align:center;font-family:'League Spartan',sans-serif;font-size:0.62rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(234,223,207,0.35);text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='rgba(218,175,55,0.6)'" onmouseout="this.style.color='rgba(234,223,207,0.35)'">Not an actor? Apply for crew →</a>
     </div>
     <div class="modal-tab-content" id="love-me-like-this-subscribe">
       <div class="casting-form">
@@ -643,19 +1225,22 @@ body { background: #080808; color: #EADFCF; }
         <p class="form-sub">Casting opens soon — subscribe to be notified first.</p>
         <form id="form-love-me-like-this" onsubmit="submitNotify(event,'Love Me Like This')">
           <div class="form-field"><label>Role Interested In *</label>
-            <select name="role" required>
-              <option value="">Select role</option>
-              <option>Sosa (Male Lead)</option>
-              <option>Alanna (Female Lead)</option>
-            </select>
-          </div>
+              <select name="role" required>
+                <option value="">Select role</option>
+                <option>Sosa (Male Lead)</option>
+                <option>Alanna (Female Lead)</option>
+              </select>
+            </div>
           <div class="form-field"><label>Full Name *</label><input type="text" name="name" placeholder="Your full name" required></div>
           <div class="form-field"><label>Email *</label><input type="email" name="email" placeholder="name@email.com" required></div>
           <div class="form-field" style="flex-direction:row;align-items:center;gap:10px;margin-top:4px"><input type="checkbox" name="newsletter" style="width:auto;accent-color:#DAAF37"><label style="font-size:0.75rem;color:rgba(234,223,207,0.45);text-transform:none;letter-spacing:0">Also subscribe to all BLEUSKM casting updates</label></div>
           <button type="submit" class="form-submit-btn">Notify Me When Casting Opens</button>
           <p class="form-note">No spam. You'll only hear from us when casting opens for this production.</p>
         </form>
-        <div id="love-me-like-this-success" class="form-success" style="display:none"><h4>You're on the list</h4><p>We'll notify you when casting opens for Love Me Like This.</p></div>
+        <div id="love-me-like-this-success" class="form-success" style="display:none">
+          <h4>You're on the list</h4>
+          <p>We'll notify you when casting opens for Love Me Like This.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -666,8 +1251,8 @@ body { background: #080808; color: #EADFCF; }
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('liminal-county')">&times;</button>
     <div class="modal-tabs">
-      <button class="modal-tab active" onclick="switchTab('liminal-county','info')">Film Details</button>
-      <button class="modal-tab" onclick="switchTab('liminal-county','subscribe')">Stay Updated</button>
+      <button class="modal-tab active" onclick="switchTab('liminal-county', 'info')">Film Details</button>
+      <button class="modal-tab" onclick="switchTab('liminal-county', 'subscribe')">Stay Updated</button>
     </div>
     <div class="modal-tab-content active" id="liminal-county-info">
       <span class="cast-status-badge badge-soon" style="margin-bottom:20px;display:inline-block">Casting Not Yet Open</span>
@@ -678,7 +1263,7 @@ body { background: #080808; color: #EADFCF; }
       <div class="role-row"><div class="role-desc">Isolation · Spiritual Warfare · Collective Forgetting</div></div>
       <span class="modal-roles-title" style="margin-top:20px;display:block">Visual Tone</span>
       <div class="role-row"><div class="role-desc">Foggy · Dreamlike · Unsettling</div></div>
-      <button class="apply-from-info-btn" onclick="switchTab('liminal-county','subscribe')" style="margin-top:24px">Get Casting Updates →</button>
+      <button class="apply-from-info-btn" onclick="switchTab('liminal-county', 'subscribe')" style="margin-top:24px">Get Casting Updates →</button>
     </div>
     <div class="modal-tab-content" id="liminal-county-subscribe">
       <div class="casting-form">
@@ -691,7 +1276,10 @@ body { background: #080808; color: #EADFCF; }
           <button type="submit" class="form-submit-btn">Notify Me When Casting Opens</button>
           <p class="form-note">No spam. You'll only hear from us when casting opens for this production.</p>
         </form>
-        <div id="liminal-county-success" class="form-success" style="display:none"><h4>You're on the list</h4><p>We'll notify you when casting opens for Liminal County.</p></div>
+        <div id="liminal-county-success" class="form-success" style="display:none">
+          <h4>You're on the list</h4>
+          <p>We'll notify you when casting opens for Liminal County.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -702,8 +1290,8 @@ body { background: #080808; color: #EADFCF; }
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('of-blood-and-dominion')">&times;</button>
     <div class="modal-tabs">
-      <button class="modal-tab active" onclick="switchTab('of-blood-and-dominion','info')">Film Details</button>
-      <button class="modal-tab" onclick="switchTab('of-blood-and-dominion','subscribe')">Stay Updated</button>
+      <button class="modal-tab active" onclick="switchTab('of-blood-and-dominion', 'info')">Film Details</button>
+      <button class="modal-tab" onclick="switchTab('of-blood-and-dominion', 'subscribe')">Stay Updated</button>
     </div>
     <div class="modal-tab-content active" id="of-blood-and-dominion-info">
       <span class="cast-status-badge badge-soon" style="margin-bottom:20px;display:inline-block">Casting Not Yet Open</span>
@@ -711,10 +1299,10 @@ body { background: #080808; color: #EADFCF; }
       <div class="modal-film-meta">Feature Film · In Development · Director: Zaria Lashae</div>
       <p class="modal-logline">In a society governed by blood classification, a young man discovers the horrifying truth behind the system designed to control identity and power.</p>
       <span class="modal-roles-title">Themes</span>
-      <div class="role-row"><div class="role-desc">Genetic Hierarchy · Power &amp; Control · Systemic Oppression · Rebellion</div></div>
+      <div class="role-row"><div class="role-desc">Genetic Hierarchy · Power & Control · Systemic Oppression · Rebellion</div></div>
       <span class="modal-roles-title" style="margin-top:20px;display:block">Visual Tone</span>
       <div class="role-row"><div class="role-desc">Clinical · High Contrast · Dystopian · Stylized</div></div>
-      <button class="apply-from-info-btn" onclick="switchTab('of-blood-and-dominion','subscribe')" style="margin-top:24px">Get Casting Updates →</button>
+      <button class="apply-from-info-btn" onclick="switchTab('of-blood-and-dominion', 'subscribe')" style="margin-top:24px">Get Casting Updates →</button>
     </div>
     <div class="modal-tab-content" id="of-blood-and-dominion-subscribe">
       <div class="casting-form">
@@ -727,19 +1315,22 @@ body { background: #080808; color: #EADFCF; }
           <button type="submit" class="form-submit-btn">Notify Me When Casting Opens</button>
           <p class="form-note">No spam. You'll only hear from us when casting opens for this production.</p>
         </form>
-        <div id="of-blood-and-dominion-success" class="form-success" style="display:none"><h4>You're on the list</h4><p>We'll notify you when casting opens for Of Blood and Dominion.</p></div>
+        <div id="of-blood-and-dominion-success" class="form-success" style="display:none">
+          <h4>You're on the list</h4>
+          <p>We'll notify you when casting opens for Of Blood and Dominion.</p>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- AS IS MODAL — FIXED -->
+<!-- AS IS MODAL — FIXED (was id="modal-As IS" with spaces, now id="modal-as-is") -->
 <div class="modal-overlay" id="modal-as-is">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('as-is')">&times;</button>
     <div class="modal-tabs">
-      <button class="modal-tab active" onclick="switchTab('as-is','info')">Film Details</button>
-      <button class="modal-tab" onclick="switchTab('as-is','subscribe')">Stay Updated</button>
+      <button class="modal-tab active" onclick="switchTab('as-is', 'info')">Film Details</button>
+      <button class="modal-tab" onclick="switchTab('as-is', 'subscribe')">Stay Updated</button>
     </div>
     <div class="modal-tab-content active" id="as-is-info">
       <span class="cast-status-badge badge-soon" style="margin-bottom:20px;display:inline-block">Casting Not Yet Open</span>
@@ -747,10 +1338,10 @@ body { background: #080808; color: #EADFCF; }
       <div class="modal-film-meta">Short / Feature · In Development · Director: Zaria Lashae</div>
       <p class="modal-logline">In a Black neighborhood sold "as is," a teen begins to notice that the constant noise and tension around them follow strange patterns—while a quiet buyout program offers residents a way out, revealing a system that wears the community down from within.</p>
       <span class="modal-roles-title">Themes</span>
-      <div class="role-row"><div class="role-desc">Historical Erasure · Land &amp; Legacy · Displacement · Ancestral Memory</div></div>
+      <div class="role-row"><div class="role-desc">Historical Erasure · Land & Legacy · Displacement · Ancestral Memory</div></div>
       <span class="modal-roles-title" style="margin-top:20px;display:block">Visual Tone</span>
       <div class="role-row"><div class="role-desc">Documentary-Realism · Haunting · Muted · Grounded</div></div>
-      <button class="apply-from-info-btn" onclick="switchTab('as-is','subscribe')" style="margin-top:24px">Get Casting Updates →</button>
+      <button class="apply-from-info-btn" onclick="switchTab('as-is', 'subscribe')" style="margin-top:24px">Get Casting Updates →</button>
     </div>
     <div class="modal-tab-content" id="as-is-subscribe">
       <div class="casting-form">
@@ -763,7 +1354,10 @@ body { background: #080808; color: #EADFCF; }
           <button type="submit" class="form-submit-btn">Notify Me When Casting Opens</button>
           <p class="form-note">No spam. You'll only hear from us when casting opens for this production.</p>
         </form>
-        <div id="as-is-success" class="form-success" style="display:none"><h4>You're on the list</h4><p>We'll notify you when casting opens for As Is.</p></div>
+        <div id="as-is-success" class="form-success" style="display:none">
+          <h4>You're on the list</h4>
+          <p>We'll notify you when casting opens for As Is.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -977,6 +1571,77 @@ var submitNewsletterFooter = submitNewsletter;
 var submitEchosNewsletter = submitNewsletter;
 var submitFilmNewsletter = submitNewsletter;
 
+function selectRole(el) {
+  var role = el.textContent.trim();
+  var select = document.getElementById('crew-role');
+  if (select) { for (var i = 0; i < select.options.length; i++) { if (select.options[i].text === role) { select.selectedIndex = i; break; } } }
+  document.querySelectorAll('.dept-role').forEach(function(r) { r.classList.remove('selected'); });
+  el.classList.add('selected');
+  if (window.innerWidth < 768) { var f = document.getElementById('crewForm'); if (f) f.scrollIntoView({ behavior: 'smooth' }); }
+}
+
+async function submitCrewForm(e) {
+  e.preventDefault();
+  var btn = document.querySelector('#crewForm button[type="submit"]');
+  if (btn) { btn.textContent = 'Submitting...'; btn.disabled = true; }
+  var name = document.getElementById('crew-name').value.trim();
+  var email = document.getElementById('crew-email').value.trim();
+  var phone = (document.getElementById('crew-phone') || {}).value || '';
+  var city = (document.getElementById('crew-city') || {}).value || '';
+  var role = (document.getElementById('crew-role') || {}).value || '';
+  var resume = (document.getElementById('crew-resume') || {}).value || '';
+  var reel = (document.getElementById('crew-reel') || {}).value || '';
+  var gear = (document.getElementById('crew-gear') || {}).value || '';
+  var availability = (document.getElementById('crew-availability') || {}).value || '';
+  var filmInterest = (document.getElementById('crew-film-interest') || {}).value || '';
+  var fields = { 'Name': name, 'Email': email, 'Role': role };
+  if (phone) fields['Phone'] = phone;
+  if (city) fields['City'] = city;
+  if (resume) fields['Resume / Portfolio Link'] = resume;
+  if (reel) fields['Reel / Work Samples'] = reel;
+  if (gear) fields['Gear List'] = gear;
+  if (availability) fields['Availability'] = availability;
+  if (filmInterest) fields['Film Interest'] = filmInterest;
+  try {
+    await sendToAirtable(TBL_CREW, fields);
+    await sendToBrevo(6, email, name, { CREW_ROLE: role });
+    await sendEmail(2, email, name, { FIRSTNAME: name, ROLE: role });
+    document.getElementById('crewForm').style.display = 'none';
+    document.getElementById('crewSuccess').style.display = 'block';
+  } catch(err) { console.error(err); if (btn) { btn.textContent = 'Submit Crew Application'; btn.disabled = false; } alert('Submission failed. Please try again.'); }
+}
+
+async function submitContact() {
+  var name = (document.getElementById('cf-name') || {}).value || '';
+  var email = ((document.getElementById('cf-email') || {}).value || '').trim();
+  var phone = (document.getElementById('cf-phone') || {}).value || '';
+  var projType = (document.getElementById('cf-type') || {}).value || '';
+  var budget = (document.getElementById('cf-budget') || {}).value || '';
+  var concept = (document.getElementById('cf-concept') || {}).value || '';
+  var timeline = (document.getElementById('cf-timeline') || {}).value || '';
+  var nlCheck = document.getElementById('cf-newsletter');
+  var agree = document.getElementById('cf-agree');
+  if (!email) { alert('Email is required.'); return; }
+  if (agree && !agree.checked) { alert('Please confirm you understand this is an inquiry.'); return; }
+  var btn = document.querySelector('.submit-btn');
+  if (btn) { btn.textContent = 'Submitting...'; btn.disabled = true; }
+  var fields = { 'Name': name, 'Email': email };
+  if (phone) fields['Phone number'] = phone;
+  if (projType) fields['Project Type'] = projType;
+  if (budget) fields['Budget'] = budget;
+  if (concept) fields['Concept'] = concept;
+  if (timeline) fields['Timeline'] = timeline;
+  try {
+    await sendToAirtable(TBL_INQUIRIES, fields);
+    await sendToBrevo(5, email, name, { PROJECT_TYPE: projType });
+    if (nlCheck && nlCheck.checked) { await sendToAirtable(TBL_NEWSLETTER, {'Name': name, 'Email': email}); await sendToBrevo(2, email, name, {}); }
+    var form = document.getElementById('contactForm');
+    if (form) form.style.display = 'none';
+    var s = document.getElementById('contactSuccess');
+    if (s) s.style.display = 'block';
+  } catch(err) { console.error(err); if (btn) { btn.textContent = 'Submit Project Inquiry'; btn.disabled = false; } alert('Submission failed. Please try again.'); }
+}
+
 function toggleBreakdown(btn) {
   var body = btn.nextElementSibling;
   var isOpen = body.classList.contains('open');
@@ -986,7 +1651,7 @@ function toggleBreakdown(btn) {
 }
 </script>
 
-<!-- CART POPUP -->
+<!-- CART POPUP BUTTON -->
 <div id="cartPopupBtn" onclick="toggleCartPopup()" style="position:fixed;top:80px;right:24px;z-index:1100;cursor:pointer;display:none;align-items:center;gap:8px;background:rgba(8,8,8,0.9);border:1px solid rgba(218,175,55,0.3);padding:8px 16px;backdrop-filter:blur(10px)">
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DAAF37" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
   <span style="font-family:'League Spartan',sans-serif;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:#DAAF37">Cart</span>
@@ -1052,7 +1717,7 @@ document.addEventListener('click', function(e) {
 })();
 </script>
 
-<!-- CONTACT CHANNELS -->
+<!-- CONTACT CHANNELS POPUP -->
 <div id="channelsBtn" onclick="toggleChannels()" style="position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:1100;cursor:pointer;background:rgba(8,8,8,0.92);border:1px solid rgba(218,175,55,0.3);border-right:none;padding:14px 10px;backdrop-filter:blur(10px)">
   <span style="font-family:'League Spartan',sans-serif;font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37;writing-mode:vertical-rl;text-orientation:mixed;user-select:none">Contact</span>
 </div>
