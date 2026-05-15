@@ -858,3 +858,110 @@ img {
   outline: none !important;
   box-shadow: 0 0 0 2px rgba(218,175,55,0.4) !important;
 }
+/* ── MOBILE FIXES ── */
+@media (max-width: 768px) {
+
+  /* CHANNELS SIDE TAB — stop it getting clipped */
+  #channelsBtn {
+    padding: 10px 7px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+  }
+
+  #channelsBtn span {
+    font-size: 0.45rem !important;
+    letter-spacing: 2px !important;
+  }
+
+  /* CHANNELS POPUP — fit properly on small screens */
+  #channelsPopup > div {
+    width: 92% !important;
+    max-width: 360px !important;
+    padding: 28px 20px !important;
+  }
+
+  #channelsPopup h2 {
+    font-size: 1rem !important;
+    letter-spacing: 2px !important;
+  }
+
+  /* CART POPUP — stop it overflowing off screen */
+  #cartPopupBtn {
+    right: 12px !important;
+    top: 68px !important;
+    padding: 6px 12px !important;
+  }
+
+  #cartPopup {
+    right: 12px !important;
+    left: 12px !important;
+    width: auto !important;
+    top: 115px !important;
+  }
+
+  /* NAV */
+  .navbar {
+    padding: 10px 16px !important;
+  }
+
+  .navbar-collapse {
+    background: #0C0C0C !important;
+    padding: 10px 0 16px !important;
+    border-top: 1px solid rgba(218,175,55,0.1) !important;
+  }
+
+  .navbar-collapse .nav-link {
+    padding: 10px 4px !important;
+    border-bottom: 1px solid rgba(255,255,255,0.04) !important;
+  }
+
+  /* HERO */
+  .hero-wrapper { padding: 10px 10px 0 !important; }
+  .hero-img { height: 45vh !important; }
+  .hero-content {
+    left: 14px !important;
+    right: 14px !important;
+    bottom: 20px !important;
+    max-width: 100% !important;
+  }
+  .hero-title { font-size: 1.4rem !important; }
+  .hero-sub { font-size: 0.8rem !important; }
+
+  /* PRODUCTIONS */
+  .project-rail {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    padding: 0 12px !important;
+  }
+  .thumb-img { height: 150px !important; }
+  .project-info {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 2px !important;
+    border-bottom: none !important;
+    padding: 6px 0 !important;
+  }
+  .project-name { font-size: 0.7rem !important; }
+  .project-category, .project-year { font-size: 0.58rem !important; }
+
+  /* FOOTER */
+  .footer-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 20px !important;
+  }
+  .footer-bottom {
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 8px !important;
+  }
+}
+
+/* iPhone SE and very small screens */
+@media (max-width: 375px) {
+  #channelsPopup > div {
+    width: 96% !important;
+    padding: 24px 14px !important;
+  }
+  .project-rail { gap: 8px !important; padding: 0 10px !important; }
+  .thumb-img { height: 130px !important; }
+}
