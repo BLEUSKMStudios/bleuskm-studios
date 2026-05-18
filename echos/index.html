@@ -473,6 +473,7 @@ async function submitComingSoon(e, filmTitle) {
   try {
     await sendToAirtable(TBL_NOTIFY, fields);
     await sendToBrevo(2, email, name, { FILM: filmTitle });
+    await sendEmail(4, email, name, { FIRSTNAME: name, FILM: filmTitle });
     if (nlCheck && nlCheck.checked) await sendToBrevo(2, email, name, {});
 
     form.style.display = 'none';
@@ -499,6 +500,7 @@ async function submitNewsletter(e) {
   try {
     await sendToAirtable(TBL_NEWSLETTER, { 'Name': name, 'Email': email });
     await sendToBrevo(2, email, name, {});
+    await sendEmail(3, email, name, { FIRSTNAME: name });
 
     form.style.display = 'none';
     var s = document.getElementById('fnl-success') || form.nextElementSibling;
