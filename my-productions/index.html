@@ -680,16 +680,19 @@ async function sendToAirtable(tableId, fields) {
 async function sendToBrevo(listId, email, name, extraAttrs) {
   try {
     var attrs = Object.assign({ FIRSTNAME: name }, extraAttrs || {});
-    var r = await fetch('https://api.brevo.com/v3/contacts', {
+    var r = await fetch('/.netlify/functions/brevo-proxy', {
       method: 'POST',
-      headers: { 'api-key': BREVO_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email, attributes: attrs, listIds: [listId], updateEnabled: true })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        endpoint: 'https://api.brevo.com/v3/contacts',
+        payload: { email: email, attributes: attrs, listIds: [listId], updateEnabled: true }
+      })
     });
     var j = await r.json();
-    console.log('Brevo:', j);
+    console.log('Brevo contact:', j);
     return j;
   } catch(e) {
-    console.error('Brevo error:', e);
+    console.error('Brevo contact error:', e);
   }
 }
 
@@ -924,13 +927,20 @@ async function sendToAirtable(tableId, fields) {
 async function sendToBrevo(listId, email, name, extraAttrs) {
   try {
     var attrs = Object.assign({ FIRSTNAME: name }, extraAttrs || {});
-    var r = await fetch('https://api.brevo.com/v3/contacts', {
+    var r = await fetch('/.netlify/functions/brevo-proxy', {
       method: 'POST',
-      headers: { 'api-key': BREVO_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email, attributes: attrs, listIds: [listId], updateEnabled: true })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        endpoint: 'https://api.brevo.com/v3/contacts',
+        payload: { email: email, attributes: attrs, listIds: [listId], updateEnabled: true }
+      })
     });
-    var j = await r.json(); console.log('Brevo:', j); return j;
-  } catch(e) { console.error('Brevo error:', e); }
+    var j = await r.json();
+    console.log('Brevo contact:', j);
+    return j;
+  } catch(e) {
+    console.error('Brevo contact error:', e);
+  }
 }
 
 // ── MODAL CONTROLS ──
