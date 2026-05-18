@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLEUSKM OS — Zaria Lashae</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Bebas+Neue&family=DM+Mono:wght@300;400&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0F0B0F;--bg2:#140E14;--panel:#1E1420;--panel2:#231828;
+  --rose:#C4507A;--rose-d:#8B3255;--rose-p:rgba(196,80,122,0.08);
+  --mauve:#9B7FA8;--gold:#D4A843;--gold-d:#9A7820;
+  --border:rgba(196,80,122,0.12);--border2:rgba(155,127,168,0.15);
+  --text:#F0E8F0;--text2:rgba(240,232,240,0.55);--text3:rgba(240,232,240,0.28);
+}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font-size:12px;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+::-webkit-scrollbar{width:3px;height:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(196,80,122,0.3);border-radius:2px;}
+/* LAYOUT */
+.os{display:grid;grid-template-columns:210px 1fr;grid-template-rows:52px 1fr;height:100vh;}
+/* TOPBAR */
+.topbar{grid-column:1/-1;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 22px;position:sticky;top:0;z-index:300;}
+.tl-wrap{display:flex;align-items:baseline;gap:10px;}
+.tl-main{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:4px;color:var(--rose);}
+.tl-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--gold);opacity:.8;}
+.tb-mid{font-size:9px;letter-spacing:4px;color:var(--text3);text-transform:uppercase;}
+.tb-right{display:flex;align-items:center;gap:16px;}
+.status-pill{display:flex;align-items:center;gap:5px;font-size:8.5px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);}
+.sdot{width:5px;height:5px;border-radius:50%;animation:pulse 2s ease-in-out infinite;}
+.s-rose{background:var(--rose);}
+.s-gold{background:var(--gold);}
+.s-green{background:#4aad6a;}
+#clock{font-size:11px;letter-spacing:2px;color:var(--gold);}
+/* SIDEBAR */
+.sidebar{background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:0 0 40px;overflow-y:auto;}
+.sb-brand{padding:16px 16px 12px;border-bottom:1px solid var(--border);margin-bottom:6px;}
+.sb-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;color:var(--rose);}
+.sb-url{font-size:8px;letter-spacing:2px;color:var(--text3);margin-top:2px;}
+.sb-label{font-size:7.5px;letter-spacing:4px;color:var(--rose);opacity:.5;text-transform:uppercase;padding:10px 16px 3px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:7px 16px;cursor:pointer;transition:all .12s;border-left:2px solid transparent;color:var(--text3);font-size:10.5px;}
+.nav-item:hover{background:rgba(196,80,122,0.06);color:var(--text);border-left-color:rgba(196,80,122,0.4);}
+.nav-item.active{background:rgba(196,80,122,0.1);color:var(--rose);border-left-color:var(--rose);}
+.nav-icon{font-size:11px;width:15px;text-align:center;flex-shrink:0;}
+.nav-badge{margin-left:auto;background:var(--rose);color:var(--bg);font-size:8px;padding:1px 5px;border-radius:20px;}
+/* MAIN */
+.main{background:var(--bg);overflow-y:auto;padding:24px 24px 50px;}
+.section{display:none;flex-direction:column;gap:16px;animation:fadeIn .25s ease;}
+.section.active{display:flex;}
+/* PAGE HEADER */
+.ph{display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:4px;}
+.ph-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--text);line-height:1;}
+.ph-sub{font-size:8px;letter-spacing:3px;color:var(--text3);text-transform:uppercase;margin-top:3px;}
+.ph-actions{display:flex;gap:7px;flex-wrap:wrap;}
+/* BUTTONS */
+.btn{background:var(--rose);color:var(--bg);border:none;padding:7px 13px;cursor:pointer;font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:2px;text-transform:uppercase;transition:.12s;white-space:nowrap;}
+.btn:hover{background:var(--rose-d);color:var(--text);}
+.btn-o{background:transparent;border:1px solid var(--rose);color:var(--rose);}
+.btn-o:hover{background:var(--rose-p);}
+.btn-g{background:var(--gold);color:var(--bg);}
+.btn-g:hover{background:var(--gold-d);color:var(--text);}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text2);font-size:8px;padding:4px 9px;}
+.btn-ghost:hover{border-color:var(--mauve);color:var(--mauve);}
+/* CARDS */
+.card{background:var(--panel);border:1px solid var(--border);padding:15px 17px;position:relative;}
+.card-top{position:absolute;top:0;left:0;right:0;height:2px;}
+.ct-r{background:var(--rose)}.ct-g{background:var(--gold)}.ct-m{background:var(--mauve)}.ct-rg{background:linear-gradient(90deg,var(--rose),var(--gold))}
+.card-label{font-size:8px;letter-spacing:4px;color:var(--text3);text-transform:uppercase;margin-bottom:7px;}
+.card-val{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--text);line-height:1;margin-bottom:3px;}
+.card-sub{font-size:10px;color:var(--text2);line-height:1.6;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;}
+/* ALERT */
+.alert{background:rgba(196,80,122,0.06);border:1px solid rgba(196,80,122,0.2);border-left:3px solid var(--rose);padding:9px 13px;font-size:10px;color:var(--rose);line-height:1.65;}
+.alert-g{background:rgba(212,168,67,0.06);border:1px solid rgba(212,168,67,0.2);border-left:3px solid var(--gold);color:var(--gold);}
+/* TAGS */
+.tag{font-size:8px;letter-spacing:1.5px;padding:2px 7px;border:1px solid;text-transform:uppercase;white-space:nowrap;display:inline-block;}
+.t-r{color:var(--rose);border-color:rgba(196,80,122,0.4);}
+.t-g{color:var(--gold);border-color:rgba(212,168,67,0.4);}
+.t-gr{color:#4aad6a;border-color:rgba(74,173,106,0.35);}
+.t-m{color:var(--mauve);border-color:rgba(155,127,168,0.35);}
+.t-d{color:var(--text3);border-color:rgba(255,255,255,0.1);}
+/* DATA ROWS */
+.dlist{display:flex;flex-direction:column;}
+.drow{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--border);}
+.drow:last-child{border-bottom:none;}
+.drow-main{flex:1;}
+.drow-label{font-size:11px;color:var(--text);}
+.drow-sub{font-size:9px;color:var(--text3);margin-top:1px;}
+.dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.d-r{background:var(--rose)}.d-g{background:var(--gold)}.d-gr{background:#4aad6a}.d-m{background:var(--mauve)}.d-d{background:rgba(255,255,255,0.1)}
+/* PROGRESS */
+.prog{margin-top:9px;}
+.prog-lbl{display:flex;justify-content:space-between;font-size:8px;color:var(--text3);margin-bottom:3px;letter-spacing:2px;text-transform:uppercase;}
+.prog-bar{height:3px;background:rgba(255,255,255,0.05);}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--rose),var(--gold));transition:width 1s;}
+/* JARVIS */
+.j-shell{background:var(--bg2);border:1px solid rgba(196,80,122,0.25);overflow:hidden;}
+.j-header{background:rgba(196,80,122,0.08);border-bottom:1px solid rgba(196,80,122,0.2);padding:10px 15px;display:flex;align-items:center;gap:10px;}
+.j-orb{width:8px;height:8px;border-radius:50%;background:var(--rose);box-shadow:0 0 10px rgba(196,80,122,0.7);animation:pulse 1.5s ease-in-out infinite;}
+.j-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:4px;color:var(--text);}
+.j-status{margin-left:auto;font-size:8px;letter-spacing:3px;color:var(--text3);text-transform:uppercase;}
+.j-log{padding:12px 15px;display:flex;flex-direction:column;gap:6px;min-height:200px;max-height:260px;overflow-y:auto;}
+.j-line{display:flex;gap:8px;font-size:10.5px;line-height:1.65;}
+.j-from{flex-shrink:0;font-size:9.5px;color:var(--rose);width:42px;}
+.j-from.you{color:var(--gold);}
+.j-msg{color:var(--text2);}
+.j-msg.hi{color:var(--gold);}
+.j-msg.you-msg{color:rgba(240,232,240,0.9);}
+.j-input-row{border-top:1px solid rgba(196,80,122,0.15);display:flex;}
+.j-input{flex:1;background:transparent;border:none;outline:none;padding:10px 15px;font-family:'DM Mono',monospace;font-size:10.5px;color:var(--text);}
+.j-input::placeholder{color:rgba(196,80,122,0.3);}
+.j-send{background:var(--rose);border:none;color:var(--bg);padding:0 15px;cursor:pointer;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:3px;text-transform:uppercase;transition:.12s;}
+.j-send:hover{background:var(--rose-d);color:var(--text);}
+/* QA GRID */
+.qa-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;}
+.qa-btn{background:var(--panel);border:1px solid var(--border);padding:11px 8px;text-align:center;cursor:pointer;transition:.12s;}
+.qa-btn:hover{border-color:var(--rose);background:var(--rose-p);}
+.qa-icon{font-size:15px;margin-bottom:5px;}
+.qa-label{font-size:7.5px;letter-spacing:1px;color:var(--text2);text-transform:uppercase;line-height:1.4;}
+/* BRAIN DUMP */
+.dump-area{width:100%;background:var(--panel2);border:1px solid var(--border);border-top:2px solid var(--gold);padding:13px;color:var(--text);font-family:'Cormorant Garamond',serif;font-size:15px;line-height:1.75;resize:none;outline:none;min-height:100px;transition:border-color .2s;}
+.dump-area:focus{border-color:var(--rose);}
+.dump-area::placeholder{color:var(--text3);font-style:italic;}
+.idea-card{background:var(--panel);border:1px solid var(--border);border-left:2px solid var(--gold);padding:12px 14px;margin-bottom:8px;}
+.idea-text{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--text);line-height:1.7;margin-bottom:6px;}
+.idea-meta{font-size:8.5px;color:var(--text3);}
+/* KANBAN */
+.kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;}
+.kb-col{background:var(--panel);border:1px solid var(--border);padding:12px;min-height:170px;}
+.kb-title{font-size:8px;letter-spacing:4px;color:var(--text3);text-transform:uppercase;margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;}
+.kb-card{background:var(--panel2);border:1px solid var(--border);padding:9px 11px;margin-bottom:6px;cursor:pointer;transition:.12s;}
+.kb-card:hover{border-color:var(--rose);}
+.kc-t{font-size:10.5px;color:var(--text);margin-bottom:3px;}
+.kc-m{font-size:9px;color:var(--text3);}
+.kc-tags{display:flex;gap:3px;margin-top:5px;flex-wrap:wrap;}
+.kc-tag{font-size:7px;color:var(--text3);border:1px solid var(--border);padding:1px 5px;}
+/* SERIES */
+.series-card{background:var(--panel);border:1px solid var(--border);padding:15px;}
+.series-name{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--text);margin-bottom:3px;}
+.series-desc{font-size:9.5px;color:var(--text3);margin-bottom:9px;line-height:1.6;}
+.series-topic{font-size:9.5px;color:var(--text2);display:flex;align-items:center;gap:7px;margin-bottom:3px;}
+.series-topic::before{content:'';width:3px;height:3px;background:currentColor;border-radius:50%;flex-shrink:0;}
+/* CONTENT ROW */
+.content-row{display:grid;grid-template-columns:65px 70px 1fr 75px;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+.c-date{font-size:9.5px;color:var(--text3);}
+.c-plat{font-size:8px;letter-spacing:2px;color:var(--mauve);text-transform:uppercase;}
+.c-title{font-size:10.5px;color:var(--text);}
+/* SHOT LIST */
+.shot-row{display:grid;grid-template-columns:34px 72px 52px 1fr 88px;gap:9px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);}
+.shot-num{color:var(--rose);font-family:'Bebas Neue',sans-serif;font-size:16px;}
+.shot-meta{font-size:9px;color:var(--text3);}
+/* SCHEDULE */
+.time-block{display:flex;gap:12px;padding:7px 0;border-bottom:1px solid var(--border);align-items:flex-start;}
+.tb-time{font-size:10px;color:var(--rose);width:62px;flex-shrink:0;padding-top:1px;}
+.tb-content{flex:1;}
+.tb-label{font-size:11px;color:var(--text);}
+.tb-sub{font-size:9px;color:var(--text3);line-height:1.5;margin-top:1px;}
+.tb-emoji{font-size:12px;margin-top:1px;}
+/* SETUP */
+.setup-card{background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--rose);padding:16px;margin-bottom:12px;}
+.setup-title{font-size:11px;color:var(--rose);letter-spacing:2px;text-transform:uppercase;margin-bottom:9px;}
+.setup-body{font-size:10.5px;color:var(--text2);line-height:1.9;}
+.cmd-block{display:block;background:var(--bg2);border:1px solid var(--border2);padding:6px 10px;margin:4px 0;color:var(--gold);font-family:'DM Mono',monospace;font-size:10px;}
+/* SELF CARE */
+.textarea-dark{width:100%;background:var(--panel2);border:1px solid var(--border);padding:7px 10px;color:var(--text);font-family:'DM Mono',monospace;font-size:10.5px;resize:none;outline:none;min-height:72px;line-height:1.6;}
+.textarea-dark:focus{border-color:var(--rose);}
+.select-dark{background:var(--panel2);border:1px solid var(--border);padding:7px 10px;color:var(--text);font-family:'DM Mono',monospace;font-size:10.5px;outline:none;width:100%;}
+</style>
+</head>
+<body>
+<div class="os">
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="tl-wrap">
+    <span class="tl-main">BLEUSKM OS</span>
+    <span class="tl-sub">Zaria Lashae</span>
+  </div>
+  <div class="tb-mid">Production Company Command Center</div>
+  <div class="tb-right">
+    <div class="status-pill"><div class="sdot s-rose"></div>Casting Live</div>
+    <div class="status-pill"><div class="sdot s-green"></div>JARVIS Online</div>
+    <div class="status-pill"><div class="sdot s-gold"></div>The Final Hand</div>
+    <div id="clock">--:--</div>
+  </div>
+</header>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-brand"><div class="sb-name">BLEUSKM</div><div class="sb-url">bleuskm.com</div></div>
+
+  <div class="sb-label">Command</div>
+  <div class="nav-item active" onclick="go('jarvis',this)"><span class="nav-icon">◈</span>JARVIS</div>
+  <div class="nav-item" onclick="go('overview',this)"><span class="nav-icon">▦</span>Overview</div>
+  <div class="nav-item" onclick="go('braindump',this)"><span class="nav-icon">💭</span>Brain Dump</div>
+
+  <div class="sb-label">Film & Production</div>
+  <div class="nav-item" onclick="go('projects',this)"><span class="nav-icon">🎬</span>Projects</div>
+  <div class="nav-item" onclick="go('scripts',this)"><span class="nav-icon">📄</span>Scripts & Stories</div>
+  <div class="nav-item" onclick="go('shotlist',this)"><span class="nav-icon">🎥</span>Shot Lists</div>
+  <div class="nav-item" onclick="go('casting',this)"><span class="nav-icon">🎭</span>Casting<span class="nav-badge" id="cast-badge">—</span></div>
+  <div class="nav-item" onclick="go('crew',this)"><span class="nav-icon">👥</span>Crew & Packages</div>
+  <div class="nav-item" onclick="go('festivals',this)"><span class="nav-icon">🏆</span>Festivals</div>
+
+  <div class="sb-label">Business</div>
+  <div class="nav-item" onclick="go('clients',this)"><span class="nav-icon">💼</span>Client Portal</div>
+  <div class="nav-item" onclick="go('revenue',this)"><span class="nav-icon">◈</span>Revenue</div>
+  <div class="nav-item" onclick="go('email',this)"><span class="nav-icon">✉</span>Email & Brevo</div>
+
+  <div class="sb-label">Content & Social</div>
+  <div class="nav-item" onclick="go('series',this)"><span class="nav-icon">📼</span>My Series</div>
+  <div class="nav-item" onclick="go('content',this)"><span class="nav-icon">📅</span>Content Calendar</div>
+  <div class="nav-item" onclick="go('social',this)"><span class="nav-icon">📊</span>Social Command</div>
+  <div class="nav-item" onclick="go('aitools',this)"><span class="nav-icon">✨</span>AI Studio Tools</div>
+
+  <div class="sb-label">Life OS</div>
+  <div class="nav-item" onclick="go('schedule',this)"><span class="nav-icon">☀</span>Schedule</div>
+  <div class="nav-item" onclick="go('school',this)"><span class="nav-icon">📚</span>School</div>
+  <div class="nav-item" onclick="go('selfcare',this)"><span class="nav-icon">✿</span>Self Care</div>
+  <div class="nav-item" onclick="go('setup',this)"><span class="nav-icon">⚙</span>Setup Guide</div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- ═══ JARVIS ═══ -->
+<div id="s-jarvis" class="section active">
+  <div class="ph">
+    <div><div class="ph-title">JARVIS</div><div class="ph-sub">Bleuskm AI · Daily Briefing · Command Interface</div></div>
+    <div class="ph-actions">
+      <button class="btn btn-o" onclick="sendJ('Give me my full morning briefing — priorities, school, casting, content, what I need to focus on today')">☀ Morning</button>
+      <button class="btn btn-o" onclick="sendJ('Give me my evening wind-down summary — what I accomplished, what carries to tomorrow')">🌙 Night</button>
+      <button class="btn" onclick="sendJ('What are my top 3 priorities for Bleuskm Studios right now?')">Top 3</button>
+    </div>
+  </div>
+  <div class="alert">⚡ <strong>Today</strong> — Post carousels (casting + studio intro). Review casting submissions. BlackStar: 47 days to early bird.</div>
+  <div class="j-shell">
+    <div class="j-header">
+      <div class="j-orb"></div>
+      <div class="j-name">JARVIS — BLEUSKM OS</div>
+      <div class="j-status">● Claude · Connected</div>
+    </div>
+    <div class="j-log" id="jlog">
+      <div class="j-line"><span class="j-from">JARVIS</span><span class="j-msg hi">Good morning, Zaria. BLEUSKM OS is live.</span></div>
+      <div class="j-line"><span class="j-from">SYS</span><span class="j-msg">📌 Priority 1 — Post casting carousel to IG, TikTok, Facebook. Today.</span></div>
+      <div class="j-line"><span class="j-from">SYS</span><span class="j-msg">📌 Priority 2 — Review casting submissions in Casting tab (live from Airtable).</span></div>
+      <div class="j-line"><span class="j-from">SYS</span><span class="j-msg">📌 Priority 3 — Check Brevo for client inquiry.</span></div>
+      <div class="j-line"><span class="j-from">SYS</span><span class="j-msg">🏆 BlackStar Film Festival — 47 days to early bird. Research blackstarfest.org today.</span></div>
+      <div class="j-line"><span class="j-from">SYS</span><span class="j-msg">📲 Slate Night video recorded — finish editing, post by Sunday.</span></div>
+      <div class="j-line"><span class="j-from">JARVIS</span><span class="j-msg hi">Ready. Type anything or hit a quick command below.</span></div>
+    </div>
+    <div class="j-input-row">
+      <input class="j-input" id="jinput" placeholder="Talk to JARVIS — draft email, caption, shot list, crew pack, expand an idea, plan your week..." />
+      <button class="j-send" onclick="sendJ()">Send ↵</button>
+    </div>
+  </div>
+  <div>
+    <div class="card-label" style="margin-bottom:8px;">Quick Commands</div>
+    <div class="qa-grid">
+      <div class="qa-btn" onclick="sendJ('Give me my full morning briefing for today')"><div class="qa-icon">☀</div><div class="qa-label">Morning Brief</div></div>
+      <div class="qa-btn" onclick="sendJ('Draft a warm professional casting acknowledgment email for The Final Hand from Zaria Lashae, Bleuskm Studios')"><div class="qa-icon">✉</div><div class="qa-label">Cast Email</div></div>
+      <div class="qa-btn" onclick="sendJ('Write a TikTok and Instagram caption for The Final Hand casting call — Afro-surrealist filmmaker tone, hook, hashtags')"><div class="qa-icon">📲</div><div class="qa-label">Caption</div></div>
+      <div class="qa-btn" onclick="sendJ('I have a new creative film idea — help me develop it into a premise and logline')"><div class="qa-icon">💭</div><div class="qa-label">Expand Idea</div></div>
+      <div class="qa-btn" onclick="sendJ('What festival deadlines are coming up for The Final Hand short film in 2026?')"><div class="qa-icon">🏆</div><div class="qa-label">Festivals</div></div>
+      <div class="qa-btn" onclick="sendJ('Create a detailed shot list for The Final Hand opening lounge scene — cinematic, atmospheric, slow burn')"><div class="qa-icon">🎥</div><div class="qa-label">Shot List</div></div>
+      <div class="qa-btn" onclick="sendJ('Write a full pre-production package for the Director of Photography on The Final Hand')"><div class="qa-icon">👥</div><div class="qa-label">Crew Pack</div></div>
+      <div class="qa-btn" onclick="sendJ('Write a cold pitch email for Bleuskm Studios brand video services to a DFW small business')"><div class="qa-icon">💼</div><div class="qa-label">Client Pitch</div></div>
+      <div class="qa-btn" onclick="sendJ('Generate a 2-week content plan for my 3 series: Slate Night, Manifesto in Motion, The Creative Room. Max 3 posts per week.')"><div class="qa-icon">📅</div><div class="qa-label">Content Plan</div></div>
+      <div class="qa-btn" onclick="sendJ('Write a Higgsfield AI video generation prompt for The Final Hand — dim lounge, amber light, two hands, glowing chip, cinematic')"><div class="qa-icon">✨</div><div class="qa-label">Higgsfield</div></div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="card-label">Live — Casting Submissions</div><div id="cast-live" class="card-sub">Loading from Airtable...</div></div>
+    <div class="card"><div class="card-label">Live — Client Inquiries</div><div id="inq-live" class="card-sub">Loading from Airtable...</div></div>
+  </div>
+</div>
+
+<!-- ═══ OVERVIEW ═══ -->
+<div id="s-overview" class="section">
+  <div class="ph"><div><div class="ph-title">Overview</div><div class="ph-sub">Studio Status · May 2026</div></div></div>
+  <div class="g4">
+    <div class="card"><div class="card-top ct-r"></div><div class="card-label">Active Films</div><div class="card-val">1</div><div class="card-sub">The Final Hand · In Dev</div></div>
+    <div class="card"><div class="card-top ct-r"></div><div class="card-label">Cast Submissions</div><div class="card-val" id="ov-cast">—</div><div class="card-sub">Live from Airtable</div></div>
+    <div class="card"><div class="card-top ct-g"></div><div class="card-label">Festival Targets</div><div class="card-val">8</div><div class="card-sub">Primary + Secondary</div></div>
+    <div class="card"><div class="card-top ct-m"></div><div class="card-label">Revenue MTD</div><div class="card-val">$0</div><div class="card-sub">First client incoming</div></div>
+  </div>
+  <div class="card">
+    <div class="card-label">The Final Hand — Production Progress</div>
+    <div class="prog"><div class="prog-lbl"><span>Script</span><span>100%</span></div><div class="prog-bar"><div class="prog-fill" style="width:100%"></div></div></div>
+    <div class="prog"><div class="prog-lbl"><span>Pitch Deck</span><span>100%</span></div><div class="prog-bar"><div class="prog-fill" style="width:100%"></div></div></div>
+    <div class="prog"><div class="prog-lbl"><span>Marketing / Socials</span><span>70%</span></div><div class="prog-bar"><div class="prog-fill" style="width:70%"></div></div></div>
+    <div class="prog"><div class="prog-lbl"><span>Casting</span><span>45%</span></div><div class="prog-bar"><div class="prog-fill" style="width:45%"></div></div></div>
+    <div class="prog"><div class="prog-lbl"><span>Crew</span><span>10%</span></div><div class="prog-bar"><div class="prog-fill" style="width:10%"></div></div></div>
+    <div class="prog"><div class="prog-lbl"><span>Funding</span><span>5%</span></div><div class="prog-bar"><div class="prog-fill" style="width:5%"></div></div></div>
+    <div class="prog"><div class="prog-lbl"><span>Production</span><span>0%</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-label">Upcoming Deadlines</div>
+      <div class="dlist">
+        <div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">BlackStar — Early Bird</div></div><span class="tag t-r">47 days</span></div>
+        <div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">DBFF — Research Date</div></div><span class="tag t-r">Priority</span></div>
+        <div class="drow"><div class="dot d-g"></div><div class="drow-main"><div class="drow-label">Sundance Short Film</div></div><span class="tag t-g">Aug 2026</span></div>
+        <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label">SXSW Submissions</div></div><span class="tag t-d">Sept 2026</span></div>
+        <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label">Tribeca Film Festival</div></div><span class="tag t-d">Dec 2026</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">This Month</div>
+      <div class="dlist">
+        <div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">Post carousels — all socials</div></div><span class="tag t-r">Week 1</span></div>
+        <div class="drow"><div class="dot d-g"></div><div class="drow-main"><div class="drow-label">Airtable CRM + Brevo flows</div></div><span class="tag t-g">Week 2</span></div>
+        <div class="drow"><div class="dot d-g"></div><div class="drow-main"><div class="drow-label">First 10 client cold emails</div></div><span class="tag t-g">Week 2</span></div>
+        <div class="drow"><div class="dot d-g"></div><div class="drow-main"><div class="drow-label">Research BlackStar + DBFF</div></div><span class="tag t-g">Week 2</span></div>
+        <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label">Finalize casting callbacks</div></div><span class="tag t-d">Week 3-4</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ BRAIN DUMP ═══ -->
+<div id="s-braindump" class="section">
+  <div class="ph">
+    <div><div class="ph-title">Brain Dump</div><div class="ph-sub">Idea Vault · Never Lose a Creative Thought</div></div>
+    <div class="ph-actions"><button class="btn btn-g" onclick="saveDump()">Save to Vault</button></div>
+  </div>
+  <div class="alert">💭 Drop anything the second it hits you — a scene, a feeling, a line, a character, a world. JARVIS saves and helps you expand when ready.</div>
+  <div class="card">
+    <textarea class="dump-area" id="dump-input" placeholder="Start typing... a visual in your head, a dialogue line, a character emotion, a world you see. No editing. Just dump it." rows="5"></textarea>
+    <div style="display:flex;gap:8px;margin-top:9px;flex-wrap:wrap;align-items:center;">
+      <select class="select-dark" id="dump-tag" style="flex:1;min-width:130px;">
+        <option>Film Idea</option><option>Character</option><option>Dialogue</option>
+        <option>Visual / Image</option><option>Story Beat</option><option>World Building</option>
+        <option>Series Idea</option><option>Content Idea</option><option>Personal</option>
+      </select>
+      <button class="btn" onclick="saveDump()">Save</button>
+      <button class="btn btn-o" onclick="sendJ('Expand this creative idea into a full scene or premise: ' + document.getElementById('dump-input').value)">Send to JARVIS →</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Idea Vault</div>
+    <div id="dump-vault">
+      <div class="idea-card"><div class="idea-text">High John doesn't speak in the first act — but the room responds to him anyway. The cards shuffle slightly when he sits. Only the audience notices. The Gambler notices too late.</div><div class="idea-meta">May 14 · 2:14am · Story Beat · The Final Hand</div></div>
+      <div class="idea-card" style="border-left-color:var(--rose);"><div class="idea-text">A woman who collects other people's dreams in glass jars. When one breaks that shouldn't — she experiences a dream that was never meant for her.</div><div class="idea-meta">May 13 · 11:47pm · Film Idea</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PROJECTS ═══ -->
+<div id="s-projects" class="section">
+  <div class="ph"><div><div class="ph-title">Projects</div><div class="ph-sub">Films · Client Work · Pipeline</div></div><button class="btn">+ New Project</button></div>
+  <div class="kanban">
+    <div class="kb-col"><div class="kb-title"><div class="dot d-g"></div>Development</div><div class="kb-card"><div class="kc-t">The Final Hand</div><div class="kc-m">Short Film · 8-10 min</div><div class="kc-tags"><div class="kc-tag">Afro-Surrealist</div><div class="kc-tag">Folklore</div><div class="kc-tag">2026</div></div></div></div>
+    <div class="kb-col"><div class="kb-title"><div class="dot d-r"></div>Pre-Production</div><div class="kb-card"><div class="kc-t">TFH — Casting</div><div class="kc-m">DFW · Live Now</div></div><div class="kb-card"><div class="kc-t">TFH — Crew</div><div class="kc-m">DP, Sound, Editor open</div></div></div>
+    <div class="kb-col"><div class="kb-title"><div class="dot d-d"></div>Production</div><div style="padding:16px 0;text-align:center;font-size:9.5px;color:var(--text3);">Nothing yet</div></div>
+    <div class="kb-col"><div class="kb-title"><div class="dot d-gr"></div>Post / Festival</div><div style="padding:16px 0;text-align:center;font-size:9.5px;color:var(--text3);">Nothing yet</div></div>
+  </div>
+</div>
+
+<!-- ═══ SCRIPTS ═══ -->
+<div id="s-scripts" class="section">
+  <div class="ph"><div><div class="ph-title">Scripts & Stories</div><div class="ph-sub">Your Writing Vault</div></div><button class="btn">+ New Script</button></div>
+  <div class="g3">
+    <div class="card" style="cursor:pointer;">
+      <div style="font-size:24px;margin-bottom:7px;">📜</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--text);margin-bottom:3px;">The Final Hand</div>
+      <div style="font-size:9px;color:var(--text3);margin-bottom:8px;">Short Film · 8-10 min · Draft 1 Complete</div>
+      <span class="tag t-gr">Locked</span> <span class="tag t-r" style="margin-left:4px;">In Production</span>
+    </div>
+    <div class="card" style="cursor:pointer;border-style:dashed;opacity:.65;">
+      <div style="font-size:24px;margin-bottom:7px;">✏</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--text);margin-bottom:3px;">Short Series — TFH Universe</div>
+      <div style="font-size:9px;color:var(--text3);margin-bottom:8px;">3-5 Episodes · Different folklore game each</div>
+      <span class="tag t-g">Concept Phase</span>
+    </div>
+    <div class="card" style="cursor:pointer;border-style:dashed;opacity:.35;text-align:center;">
+      <div style="font-size:24px;margin-bottom:7px;">+</div>
+      <div style="font-size:10px;color:var(--text3);">Add Script</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-label">JARVIS Writing Help</div>
+      <div class="dlist">
+        <div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">Expand a scene from The Final Hand</div></div><button class="btn btn-ghost" onclick="sendJ('Help me expand a scene from The Final Hand — ask me which scene and direction')">Ask</button></div>
+        <div class="drow"><div class="dot d-g"></div><div class="drow-main"><div class="drow-label">Write dialogue for High John</div></div><button class="btn btn-ghost" onclick="sendJ('Write 5 lines of dialogue for High John the Conqueror — calm, ritualistic, few words, each one lands')">Ask</button></div>
+        <div class="drow"><div class="dot d-m"></div><div class="drow-main"><div class="drow-label">Build the short series arc</div></div><button class="btn btn-ghost" onclick="sendJ('Help me build a short series expanding The Final Hand universe — each episode a different folklore figure, different game, same world. Give me 5 episode concepts.')">Ask</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Writing Roadmap</div>
+      <div class="dlist">
+        <div class="drow"><div class="dot d-gr"></div><div class="drow-main"><div class="drow-label">The Final Hand — Short Film</div><div class="drow-sub">Script complete · Production 2026</div></div><span class="tag t-gr">Done</span></div>
+        <div class="drow"><div class="dot d-g"></div><div class="drow-main"><div class="drow-label">Short Series — TFH Universe</div><div class="drow-sub">3-5 eps · Each a new folklore game</div></div><span class="tag t-g">Next</span></div>
+        <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label">Feature Film</div><div class="drow-sub">After festival run</div></div><span class="tag t-d">Future</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SHOT LIST ═══ -->
+<div id="s-shotlist" class="section">
+  <div class="ph">
+    <div><div class="ph-title">Shot Lists</div><div class="ph-sub">The Final Hand</div></div>
+    <button class="btn btn-o" onclick="sendJ('Create a detailed shot list for the opening scene of The Final Hand — The Gambler enters a dim lounge and first notices High John. Cinematic, atmospheric, slow burn.')">JARVIS Generate</button>
+  </div>
+  <div class="card">
+    <div class="card-label">Scene 1 — The Lounge (Opening)</div>
+    <div style="display:grid;grid-template-columns:34px 72px 52px 1fr 88px;gap:9px;padding:7px 0;border-bottom:1px solid var(--border);margin-bottom:4px;">
+      <div style="font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;">#</div>
+      <div style="font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;">Type</div>
+      <div style="font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;">Lens</div>
+      <div style="font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;">Description</div>
+      <div style="font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;">Status</div>
+    </div>
+    <div class="shot-row"><div class="shot-num">01</div><div class="shot-meta">Wide</div><div class="shot-meta">24mm</div><div style="font-size:10.5px;color:var(--text);">Exterior night. Amber neon through frosted glass. Smoke. Muffled jazz.</div><span class="tag t-d">Planned</span></div>
+    <div class="shot-row"><div class="shot-num">02</div><div class="shot-meta">Medium</div><div class="shot-meta">50mm</div><div style="font-size:10.5px;color:var(--text);">The Gambler enters. Adjusts. Scans the room. Eyes land on something.</div><span class="tag t-d">Planned</span></div>
+    <div class="shot-row"><div class="shot-num">03</div><div class="shot-meta">POV</div><div class="shot-meta">85mm</div><div style="font-size:10.5px;color:var(--text);">High John. Utterly still. Room bends around him.</div><span class="tag t-d">Planned</span></div>
+    <div class="shot-row"><div class="shot-num">04</div><div class="shot-meta">Close-Up</div><div class="shot-meta">85mm</div><div style="font-size:10.5px;color:var(--text);">His hands. Not touching the deck. The cards know he's there.</div><span class="tag t-d">Planned</span></div>
+    <div class="shot-row"><div class="shot-num">05</div><div class="shot-meta">Insert</div><div class="shot-meta">100mm</div><div style="font-size:10.5px;color:var(--text);">A chip slides across the bar. Stops in front of The Gambler.</div><span class="tag t-d">Planned</span></div>
+  </div>
+  <div class="card">
+    <div class="card-label">Generate Shot List — Describe Any Scene</div>
+    <textarea class="textarea-dark" id="shot-scene" placeholder="Describe a scene... e.g. 'The game begins. High John deals slowly. The Gambler watches every move.'" rows="3"></textarea>
+    <button class="btn" style="margin-top:9px;" onclick="sendJ('Create a detailed shot list for this scene: ' + document.getElementById('shot-scene').value + '. Include shot number, type, lens recommendation, and description.')">Generate</button>
+  </div>
+</div>
+
+<!-- ═══ CASTING ═══ -->
+<div id="s-casting" class="section">
+  <div class="ph"><div><div class="ph-title">Casting</div><div class="ph-sub">The Final Hand · Live from Airtable</div></div><button class="btn">Review All</button></div>
+  <div class="g3">
+    <div class="card"><div class="card-top ct-r"></div><div class="card-label">Total Submissions</div><div class="card-val" id="cast-total">—</div><div class="card-sub">Loading from Airtable</div></div>
+    <div class="card"><div class="card-top ct-g"></div><div class="card-label">Pending Review</div><div class="card-val" id="cast-pending">—</div><div class="card-sub">Awaiting your notes</div></div>
+    <div class="card"><div class="card-top ct-m"></div><div class="card-label">Callbacks Sent</div><div class="card-val">0</div><div class="card-sub">Draft via Brevo</div></div>
+  </div>
+  <div class="card">
+    <div class="card-label">Open Roles</div>
+    <div class="dlist">
+      <div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">High John — The Conqueror</div><div class="drow-sub">Lead · Black Male · 35 to 55</div></div><span class="tag t-gr">Open</span></div>
+      <div class="drow"><div class="dot d-g"></div><div class="drow-main"><div class="drow-label">The Player — The Challenger</div><div class="drow-sub">Lead · Open · 28 to 45</div></div><span class="tag t-gr">Open</span></div>
+      <div class="drow"><div class="dot d-m"></div><div class="drow-main"><div class="drow-label">The Stranger — The Messenger</div><div class="drow-sub">Supporting · Open · 30 to 60</div></div><span class="tag t-gr">Open</span></div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="card-label">Submissions — Live</div><div id="cast-list" class="card-sub">Loading from Airtable...</div></div>
+    <div class="card">
+      <div class="card-label">Email Actions via Brevo</div>
+      <div class="dlist">
+        <div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">Casting acknowledgment email</div></div><button class="btn btn-ghost" onclick="sendJ('Write a warm professional casting acknowledgment email for The Final Hand. From Zaria Lashae, Bleuskm Studios.')">Draft</button></div>
+        <div class="drow"><div class="dot d-g"></div><div class="drow-main"><div class="drow-label">Callback email</div></div><button class="btn btn-ghost" onclick="sendJ('Write a callback email inviting an actor to audition for The Final Hand — warm, excited, professional. From Zaria Lashae.')">Draft</button></div>
+        <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label">Pass email</div></div><button class="btn btn-ghost" onclick="sendJ('Write a kind professional pass email for The Final Hand casting applicant — leave door open for future projects.')">Draft</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CREW ═══ -->
+<div id="s-crew" class="section">
+  <div class="ph"><div><div class="ph-title">Crew & Packages</div><div class="ph-sub">The Final Hand · Pre/Post Packs</div></div><button class="btn">+ Add Crew</button></div>
+  <div class="alert">📦 JARVIS generates personalized packages per crew member — role breakdown, visual tone, scenes, schedule, contacts. Send directly via Brevo.</div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-label">Open Positions</div>
+      <div class="dlist">
+        <div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">Director of Photography</div><div class="drow-sub">DFW · Seeking</div></div><span class="tag t-r">Open</span></div>
+        <div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">Sound Mixer / Boom Op</div><div class="drow-sub">DFW · Seeking</div></div><span class="tag t-r">Open</span></div>
+        <div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">Production Designer</div><div class="drow-sub">Seeking</div></div><span class="tag t-r">Open</span></div>
+        <div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">Editor</div><div class="drow-sub">Post-Production · Seeking</div></div><span class="tag t-r">Open</span></div>
+        <div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">Composer</div><div class="drow-sub">Score · Seeking</div></div><span class="tag t-r">Open</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Generate Crew Packages</div>
+      <div class="dlist">
+        <div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">DP Pre-Production Pack</div></div><button class="btn btn-ghost" onclick="sendJ('Write a full pre-production package for the DP on The Final Hand — visual language, palette (warm ambers, deep greens, shadow blacks), comp films (The Card Counter, Sinners), key scenes and schedule.')">Generate</button></div>
+        <div class="drow"><div class="dot d-g"></div><div class="drow-main"><div class="drow-label">Sound Mixer Pack</div></div><button class="btn btn-ghost" onclick="sendJ('Write a production package for the Sound Mixer on The Final Hand — location (dim lounge), atmosphere notes (low jazz, ritual knock), crew expectations, delivery format.')">Generate</button></div>
+        <div class="drow"><div class="dot d-m"></div><div class="drow-main"><div class="drow-label">Editor Post-Production Pack</div></div><button class="btn btn-ghost" onclick="sendJ('Write a post-production package for the Editor of The Final Hand — pacing notes, color grading direction, comp films, delivery specs for festival circuit.')">Generate</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FESTIVALS ═══ -->
+<div id="s-festivals" class="section">
+  <div class="ph">
+    <div><div class="ph-title">Festivals</div><div class="ph-sub">Submission Tracker</div></div>
+    <button class="btn" onclick="sendJ('Research 2026 submission deadlines and fees for Sundance, BlackStar, SXSW, Tribeca, Denton Black Film Festival, Pan African Film Festival for short films.')">Research All</button>
+  </div>
+  <div class="alert">🏆 BlackStar is your most urgent — 47 days to early bird. Go to blackstarfest.org today.</div>
+  <div class="card">
+    <div class="card-label">Primary Targets</div>
+    <div style="display:grid;grid-template-columns:1fr 110px 65px 75px;gap:9px;padding:7px 0;border-bottom:1px solid var(--border);margin-bottom:4px;">
+      <div style="font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;">Festival</div>
+      <div style="font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;">Deadline</div>
+      <div style="font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;">Est. Fee</div>
+      <div style="font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;">Status</div>
+    </div>
+    <div class="dlist">
+      <div class="drow" style="display:grid;grid-template-columns:1fr 110px 65px 75px;gap:9px;"><span style="font-size:11px;color:var(--text);">Sundance Film Festival</span><span style="font-size:10px;color:var(--text3);">Aug/Sept 2026</span><span style="font-size:10px;color:var(--text3);">~$65</span><span class="tag t-g">Upcoming</span></div>
+      <div class="drow" style="display:grid;grid-template-columns:1fr 110px 65px 75px;gap:9px;"><span style="font-size:11px;color:var(--text);">BlackStar Film Festival</span><span style="font-size:10px;color:var(--rose);">47 days</span><span style="font-size:10px;color:var(--text3);">~$30</span><span class="tag t-r">Urgent</span></div>
+      <div class="drow" style="display:grid;grid-template-columns:1fr 110px 65px 75px;gap:9px;"><span style="font-size:11px;color:var(--text);">SXSW Film Festival</span><span style="font-size:10px;color:var(--text3);">Sept 2026</span><span style="font-size:10px;color:var(--text3);">~$50</span><span class="tag t-g">Upcoming</span></div>
+      <div class="drow" style="display:grid;grid-template-columns:1fr 110px 65px 75px;gap:9px;"><span style="font-size:11px;color:var(--text);">Tribeca Film Festival</span><span style="font-size:10px;color:var(--text3);">Dec 2026</span><span style="font-size:10px;color:var(--text3);">~$75</span><span class="tag t-d">Later</span></div>
+      <div class="drow" style="display:grid;grid-template-columns:1fr 110px 65px 75px;gap:9px;"><span style="font-size:11px;color:var(--text);">Denton Black Film Festival</span><span style="font-size:10px;color:var(--rose);">Research Now</span><span style="font-size:10px;color:var(--text3);">TBD</span><span class="tag t-r">Priority</span></div>
+      <div class="drow" style="display:grid;grid-template-columns:1fr 110px 65px 75px;gap:9px;"><span style="font-size:11px;color:var(--text);">American Black Film Festival</span><span style="font-size:10px;color:var(--text3);">Research</span><span style="font-size:10px;color:var(--text3);">Varies</span><span class="tag t-m">Track</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CLIENTS ═══ -->
+<div id="s-clients" class="section">
+  <div class="ph"><div><div class="ph-title">Client Portal</div><div class="ph-sub">Inquiries · CRM · Services</div></div><button class="btn">+ New Client</button></div>
+  <div class="alert alert-g">💼 Phase 2: Each client gets their own login dashboard. You update here, it syncs to them automatically.</div>
+  <div class="g4">
+    <div class="card"><div class="card-top ct-r"></div><div class="card-label">Active Clients</div><div class="card-val">0</div></div>
+    <div class="card"><div class="card-top ct-g"></div><div class="card-label">Prospects</div><div class="card-val">0</div></div>
+    <div class="card"><div class="card-top ct-rg"></div><div class="card-label">Month 3 Goal</div><div class="card-val">$1.5K</div></div>
+    <div class="card"><div class="card-top ct-m"></div><div class="card-label">Month 6 Goal</div><div class="card-val">$4K</div></div>
+  </div>
+  <div class="card">
+    <div class="card-label">Services — Bleuskm Studios</div>
+    <div class="dlist">
+      <div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">Brand Video / Promo</div><div class="drow-sub">$500 to $2,500 per project</div></div><span class="tag t-gr">Active</span></div>
+      <div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">Music Video Production</div><div class="drow-sub">$800 to $3,000 per project</div></div><span class="tag t-gr">Active</span></div>
+      <div class="drow"><div class="dot d-g"></div><div class="drow-main"><div class="drow-label">Creative Direction Retainer</div><div class="drow-sub">$500 to $1,500 / month</div></div><span class="tag t-gr">Active</span></div>
+      <div class="drow"><div class="dot d-g"></div><div class="drow-main"><div class="drow-label">Photography + Visuals</div><div class="drow-sub">$200 to $800 per session</div></div><span class="tag t-gr">Active</span></div>
+      <div class="drow"><div class="dot d-m"></div><div class="drow-main"><div class="drow-label">Post-Production</div><div class="drow-sub">Color grading, editing, finishing</div></div><span class="tag t-gr">Active</span></div>
+      <div class="drow"><div class="dot d-m"></div><div class="drow-main"><div class="drow-label">Brand Development + Content</div><div class="drow-sub">Visual identity + content strategy</div></div><span class="tag t-gr">Active</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ REVENUE ═══ -->
+<div id="s-revenue" class="section">
+  <div class="ph"><div><div class="ph-title">Revenue</div><div class="ph-sub">Income · Goals · Streams</div></div></div>
+  <div class="g4">
+    <div class="card"><div class="card-top ct-r"></div><div class="card-label">This Month</div><div class="card-val">$0</div></div>
+    <div class="card"><div class="card-top ct-g"></div><div class="card-label">This Quarter</div><div class="card-val">$0</div></div>
+    <div class="card"><div class="card-top ct-rg"></div><div class="card-label">Month 3 Goal</div><div class="card-val">$1.5K</div></div>
+    <div class="card"><div class="card-top ct-m"></div><div class="card-label">Month 6 Goal</div><div class="card-val">$4K</div></div>
+  </div>
+  <div class="alert alert-g">Connect Airtable with an Invoices table and your numbers populate here automatically. Send me your base ID to set it up.</div>
+</div>
+
+<!-- ═══ EMAIL ═══ -->
+<div id="s-email" class="section">
+  <div class="ph"><div><div class="ph-title">Email & Brevo</div><div class="ph-sub">Inbox · Sequences · Templates</div></div><button class="btn" onclick="sendJ('Help me create a new Brevo email template. What kind do you need — Casting, Newsletter, Client, Crew, or Film Update?')">+ New Template</button></div>
+  <div class="card">
+    <div class="card-label">Email Aliases — Zoho + Brevo</div>
+    <div class="dlist">
+      <div class="drow"><div class="dot d-gr"></div><div class="drow-main"><div class="drow-label">casting@bleuskm.com</div><div class="drow-sub">Casting submissions → Airtable → Brevo auto-ack</div></div><span class="tag t-gr">Live</span></div>
+      <div class="drow"><div class="dot d-gr"></div><div class="drow-main"><div class="drow-label">crew@bleuskm.com</div><div class="drow-sub">Crew apps → Airtable → Brevo auto-ack</div></div><span class="tag t-gr">Live</span></div>
+      <div class="drow"><div class="dot d-gr"></div><div class="drow-main"><div class="drow-label">clients@bleuskm.com</div><div class="drow-sub">Inquiries → Airtable → Brevo auto-reply</div></div><span class="tag t-gr">Live</span></div>
+      <div class="drow"><div class="dot d-g"></div><div class="drow-main"><div class="drow-label">newsletter@bleuskm.com</div><div class="drow-sub">Build welcome sequence</div></div><span class="tag t-g">Build</span></div>
+      <div class="drow"><div class="dot d-m"></div><div class="drow-main"><div class="drow-label">films@bleuskm.com · studio@bleuskm.com</div><div class="drow-sub">Film notifications · Main studio contact</div></div><span class="tag t-m">Active</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Tell JARVIS to Create a Template</div>
+    <textarea class="textarea-dark" id="brevo-prompt" placeholder="e.g. 'Create a newsletter announcing The Final Hand casting call' or 'Write a client onboarding email sequence'" rows="3"></textarea>
+    <button class="btn" style="margin-top:9px;" onclick="sendJ('Create a Brevo email template for: ' + document.getElementById('brevo-prompt').value + '. Full subject line and body in Bleuskm brand voice — cinematic, warm, cultural, professional.')">Generate Template</button>
+  </div>
+</div>
+
+<!-- ═══ SERIES ═══ -->
+<div id="s-series" class="section">
+  <div class="ph">
+    <div><div class="ph-title">My Series</div><div class="ph-sub">3 Content Series · All Platforms</div></div>
+    <button class="btn" onclick="sendJ('Help me plan my next video — ask which series and topic: Slate Night, Manifesto in Motion, or The Creative Room')">Plan Next Episode</button>
+  </div>
+  <div class="g3">
+    <div class="series-card" style="border-top:2px solid var(--rose);">
+      <div class="series-name">🕯 Slate Night</div>
+      <div class="series-desc">Late-night director conversations. Personal. Intimate. @lashaez._ + @z.lashae_</div>
+      <div class="series-topic">Creative burnout</div>
+      <div class="series-topic">Fear of success</div>
+      <div class="series-topic">Being multi-passionate</div>
+      <div class="series-topic">Inner child conversations</div>
+      <div class="series-topic">"We're really doing this now"</div>
+      <div class="series-topic">Motivation for emerging creatives</div>
+      <div style="margin-top:9px;"><span class="tag t-r">~10 episodes</span></div>
+    </div>
+    <div class="series-card" style="border-top:2px solid var(--gold);">
+      <div class="series-name">📚 Manifesto in Motion</div>
+      <div class="series-desc">Intellectual. Cultural. Film breakdowns, Black cinema, overlooked creatives. @Bleuskm.studios</div>
+      <div class="series-topic">Film analysis + symbolism</div>
+      <div class="series-topic">Black folklore in film</div>
+      <div class="series-topic">"If this director made this movie"</div>
+      <div class="series-topic">Forgotten Black creatives</div>
+      <div class="series-topic">Hidden meanings in films</div>
+      <div class="series-topic">Visual essays / diaries</div>
+      <div style="margin-top:9px;"><span class="tag t-g">Cinematic essay</span></div>
+    </div>
+    <div class="series-card" style="border-top:2px solid var(--mauve);">
+      <div class="series-name">🎞 The Creative Room</div>
+      <div class="series-desc">Umbrella world. Director's Notes + Artist Days. Everything lives here. @Bleuskm.studios</div>
+      <div class="series-topic">Director's Notes — BTS, building BLEUSKM</div>
+      <div class="series-topic">Artist Days — museums, cafes, vinyl</div>
+      <div class="series-topic">Come to set with me</div>
+      <div class="series-topic">Creative struggles + pre-prod chaos</div>
+      <div class="series-topic">Movie theater / casual reviews</div>
+      <div style="margin-top:9px;"><span class="tag t-m">Umbrella series</span></div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-label">JARVIS — Episode Ideas</div>
+      <div class="dlist">
+        <div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">Slate Night — next episode</div></div><button class="btn btn-ghost" onclick="sendJ('Give me 5 Slate Night episode concepts — late-night personal director conversations, intimate, one-take energy')">Ideas</button></div>
+        <div class="drow"><div class="dot d-g"></div><div class="drow-main"><div class="drow-label">Manifesto — next breakdown</div></div><button class="btn btn-ghost" onclick="sendJ('Give me 5 Manifesto in Motion episode concepts — intellectual Black cinema essays, symbolism, folklore, overlooked creatives')">Ideas</button></div>
+        <div class="drow"><div class="dot d-m"></div><div class="drow-main"><div class="drow-label">Creative Room — next entry</div></div><button class="btn btn-ghost" onclick="sendJ('Give me 5 Creative Room episode ideas — mix of Director\'s Notes (BTS, building BLEUSKM) and Artist Days (museums, cafes, vinyl, film reviews)')">Ideas</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Title Formats</div>
+      <div class="dlist">
+        <div class="drow"><div class="dot d-m"></div><div class="drow-main"><div class="drow-label">The Creative Room: Director's Notes</div></div></div>
+        <div class="drow"><div class="dot d-m"></div><div class="drow-main"><div class="drow-label">The Creative Room: Artist Day — [place]</div></div></div>
+        <div class="drow"><div class="dot d-m"></div><div class="drow-main"><div class="drow-label">The Creative Room: Building BLEUSKM</div></div></div>
+        <div class="drow"><div class="dot d-g"></div><div class="drow-main"><div class="drow-label">Manifesto in Motion: Black Folklore in Film</div></div></div>
+        <div class="drow"><div class="dot d-g"></div><div class="drow-main"><div class="drow-label">Manifesto in Motion: [Hidden Meaning in X]</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CONTENT ═══ -->
+<div id="s-content" class="section">
+  <div class="ph">
+    <div><div class="ph-title">Content Calendar</div><div class="ph-sub">@Bleuskm.Studios · @Z.Lashae_ · @lashaez._</div></div>
+    <button class="btn btn-g" onclick="sendJ('Generate a full 2-week content calendar for my 3 series: Slate Night, Manifesto in Motion, The Creative Room. Max 3 posts per week. Each post: idea, hook, caption draft, hashtags.')">JARVIS Build 2 Weeks</button>
+  </div>
+  <div class="card">
+    <div class="card-label">This Week</div>
+    <div style="display:grid;grid-template-columns:65px 72px 1fr 75px;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);margin-bottom:3px;">
+      <div style="font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;">Date</div>
+      <div style="font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;">Platform</div>
+      <div style="font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;">Content</div>
+      <div style="font-size:8px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;">Status</div>
+    </div>
+    <div class="content-row"><div class="c-date">Today</div><div class="c-plat">IG·TT·FB</div><div class="c-title">The Final Hand — Casting Carousel</div><span class="tag t-r">Post Now</span></div>
+    <div class="content-row"><div class="c-date">Today</div><div class="c-plat">IG·TT·FB</div><div class="c-title">Bleuskm Studios — Intro Carousel</div><span class="tag t-r">Post Now</span></div>
+    <div class="content-row"><div class="c-date">Sun</div><div class="c-plat">@lashaez._</div><div class="c-title">Slate Night Ep 1 — recorded, needs edit + music</div><span class="tag t-g">Edit+Post</span></div>
+    <div class="content-row"><div class="c-date">Thu</div><div class="c-plat">@Bleuskm</div><div class="c-title">Creative Room: Building BLEUSKM</div><span class="tag t-m">Plan</span></div>
+    <div class="content-row"><div class="c-date">Sat</div><div class="c-plat">@Bleuskm</div><div class="c-title">Manifesto in Motion — Episode 1</div><span class="tag t-d">Plan</span></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-label">Generate Caption — JARVIS</div>
+      <textarea class="textarea-dark" id="cap-input" placeholder="Describe what you're posting and which series..." rows="3"></textarea>
+      <div style="display:flex;gap:7px;margin-top:8px;flex-wrap:wrap;">
+        <select class="select-dark" id="cap-series" style="flex:1;min-width:100px;">
+          <option>Slate Night</option><option>Manifesto in Motion</option>
+          <option>The Creative Room</option><option>Studio / Film</option>
+        </select>
+        <button class="btn" onclick="sendJ('Write a social caption for ' + document.getElementById('cap-series').value + ': ' + document.getElementById('cap-input').value + '. Bleuskm tone — cinematic, cultural, Afro-surrealist. Hook + body + CTA + 15 hashtags.')">Write Caption</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Higgsfield — AI Video Prompt</div>
+      <textarea class="textarea-dark" id="hig-input" placeholder="Describe the visual scene... lighting, atmosphere, motion, mood" rows="3"></textarea>
+      <button class="btn btn-g" style="margin-top:8px;" onclick="sendJ('Write a detailed Higgsfield AI video generation prompt for: ' + document.getElementById('hig-input').value + '. Cinematic, atmospheric, film-quality. Include camera movement, lighting, mood, style keywords.')">Generate Higgsfield Prompt</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SOCIAL ═══ -->
+<div id="s-social" class="section">
+  <div class="ph">
+    <div><div class="ph-title">Social Command</div><div class="ph-sub">Analytics · SEO · Growth</div></div>
+    <button class="btn" onclick="sendJ('Analyze the best content strategy for @Bleuskm.studios and @lashaez._ in 2026. Format, frequency, topics, posting times for indie filmmakers on TikTok and Instagram.')">JARVIS Analyze</button>
+  </div>
+  <div class="alert alert-g">📊 Connect Instagram Business and TikTok For Business APIs to see real analytics. Once connected, JARVIS flags what to post, when, and what to stop doing — hourly refresh.</div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-label">Studio — @Bleuskm.Studios</div>
+      <div class="dlist">
+        <div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">Instagram @Bleuskm.studios</div></div><span class="tag t-g">Connect</span></div>
+        <div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">TikTok @Bleuskm.studios</div></div><span class="tag t-g">Connect</span></div>
+        <div class="drow"><div class="dot d-m"></div><div class="drow-main"><div class="drow-label">Threads @Bleuskm.studios</div></div><span class="tag t-m">Active</span></div>
+        <div class="drow"><div class="dot d-m"></div><div class="drow-main"><div class="drow-label">Facebook: Bleuskm Studios</div></div><span class="tag t-m">Active</span></div>
+        <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label">YouTube: bleuskmstudios</div></div><span class="tag t-d">Growing</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Personal — @Z.Lashae_</div>
+      <div class="dlist">
+        <div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">TikTok @lashaez._ — Slate Night series</div></div><span class="tag t-r">Primary</span></div>
+        <div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">Instagram @z.lashae_</div></div><span class="tag t-r">Active</span></div>
+        <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label">Facebook: Zaria Lashae</div></div><span class="tag t-d">Active</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ AI TOOLS ═══ -->
+<div id="s-aitools" class="section">
+  <div class="ph"><div><div class="ph-title">AI Studio Tools</div><div class="ph-sub">Higgsfield · Granola · Research</div></div></div>
+  <div class="g3">
+    <div class="card"><div class="card-top ct-r"></div>
+      <div class="card-label">Higgsfield — AI Video</div>
+      <div style="font-size:10.5px;color:var(--text2);line-height:1.8;margin-bottom:9px;">Generate cinematic AI video for social content, mood boards, and film concepts.</div>
+      <textarea class="textarea-dark" id="hig2-input" placeholder="Describe the scene... lighting, atmosphere, motion, mood" rows="3"></textarea>
+      <button class="btn" style="margin-top:8px;" onclick="sendJ('Write a detailed Higgsfield AI video prompt for: ' + document.getElementById('hig2-input').value + '. Cinematic, atmospheric, film-quality. Camera movement, lighting, mood, art direction keywords.')">Optimize for Higgsfield</button>
+    </div>
+    <div class="card"><div class="card-top ct-g"></div>
+      <div class="card-label">Granola — Meeting Notes</div>
+      <div style="font-size:10.5px;color:var(--text2);line-height:1.8;margin-bottom:9px;">Paste your Granola meeting summary → JARVIS extracts action items and decisions.</div>
+      <textarea class="textarea-dark" id="granola-input" placeholder="Paste your Granola meeting summary here..." rows="3"></textarea>
+      <button class="btn btn-g" style="margin-top:8px;" onclick="sendJ('I just had a meeting. Notes: ' + document.getElementById('granola-input').value + '. Extract: key decisions, action items with owners, follow-up deadlines, what I need to do today.')">Extract Action Items</button>
+    </div>
+    <div class="card"><div class="card-top ct-m"></div>
+      <div class="card-label">Research</div>
+      <div class="dlist" style="margin-top:6px;">
+        <div class="drow"><div class="dot d-g"></div><div class="drow-main"><div class="drow-label">Film grants — Black filmmakers</div></div><button class="btn btn-ghost" onclick="sendJ('List current film grants and funding opportunities for Black and emerging filmmakers in 2026. Include deadlines and eligibility.')">Search</button></div>
+        <div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">DFW indie film community</div></div><button class="btn btn-ghost" onclick="sendJ('How do I find and connect with the DFW indie film community — festivals, groups, meetups, film co-ops, networking events?')">Search</button></div>
+        <div class="drow"><div class="dot d-m"></div><div class="drow-main"><div class="drow-label">Afro-surrealist film references</div></div><button class="btn btn-ghost" onclick="sendJ('List essential Afro-surrealist films and directors — historical and contemporary — for The Final Hand reference.')">Search</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SCHEDULE ═══ -->
+<div id="s-schedule" class="section">
+  <div class="ph"><div><div class="ph-title">Schedule</div><div class="ph-sub">Daily Rhythm · May 2026</div></div></div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-label">Your Actual Daily Routine</div>
+      <div class="time-block"><div class="tb-time">8:00 AM</div><div class="tb-content"><div class="tb-label">Wake up</div><div class="tb-sub">Lay for a minute. Drink water. Meditate or brain dump before 9am if feeling it.</div></div><div class="tb-emoji">💧</div></div>
+      <div class="time-block"><div class="tb-time">8:30 AM</div><div class="tb-content"><div class="tb-label">Get up · Morning ritual</div><div class="tb-sub">Open blinds, sun, let puppy out, skincare.</div></div><div class="tb-emoji">🌅</div></div>
+      <div class="time-block"><div class="tb-time">9:00 AM</div><div class="tb-content"><div class="tb-label">Mind + Body</div><div class="tb-sub">Make bed. Journal / mindfulness / meditate / read (15-30 min).</div></div><div class="tb-emoji">📖</div></div>
+      <div class="time-block"><div class="tb-time">9:15 AM</div><div class="tb-content"><div class="tb-label">Breakfast + vitamins</div><div class="tb-sub">Juice, tea, broth, or lemon water.</div></div><div class="tb-emoji">🍊</div></div>
+      <div class="time-block"><div class="tb-time">9:40 AM</div><div class="tb-content"><div class="tb-label">Stretch + Workout</div><div class="tb-sub">1 to 1.5 hours.</div></div><div class="tb-emoji">💪</div></div>
+      <div class="time-block"><div class="tb-time">11:00 AM</div><div class="tb-content"><div class="tb-label">Post-workout meal · Get ready</div><div class="tb-sub">Shower, get dressed by 11:45-12pm.</div></div><div class="tb-emoji">🚿</div></div>
+      <div class="time-block"><div class="tb-time">12:15 PM</div><div class="tb-content"><div class="tb-label">⏱ CLOCK IN — Bleuskm Studios</div><div class="tb-sub">Open dashboard. Speak with JARVIS. Start the work day.</div></div><div class="tb-emoji">🎬</div></div>
+      <div class="time-block"><div class="tb-time">2:00 PM</div><div class="tb-content"><div class="tb-label">Snack + Break</div><div class="tb-sub">Puppy, sun, ~1 hour.</div></div><div class="tb-emoji">☀</div></div>
+      <div class="time-block"><div class="tb-time">3:00 PM</div><div class="tb-content"><div class="tb-label">Back to work</div><div class="tb-sub">Continue studio work until 7pm.</div></div><div class="tb-emoji">💼</div></div>
+      <div class="time-block"><div class="tb-time">6:00 PM</div><div class="tb-content"><div class="tb-label">Dinner</div><div class="tb-sub">Cook, leftovers, or meal prep.</div></div><div class="tb-emoji">🍽</div></div>
+      <div class="time-block"><div class="tb-time">7:00 PM</div><div class="tb-content"><div class="tb-label">⏱ CLOCK OUT</div><div class="tb-sub">Snack, read, meditate, TV, wind down.</div></div><div class="tb-emoji">🌙</div></div>
+      <div class="time-block"><div class="tb-time">10:30 PM</div><div class="tb-content"><div class="tb-label">Magnesium</div></div><div class="tb-emoji">💊</div></div>
+      <div class="time-block"><div class="tb-time">11-12 AM</div><div class="tb-content"><div class="tb-label">Bedtime</div></div><div class="tb-emoji">🌙</div></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Weekly Rhythm</div>
+      <div class="dlist">
+        <div class="drow"><div class="dot d-g"></div><div class="drow-main"><div class="drow-label">Monday — School (Wed discussions)</div><div class="drow-sub">Wed's posts due · Studio work PM</div></div><span class="tag t-g">School</span></div>
+        <div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">Tuesday — Full Studio Day</div><div class="drow-sub">Production, client outreach, content</div></div><span class="tag t-r">Studio</span></div>
+        <div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">Wednesday — Studio + Self</div><div class="drow-sub">Production. Optional clean / self-care.</div></div><span class="tag t-r">Studio</span></div>
+        <div class="drow"><div class="dot d-g"></div><div class="drow-main"><div class="drow-label">Thursday — School (Sun assignments)</div><div class="drow-sub">Sun's work + initial peer responses for Wed</div></div><span class="tag t-g">School</span></div>
+        <div class="drow"><div class="dot d-m"></div><div class="drow-main"><div class="drow-label">Friday — Studio + Follow-ups</div><div class="drow-sub">Wed discussion follow-ups · Studio</div></div><span class="tag t-m">Mixed</span></div>
+        <div class="drow"><div class="dot d-m"></div><div class="drow-main"><div class="drow-label">Saturday — Batch Content Day</div><div class="drow-sub">Film all 3 series. Scripts + shot lists ready Friday.</div></div><span class="tag t-m">Content</span></div>
+        <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label">Sunday — Rest + Review + Submit</div><div class="drow-sub">School due. JARVIS weekly review. Brain dump.</div></div><span class="tag t-d">Rest</span></div>
+      </div>
+      <div style="margin-top:12px;font-size:9.5px;color:var(--text3);">Work day: 12:15 PM to 7 PM · Brain dumps allowed anytime.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SCHOOL ═══ -->
+<div id="s-school" class="section">
+  <div class="ph"><div><div class="ph-title">School</div><div class="ph-sub">Champlain College Online</div></div><button class="btn">+ Assignment</button></div>
+  <div class="g3">
+    <div class="card"><div class="card-top ct-g"></div><div class="card-label">Due This Week</div><div class="card-val">2</div></div>
+    <div class="card"><div class="card-top ct-r"></div><div class="card-label">Overdue</div><div class="card-val">0</div><div class="card-sub">Keep it there</div></div>
+    <div class="card"><div class="card-top ct-m"></div><div class="card-label">GPA Goal</div><div class="card-val">3.5+</div></div>
+  </div>
+  <div class="card">
+    <div class="card-label">Your School Rhythm</div>
+    <div class="dlist">
+      <div class="drow"><div class="dot d-g"></div><div class="drow-main"><div class="drow-label">Monday — Wednesday discussion posts</div><div class="drow-sub">Get Wed work done early so the rest of the week stays clear</div></div><span class="tag t-g">Mon</span></div>
+      <div class="drow"><div class="dot d-g"></div><div class="drow-main"><div class="drow-label">Thursday — Sunday assignments + initial peer responses</div><div class="drow-sub">Also initial peer responses for Wednesday discussion</div></div><span class="tag t-g">Thu</span></div>
+      <div class="drow"><div class="dot d-m"></div><div class="drow-main"><div class="drow-label">Thursday / Friday — Follow-up peer responses</div><div class="drow-sub">For Wednesday discussion (due Sunday)</div></div><span class="tag t-m">Thu-Fri</span></div>
+      <div class="drow"><div class="dot d-m"></div><div class="drow-main"><div class="drow-label">Friday / Saturday — Final follow-up responses</div><div class="drow-sub">Get ahead of Sunday deadline</div></div><span class="tag t-m">Fri-Sat</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Add Your Assignments</div>
+    <div style="font-size:10.5px;color:var(--text3);padding:10px 0;">Send me your Champlain College syllabus and I'll auto-fill assignments with due dates and remind you in your morning JARVIS brief.</div>
+    <button class="btn btn-o" onclick="sendJ('Help me organize my Champlain College assignments. My rhythm: Monday = Wednesday discussions. Thursday = Sunday assignments + initial peer responses. Thursday-Saturday = follow-up responses. Ask me for my courses and assignments.')">JARVIS Organize</button>
+  </div>
+</div>
+
+<!-- ═══ SELF CARE ═══ -->
+<div id="s-selfcare" class="section">
+  <div class="ph"><div><div class="ph-title">Self Care</div><div class="ph-sub">Hair · Nails · Skin · Home · Rest</div></div></div>
+  <div class="alert">✿ This is part of the schedule, not extra. JARVIS will remind you when self care days are coming up.</div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-label">Self Care Schedule</div>
+      <div class="dlist">
+        <div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">Hair Wash + Style Day</div><div class="drow-sub">High porosity — moisturize, protect, prioritize growth. Bi-weekly minimum.</div></div><span class="tag t-r">Bi-weekly</span></div>
+        <div class="drow"><div class="dot d-g"></div><div class="drow-main"><div class="drow-label">Nails</div><div class="drow-sub">Every 3-4 weeks. Book in advance.</div></div><span class="tag t-g">Monthly</span></div>
+        <div class="drow"><div class="dot d-m"></div><div class="drow-main"><div class="drow-label">Skin + Body Care Day</div><div class="drow-sub">Bi-weekly — face, body, full routine.</div></div><span class="tag t-m">Bi-weekly</span></div>
+        <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label">Light Tidy</div><div class="drow-sub">Dishes, counters, sweep, trash.</div></div><span class="tag t-d">Weekly</span></div>
+        <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label">Deep Clean</div><div class="drow-sub">Mop, bathroom, fridge, laundry.</div></div><span class="tag t-d">2x/month</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Hair Health Note</div>
+      <div style="font-size:10.5px;color:var(--text2);line-height:1.9;margin-bottom:12px;">High porosity hair needs consistent moisture and protection. Scalp getting dry + breakage = moisture-protein balance issue.<br><br><strong style="color:var(--rose);">Priorities:</strong> Wash bi-weekly · Deep condition every wash · Seal with oil after moisture · Protective styles between wash days · Scalp massages + oils · Trim split ends quarterly</div>
+      <button class="btn btn-o" onclick="sendJ('Give me a simple bi-weekly hair care routine for high porosity natural hair that breaks and struggles to retain length. I have ADHD — keep it realistic and low-effort.')">JARVIS Build Routine</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SETUP GUIDE ═══ -->
+<div id="s-setup" class="section">
+  <div class="ph"><div><div class="ph-title">Setup Guide</div><div class="ph-sub">Access · Voice JARVIS · Daily Text · GitHub · Higgsfield · Granola</div></div></div>
+
+  <div class="setup-card">
+    <div class="setup-title">1. You're Already Here — Access This Dashboard Anywhere</div>
+    <div class="setup-body">
+      This file lives at <strong style="color:var(--gold);">bleuskm.com/dashboard/index.html</strong><br>
+      Bookmark it on your phone and laptop. Nobody else sees it unless you share the link.<br><br>
+      To password protect it: go to Netlify → your site → Site Settings → Access Control → add a password. Free.
+    </div>
+  </div>
+
+  <div class="setup-card" style="border-left-color:var(--gold);">
+    <div class="setup-title" style="color:var(--gold);">2. Voice JARVIS — Say "Hey JARVIS"</div>
+    <div class="setup-body">
+      <span class="cmd-block">git clone https://github.com/ethanplusai/jarvis</span>
+      <span class="cmd-block">cd jarvis</span>
+      <span class="cmd-block">pip install -r requirements.txt</span>
+      Create a <strong style="color:var(--gold);">.env</strong> file and add:<br>
+      <span class="cmd-block">ANTHROPIC_API_KEY=your_key_here</span>
+      Then run:
+      <span class="cmd-block">python main.py</span>
+      Say "Hey JARVIS" → it wakes up → you speak → it responds in voice.<br><br>
+      <strong style="color:var(--gold);">Tell me when you're set up and I'll write your full custom system prompt with all Bleuskm context baked in.</strong>
+    </div>
+  </div>
+
+  <div class="setup-card" style="border-left-color:var(--mauve);">
+    <div class="setup-title" style="color:var(--mauve);">3. Daily Text from JARVIS (Morning + Night)</div>
+    <div class="setup-body">
+      1. Sign up at <strong>twilio.com</strong> (free trial) → get a phone number<br>
+      2. Sign up at <strong>zapier.com</strong> (free)<br>
+      3. Create Zap:<br>
+      &nbsp;&nbsp;&nbsp;Trigger: Schedule → Every day 8:15 AM<br>
+      &nbsp;&nbsp;&nbsp;Action: Claude API → morning briefing prompt<br>
+      &nbsp;&nbsp;&nbsp;Action: Twilio SMS → your phone number<br>
+      4. Repeat for 7PM night summary<br><br>
+      <strong style="color:var(--mauve);">Send me your Twilio number and I'll write both prompts for you to paste into Zapier.</strong>
+    </div>
+  </div>
+
+  <div class="setup-card">
+    <div class="setup-title">4. Updating This Dashboard via GitHub</div>
+    <div class="setup-body">
+      Any time you want to update the dashboard — tell JARVIS what to change, it writes the code, then run:<br>
+      <span class="cmd-block">git add dashboard/index.html</span>
+      <span class="cmd-block">git commit -m "update dashboard"</span>
+      <span class="cmd-block">git push origin main</span>
+      Netlify auto-deploys in ~30 seconds. Dashboard updates live.
+    </div>
+  </div>
+
+  <div class="setup-card" style="border-left-color:var(--gold);">
+    <div class="setup-title" style="color:var(--gold);">5. Higgsfield AI Video</div>
+    <div class="setup-body">
+      Go to <strong>higgsfield.ai</strong> → create account → use the AI Tools tab here to generate an optimized prompt → paste into Higgsfield → download → use in your content.<br><br>
+      Best for: atmospheric mood clips for @Bleuskm.studios, scene visualization before production, B-roll for The Final Hand social posts.
+    </div>
+  </div>
+
+  <div class="setup-card" style="border-left-color:var(--mauve);">
+    <div class="setup-title" style="color:var(--mauve);">6. Granola — Automatic Meeting Notes</div>
+    <div class="setup-body">
+      Download <strong>granola.so</strong> (Mac app) → it runs in the background and records + transcribes your calls automatically.<br><br>
+      After any call: Granola gives you a clean summary → paste it into the AI Tools tab → JARVIS extracts action items, decisions, and deadlines.<br><br>
+      Use for: client calls, crew meetings, casting conversations, any creative call you want notes from.
+    </div>
+  </div>
+
+  <div class="setup-card">
+    <div class="setup-title">7. Airtable Live Data (Already Connected)</div>
+    <div class="setup-body">
+      Your dashboard already pulls from your Airtable automatically:<br><br>
+      Base ID: <strong style="color:var(--gold);">appXf1NxIVhYbuV4j</strong><br>
+      Tables: Casting · Newsletter · Inquiries · Crew · Notify<br><br>
+      Casting submissions, client inquiries, and crew applications show up live every time you open the dashboard.<br><br>
+      For hourly background refresh (updates without page reload) → tell me and I'll add it in the next update.
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+// ── CONFIG ─────────────────────────────────────────────────────
+const AT_TOKEN = 'pat4zUowRMotxgqVA.415605c7a68e67cff288f42f8c2b75f48653ef33d98f6b895bd3a4da59931fb4';
+const AT_BASE  = 'appXf1NxIVhYbuV4j';
+const TBL_CASTING   = 'tblLGmXULNb9ebFxH';
+const TBL_INQUIRIES = 'tblwfk7tmoFhGIia5';
+const TBL_CREW      = 'tblCR7Cg3WugORlwO';
+
+async function atFetch(tableId) {
+  try {
+    const r = await fetch('https://api.airtable.com/v0/' + AT_BASE + '/' + tableId + '?maxRecords=20', {
+      headers: { 'Authorization': 'Bearer ' + AT_TOKEN }
+    });
+    if (!r.ok) return [];
+    const d = await r.json();
+    return d.records || [];
+  } catch(e) { return []; }
+}
+
+// ── CLOCK ───────────────────────────────────────────────────────
+function tick() {
+  const n = new Date();
+  document.getElementById('clock').textContent =
+    String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
+}
+tick(); setInterval(tick, 15000);
+
+// ── NAVIGATION ─────────────────────────────────────────────────
+function go(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('s-' + id).classList.add('active');
+  el.classList.add('active');
+  if (id === 'casting' || id === 'jarvis') loadCasting();
+  if (id === 'clients') loadInquiries();
+}
+
+// ── AIRTABLE ────────────────────────────────────────────────────
+async function loadCasting() {
+  const records = await atFetch(TBL_CASTING);
+  const total   = records.length;
+  const badge   = document.getElementById('cast-badge');
+  const liveEl  = document.getElementById('cast-live');
+  const totalEl = document.getElementById('cast-total');
+  const pendEl  = document.getElementById('cast-pending');
+  const listEl  = document.getElementById('cast-list');
+  const ovEl    = document.getElementById('ov-cast');
+
+  if (badge)   badge.textContent   = total > 0 ? total : '✓';
+  if (totalEl) totalEl.textContent = total;
+  if (pendEl)  pendEl.textContent  = total;
+  if (ovEl)    ovEl.textContent    = total;
+  if (liveEl)  liveEl.innerHTML    = '<span style="font-family:\'Bebas Neue\',sans-serif;font-size:24px;color:#C4507A;">' + total + '</span> submissions · ' + total + ' pending review';
+
+  if (listEl) {
+    if (total === 0) {
+      listEl.innerHTML = '<div style="font-size:10px;color:rgba(240,232,240,0.28);padding:10px 0;">No submissions yet. Keep posting the casting carousel.</div>';
+    } else {
+      listEl.innerHTML = records.slice(0,6).map(function(r) {
+        var f    = r.fields;
+        var name = f['Name'] || f['Full Name'] || f['Applicant'] || 'New Submission';
+        var role = f['Role'] || f['Character'] || f['Applying For'] || '—';
+        return '<div class="drow"><div class="dot d-r"></div><div class="drow-main"><div class="drow-label">' + name + '</div><div class="drow-sub">Role: ' + role + '</div></div><span class="tag t-g">Review</span></div>';
+      }).join('');
+    }
+  }
+}
+
+async function loadInquiries() {
+  const records = await atFetch(TBL_INQUIRIES);
+  const liveEl  = document.getElementById('inq-live');
+  if (liveEl) liveEl.innerHTML = '<span style="font-family:\'Bebas Neue\',sans-serif;font-size:24px;color:#D4A843;">' + records.length + '</span> inquiries total';
+}
+
+// Load on open
+loadCasting();
+loadInquiries();
+
+// ── JARVIS RESPONSES ────────────────────────────────────────────
+var JR = {
+  'briefing|morning|good morning|daily|priorities|today': 'Good morning, Zaria. BLEUSKM OS daily briefing.\n\n📌 POST CAROUSELS — casting + studio intro to IG, TikTok, Facebook. Today.\n📌 REVIEW CASTING — check new submissions in Casting tab.\n📌 CLIENT INQUIRY — reply to flagged email in Brevo.\n🏆 BLACKSTAR — 47 days to early bird. Research blackstarfest.org now.\n📲 SLATE NIGHT — video recorded, needs editing. Post by Sunday.\n\nSchool: Thursday = Sunday assignments + initial peer responses.\nWhat do you need first?',
+  'night|evening|wind down|wrap': 'Good evening, Zaria. Wind-down summary.\n\nWhatever you shipped today moved the needle.\n\nCarry to tomorrow:\n📌 Anything unfinished from today\n📌 Casting submissions not reviewed\n📌 Emails not replied to\n\nRest well. Magnesium at 10:30. ✿',
+  'caption|instagram|tiktok|social post|write a post': 'CASTING CALL CAPTION:\n\nHOOK: "Some power can\'t be studied. It can only be inherited. 🃏"\n\nBleuskm Studios is now casting for The Final Hand — an Afro-surrealist psychological thriller rooted in Black American folklore. Written and directed by Zaria Lashae.\n\nSwipe to meet the characters. Apply at link in bio.\n📍 DFW / North Texas · 2026\n\n#CastingCall #ShortFilm #DFWActors #AfroSurrealism #BlackFilmmaker #TheFinalHand #BleuskmStudios #IndieFilm #FilmTok #BlackCinema',
+  'cast email|acknowledgment|callback': 'Subject: Thank You for Submitting — The Final Hand\n\nHi [Name],\n\nThank you so much for your interest in The Final Hand. I genuinely appreciate you taking the time.\n\nWe are reviewing all submissions and will be in touch within 2 weeks.\n\nStay connected at @Bleuskm.studios for updates on the film.\n\nWarm regards,\nZaria Lashae\nWriter and Director | Bleuskm Studios\nbleuskm.com',
+  'higgsfield|ai video|video prompt': 'HIGGSFIELD PROMPT — THE FINAL HAND:\n\nCinematic close-up of two hands exchanging an ancient glowing coin over a dim card table, amber and shadow noir lighting, slow motion, 16mm film grain texture, warm candlelight practical lighting, smoke in background, deep blacks and gold tones, atmospheric haze, ultra-detailed, slow push-in camera movement, Afro-surrealist folklore aesthetic, desaturated except for the glowing amber coin\n\nPaste into Higgsfield → select Cinematic → generate.',
+  'shot list|coverage|shots|scene': 'SHOT LIST — OPENING LOUNGE SCENE:\n\n01 · WIDE (24mm) — Ext. night. Amber neon through frosted glass. Smoke. Jazz.\n02 · MEDIUM (50mm) — The Gambler enters. Adjusts. Eyes land on something.\n03 · POV (85mm) — High John. Utterly still. Room bends around him.\n04 · CLOSE-UP (85mm) — His hands. Not touching the deck. The cards know.\n05 · INSERT (100mm) — The chip slides. Stops in front of The Gambler.\n06 · REACTION (50mm) — He looks up. The Stranger is already gone.\n07 · SLOW PUSH (35mm) — He walks toward the table. Camera follows at a reverent distance.',
+  'crew|dp|pre-production pack': 'PRE-PRODUCTION PACK — DP\nThe Final Hand · Bleuskm Studios\n\nVISUAL: Camera witnesses, never participates. Influenced by The Card Counter, Sinners, early Jenkins.\n\nPALETTE: Warm ambers, deep greens, shadow-heavy blacks. Skin tones luminous and honored.\n\nLENSING: 24mm (atmosphere), 50mm (witness), 85mm (truth), 100mm (ritual detail).\n\nKEY MOMENTS:\n— The Knock: most important 10 seconds in the film\n— The Game: close-up hands only, no wide coverage\n— High John reveal: the room changes when he appears\n\nNext: Virtual lookbook review with Zaria.',
+  'client pitch|cold email|outreach': 'Subject: Stories Worth Telling — Bleuskm Studios\n\nHi [Name],\n\nI\'m Zaria Lashae, founder of Bleuskm Studios — a film and visual production house in DFW creating brand videos, music videos, and visual content for businesses with a story worth telling.\n\nI\'d love to chat — even 15 minutes.\n\nbleuskm.com\n\nZaria Lashae · studio@bleuskm.com',
+  'slate night|episode': 'SLATE NIGHT — Episode Ideas:\n\n1. "We\'re really doing this now" — the moment it felt real\n2. "Fear of success is real and nobody talks about it"\n3. "Being multi-passionate in a world that wants you to pick one thing"\n4. "Inner child check-in — what did little you think you\'d be doing?"\n5. "Creative burnout doesn\'t look like you think"\n\nVibe: 🕯 late at night. No filter. One take energy.',
+  'manifesto|film breakdown|black cinema': 'MANIFESTO IN MOTION — Episode Concepts:\n\n1. "The Hidden Folklore Inside Sinners"\n2. "High John the Conqueror: The Trickster History Erased"\n3. "Why Black Surrealism is the Most Political Genre in Cinema"\n4. "If Julie Dash Directed Get Out"\n5. "The Overlooked Geniuses Behind Your Favorite Black Films"',
+  'creative room|bts|artist day': 'THE CREATIVE ROOM — Ideas:\n\nDirector\'s Notes:\n— "The day I wrote the final scene of The Final Hand"\n— "Come to a location scout with me"\n— "What nobody tells you about casting your own film"\n\nArtist Days:\n— "Museum day alone — what changed my next script"\n— "Vinyl shopping + what I\'m listening to while writing"\n— "Late night café writing session"\n— "I watched [film] alone and here\'s my immediate take"',
+  'grant|funding|money': 'FILM GRANTS — BLACK + EMERGING FILMMAKERS:\n\n— Sundance Institute Short Film Fund\n— Black Public Media Open Call\n— MACRO Fund (Black film dev)\n— Firelight Media Documentary Lab\n— Jerome Foundation\n— Princess Grace Foundation\n— IDA Enterprise Documentary Fund\n\nBEST FIT FOR THE FINAL HAND:\nBlack Public Media + Sundance Institute.\n\nWant a grant application draft? Tell me which one.',
+  'voice|hey jarvis|wake word|speak': 'VOICE JARVIS SETUP:\n\n1. git clone https://github.com/ethanplusai/jarvis\n2. cd jarvis\n3. pip install -r requirements.txt\n4. Create .env → ANTHROPIC_API_KEY=your_key\n5. python main.py\n\nSay "Hey JARVIS" → wakes up → you speak → responds in voice.\n\nTell me when set up and I\'ll write your full custom system prompt with all Bleuskm context baked in.',
+  'twilio|text|daily text|morning text': 'DAILY TEXT SETUP:\n\n1. Sign up at twilio.com (free trial) → get a phone number\n2. Sign up at zapier.com (free)\n3. Zap: Schedule → 8:15 AM → Claude API → Twilio SMS\n4. Repeat for 7PM night summary\n\nSend me your Twilio number and I\'ll write both prompts for you to paste directly into Zapier.',
+  'github|deploy|website|push': 'UPDATING YOUR DASHBOARD:\n\n1. Edit dashboard/index.html in your repo\n2. Commit and push:\n   git add dashboard/index.html\n   git commit -m "update dashboard"\n   git push origin main\n3. Netlify auto-deploys in ~30 seconds\n4. Refresh bleuskm.com/dashboard — done.\n\nFor JARVIS to edit your website files directly, I can build a GitHub Actions workflow. Tell me when you\'re ready.',
+  'content plan|2 week|calendar': '2-WEEK CONTENT PLAN:\n\nWEEK 1:\nMon: The Final Hand casting carousel (IG/TT/FB)\nWed: Slate Night Ep 1 — post your recorded video\nFri: Creative Room: Building BLEUSKM\n\nWEEK 2:\nMon: Manifesto in Motion — Black Folklore in Film\nWed: Slate Night Ep 2 — fear of success\nFri: Creative Room: Artist Day — café or museum',
+  'default': 'I\'m here, Zaria. Tell me what you need.\n\nI can: draft emails · write captions · build shot lists · generate crew packages · plan your week · expand film ideas · write Higgsfield prompts · research grants · script episode outlines · set up automations · or just think something through.\n\nWhat\'s on your mind?'
+};
+
+function getResp(msg) {
+  var lower = msg.toLowerCase();
+  for (var keys in JR) {
+    if (keys === 'default') continue;
+    var arr = keys.split('|');
+    for (var i = 0; i < arr.length; i++) {
+      if (lower.indexOf(arr[i]) !== -1) return JR[keys];
+    }
+  }
+  return JR['default'];
+}
+
+function sendJ(override) {
+  var input  = document.getElementById('jinput');
+  var log    = document.getElementById('jlog');
+  var msg    = (override !== undefined) ? override : input.value.trim();
+  if (!msg) return;
+  if (!override) input.value = '';
+
+  var ul = document.createElement('div');
+  ul.className = 'j-line';
+  ul.innerHTML = '<span class="j-from you">YOU</span><span class="j-msg you-msg">' + msg + '</span>';
+  log.appendChild(ul);
+  log.scrollTop = log.scrollHeight;
+
+  var resp = getResp(msg);
+  var lines = resp.split('\n').filter(function(l){ return l.trim(); });
+
+  setTimeout(function() {
+    lines.forEach(function(line, i) {
+      setTimeout(function() {
+        var jl = document.createElement('div');
+        jl.className = 'j-line';
+        jl.innerHTML = '<span class="j-from">' + (i===0?'JARVIS':'SYS') + '</span><span class="j-msg ' + (i===0?'hi':'') + '">' + line + '</span>';
+        log.appendChild(jl);
+        log.scrollTop = log.scrollHeight;
+      }, i * 65);
+    });
+  }, 280);
+}
+
+document.getElementById('jinput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') sendJ();
+});
+
+// ── BRAIN DUMP ──────────────────────────────────────────────────
+function saveDump() {
+  var input = document.getElementById('dump-input');
+  var vault = document.getElementById('dump-vault');
+  var tag   = document.getElementById('dump-tag');
+  var text  = input.value.trim();
+  if (!text) return;
+
+  var now  = new Date();
+  var time = now.toLocaleDateString('en-US',{month:'short',day:'numeric'}) + ' · ' +
+    now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true});
+
+  var card = document.createElement('div');
+  card.className = 'idea-card';
+  card.innerHTML = '<div class="idea-text">' + text + '</div><div class="idea-meta">' + time + ' · ' + (tag ? tag.value : 'Unsorted') + '</div>';
+  vault.insertBefore(card, vault.firstChild);
+  input.value = '';
+}
+</script>
+</body>
+</html>
