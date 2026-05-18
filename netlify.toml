@@ -1,6 +1,144 @@
 [build]
   functions = "netlify/functions"
 
+[[redirects]]
+  from = "/my-productions.html"
+  to = "/my-productions"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/about.html"
+  to = "/about"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/casting.html"
+  to = "/casting"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/contact.html"
+  to = "/contact"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/crew-application.html"
+  to = "/crew-application"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/visuals.html"
+  to = "/visuals"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/echos.html"
+  to = "/echos"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/final-hand.html"
+  to = "/final-hand"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/overstood.html"
+  to = "/overstood"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/book-of-beginnings.html"
+  to = "/book-of-beginnings"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/liminal-county.html"
+  to = "/liminal-county"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/blood-and-dominion.html"
+  to = "/blood-and-dominion"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/love-me-like-this.html"
+  to = "/love-me-like-this"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/15th-hour.html"
+  to = "/15th-hour"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/cart.html"
+  to = "/cart"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/product.html"
+  to = "/product"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/final-hand-casting.html"
+  to = "/final-hand-casting"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/narrative-slate-2026.html"
+  to = "/narrative-slate-2026"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/pro-15th-hour-update.html"
+  to = "/pro-15th-hour-update"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/the-15th-hour-archive.html"
+  to = "/the-15th-hour-archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/privacy.html"
+  to = "/privacy"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/terms.html"
+  to = "/terms"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/product/"
+  to = "/product.html"
+  status = 200
+  force = true
+
 [[headers]]
   for = "/.netlify/functions/*"
   [headers.values]
