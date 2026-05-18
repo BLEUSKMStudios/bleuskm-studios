@@ -212,7 +212,6 @@ main{flex:1}
 
 
 
-var BREVO_KEY = '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';
 async function addToBrevo(listId, email, name, attributes) {
   try {
     if (!attributes) attributes = Object.create(null);
@@ -223,13 +222,10 @@ async function addToBrevo(listId, email, name, attributes) {
       listIds: [listId],
       updateEnabled: true
     });
-    var r = await fetch('https://api.brevo.com/v3/contacts', {
+    var r = await fetch('/.netlify/functions/brevo-proxy', {
       method: 'POST',
-      headers: {
-        'api-key': BREVO_KEY,
-        'Content-Type': 'application/json'
-      },
-      body: payload
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ endpoint: 'https://api.brevo.com/v3/contacts', payload: JSON.parse(payload) })
     });
     var j = await r.json();
     console.log('Brevo:', j);
@@ -268,7 +264,6 @@ var TBL_INQUIRIES  = 'tblwfk7tmoFhGIia5';
 var TBL_CREW       = 'tblCR7Cg3WugORlwO';
 var TBL_NOTIFY     = 'tblcSHay5dfYcbDKC';    // ← you will replace this after creating the table
 
-var BREVO_KEY = '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';
 
 // ── AIRTABLE ──
 async function sendToAirtable(tableId, fields) {
@@ -553,7 +548,6 @@ var TBL_NEWSLETTER = 'tblSMb3y7vrvjbONx';
 var TBL_INQUIRIES  = 'tblwfk7tmoFhGIia5';
 var TBL_CREW       = 'tblCR7Cg3WugORlwO';
 var TBL_NOTIFY     = 'tblcSHay5dfYcbDKC';
-var BREVO_KEY = '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';
 
 async function sendToAirtable(tableId, fields) {
   try {
