@@ -405,7 +405,7 @@ async function loadShop() {
 
       const tile = document.createElement('a');
       tile.className = 'product-tile';
-      tile.href = `product/?handle=${node.handle}`;
+      tile.href = `/product/?handle=${node.handle}`;
       tile.innerHTML = `
         <div class="tile-img-wrap">
           <img src="${imgUrl}" alt="${imgAlt}" loading="lazy">
