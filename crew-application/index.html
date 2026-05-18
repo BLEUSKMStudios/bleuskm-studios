@@ -1270,6 +1270,11 @@ async function submitCrewForm(e) {
   if (ltInterests)  fields['Collective Interests']   = ltInterests;
   try {
     await sendToAirtable(TBL_CREW, fields);
+    var nlCheck = document.getElementById('crew-newsletter');
+    if (nlCheck && nlCheck.checked) {
+      await sendToAirtable(TBL_NEWSLETTER, { 'Name': name, 'Email': email });
+      await sendEmail(3, email, name, { FIRSTNAME: name });
+    }
     await sendToBrevo(6, email, name, { CREW_ROLE: role });
     await sendEmail(2, email, name, { FIRSTNAME: name, ROLE: role });
     document.getElementById('crewForm').style.display = 'none';
