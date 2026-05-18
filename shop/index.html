@@ -6,8 +6,8 @@
 <title>Shop | BLEUSKM Studios</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;800;900&family=Red+Hat+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/styles.css">
-<link rel="icon" type="image/png" href="/images/bleuskm-logo.png">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="icon" type="image/png" href="images/bleuskm-logo.png">
 <style>
 
 /* ── SHOP GRID PAGE ── */
@@ -263,19 +263,19 @@ body {
 <!-- NAV -->
 <nav class="navbar navbar-expand-md navbar-dark fixed-top">
   <div class="container-fluid">
-    <a class="navbar-brand brand-logo" href="/" style="display:flex;align-items:center;gap:10px"><img src="/images/bleuskm-logo.png" alt="BLEUSKM Logo" style="height:32px;width:auto;"><span style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37">BLEUSKM Studios</span></a>
+    <a class="navbar-brand brand-logo" href="index.html" style="display:flex;align-items:center;gap:10px"><img src="images/bleuskm-logo.png" alt="BLEUSKM Logo" style="height:32px;width:auto;"><span style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37">BLEUSKM Studios</span></a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="mainNav">
       <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link" href="/about/">About</a></li>
-        <li class="nav-item"><a class="nav-link" href="/my-productions/">Productions</a></li>
-        <li class="nav-item"><a class="nav-link" href="/visuals/">Visuals</a></li>
-        <li class="nav-item"><a class="nav-link" href="/echos/">Echos</a></li>
-        <li class="nav-item"><a class="nav-link" href="/casting/">Casting</a></li>
-        <li class="nav-item"><a class="nav-link" href="/shop/" class="nav-link active">Shop</a></li>
-        <li class="nav-item"><a class="nav-link" href="/contact/">Contact</a></li>
+        <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="my-productions.html">Productions</a></li>
+        <li class="nav-item"><a class="nav-link" href="visuals.html">Visuals</a></li>
+        <li class="nav-item"><a class="nav-link" href="echos.html">Echos</a></li>
+        <li class="nav-item"><a class="nav-link" href="casting.html">Casting</a></li>
+        <li class="nav-item"><a class="nav-link" href="bleuskm shop.html" class="nav-link active">Shop</a></li>
+        <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
       </ul>
     </div>
   </div>
@@ -302,7 +302,7 @@ body {
       <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:rgba(234,223,207,0.5)">Subtotal</span>
       <span id="cartPopupTotal" style="color:#DAAF37;font-family:'Red Hat Display',sans-serif;font-weight:600"></span>
     </div>
-    <a href="/cart/" style="display:block;background:#DAAF37;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;padding:14px;text-align:center;text-decoration:none">View Cart &amp; Checkout</a>
+    <a href="cart.html" style="display:block;background:#DAAF37;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;padding:14px;text-align:center;text-decoration:none">View Cart &amp; Checkout</a>
   </div>
 </div>
 
@@ -405,7 +405,7 @@ async function loadShop() {
 
       const tile = document.createElement('a');
       tile.className = 'product-tile';
-      tile.href = `product.html?handle=${node.handle}`;
+      tile.href = `product/?handle=${node.handle}`;
       tile.innerHTML = `
         <div class="tile-img-wrap">
           <img src="${imgUrl}" alt="${imgAlt}" loading="lazy">
@@ -440,42 +440,42 @@ loadShop();
 <footer class="site-footer-full">
   <div class="footer-grid">
     <div class="footer-brand">
-      <img src="/images/bleuskm-logo.png" alt="BLEUSKM Logo" style="height:32px;width:auto;">
+      <img src="images/bleuskm-logo.png" alt="BLEUSKM Logo" style="height:32px;width:auto;">
       <p>A film and visual production house building worlds grounded in Black imagination, history, and cultural memory.</p>
     </div>
 
     <div class="footer-col">
       <h4>Navigate</h4>
-      <a href="/">Home</a>
-      <a href="/about/">About</a>
-      <a href="/my-productions/">Productions</a>
-      <a href="/visuals/">Visuals</a>
-      <a href="/echos/">Echos</a>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="my-productions.html">Productions</a>
+      <a href="visuals.html">Visuals</a>
+      <a href="echos.html">Echos</a>
     </div>
 
     <div class="footer-col">
       <h4>Work With Us</h4>
-      <a href="/contact/">Project Inquiry</a>
-      <a href="/casting/">Apply to Casting Calls</a>
-      <a href="/crew-application/">Join the Crew</a>
-      <a href="/shop/">The Vault — Shop</a>
+      <a href="contact.html">Project Inquiry</a>
+      <a href="casting.html">Apply to Casting Calls</a>
+      <a href="crew-application.html">Join the Crew</a>
+      <a href="bleuskm shop.html">The Vault — Shop</a>
     </div>
 
     <div class="footer-col">
       <h4>Legal</h4>
-      <a href="/privacy/">Privacy Policy</a>
-      <a href="/terms/">Terms of Use</a>
-      <a href="/contact/">Contact Us</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms of Use</a>
+      <a href="contact.html">Contact Us</a>
     </div>
   </div>
 
   <div class="footer-bottom">
     <p>&copy; 2026 BLEUSKM Studios. All rights reserved.</p>
     <div>
-      <a href="/privacy/">Privacy</a>
-      <a href="/terms/">Terms</a>
-      <a href="/casting/">Casting</a>
-      <a href="/contact/">Contact</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="casting.html">Casting</a>
+      <a href="contact.html">Contact</a>
     </div>
   </div>
 </footer>
@@ -544,7 +544,7 @@ document.addEventListener('click', function(e) {
       <a href="mailto:studio@bleuskm.com" style="color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg></a>
     </div>
     <p style="font-size:0.78rem;color:rgba(234,223,207,0.4);line-height:1.7;margin:0">Follow us for casting announcements, production updates, and studio news.</p>
-    <a href="/contact/" style="display:inline-block;margin-top:20px;background:#DAAF37;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.68rem;letter-spacing:3px;text-transform:uppercase;padding:12px 28px;text-decoration:none">Project Inquiry &rarr;</a>
+    <a href="contact.html" style="display:inline-block;margin-top:20px;background:#DAAF37;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.68rem;letter-spacing:3px;text-transform:uppercase;padding:12px 28px;text-decoration:none">Project Inquiry &rarr;</a>
   </div>
 </div>
 
