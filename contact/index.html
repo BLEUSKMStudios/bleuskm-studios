@@ -306,13 +306,21 @@ async function sendToBrevo(listId, email, name, extraAttrs) {
 
 async function sendEmail(templateId, email, name, params) {
   try {
+    var senderMap = {
+      1: { email: 'casting@bleuskm.com', name: 'BLEUSKM Studios Casting' },
+      2: { email: 'crew@bleuskm.com', name: 'BLEUSKM Studios Crew' },
+      3: { email: 'newsletter@bleuskm.com', name: 'BLEUSKM Studios' },
+      4: { email: 'films@bleuskm.com', name: 'BLEUSKM Studios Films' },
+      5: { email: 'clients@bleuskm.com', name: 'BLEUSKM Studios' }
+    };
+    var sender = senderMap[templateId] || { email: 'clients@bleuskm.com', name: 'BLEUSKM Studios' };
     var r = await fetch('/.netlify/functions/brevo-proxy', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         endpoint: 'https://api.brevo.com/v3/smtp/email',
         payload: {
-          sender: { email: 'clients@bleuskm.com', name: 'BLEUSKM Studios' },
+          sender: sender,
           to: [{ email: email, name: name }],
           templateId: templateId,
           params: params || {}
