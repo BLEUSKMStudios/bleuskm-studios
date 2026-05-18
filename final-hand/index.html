@@ -4,35 +4,142 @@
   <base href="/">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Final Hand | BLEUSKM Studios</title>
+<title>Echos | BLEUSKM Studios</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;800;900&family=Red+Hat+Display:wght@300;400;500;600;700&family=Kalnia:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="/css/styles.css">
 <link rel="icon" type="image/png" sizes="32x32" href="images/bleuskm-logo.png">
 <style>
-*,*::before,*::after{box-sizing:border-box}
-body{background:#080808;color:#EADFCF;margin:0;padding-top:70px}
-.poster-hero{position:relative;width:100%;height:92vh;overflow:hidden}
-.poster-hero img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;filter:brightness(0.75)}
-.poster-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,rgba(8,8,8,0.5) 70%,#080808 100%)}
-.poster-status{position:absolute;top:36px;left:50px;z-index:10;font-family:'League Spartan',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:#DAAF37;border:1px solid rgba(218,175,55,0.5);padding:6px 14px;background:rgba(0,0,0,0.4);backdrop-filter:blur(6px)}
-.poster-back{position:absolute;top:36px;right:50px;z-index:10;font-family:'League Spartan',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(234,223,207,0.6);text-decoration:none;transition:color 0.2s}
-.poster-back:hover{color:#DAAF37}
-.poster-board{max-width:1100px;margin:0 auto;padding:0 50px 100px}
-.poster-title-row{display:flex;align-items:baseline;gap:24px;margin-bottom:6px;flex-wrap:wrap}
-.poster-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(3rem,7vw,6rem);letter-spacing:4px;text-transform:uppercase;color:#EADFCF;line-height:0.95;margin:0}
-.poster-year{font-family:'Red Hat Display',sans-serif;font-weight:300;font-size:1.4rem;color:rgba(234,223,207,0.4);white-space:nowrap}
-.poster-meta-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid rgba(218,175,55,0.15);border-left:1px solid rgba(218,175,55,0.15);margin-bottom:48px}
-.meta-cell{padding:18px 22px;border-right:1px solid rgba(218,175,55,0.15);border-bottom:1px solid rgba(218,175,55,0.15)}
-.meta-label{display:block;font-family:'Red Hat Display',sans-serif;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:rgba(218,175,55,0.5);margin-bottom:6px}
-.meta-value{display:block;font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.9rem;letter-spacing:1px;text-transform:uppercase;color:#EADFCF}
-.poster-logline{font-family:'Kalnia',serif;font-weight:400;font-size:clamp(1.1rem,2vw,1.4rem);line-height:1.65;color:rgba(234,223,207,0.85);margin-bottom:52px;max-width:820px;font-style:italic}
-.poster-details-row{display:grid;grid-template-columns:1fr 1fr;gap:60px;border-top:1px solid rgba(218,175,55,0.12);padding-top:40px}
-.detail-col-label{font-family:'Red Hat Display',sans-serif;font-size:0.65rem;letter-spacing:3px;text-transform:uppercase;color:rgba(218,175,55,0.5);margin-bottom:20px;display:block}
-.detail-tags{display:flex;flex-wrap:wrap;gap:10px}
-.detail-tag{font-family:'League Spartan',sans-serif;font-weight:600;font-size:0.75rem;letter-spacing:1.5px;text-transform:uppercase;color:#EADFCF;border:1px solid rgba(218,175,55,0.25);padding:7px 14px}
-.site-footer{border-top:1px solid rgba(218,175,55,0.1);padding:24px 50px;font-size:0.8rem;color:rgba(218,175,55,0.4);background:#080808;margin-top:0}
-@media(max-width:768px){.poster-hero{height:60vh}.poster-status{top:20px;left:20px}.poster-back{top:20px;right:20px}.poster-board{padding:0 20px 60px}.poster-meta-grid{grid-template-columns:repeat(2,1fr)}.poster-details-row{grid-template-columns:1fr;gap:30px}}
+html, body { height: 100%; margin: 0; }
+body {
+  display: flex; flex-direction: column;
+  background: linear-gradient(to right, #950606, #B24C1E, #DAAF37);
+  background-attachment: fixed;
+  color: #EADFCF; font-family: 'Red Hat Display', sans-serif;
+}
+main { flex: 1; }
+
+.echos-page-header { padding: 70px 60px 40px; border-bottom: 1px solid rgba(0,0,0,0.15); }
+.echos-page-header h1 { font-family: 'League Spartan',sans-serif; font-weight:900; font-size:clamp(2rem,5vw,3.2rem); letter-spacing:6px; text-transform:uppercase; color:#0C0C0C; margin-bottom:6px; }
+.echos-page-header p { font-size:0.8rem; letter-spacing:2px; text-transform:uppercase; color:rgba(0,0,0,0.45); }
+
+.echos-filter {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 0 60px;
+  background: rgba(0,0,0,0.2);
+  border-bottom: 1px solid rgba(0,0,0,0.15);
+  overflow-x: hidden;
+}
+.echos-filter {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.echos-filter::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+.echos-filter {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.echos-filter::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+@media (max-width: 768px) {
+  .echos-filter {
+    overflow-x: auto;
+  }
+}
+.filter-btn { background:none; border:none; border-bottom:3px solid transparent; color:rgba(234,223,207,0.55); font-family:'League Spartan',sans-serif; font-weight:600; font-size:0.72rem; letter-spacing:2.5px; text-transform:uppercase; cursor:pointer; padding:18px 28px; transition:color 0.2s,border-color 0.2s; white-space:nowrap; }
+.filter-btn:hover { color:#EADFCF; }
+.filter-btn.active { color:#DAAF37; border-bottom:3px solid #DAAF37; }
+
+.echos-body { display:grid; grid-template-columns:1fr 320px; gap:0; max-width:1400px; margin:0 auto; padding:50px 60px 80px; width:100%; box-sizing:border-box; }
+
+.echo-item { border-bottom:1px solid rgba(0,0,0,0.15); overflow:hidden; }
+.echo-header { background:none; border:none; width:100%; text-align:left; cursor:pointer; padding:28px 0; display:block; transition:opacity 0.2s; }
+.echo-header:hover { opacity:0.85; }
+.echo-header-inner { display:flex; align-items:flex-start; gap:20px; }
+.echo-type-badge { font-size:0.6rem; letter-spacing:2.5px; text-transform:uppercase; font-family:'League Spartan',sans-serif; font-weight:700; padding:4px 10px; border-radius:2px; white-space:nowrap; margin-top:4px; flex-shrink:0; }
+.badge-announcement { background:rgba(0,0,0,0.5); color:#DAAF37; border:1px solid rgba(218,175,55,0.3); }
+.badge-casting-open { background:#DAAF37; color:#000; }
+.badge-casting-closed { background:rgba(0,0,0,0.4); color:rgba(234,223,207,0.5); border:1px solid rgba(255,255,255,0.1); }
+.badge-casting-postponed { background:rgba(80,40,0,0.7); color:rgba(218,175,55,0.8); border:1px solid rgba(218,175,55,0.3); }
+.badge-casting-postponed { background:rgba(80,40,0,0.7); color:rgba(218,175,55,0.8); border:1px solid rgba(218,175,55,0.3); }
+.badge-past { background:rgba(0,0,0,0.3); color:rgba(234,223,207,0.4); }
+.echo-header-text { flex:1; }
+.echo-category-label { font-size:0.6rem; letter-spacing:2px; text-transform:uppercase; color:rgba(0,0,0,0.4); margin-bottom:6px; display:block; }
+.echo-header h3 { font-family:'League Spartan',sans-serif; font-weight:800; font-size:1.15rem; color:#0C0C0C; margin-bottom:5px; line-height:1.2; }
+.echo-date { font-size:0.75rem; color:rgba(0,0,0,0.4); }
+.echo-chevron { color:rgba(0,0,0,0.3); font-size:0.8rem; margin-top:6px; flex-shrink:0; transition:transform 0.3s ease; display:inline-block; }
+.echo-item.open .echo-chevron { transform:rotate(180deg); }
+.echo-content { max-height:0; overflow:hidden; transition:max-height 0.4s ease; }
+.echo-content-inner { padding:0 0 32px 0; border-left:2px solid rgba(218,175,55,0.4); padding-left:24px; margin-left:4px; }
+.echo-content p { font-size:0.9rem; line-height:1.7; color:rgba(0,0,0,0.65); margin-bottom:16px; max-width:680px; }
+.echo-read-more { display:inline-flex; align-items:center; gap:8px; font-family:'League Spartan',sans-serif; font-weight:700; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; color:#0C0C0C; text-decoration:none; border-bottom:1px solid rgba(0,0,0,0.3); padding-bottom:2px; transition:color 0.2s,border-color 0.2s; }
+.echo-read-more:hover { color:#950606; border-color:#950606; }
+
+.echos-sidebar { padding-left:50px; border-left:1px solid rgba(0,0,0,0.12); }
+.sidebar-block { margin-bottom:48px; }
+.sidebar-label { font-family:'League Spartan',sans-serif; font-size:0.6rem; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:rgba(0,0,0,0.35); margin-bottom:20px; display:block; padding-bottom:10px; border-bottom:1px solid rgba(0,0,0,0.1); }
+.sidebar-newsletter input { width:100%; background:rgba(0,0,0,0.15); border:1px solid rgba(0,0,0,0.2); color:#0C0C0C; padding:10px 14px; font-family:'Red Hat Display',sans-serif; font-size:0.85rem; margin-bottom:10px; box-sizing:border-box; }
+.sidebar-newsletter input::placeholder { color:rgba(0,0,0,0.35); }
+.sidebar-newsletter input:focus { outline:none; border-color:rgba(0,0,0,0.5); }
+.sidebar-newsletter button { width:100%; background:#0C0C0C; color:#DAAF37; border:none; font-family:'League Spartan',sans-serif; font-weight:800; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; padding:12px; cursor:pointer; transition:opacity 0.2s; }
+.sidebar-newsletter button:hover { opacity:0.8; }
+.sidebar-nl-success { display:none; font-size:0.8rem; color:#0C0C0C; padding:12px; background:rgba(0,0,0,0.1); text-align:center; letter-spacing:1px; }
+.sidebar-link { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid rgba(0,0,0,0.08); text-decoration:none; }
+.sidebar-link-title { font-family:'League Spartan',sans-serif; font-weight:700; font-size:0.8rem; letter-spacing:1px; text-transform:uppercase; color:#0C0C0C; }
+.sidebar-link-tag { font-size:0.6rem; letter-spacing:1.5px; text-transform:uppercase; color:rgba(0,0,0,0.35); }
+.sidebar-link:hover .sidebar-link-title { color:#950606; }
+
+.site-footer-full { background:#040404; border-top:1px solid rgba(218,175,55,0.1); padding:50px 60px 30px; }
+.footer-grid { display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:40px; margin-bottom:40px; }
+.footer-brand img { height:32px; margin-bottom:14px; }
+.footer-brand p { font-size:0.78rem; color:rgba(234,223,207,0.35); line-height:1.6; max-width:220px; }
+.footer-col h4 { font-family:'League Spartan',sans-serif; font-weight:700; font-size:0.65rem; letter-spacing:3px; text-transform:uppercase; color:rgba(218,175,55,0.5); margin-bottom:16px; }
+.footer-col a { display:block; font-size:0.8rem; color:rgba(234,223,207,0.45); text-decoration:none; margin-bottom:10px; transition:color 0.2s; }
+.footer-col a:hover { color:#DAAF37; }
+.footer-bottom { border-top:1px solid rgba(218,175,55,0.08); padding-top:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+.footer-bottom p { font-size:0.72rem; color:rgba(234,223,207,0.2); }
+.footer-bottom a { font-size:0.72rem; color:rgba(234,223,207,0.2); text-decoration:none; margin-left:20px; transition:color 0.2s; }
+.footer-bottom a:hover { color:rgba(218,175,55,0.5); }
+
+@media (max-width:900px) {
+  .echos-body { grid-template-columns:1fr; padding:30px 20px 60px; }
+  .echos-sidebar { padding-left:0; border-left:none; border-top:1px solid rgba(0,0,0,0.12); padding-top:40px; margin-top:20px; }
+  .echos-page-header,.echos-filter { padding-left:20px; padding-right:20px; }
+  .footer-grid { grid-template-columns:1fr 1fr; }
+}
+/* ── BLEUSKM GOLD TEXT OVERRIDE ── */
+
+.echos-page-header h1 {
+  color: #DAAF37 !important;
+}
+
+.echos-page-header p {
+  color: rgba(218,175,55,0.8) !important;
+}
+
+/* small labels */
+.echo-category-label,
+.echo-date,
+.sidebar-label {
+  color: rgba(218,175,55,0.7) !important;
+}
+
+/* body preview text */
+.echo-content p {
+  color: rgba(234,223,207,0.9) !important;
+}
+
+/* sidebar text */
+.sidebar-block p {
+  color: rgba(234,223,207,0.8) !important;
+}
 
 /* NAV */
 .navbar{background:rgba(8,8,8,0.92)!important;backdrop-filter:blur(12px);border-bottom:1px solid rgba(218,175,55,0.08)}
@@ -44,95 +151,185 @@ body{background:#080808;color:#EADFCF;margin:0;padding-top:70px}
     a { color: inherit; text-decoration: none; }
     a:hover { color: #DAAF37; text-decoration: none; }
   </style>
-  <style>
-    a, a:link, a:visited, a:active, a:hover { text-decoration: none !important; }
-  </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top">
   <div class="container-fluid">
-    <a class="navbar-brand brand-logo" href="index.html" style="display:flex;align-items:center;gap:10px"><img src="images/bleuskm-logo.png" alt="BLEUSKM Logo" style="height:32px;width:auto;"><span style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37">BLEUSKM Studios</span></a>
+    <a class="navbar-brand brand-logo" href="/" style="display:flex;align-items:center;gap:10px"><img src="/images/bleuskm-logo.png" alt="BLEUSKM Logo" style="height:32px;width:auto;"><span style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37">BLEUSKM Studios</span></a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"><span class="navbar-toggler-icon"></span></button>
     <div class="collapse navbar-collapse" id="mainNav">
       <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
-        <li class="nav-item"><a class="nav-link" href="my-productions.html">Productions</a></li>
-        <li class="nav-item"><a class="nav-link" href="visuals.html">Visuals</a></li>
-        <li class="nav-item"><a class="nav-link" href="echos.html">Echos</a></li>
-        <li class="nav-item"><a class="nav-link" href="casting.html">Casting</a></li>
-        <li class="nav-item"><a class="nav-link" href="bleuskm shop.html">Shop</a></li>
-        <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+        <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="/my-productions">Productions</a></li>
+        <li class="nav-item"><a class="nav-link" href="/visuals">Visuals</a></li>
+        <li class="nav-item"><a class="nav-link" href="/echos" class="nav-link active">Echos</a></li>
+        <li class="nav-item"><a class="nav-link" href="/casting">Casting</a></li>
+        <li class="nav-item"><a class="nav-link" href="/shop">Shop</a></li>
+        <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
       </ul>
     </div>
   </div>
 </nav>
-<div class="poster-hero">
-  <img src="images/the_final_hand_poster.png" alt="The Final Hand" style="object-position:center center">
-  <span class="poster-status">Pre-Production · 2026</span>
-  <a href="my-productions.html" class="poster-back">← Productions</a>
-</div>
-<div class="poster-board">
-  <p style="font-family:'Red Hat Display',sans-serif;font-size:0.65rem;letter-spacing:4px;text-transform:uppercase;color:rgba(218,175,55,0.5);margin-bottom:10px;margin-top:40px">BLEUSKM Studios</p>
-<div class="poster-title-row">
-    <h1 class="poster-title">The Final Hand</h1>
-    <span class="poster-year">"You borrowed fire with wet hands"</span>
-  </div>
-  <div class="poster-meta-grid">
-    <div class="meta-cell"><span class="meta-label">Format</span><span class="meta-value">Short Film</span></div>
-    <div class="meta-cell"><span class="meta-label">Status</span><span class="meta-value">Pre-Production</span></div>
-    <div class="meta-cell"><span class="meta-label">Directed by</span><span class="meta-value">Zaria Lashae</span></div>
-    <div class="meta-cell"><span class="meta-label">Written by</span><span class="meta-value">Zaria Lashae</span></div><div class="meta-cell" style="grid-column:1/-1"><span class="meta-label">Genre</span><span class="meta-value" style="color:#DAAF37;display:block;margin-bottom:6px">Afrosurreal Psychological Drama</span><span style="display:inline-block;font-family:'League Spartan',sans-serif;font-weight:600;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;color:rgba(234,223,207,0.4);margin-right:16px;margin-top:5px">Folklore / Mythic Cinema</span><span style="display:inline-block;font-family:'League Spartan',sans-serif;font-weight:600;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;color:rgba(234,223,207,0.4);margin-right:16px;margin-top:5px">Psychological Thriller (Minimalist)</span><span style="display:inline-block;font-family:'League Spartan',sans-serif;font-weight:600;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;color:rgba(234,223,207,0.4);margin-right:16px;margin-top:5px">Chamber Film</span></div></div>
-<p class="poster-logline">During a game of blackjack, a gambler attempts to outplay a man named High John the Conqueror, only to realize too late that truth and trick share the same breath. The game is testing something deeper than skill...and in return it teaches that true power cannot be learned through observation alone.</p>
-<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:-30px;margin-bottom:40px"><a href="casting.html" onclick="sessionStorage.setItem('openModal','final-hand')" style="display:inline-flex;align-items:center;background:#DAAF37;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.78rem;letter-spacing:3px;text-transform:uppercase;padding:18px 36px;text-decoration:none;white-space:nowrap;transition:background 0.2s" onmouseover="this.style.background='#b9892e'" onmouseout="this.style.background='#DAAF37'">Apply to Cast →</a><a href="crew-application.html" style="display:inline-flex;align-items:center;background:transparent;color:#DAAF37;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.78rem;letter-spacing:3px;text-transform:uppercase;padding:18px 36px;text-decoration:none;white-space:nowrap;border:1px solid rgba(218,175,55,0.4);transition:all 0.2s" onmouseover="this.style.background='#DAAF37';this.style.color='#0b0b0b'" onmouseout="this.style.background='transparent';this.style.color='#DAAF37'">Join the Crew →</a></div>
-<div class="poster-details-row">
-    <div>
-      <span class="detail-col-label">Themes</span>
-      <div class="detail-tags">
-        <span class="detail-tag">Power & Inheritance</span><span class="detail-tag">IMITATION VS UNDERSTANDING</span><span class="detail-tag">PRIDE & HUMILITY</span><span class="detail-tag">SPIRITUAL AUTHORITY</span>
-      </div>
-    </div>
-    <div>
-      <span class="detail-col-label">Visual Tone</span>
-      <div class="detail-tags">
-        <span class="detail-tag">AFROSURREAL</span><span class="detail-tag">INTIMATE</span><span class="detail-tag">MYTHIC</span><span class="detail-tag">LOW-LIGHT / CHIAROSCURO</span>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- FULL FOOTER -->
-<div style="background:rgba(218,175,55,0.04);border-top:1px solid rgba(218,175,55,0.12);padding:60px 60px 40px;margin-top:0">
-  <div style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start">
-    <div>
-      <span style="font-family:'League Spartan',sans-serif;font-size:0.65rem;letter-spacing:4px;text-transform:uppercase;color:rgba(218,175,55,0.5);display:block;margin-bottom:14px">Stay Connected</span>
-      <h2 style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:1.4rem;letter-spacing:3px;text-transform:uppercase;color:#EADFCF;margin:0 0 10px">Stay in the Loop</h2>
-      <p style="font-size:0.85rem;color:rgba(234,223,207,0.5);line-height:1.7;margin:0 0 24px">Subscribe to receive casting call announcements, production updates, and BLEUSKM news directly to your inbox.</p>
+<main>
+  <div class="echos-page-header">
+    <h1>Echos</h1>
+    <p>Studio announcements, casting calls &amp; dispatches from BLEUSKM</p>
+  </div>
+  <div class="echos-filter">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="announcement">Announcements</button>
+    <button class="filter-btn" data-filter="upcoming">Open Castings</button>
+    <button class="filter-btn" data-filter="closed">Closed Castings</button>
+    <button class="filter-btn" data-filter="archive">Archive</button>
+  </div>
+  <div class="echos-body">
+    <div class="echos-feed" id="echosFeed">
+
+      <!-- THE FINAL HAND — CASTING OPEN -->
+      <div class="echo-item" data-category="upcoming">
+        <button class="echo-header"><div class="echo-header-inner">
+          <span class="echo-type-badge badge-casting-open">Casting Open</span>
+          <div class="echo-header-text">
+            <span class="echo-category-label">Open Casting Call</span>
+            <h3>Casting Announcement: "The Final Hand"</h3>
+            <span class="echo-date">Casting Opens May 2026 · Production projected to begin Summer 2026</span>
+          </div>
+          <span class="echo-chevron">▼</span>
+        </div></button>
+        <div class="echo-content"><div class="echo-content-inner">
+          <p>Casting submissions open May 2026 for BLEUSKM's psychological short "The Final Hand." Roles include High John (Lead), The Player (Lead), and The Stranger (Supporting).</p>
+          <a href="/final-hand-casting" class="echo-read-more">Read Full Casting Call →</a>
+        </div></div>
+      </div>
+
+      <!-- POSTPONEMENT ANNOUNCEMENT -->
+      <div class="echo-item" data-category="announcement">
+        <button class="echo-header"><div class="echo-header-inner">
+          <span class="echo-type-badge badge-announcement">Announcement</span>
+          <div class="echo-header-text">
+            <span class="echo-category-label">Production Update</span>
+            <h3>Production Update: "The 15th Hour" — Postponed</h3>
+            <span class="echo-date">April 2026</span>
+          </div>
+          <span class="echo-chevron">▼</span>
+        </div></button>
+        <div class="echo-content"><div class="echo-content-inner">
+          <p>After careful consideration, BLEUSKM Studios has made the decision to postpone production on <strong>The 15th Hour</strong> due to persistent location availability issues and ongoing scheduling conflicts. The project is not cancelled — it is paused. A formal announcement will be made when we are ready to move forward.</p>
+          <a href="/pro-15th-hour-update" class="echo-read-more">Read Full Statement →</a>
+        </div></div>
+      </div>
+
+      <!-- BLEUSKM SLATE ANNOUNCEMENT -->
+      <div class="echo-item" data-category="announcement">
+        <button class="echo-header"><div class="echo-header-inner">
+          <span class="echo-type-badge badge-announcement">Announcement</span>
+          <div class="echo-header-text">
+            <span class="echo-category-label">Studio News</span>
+            <h3>BLEUSKM Expands Narrative Slate for 2026</h3>
+            <span class="echo-date">February 2026</span>
+          </div>
+          <span class="echo-chevron">▼</span>
+        </div></button>
+        <div class="echo-content"><div class="echo-content-inner">
+          <p>BLEUSKM confirms multiple original narrative projects entering development in 2026 — expanding its psychological thriller, surrealist, and experimental slate with new short and feature projects led by founder Zaria Lashae.</p>
+          <a href="/narrative-slate-2026" class="echo-read-more">Read Full Announcement →</a>
+        </div></div>
+      </div>
+
+      <div class="echo-item" data-category="archive">
+        <button class="echo-header"><div class="echo-header-inner">
+          <span class="echo-type-badge badge-casting-postponed">Casting Postponed</span>
+          <div class="echo-header-text">
+            <span class="echo-category-label">Archived</span>
+            <h3>Casting Announcement: "The 15th Hour"</h3>
+            <span class="echo-date">Originally Posted January 14, 2026</span>
+          </div>
+          <span class="echo-chevron">▼</span>
+        </div></button>
+        <div class="echo-content"><div class="echo-content-inner">
+          <p>The original open casting call for "The 15th Hour" — archived for reference. Submissions are now closed.</p>
+          <a href="/the-15th-hour-archive" class="echo-read-more">View Original Post →</a>
+        </div></div>
+      </div>
+
+
     </div>
-    <div>
-      <form id="filmNlForm" onsubmit="submitNewsletter(event)">
-        <div style="display:flex;flex-direction:column;gap:10px;max-width:400px">
-          <input type="text" id="fnl-name" name="name" placeholder="Your name" style="background:rgba(255,255,255,0.05);border:1px solid rgba(218,175,55,0.2);color:#EADFCF;padding:12px 16px;font-family:'Red Hat Display',sans-serif;font-size:0.85rem;border-radius:0;width:100%;box-sizing:border-box">
-          <input type="email" id="fnl-email" name="email" placeholder="name@email.com" required style="background:rgba(255,255,255,0.05);border:1px solid rgba(218,175,55,0.2);color:#EADFCF;padding:12px 16px;font-family:'Red Hat Display',sans-serif;font-size:0.85rem;border-radius:0;width:100%;box-sizing:border-box">
-          <button type="submit" style="background:#DAAF37;border:none;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.78rem;letter-spacing:3px;text-transform:uppercase;padding:14px;cursor:pointer;transition:background 0.2s" onmouseover="this.style.background='#b9892e'" onmouseout="this.style.background='#DAAF37'">Subscribe to Updates</button>
+
+    <aside class="echos-sidebar">
+      <div class="sidebar-block">
+        <span class="sidebar-label">Stay Updated</span>
+        <p style="font-size:0.8rem;color:rgba(0,0,0,0.5);line-height:1.6;margin-bottom:16px">Get casting calls and studio news delivered to your inbox.</p>
+        <div class="sidebar-newsletter">
+          <form id="echosNlForm" onsubmit="submitEchosNewsletter(event)">
+        <div style="display:flex;gap:12px;flex-direction:column">
+          <input type="text" id="echos-nl-name" placeholder="Your name" style="background:rgba(255,255,255,0.08);border:1px solid rgba(218,175,55,0.2);color:#EADFCF;padding:12px 16px;font-family:'Red Hat Display',sans-serif;font-size:0.88rem;border-radius:0;width:100%">
+          <input type="email" id="echos-nl-email" placeholder="name@email.com" required style="background:rgba(255,255,255,0.08);border:1px solid rgba(218,175,55,0.2);color:#EADFCF;padding:12px 16px;font-family:'Red Hat Display',sans-serif;font-size:0.88rem;border-radius:0;width:100%">
+          <button type="submit" style="background:#DAAF37;border:none;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.8rem;letter-spacing:2px;text-transform:uppercase;padding:14px;cursor:pointer;transition:background 0.2s">Subscribe</button>
         </div>
       </form>
-      <div id="fnl-success" style="display:none;padding:16px 0">
-        <p style="color:#DAAF37;font-family:'League Spartan',sans-serif;letter-spacing:2px;font-size:0.85rem;margin:0">YOU'RE ON THE LIST</p>
-        <p style="color:rgba(234,223,207,0.4);font-size:0.8rem;margin-top:6px">We'll be in touch when casting opens and productions drop.</p>
+      <div id="echos-nl-success" style="display:none;padding:20px 0">
+        <p style="color:#DAAF37;font-family:'League Spartan',sans-serif;letter-spacing:2px;font-size:0.85rem">YOU'RE ON THE LIST</p>
+        <p style="color:rgba(234,223,207,0.4);font-size:0.8rem;margin-top:8px">Don't worry, we won't spam your inbox.</p>
       </div>
-    </div>
-    <div style="max-width:1100px;margin:40px auto 0;padding-top:24px;border-top:1px solid rgba(218,175,55,0.1);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
-    <p style="font-size:0.72rem;color:rgba(234,223,207,0.2);margin:0">&copy; 2026 BLEUSKM Studios. All rights reserved.</p>
-    <div>
-      <a href="my-productions.html" style="font-size:0.72rem;color:rgba(234,223,207,0.2);text-decoration:none;margin-left:20px;transition:color 0.2s" onmouseover="this.style.color='rgba(218,175,55,0.5)'" onmouseout="this.style.color='rgba(234,223,207,0.2)'">Productions</a>
-      <a href="casting.html" style="font-size:0.72rem;color:rgba(234,223,207,0.2);text-decoration:none;margin-left:20px;transition:color 0.2s" onmouseover="this.style.color='rgba(218,175,55,0.5)'" onmouseout="this.style.color='rgba(234,223,207,0.2)'">Casting</a>
-      <a href="crew-application.html" style="font-size:0.72rem;color:rgba(234,223,207,0.2);text-decoration:none;margin-left:20px;transition:color 0.2s" onmouseover="this.style.color='rgba(218,175,55,0.5)'" onmouseout="this.style.color='rgba(234,223,207,0.2)'">Crew</a>
-      <a href="contact.html" style="font-size:0.72rem;color:rgba(234,223,207,0.2);text-decoration:none;margin-left:20px;transition:color 0.2s" onmouseover="this.style.color='rgba(218,175,55,0.5)'" onmouseout="this.style.color='rgba(234,223,207,0.2)'">Contact</a>
-    </div>
+          <div class="sidebar-nl-success" id="echosNlSuccess">Thank you for subscribing!</div>
+        </div>
+      </div>
+      <div class="sidebar-block">
+        <span class="sidebar-label">Quick Links</span>
+        <a href="/casting" class="sidebar-link"><span class="sidebar-link-title">Casting Portal</span><span class="sidebar-link-tag">Apply</span></a>
+        <a href="/my-productions" class="sidebar-link"><span class="sidebar-link-title">All Productions</span><span class="sidebar-link-tag">Films</span></a>
+        <a href="/final-hand-casting" class="sidebar-link"><span class="sidebar-link-title">The Final Hand</span><span class="sidebar-link-tag">Casting Open</span></a>
+        <a href="/narrative-slate-2026" class="sidebar-link"><span class="sidebar-link-title">2026 Slate</span><span class="sidebar-link-tag">Read</span></a>
+        <a href="/contact" class="sidebar-link"><span class="sidebar-link-title">Project Inquiry</span><span class="sidebar-link-tag">Hire Us</span></a>
+      </div>
+    </aside>
   </div>
-</div>
-<footer style="display:none"></footer>
+</main>
+
+<footer class="site-footer-full">
+  <div class="footer-grid">
+    <div class="footer-brand"><img src="/images/bleuskm-logo.png" alt="BLEUSKM Logo" style="height:32px;width:auto;"><p>A film and visual production house building worlds grounded in Black imagination, history, and cultural memory.</p></div>
+    <div class="footer-col"><h4>Navigate</h4><a href="/">Home</a><a href="/about">About</a><a href="/my-productions">Productions</a><a href="/visuals">Visuals</a><a href="/echos">Echos</a></div>
+    <div class="footer-col"><h4>Work With Us</h4><a href="/contact">Project Inquiry</a><a href="/casting">Apply to Casting Calls</a><a href="/crew-application">Join the Crew</a><a href="/shop">The Vault — Shop</a></div>
+    <div class="footer-col"><h4>Legal</h4><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Use</a><a href="/contact">Contact Us</a></div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 BLEUSKM Studios. All rights reserved.</p>
+    <div><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/casting">Casting</a><a href="/contact">Contact</a></div>
+  </div>
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.querySelectorAll('.echo-header').forEach(header => {
+  header.addEventListener('click', () => {
+    const item = header.closest('.echo-item');
+    const content = item.querySelector('.echo-content');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.echo-item').forEach(i => { i.classList.remove('open'); i.querySelector('.echo-content').style.maxHeight = null; });
+    if (!isOpen) { item.classList.add('open'); content.style.maxHeight = content.scrollHeight + 'px'; }
+  });
+});
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelector('.filter-btn.active').classList.remove('active');
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    document.querySelectorAll('.echo-item').forEach(item => {
+      item.style.display = (filter === 'all' || item.dataset.category === filter) ? 'block' : 'none';
+    });
+  });
+});
+document.getElementById('echosNlForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(new FormData(this)).toString() })
+  .finally(() => { this.style.display = 'none'; document.getElementById('echosNlSuccess').style.display = 'block'; });
+});
+</script>
+
+
+
 
 <script>
 // ── BLEUSKM STUDIOS · UNIFIED SUBMISSION HANDLER ──
@@ -217,8 +414,7 @@ async function submitCasting(e, filmTitle) {
   try {
     await sendToAirtable(TBL_CASTING, fields);
     await sendToBrevo(4, email, name, { FILM: filmTitle, ROLE: role });
-    await sendEmail(1, email, name, { FIRSTNAME: name, FILM: filmTitle, ROLE: role });
-    if (nlCheck && nlCheck.checked) { await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
+    if (nlCheck && nlCheck.checked) await sendToBrevo(2, email, name, {});
 
     var formId = form.id;
     form.style.display = 'none';
@@ -250,8 +446,7 @@ async function submitNotify(e, filmTitle) {
   try {
     await sendToAirtable(TBL_NOTIFY, fields);
     await sendToBrevo(2, email, name, { FILM: filmTitle, ROLE_INTEREST: roleInt });
-    await sendEmail(4, email, name, { FIRSTNAME: name, FILM: filmTitle });
-    if (nlCheck && nlCheck.checked) { await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
+    if (nlCheck && nlCheck.checked) await sendToBrevo(2, email, name, {});
 
     form.style.display = 'none';
     var s = form.nextElementSibling;
@@ -279,8 +474,7 @@ async function submitComingSoon(e, filmTitle) {
   try {
     await sendToAirtable(TBL_NOTIFY, fields);
     await sendToBrevo(2, email, name, { FILM: filmTitle });
-    await sendEmail(4, email, name, { FIRSTNAME: name, FILM: filmTitle });
-    if (nlCheck && nlCheck.checked) { await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
+    if (nlCheck && nlCheck.checked) await sendToBrevo(2, email, name, {});
 
     form.style.display = 'none';
     var s = form.nextElementSibling;
@@ -383,7 +577,7 @@ async function submitContact() {
   try {
     await sendToAirtable(TBL_INQUIRIES, fields);
     await sendToBrevo(5, email, name, { PROJECT_TYPE: projType });
-    if (nlCheck && nlCheck.checked) { await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
+    if (nlCheck && nlCheck.checked) await sendToBrevo(2, email, name, {});
 
     var form = document.getElementById('contactForm') || document.querySelector('form');
     if (form) form.style.display = 'none';
@@ -496,8 +690,7 @@ async function submitCasting(e, filmTitle) {
   try {
     await sendToAirtable(TBL_CASTING, fields);
     await sendToBrevo(4, email, name, { FILM: filmTitle, ROLE: role });
-    await sendEmail(1, email, name, { FIRSTNAME: name, FILM: filmTitle, ROLE: role });
-    if (nlCheck && nlCheck.checked) { await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
+    if (nlCheck && nlCheck.checked) await sendToBrevo(2, email, name, {});
     form.style.display = 'none';
     var filmId = form.id.replace('form-', '');
     var s = document.getElementById(filmId + '-success');
@@ -523,8 +716,7 @@ async function submitNotify(e, filmTitle) {
   try {
     await sendToAirtable(TBL_NOTIFY, fields);
     await sendToBrevo(2, email, name, { FILM: filmTitle, ROLE_INTEREST: roleInt });
-    await sendEmail(4, email, name, { FIRSTNAME: name, FILM: filmTitle });
-    if (nlCheck && nlCheck.checked) { await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
+    if (nlCheck && nlCheck.checked) await sendToBrevo(2, email, name, {});
     form.style.display = 'none';
     var s = form.nextElementSibling; if (s) s.style.display = 'block';
   } catch(err) {
@@ -546,8 +738,7 @@ async function submitComingSoon(e, filmTitle) {
   try {
     await sendToAirtable(TBL_NOTIFY, fields);
     await sendToBrevo(2, email, name, { FILM: filmTitle });
-    await sendEmail(4, email, name, { FIRSTNAME: name, FILM: filmTitle });
-    if (nlCheck && nlCheck.checked) { await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
+    if (nlCheck && nlCheck.checked) await sendToBrevo(2, email, name, {});
     form.style.display = 'none';
     var s = form.nextElementSibling; if (s) s.style.display = 'block';
   } catch(err) {
@@ -654,7 +845,7 @@ async function submitContact() {
   try {
     await sendToAirtable(TBL_INQUIRIES, fields);
     await sendToBrevo(5, email, name, { PROJECT_TYPE: projType });
-    if (nlCheck && nlCheck.checked) { await sendToBrevo(2, email, name, {}); await sendEmail(3, email, name, { FIRSTNAME: name }); }
+    if (nlCheck && nlCheck.checked) await sendToBrevo(2, email, name, {});
     var form = document.getElementById('contactForm');
     if (form) form.style.display = 'none';
     var s = document.getElementById('contactSuccess');
@@ -685,7 +876,7 @@ async function submitContact() {
       <span style="font-family:'League Spartan',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:rgba(234,223,207,0.5)">Subtotal</span>
       <span id="cartPopupTotal" style="color:#DAAF37;font-family:'Red Hat Display',sans-serif;font-weight:600"></span>
     </div>
-    <a href="cart.html" style="display:block;background:#DAAF37;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;padding:14px;text-align:center;text-decoration:none">View Cart &amp; Checkout</a>
+    <a href="/cart" style="display:block;background:#DAAF37;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;padding:14px;text-align:center;text-decoration:none">View Cart &amp; Checkout</a>
   </div>
 </div>
 <script>
@@ -772,7 +963,7 @@ document.addEventListener('click', function(e) {
       </a>
     </div>
     <p style="font-size:0.78rem;color:rgba(234,223,207,0.4);line-height:1.7;margin:0">Follow us for casting announcements, production updates, and studio news.</p>
-    <a href="contact.html" style="display:inline-block;margin-top:20px;background:#DAAF37;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.68rem;letter-spacing:3px;text-transform:uppercase;padding:12px 28px;text-decoration:none">Project Inquiry &rarr;</a>
+    <a href="/contact" style="display:inline-block;margin-top:20px;background:#DAAF37;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.68rem;letter-spacing:3px;text-transform:uppercase;padding:12px 28px;text-decoration:none">Project Inquiry &rarr;</a>
   </div>
 </div>
 
