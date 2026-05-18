@@ -1,79 +1,20 @@
 [build]
   functions = "netlify/functions"
 
-[[redirects]]
-  from = "/about"
-  to = "/about.html"
-  status = 200
-
-[[redirects]]
-  from = "/casting"
-  to = "/casting.html"
-  status = 200
-
-[[redirects]]
-  from = "/contact"
-  to = "/contact.html"
-  status = 200
-
-[[redirects]]
-  from = "/crew-application"
-  to = "/crew-application.html"
-  status = 200
-
-[[redirects]]
-  from = "/my-productions"
-  to = "/my-productions.html"
-  status = 200
-
-[[redirects]]
-  from = "/visuals"
-  to = "/visuals.html"
-  status = 200
-
-[[redirects]]
-  from = "/echos"
-  to = "/echos.html"
-  status = 200
-
+# Fix spaces in filenames
 [[redirects]]
   from = "/shop"
   to = "/bleuskm shop.html"
   status = 200
 
 [[redirects]]
-  from = "/final-hand"
-  to = "/final-hand.html"
+  from = "/shop.html"
+  to = "/bleuskm shop.html"
   status = 200
 
 [[redirects]]
-  from = "/15th-hour"
-  to = "/15th-hour.html"
-  status = 200
-
-[[redirects]]
-  from = "/overstood"
-  to = "/overstood.html"
-  status = 200
-
-[[redirects]]
-  from = "/book-of-beginnings"
-  to = "/book-of-beginnings.html"
-  status = 200
-
-[[redirects]]
-  from = "/liminal-county"
-  to = "/liminal-county.html"
-  status = 200
-
-[[redirects]]
-  from = "/blood-and-dominion"
-  to = "/blood-and-dominion.html"
-  status = 200
-
-[[redirects]]
-  from = "/love-me-like-this"
-  to = "/love-me-like-this.html"
+  from = "/bleuskm-shop"
+  to = "/bleuskm shop.html"
   status = 200
 
 [[redirects]]
@@ -82,11 +23,19 @@
   status = 200
 
 [[redirects]]
-  from = "/privacy"
-  to = "/privacy.html"
+  from = "/as-is.html"
+  to = "/as is.html"
   status = 200
 
+# Catch-all: serve .html for any path without extension
 [[redirects]]
-  from = "/terms"
-  to = "/terms.html"
+  from = "/:page"
+  to = "/:page.html"
   status = 200
+
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "https://bleuskm.com"
+    Access-Control-Allow-Methods = "POST, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type"
