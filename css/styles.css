@@ -976,3 +976,239 @@ img {
   outline: none !important;
   box-shadow: 0 0 0 2px rgba(218,175,55,0.4) !important;
 }
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE IMPROVEMENTS — comprehensive pass
+   ══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* ── GENERAL ── */
+  * { box-sizing: border-box; }
+  img { max-width: 100%; height: auto; }
+  p, li, span { word-break: break-word; }
+
+  /* ── ABOUT PAGE — services button centering ── */
+  .hero-services-btn-top {
+    position: static !important;
+    top: auto !important; right: auto !important;
+    margin: 20px auto 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+  }
+  .hero-services-link {
+    width: 100% !important;
+    max-width: 300px !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+  .hero-eyebrow {
+    position: static !important;
+    top: auto !important; left: auto !important;
+    padding: 80px 16px 0 !important;
+    text-align: center !important;
+  }
+  .about-hero-wrap {
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+  .about-hero-text {
+    text-align: center !important;
+    padding: 0 16px !important;
+  }
+  .services-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    padding: 0 !important;
+  }
+  .services-section {
+    padding: 28px 16px 40px !important;
+    text-align: center !important;
+  }
+  .services-section h2,
+  .services-section p { text-align: center !important; }
+  .stats-bar {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 20px !important;
+    padding: 24px 16px !important;
+    text-align: center !important;
+  }
+  .cta-banner {
+    grid-template-columns: 1fr !important;
+    padding: 28px 16px !important;
+    text-align: center !important;
+    gap: 16px !important;
+  }
+  .cta-banner a {
+    width: 100% !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+
+  /* ── PRODUCTIONS PAGE ── */
+  #productions-nav {
+    padding: 0 10px !important;
+    gap: 0 !important;
+  }
+  .prod-tab {
+    font-size: 0.62rem !important;
+    padding: 10px 10px !important;
+    letter-spacing: 1px !important;
+    white-space: nowrap !important;
+  }
+  .card-action-btn {
+    font-size: 0.58rem !important;
+    padding: 8px 10px !important;
+    letter-spacing: 1px !important;
+    width: 100% !important;
+    text-align: center !important;
+    display: block !important;
+    margin-top: 6px !important;
+  }
+  .soon-badge {
+    font-size: 0.55rem !important;
+    padding: 4px 8px !important;
+  }
+  .project-rail {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    padding: 0 12px !important;
+  }
+
+  /* ── MODALS (casting / apply) ── */
+  .modal-overlay {
+    padding: 0 !important;
+    align-items: flex-end !important;
+  }
+  .modal-box {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 90vh !important;
+    border-radius: 16px 16px 0 0 !important;
+    overflow-y: auto !important;
+    margin: 0 !important;
+  }
+  .modal-tab-content { padding: 18px 14px 30px !important; }
+  .modal-tabs { overflow-x: auto; white-space: nowrap; }
+  .modal-tab-btn { font-size: 0.62rem !important; padding: 10px 12px !important; }
+  .form-row-two,
+  .form-row-2 { grid-template-columns: 1fr !important; }
+  .form-field input,
+  .form-field textarea,
+  .form-field select {
+    font-size: 16px !important; /* prevents iOS zoom */
+  }
+
+  /* ── CASTING PAGE ── */
+  .casting-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+  .casting-grid-section { padding: 20px 12px 0 !important; }
+  .casting-page-header { padding: 22px 14px 10px !important; }
+  .casting-page-header h1 { font-size: 1.7rem !important; }
+
+  /* ── CREW APPLICATION ── */
+  .crew-body {
+    grid-template-columns: 1fr !important;
+    padding: 20px 14px 60px !important;
+    gap: 24px !important;
+  }
+  .crew-hero { padding: 36px 14px 24px !important; }
+  .crew-hero h1 { font-size: 1.7rem !important; text-align: center !important; }
+  .crew-hero p { text-align: center !important; }
+  .dept-list { position: static !important; }
+  .pill-group { gap: 8px !important; }
+  .pill { font-size: 0.75rem !important; padding: 0.38rem 0.75rem !important; }
+  .collective-fields-inner { padding: 1rem 0.85rem !important; }
+
+  /* ── CONTACT ── */
+  .contact-layout {
+    grid-template-columns: 1fr !important;
+    min-height: auto !important;
+  }
+  .contact-left {
+    padding: 30px 16px 22px !important;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(218,175,55,0.1) !important;
+  }
+  .contact-right { padding: 22px 16px 40px !important; }
+  .contact-left h1 { font-size: 1.8rem !important; }
+  .contact-form-wrap { padding: 0 !important; }
+
+  /* ── ECHOS ── */
+  .echos-body {
+    grid-template-columns: 1fr !important;
+    padding: 16px 14px 50px !important;
+  }
+  .echos-sidebar {
+    border-left: none !important;
+    border-top: 1px solid rgba(255,255,255,0.06) !important;
+    padding: 20px 0 0 !important;
+  }
+  .echos-filter { gap: 10px !important; flex-wrap: wrap !important; padding: 0 14px !important; }
+  .echos-page-header { padding: 22px 14px 10px !important; }
+  .echo-card { padding: 16px 14px !important; }
+  .echo-header h3 { font-size: 1rem !important; line-height: 1.3 !important; }
+
+  /* ── SHOP ── */
+  .shop-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+  .shop-grid-section { padding: 16px 12px 60px !important; }
+  .shop-page-header { padding: 28px 14px 0 !important; }
+  .shop-page-header h1 { font-size: 1.8rem !important; }
+
+  /* ── PRODUCT PAGE ── */
+  .product-layout {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+    padding: 0 14px !important;
+    margin: 80px auto 60px !important;
+  }
+  .product-right h1 { font-size: 1.7rem !important; }
+  .product-description { font-size: 1rem !important; }
+
+  /* ── FILM DETAIL PAGES ── */
+  .poster-hero { height: 40vh !important; }
+  .poster-board { padding: 0 14px 60px !important; }
+  .poster-title { font-size: clamp(1.5rem, 7vw, 2.5rem) !important; }
+  .poster-meta-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 14px !important; }
+  .poster-details-row { grid-template-columns: 1fr !important; gap: 16px !important; }
+
+  /* ── ARCHIVE / ARTICLE PAGES ── */
+  .archive-page { padding: 60px 16px 80px !important; }
+  .article-wrapper { margin: 88px auto 60px !important; padding: 0 16px !important; }
+  .article-content h1 { font-size: 1.6rem !important; line-height: 1.2 !important; }
+  .article-body { font-size: 15px !important; line-height: 1.7 !important; }
+  .back-link { margin-bottom: 20px !important; }
+
+  /* ── VISUALS ── */
+  .visuals-grid { grid-template-columns: 1fr !important; gap: 10px !important; padding: 0 12px !important; }
+  .visuals-overlay-logo img { width: 85vw !important; }
+
+  /* ── FOOTER ── */
+  .site-footer { padding: 16px 14px !important; font-size: 0.82rem !important; }
+  .site-footer-full { padding: 28px 14px 20px !important; }
+  .footer-grid { grid-template-columns: 1fr 1fr !important; gap: 20px !important; }
+  .footer-bottom {
+    flex-direction: column !important;
+    gap: 8px !important;
+    text-align: center !important;
+    padding-top: 14px !important;
+  }
+
+  /* ── GENERAL TEXT OVERFLOW ── */
+  section, div { overflow-x: hidden; }
+  h1, h2, h3 { overflow-wrap: break-word; hyphens: auto; }
+}
+
+/* ── Very small phones (SE etc) ── */
+@media (max-width: 375px) {
+  .project-rail { gap: 8px !important; padding: 0 10px !important; }
+  .thumb-img { height: 120px !important; }
+  .project-name { font-size: 0.62rem !important; }
+  .casting-grid { grid-template-columns: 1fr !important; }
+  .shop-grid { grid-template-columns: 1fr !important; }
+  .pill { font-size: 0.7rem !important; padding: 0.3rem 0.6rem !important; }
+}
