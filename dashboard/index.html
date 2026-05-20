@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<!-- NETLIFY: Create a netlify.toml in your repo root with: [build.environment] SECRETS_SCAN_OMIT_KEYS = "BREVO_KEY,AT_TOKEN" -->
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1571,9 +1573,9 @@ async function sendVix(override){
 
 async function speakVix(text){
   // ElevenLabs voice — fill in key when ready
-  const key='YOUR_ELEVENLABS_API_KEY';
-  const voiceId='YOUR_VOICE_ID';
-  if(key==='YOUR_ELEVENLABS_API_KEY')return;
+  const key='sk_eadb32cb06ae1a116ee8d5ab7ef9b2deea6a336d5035f562';
+  const voiceId='6aDn1KB0hjpdcocrUkmq';
+  // ElevenLabs active
   try{
     const r=await fetch('https://api.elevenlabs.io/v1/text-to-speech/'+voiceId,{
       method:'POST',
@@ -1631,32 +1633,41 @@ const projectData={
 };
 
 function openProjectDetail(id){
-  const p=projectData[id]||{title:'Project',status:'Development',director:'Zaria Lashae'};
+  const p=projectData[id]||{title:'Project',status:'Development',director:'Zaria Lashae',type:'Film',genre:'',logline:'',runtime:'',year:'TBD',notes:''};
   const el=document.getElementById('project-detail-content');
-  el.innerHTML=`
-    <div style="border-bottom:1px solid var(--border2);padding-bottom:14px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-start;">
-      <div>
-        <div style="font-family:Bebas Neue,sans-serif;font-size:28px;letter-spacing:1px;color:var(--text);">${p.title}</div>
-        <div style="font-size:10px;color:var(--text3);margin-top:3px;">${p.type} · ${p.genre||'Genre TBD'} · ${p.year}</div>
-      </div>
-      <span class="tag t-pk">${p.status.toUpperCase()}</span>
-    </div>
-    ${p.logline?'<div style="font-size:12px;color:var(--text2);line-height:1.8;margin-bottom:14px;padding:14px;background:rgba(255,45,120,.05);border-left:2px solid var(--pk);"><strong style='font-size:9px;letter-spacing:2px;color:var(--pk);'>LOGLINE</strong><br>'+p.logline+'</div>':''}
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
-      <div><div class="card-label">Director</div><div style="font-size:12px;color:var(--text);">${p.director}</div></div>
-      <div><div class="card-label">Runtime</div><div style="font-size:12px;color:var(--text);">${p.runtime||'TBD'}</div></div>
-    </div>
-    <div style="margin-bottom:14px;">
-      <div class="card-label" style="margin-bottom:6px;">Notes / Status</div>
-      <textarea class="textarea" rows="4" id="proj-notes-${id}" placeholder="Add notes, ideas, next steps...">${p.notes}</textarea>
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="btn" onclick="sendToVixFromApp('Help me develop the project ${p.title} — genre ${p.genre||'TBD'}, type ${p.type}. Give me logline options, visual style ideas, and what I need to do to move it from development into pre-production.')">Vix Develop</button>
-      <button class="btn-o" onclick="sendToVixFromApp('Write a one-page pitch document for ${p.title} — type: ${p.type}, logline: ${p.logline||'TBD'}, director: Zaria Lashae, Bleuskm Studios')">Pitch Doc</button>
-      <button class="btn-ghost" onclick="projectData['${id}'].notes=document.getElementById('proj-notes-${id}').value;toast('Notes saved','pk')">Save Notes</button>
-    </div>`;
+  let html='';
+  html+='<div style="border-bottom:1px solid var(--border2);padding-bottom:14px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-start;">';
+  html+='<div>';
+  html+='<div style="font-family:Bebas Neue,sans-serif;font-size:28px;letter-spacing:1px;color:var(--text);">'+p.title+'</div>';
+  html+='<div style="font-size:10px;color:var(--text3);margin-top:3px;">'+(p.type||'Film')+' · '+(p.genre||'Genre TBD')+' · '+p.year+'</div>';
+  html+='</div>';
+  html+='<span class="tag t-pk">'+p.status.toUpperCase()+'</span>';
+  html+='</div>';
+  if(p.logline){
+    html+='<div style="font-size:12px;color:var(--text2);line-height:1.8;margin-bottom:14px;padding:14px;background:rgba(255,45,120,.05);border-left:2px solid var(--pk);">';
+    html+='<div style="font-size:9px;letter-spacing:2px;color:var(--pk);margin-bottom:4px;">LOGLINE</div>';
+    html+=p.logline+'</div>';
+  }
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">';
+  html+='<div><div class="card-label">Director</div><div style="font-size:12px;color:var(--text);">'+p.director+'</div></div>';
+  html+='<div><div class="card-label">Runtime</div><div style="font-size:12px;color:var(--text);">'+(p.runtime||'TBD')+'</div></div>';
+  html+='</div>';
+  html+='<div style="margin-bottom:14px;">';
+  html+='<div class="card-label" style="margin-bottom:6px;">Notes / Next Steps</div>';
+  html+='<textarea class="textarea" rows="4" id="proj-notes-'+id+'" placeholder="Add notes, ideas, next steps...">'+p.notes+'</textarea>';
+  html+='</div>';
+  html+='<div style="display:flex;gap:8px;flex-wrap:wrap;">';
+  html+='<button class="btn" data-pid="'+id+'" data-ptitle="'+p.title+'" onclick="vixDevelop(this)">Vix Develop</button>';
+  html+='<button class="btn-o" data-pid="'+id+'" data-ptitle="'+p.title+'" onclick="vixPitch(this)">Pitch Doc</button>';
+  html+='<button class="btn-ghost" data-pid="'+id+'" onclick="saveProjectNotes(this)">Save Notes</button>';
+  html+='</div>';
+  el.innerHTML=html;
   openModal('modal-project-detail');
 }
+
+function vixDevelop(btn){var title=btn.getAttribute('data-title');sendToVixFromApp('Help me develop the film project: '+title+'. Give me logline options, visual style, tone references, and next steps to move it forward.');}
+function vixPitch(btn){var title=btn.getAttribute('data-title');sendToVixFromApp('Write a one-page pitch document for '+title+' directed by Zaria Lashae, Bleuskm Studios.');}
+function saveProjectNotes(btn){var id=btn.getAttribute('data-pid');var el=document.getElementById('proj-notes-'+id);if(el&&projectData[id]){projectData[id].notes=el.value;toast('Notes saved','pk');}}
 
 function addNewProject(){
   const title=document.getElementById('np-title').value.trim();
@@ -1717,7 +1728,7 @@ function addShot(){
   row.innerHTML=`<div class="shot-num">${String(shotCount).padStart(2,'0')}</div>
     <select class="sel" style="font-size:9px;padding:4px 6px;"><option>Wide</option><option>Med Wide</option><option>Medium</option><option>Med Close</option><option>Close-Up</option><option>XCU</option><option>POV</option><option>Insert</option><option>OTS</option><option>Two Shot</option></select>
     <select class="sel" style="font-size:9px;padding:4px 6px;"><option>14mm</option><option>18mm</option><option>24mm</option><option>35mm</option><option>50mm</option><option>85mm</option><option>100mm</option><option>135mm</option></select>
-    <select class="sel" style="font-size:9px;padding:4px 6px;"><option>Eye Level</option><option>Low</option><option>High</option><option>Dutch</option><option>Bird's Eye</option></select>
+    <select class="sel" style="font-size:9px;padding:4px 6px;"><option>Eye Level</option><option>Low</option><option>High</option><option>Dutch</option><option>Birds Eye</option></select>
     <input class="inp" style="font-size:10px;padding:4px 8px;" placeholder="Shot description...">
     <select class="sel" style="font-size:9px;padding:4px 6px;"><option>Planned</option><option>Shot</option><option>Approved</option><option>Cut</option></select>
     <button class="btn-danger" onclick="this.closest('.shot-row').remove()">×</button>`;
@@ -1790,97 +1801,25 @@ function calDayClick(d){const ev=prompt('Add event for day '+d+':');if(ev)toast(
 
 // ════════ SERIES ════════
 const seriesData={
-  slate:{name:'🕯 Slate Night',sub:'@lashaez._ · @z.lashae_',color:'var(--pk)',desc:'Late-night director conversations. Personal. Intimate.',topics:['Creative burnout','Fear of success','Being multi-passionate','Inner child conversations','"We're really doing this now"'],episodes:[]},
-  manifesto:{name:'📚 Manifesto in Motion',sub:'@Bleuskm.studios',color:'var(--gold)',desc:'Intellectual. Cultural. Film breakdowns, Black cinema, overlooked creatives.',topics:['Film analysis + symbolism','Black folklore in film','"If this director made this movie"','Forgotten Black creatives','Hidden meanings in films'],episodes:[]},
-  creative:{name:'🎞 The Creative Room',sub:'@Bleuskm.studios',color:'rgba(255,255,255,.5)',desc:'Umbrella world. Director's Notes + Artist Days.',topics:['Director's Notes — BTS, building BLEUSKM','Artist Days — museums, cafes, vinyl','Come to set with me','Creative struggles + pre-prod chaos'],episodes:[]}
-};
-
-function openSeries(id){
-  const s=seriesData[id];
-  if(!s)return;
-  document.getElementById('series-home').style.display='none';
-  const det=document.getElementById('series-detail');
-  det.style.display='block';
-  det.innerHTML=`
-    <div style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">
-      <button class="btn-ghost" onclick="closeSeries()">← Back to Series</button>
-      <button class="btn" onclick="openModal('modal-episode-${id}');buildEpModal('${id}')">+ Add Episode</button>
-    </div>
-    <div class="series-header" style="border-color:${s.color};">
-      <div class="series-big-title">${s.name}</div>
-      <div class="series-big-sub">${s.sub} · ${s.desc}</div>
-    </div>
-    <div class="g2">
-      <div class="card">
-        <div class="card-accent" style="background:${s.color};"></div>
-        <div class="card-label">Topics / Ideas</div>
-        ${s.topics.map(t=>`<div class="drow"><div class="dot d-pk"></div><div class="drow-main"><div class="drow-label">${t}</div></div></div>`).join('')}
-      </div>
-      <div class="card">
-        <div class="card-accent" style="background:${s.color};"></div>
-        <div class="card-label">Pre-Production Notes</div>
-        <textarea class="textarea" id="series-notes-${id}" rows="6" placeholder="Filming notes, equipment needed, locations, scripting ideas...">${s.notes||''}</textarea>
-        <button class="btn-ghost" style="margin-top:8px;" onclick="seriesData['${id}'].notes=document.getElementById('series-notes-${id}').value;toast('Saved','pk')">Save Notes</button>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-accent" style="background:${s.color};"></div>
-      <div class="card-label">Episodes</div>
-      <div id="eps-${id}">
-        ${s.episodes.length?s.episodes.map((ep,i)=>`
-          <div class="ep-card">
-            <div class="ep-num">${String(i+1).padStart(2,'0')}</div>
-            <div class="ep-info"><div class="ep-title">${ep.title}</div><div class="ep-status">${ep.status||'Planned'} · ${ep.desc||''}</div></div>
-            <select class="sel" style="width:120px;font-size:10px;padding:4px 7px;" onchange="s.episodes[${i}].status=this.value;toast('Updated','pk')">
-              <option${ep.status==='Planned'?' selected':''}>Planned</option>
-              <option${ep.status==='Scripted'?' selected':''}>Scripted</option>
-              <option${ep.status==='Filmed'?' selected':''}>Filmed</option>
-              <option${ep.status==='Edited'?' selected':''}>Edited</option>
-              <option${ep.status==='Posted'?' selected':''}>Posted</option>
-            </select>
-            <button class="btn-danger" onclick="seriesData['${id}'].episodes.splice(${i},1);openSeries('${id}')">×</button>
-          </div>`).join('')
-        :'<div style="font-size:10px;color:var(--text3);padding:12px 0;">No episodes yet. Click + Add Episode.</div>'}
-      </div>
-    </div>
-    <div style="margin-top:4px;">
-      <button class="btn-o" onclick="sendToVixFromApp('Give me 5 episode ideas for ${s.name} series. Topics: ${s.topics.join(', ')}')">Vix Episode Ideas</button>
-    </div>`;
-
-  // Build episode modal
-  if(!document.getElementById('modal-episode-'+id)){
-    const m=document.createElement('div');
-    m.className='modal-bg';
-    m.id='modal-episode-'+id;
-    m.innerHTML=`<div class="modal"><button class="modal-close" onclick="closeModal('modal-episode-${id}')">×</button>
-      <div class="modal-title">Add Episode — ${s.name}</div>
-      <div style="display:flex;flex-direction:column;gap:9px;">
-        <input class="inp" id="ep-title-${id}" placeholder="Episode title or topic">
-        <textarea class="textarea" id="ep-desc-${id}" rows="2" placeholder="Episode description / what it's about..."></textarea>
-        <select class="sel" id="ep-status-${id}"><option>Planned</option><option>Scripted</option><option>Filmed</option><option>Edited</option><option>Posted</option></select>
-        <button class="btn" onclick="addEpisode('${id}')">Add Episode</button>
-      </div></div>`;
-    document.body.appendChild(m);
-    m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});
+  slate:{
+    name:'Slate Night',sub:'@lashaez._ and @z.lashae_',color:'var(--pk)',
+    desc:'Late-night director conversations. Personal. Intimate.',
+    topics:['Creative burnout','Fear of success','Being multi-passionate','Inner child conversations','We are really doing this now','Motivation for emerging creatives'],
+    notes:'',episodes:[]
+  },
+  manifesto:{
+    name:'Manifesto in Motion',sub:'@Bleuskm.studios',color:'var(--gold)',
+    desc:'Intellectual. Cultural. Film breakdowns, Black cinema, overlooked creatives.',
+    topics:['Film analysis and symbolism','Black folklore in film','If this director made this movie','Forgotten Black creatives','Hidden meanings in films','Visual essays and diaries'],
+    notes:'',episodes:[]
+  },
+  creative:{
+    name:'The Creative Room',sub:'@Bleuskm.studios',color:'rgba(255,255,255,.4)',
+    desc:'Umbrella world. Directors Notes + Artist Days. Everything lives here.',
+    topics:['Directors Notes — BTS, building BLEUSKM','Artist Days — museums, cafes, vinyl','Come to set with me','Creative struggles and pre-prod chaos','Movie theater casual reviews'],
+    notes:'',episodes:[]
   }
-}
-
-function buildEpModal(id){openModal('modal-episode-'+id);}
-function addEpisode(id){
-  const title=document.getElementById('ep-title-'+id)?.value.trim();
-  const desc=document.getElementById('ep-desc-'+id)?.value.trim();
-  const status=document.getElementById('ep-status-'+id)?.value;
-  if(!title){toast('Add a title','');return;}
-  seriesData[id].episodes.push({title,desc,status});
-  closeModal('modal-episode-'+id);
-  openSeries(id);
-  toast('Episode added!','pk');
-}
-function closeSeries(){
-  document.getElementById('series-home').style.display='';
-  document.getElementById('series-detail').style.display='none';
-}
-
+};
 // ════════ BRAIN DUMP ════════
 function saveDump(){
   const text=document.getElementById('dump-text')?.value.trim();
@@ -1899,15 +1838,23 @@ function saveDump(){
 
 // ════════ NEWSLETTER ════════
 async function sendNewsletter(){
-  const subject=document.getElementById('nl-subject')?.value.trim();
-  const body=document.getElementById('nl-body')?.value.trim();
+  const subject=document.getElementById('nl-subject')?document.getElementById('nl-subject').value.trim():'';
+  const body=document.getElementById('nl-body')?document.getElementById('nl-body').value.trim():'';
   if(!subject||!body){toast('Fill in subject and body','');return;}
+  const htmlBody='<p>'+body.split('\n').join('<br>')+'</p>';
+  const payload={
+    name:'Newsletter '+new Date().toLocaleDateString(),
+    subject:subject,
+    sender:{name:'Zaria Lashae - Bleuskm Studios',email:'newsletter@bleuskm.com'},
+    type:'classic',
+    htmlContent:htmlBody,
+    recipients:{listIds:[2]}
+  };
   try{
     const r=await fetch('https://api.brevo.com/v3/emailCampaigns',{
       method:'POST',
       headers:{'api-key':BREVO_KEY,'Content-Type':'application/json'},
-      body:JSON.stringify({name:'Newsletter '+new Date().toLocaleDateString(),subject,sender:{name:'Zaria Lashae · Bleuskm Studios',email:'newsletter@bleuskm.com'},type:'classic',htmlContent:'<p style="font-family:sans-serif;line-height:1.8;color:#333;">'+body.replace(/
-/g,'<br>')+'</p>',recipients:{listIds:[2]}})
+      body:JSON.stringify(payload)
     });
     if(r.ok){toast('Campaign created in Brevo! Go to Brevo to review and send.','pk');closeModal('modal-newsletter');}
     else toast('Brevo error — check campaign setup','');
@@ -1987,4 +1934,63 @@ loadInquiries();
 loadNewsletter();
 </script>
 </body>
-</html>
+</htmlfunction openSeries(id){
+  const s=seriesData[id];
+  if(!s)return;
+  document.getElementById('series-home').style.display='none';
+  const det=document.getElementById('series-detail');
+  det.style.display='block';
+
+  let epsHtml='';
+  if(s.episodes.length){
+    s.episodes.forEach(function(ep,i){
+      const sel='<select class="sel" style="width:120px;font-size:10px;padding:4px 7px;" onchange="seriesData[\'' +id+ '\'].episodes['+i+'].status=this.value;toast(\'Updated\',\'pk\')">'
+        +'<option'+(ep.status==='Planned'?' selected':'')+'>Planned</option>'
+        +'<option'+(ep.status==='Scripted'?' selected':'')+'>Scripted</option>'
+        +'<option'+(ep.status==='Filmed'?' selected':'')+'>Filmed</option>'
+        +'<option'+(ep.status==='Edited'?' selected':'')+'>Edited</option>'
+        +'<option'+(ep.status==='Posted'?' selected':'')+'>Posted</option>'
+        +'</select>';
+      epsHtml+='<div class="ep-card">'
+        +'<div class="ep-num">'+String(i+1).padStart(2,'0')+'</div>'
+        +'<div class="ep-info"><div class="ep-title">'+ep.title+'</div><div class="ep-status">'+(ep.status||'Planned')+' · '+(ep.desc||'')+'</div></div>'
+        +sel
+        +'<button class="btn-danger" onclick="seriesData[\''+id+'\'].episodes.splice('+i+',1);openSeries(\''+id+'\')">×</button>'
+        +'</div>';
+    });
+  } else {
+    epsHtml='<div style="font-size:10px;color:var(--text3);padding:12px 0;">No episodes yet. Click + Add Episode.</div>';
+  }
+
+  det.innerHTML=
+    '<div style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">'+
+      '<button class="btn-ghost" onclick="closeSeries()">← Back to Series</button>'+
+      '<button class="btn" onclick="openEpModal(\''+id+'\')">+ Add Episode</button>'+
+    '</div>'+
+    '<div class="series-header" style="border-color:'+s.color+';">'+
+      '<div class="series-big-title">'+s.name+'</div>'+
+      '<div class="series-big-sub">'+s.sub+' · '+s.desc+'</div>'+
+    '</div>'+
+    '<div class="g2" style="margin-top:13px;">'+
+      '<div class="card">'+
+        '<div class="card-accent" style="background:'+s.color+';"></div>'+
+        '<div class="card-label">Topics and Ideas</div>'+
+        s.topics.map(function(t){return '<div class="drow"><div class="dot d-pk"></div><div class="drow-main"><div class="drow-label">'+t+'</div></div></div>';}).join('')+
+      '</div>'+
+      '<div class="card">'+
+        '<div class="card-accent" style="background:'+s.color+';"></div>'+
+        '<div class="card-label">Pre-Production Notes</div>'+
+        '<textarea class="textarea" id="series-notes-'+id+'" rows="6" placeholder="Filming notes, equipment, locations, scripting ideas...">'+s.notes+'</textarea>'+
+        '<button class="btn-ghost" style="margin-top:8px;" onclick="seriesData[\''+id+'\'].notes=document.getElementById(\'series-notes-'+id+'\').value;toast(\'Saved\',\'pk\')">Save Notes</button>'+
+      '</div>'+
+    '</div>'+
+    '<div class="card" style="margin-top:13px;">'+
+      '<div class="card-accent" style="background:'+s.color+';"></div>'+
+      '<div class="card-label">Episodes</div>'+
+      '<div id="eps-'+id+'">'+epsHtml+'</div>'+
+    '</div>'+
+    '<div style="margin-top:12px;">'+
+      '<button class="btn-o" onclick="sendToVixFromApp(\'Give me 5 episode ideas for '+s.name+'\')">Vix Episode Ideas</button>'+
+    '</div>';
+}
+>
