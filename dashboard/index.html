@@ -978,7 +978,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
     <div style="font-size:11px;color:var(--text2);line-height:1.9;">
       Go to <strong style="color:var(--gold);">app.netlify.com</strong> → your site → <strong>Site Settings</strong> → <strong>Environment Variables</strong> → Add these:<br><br>
       <code style="background:rgba(255,255,255,.05);padding:4px 10px;display:block;margin:3px 0;color:var(--pk);">ANTHROPIC_KEY = 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</code>
-      <code style="background:rgba(255,255,255,.05);padding:4px 10px;display:block;margin:3px 0;color:var(--pk);">ELEVENLABS_KEY = sk_eadb32cb06ae1a116ee8d5ab7ef9b2deea6a336d5035f562</code>
+      <code style="background:rgba(255,255,255,.05);padding:4px 10px;display:block;margin:3px 0;color:var(--pk);">ELEVENLABS_KEY = sk_eadb32cb06ae1a116ee8d5ab7ef9b2deea6a336d5035f562
+      Also add: ELEVENLABS_VOICE = 6aDn1KB0hjpdcocrUkmq</code>
       <code style="background:rgba(255,255,255,.05);padding:4px 10px;display:block;margin:3px 0;color:var(--pk);">ELEVENLABS_VOICE = 6aDn1KB0hjpdcocrUkmq</code>
       <code style="background:rgba(255,255,255,.05);padding:4px 10px;display:block;margin:3px 0;color:var(--pk);">BREVO_KEY = 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</code>
       <br>Also upload <strong>anthropic-proxy.js</strong> to your <strong>netlify/functions/</strong> folder on GitHub.<br><br>
@@ -1097,16 +1098,18 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
   </div>
 </div>
 
-<!-- Vix response overlay when in app -->
-<div id="app-vix-overlay" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:600;width:min(600px,92vw);background:rgba(4,2,10,0.97);border:1px solid rgba(255,45,120,.25);border-top:2px solid var(--pk);padding:18px 22px;backdrop-filter:blur(16px);">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-    <div style="font-family:Space Mono,monospace;font-size:9px;letter-spacing:3px;color:var(--pk);">VIX</div>
-    <button onclick="document.getElementById('app-vix-overlay').style.display='none'" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;">×</button>
-  </div>
-  <div id="app-vix-text" style="font-size:12px;color:var(--text2);line-height:1.9;white-space:pre-wrap;max-height:280px;overflow-y:auto;"></div>
-  <div style="display:flex;gap:8px;margin-top:12px;">
-    <input class="inp" id="app-vix-input" style="flex:1;" placeholder="Follow up with Vix...">
-    <button class="btn" onclick="appVixSend()">Send</button>
+<!-- Vix response modal -->
+<div id="app-vix-overlay" style="display:none;position:fixed;inset:0;z-index:800;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);" onclick="if(event.target===this)this.style.display='none'">
+  <div style="position:absolute;bottom:0;left:0;right:0;background:#04020A;border-top:2px solid var(--pk);padding:20px 24px;max-height:70vh;display:flex;flex-direction:column;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div style="font-family:Space Mono,monospace;font-size:9px;letter-spacing:3px;color:var(--pk);">● VIX</div>
+      <button onclick="document.getElementById('app-vix-overlay').style.display='none'" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:20px;line-height:1;">×</button>
+    </div>
+    <div id="app-vix-text" style="font-size:12px;color:var(--text2);line-height:1.9;white-space:pre-wrap;overflow-y:auto;flex:1;margin-bottom:12px;"></div>
+    <div style="display:flex;gap:8px;">
+      <input class="inp" id="app-vix-input" style="flex:1;" placeholder="Follow up with Vix...">
+      <button class="btn" onclick="appVixSend()">Send</button>
+    </div>
   </div>
 </div>
 
@@ -1567,11 +1570,19 @@ async function callVix(msg){
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({message:msg})
     });
+    if(!r.ok){
+      const errText=await r.text();
+      console.error('Proxy error:',r.status,errText);
+      if(r.status===404){return 'Proxy not found — make sure anthropic-proxy.js is in netlify/functions/ and the site has redeployed.';}
+      if(r.status===500){return 'Server error — check that ANTHROPIC_KEY is set in Netlify Environment Variables.';}
+      return 'Error '+r.status+' — '+errText.substring(0,100);
+    }
     const d=await r.json();
-    const txt = d.text||d.error||'Something went sideways.';
-    if(txt.includes('Missing ANTHROPIC_KEY')){return 'Vix needs her API key — go to Netlify → Site Settings → Environment Variables and add ANTHROPIC_KEY. Then redeploy.';}
-    return txt;
-  }catch(e){return 'Network issue — check your connection and try again.';}
+    return d.text||d.error||'Something went sideways.';
+  }catch(e){
+    console.error('Vix fetch error:',e);
+    return 'Connection error: '+e.message;
+  }
 }
 
 // ════════ VIX HOME SCREEN ════════
