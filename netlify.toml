@@ -1,6 +1,10 @@
 [build]
   functions = "netlify/functions"
+  publish = "dashboard"
 
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "BREVO_KEY,AT_TOKEN,ANTHROPIC_KEY,ELEVENLABS_KEY"
+  
 [[redirects]]
   from = "/my-productions.html"
   to = "/my-productions"
