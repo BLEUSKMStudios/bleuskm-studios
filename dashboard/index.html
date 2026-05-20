@@ -247,7 +247,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
 .modal-close { color: var(--text2) !important; }
 
 /* Series detail hidden by default */
-#series-detail { display:none; }
+#series-detail { display:none !important; }
+#series-detail.series-open { display:block !important; }
 
 /* Mobile */
 @media(max-width:768px){
@@ -1329,6 +1330,9 @@ tick();setInterval(tick,15000);
 function openApp(page){
   document.getElementById('home').classList.add('hidden');
   document.getElementById('app').classList.add('show');
+  // Make sure series detail is cleared
+  const sd=document.getElementById('series-detail');
+  if(sd){sd.style.cssText='display:none !important;';sd.innerHTML='';}
   showPage(page||'overview');
 }
 function closeApp(){
@@ -1564,7 +1568,9 @@ async function callVix(msg){
       body:JSON.stringify({message:msg})
     });
     const d=await r.json();
-    return d.text||d.error||'Something went sideways — try again.';
+    const txt = d.text||d.error||'Something went sideways.';
+    if(txt.includes('Missing ANTHROPIC_KEY')){return 'Vix needs her API key — go to Netlify → Site Settings → Environment Variables and add ANTHROPIC_KEY. Then redeploy.';}
+    return txt;
   }catch(e){return 'Network issue — check your connection and try again.';}
 }
 
@@ -1857,15 +1863,20 @@ function buildCalendar(){
   const y=now.getFullYear(),m=now.getMonth();
   const first=new Date(y,m,1).getDay();
   const daysInMonth=new Date(y,m+1,0).getDate();
-  const events={};
   const today=now.getDate();
-  // Add some preset events
-  events[today]=['Casting carousel'];
-  events[today+1]&&(events[today+1]=[]);
-  events[today]&&events[today].push('Studio Intro');
-  const sun=today+((7-now.getDay())%7);
-  if(!events[sun])events[sun]=[];
-  events[sun].push('Slate Night Ep 1');
+  // Merge events
+  // Merge hardcoded starter events with user-added ones
+  const starterEvents={};
+  starterEvents[today]=['Casting carousel','Studio Intro'];
+  const sun=today+((7-now.getDay())%7)||today+7;
+  starterEvents[sun]=['Slate Night Ep 1'];
+  // Merge starter + user events
+  const events={...starterEvents};
+  Object.keys(calEvents).forEach(function(k){
+    const kn=parseInt(k);
+    if(!events[kn])events[kn]=[];
+    events[kn]=events[kn].concat(calEvents[kn]);
+  });
 
   for(let i=0;i<first;i++)html+='<div class="cal-day" style="opacity:.2;"></div>';
   for(let d=1;d<=daysInMonth;d++){
@@ -1873,12 +1884,31 @@ function buildCalendar(){
     const evs=events[d]||[];
     html+=`<div class="cal-day${isToday?' today':''}" onclick="calDayClick(${d})">
       <div class="cal-day-num">${d}</div>
-      ${evs.map(e=>`<div class="cal-event">${e}</div>`).join('')}
+      ${evs.map((e,ei)=>'<div class="cal-event" style="display:flex;justify-content:space-between;align-items:center;"><span>'+e+'</span><span onclick="event.stopPropagation();deleteCalEvent('+d+','+ei+')" style="cursor:pointer;color:rgba(255,255,255,.4);font-size:10px;margin-left:4px;">×</span></div>').join('')}
     </div>`;
   }
   grid.innerHTML=html;
 }
-function calDayClick(d){const ev=prompt('Add event for day '+d+':');if(ev)toast('Event added for day '+d+': '+ev,'pk');}
+
+const calEvents={};
+function calDayClick(d){
+  const existing=calEvents[d]||[];
+  let msg='Day '+d;
+  if(existing.length){msg+='\nExisting: '+existing.join(', ');}
+  const ev=prompt(msg+'\n\nAdd new event (or leave blank to skip):');
+  if(ev&&ev.trim()){
+    if(!calEvents[d])calEvents[d]=[];
+    calEvents[d].push(ev.trim());
+    buildCalendar();
+    toast('Event added!','pk');
+  }
+}
+function deleteCalEvent(d,idx){
+  if(calEvents[d]){
+    calEvents[d].splice(idx,1);
+    buildCalendar();
+  }
+}
 
 // ════════ SERIES ════════
 const seriesData={
@@ -2020,7 +2050,7 @@ loadNewsletter();
   if(!s)return;
   document.getElementById('series-home').style.display='none';
   const det=document.getElementById('series-detail');
-  det.style.display='block';
+  det.classList.add('series-open');det.style.cssText='display:block !important;';
 
   let epsHtml='';
   if(s.episodes.length){
