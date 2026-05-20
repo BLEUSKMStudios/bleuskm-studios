@@ -1,6 +1,5 @@
 [build]
   functions = "netlify/functions"
-  publish = "dashboard"
 
 [build.environment]
   SECRETS_SCAN_ENABLED = "false"
