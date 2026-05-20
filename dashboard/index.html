@@ -236,6 +236,19 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
 .care-icon{font-size:18px;width:28px;text-align:center;flex-shrink:0;}
 /* Revenue */
 .invoice-row{display:grid;grid-template-columns:1fr 120px 80px 80px;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--border2);font-size:11px;}
+
+
+/* Button visibility fixes */
+.btn { color: #fff !important; }
+.btn-o { color: var(--pk) !important; }
+.btn-ghost { color: var(--text2) !important; }
+.btn-ghost:hover { color: var(--pk) !important; }
+.btn-danger { color: rgba(255,45,120,.7) !important; }
+.modal-close { color: var(--text2) !important; }
+
+/* Series detail hidden by default */
+#series-detail { display:none; }
+
 /* Mobile */
 @media(max-width:768px){
   .sidebar{display:none;position:fixed;left:0;top:52px;bottom:0;z-index:400;transform:translateX(-100%);transition:.3s;}
@@ -403,8 +416,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
     <textarea class="textarea" id="dump-text" rows="5" placeholder="A scene. A line. A character. A feeling. A world. Write it now."></textarea>
     <div style="display:flex;gap:8px;margin-top:10px;align-items:center;">
       <select class="sel" id="dump-tag" style="flex:1;max-width:200px;"><option>Film Idea</option><option>Character</option><option>Dialogue</option><option>Visual</option><option>Story Beat</option><option>World Building</option><option>Series Idea</option><option>Content Idea</option><option>Personal</option></select>
-      <button class="btn" onclick="saveDump()">Save</button>
-      <button class="btn-o" onclick="sendToVixFromApp('Expand this creative idea: ' + document.getElementById('dump-text').value)">→ Ask Vix</button>
+      <button class="btn" onclick="saveDump()" style="background:var(--pk);color:#fff;">Save</button>
+      <button class="btn-o" style="color:var(--pk);border-color:var(--pk);" onclick="sendToVixFromApp('Expand this creative idea: ' + document.getElementById('dump-text').value)">→ Ask Vix</button>
     </div>
   </div>
   <div class="card">
@@ -420,30 +433,34 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
 <!-- ═══ PROJECTS ═══ -->
 <div id="p-projects" class="page">
   <div class="ph"><div class="ph-left"><div class="ph-title">Projects</div><div class="ph-sub">All Films · Pipeline</div></div><div class="ph-actions"><button class="btn" onclick="openModal('modal-newproject')">+ New Project</button></div></div>
-  <div class="kanban">
-    <div class="kb-col">
+  <div id="kanban-board" class="kanban">
+    <div class="kb-col" id="col-development">
       <div class="kb-col-title"><div class="dot d-d"></div>Development</div>
-      <div class="kb-card" onclick="openProjectDetail('15th-hour')"><div class="kb-card-title">The 15th Hour</div><div class="kb-card-sub">Feature · Concept</div></div>
-      <div class="kb-card" onclick="openProjectDetail('as-is')"><div class="kb-card-title">As Is</div><div class="kb-card-sub">Short · Concept</div></div>
-      <div class="kb-card" onclick="openProjectDetail('blood-dominion')"><div class="kb-card-title">Of Blood and Dominion</div><div class="kb-card-sub">Feature · Concept</div></div>
-      <div class="kb-card" onclick="openProjectDetail('liminal')"><div class="kb-card-title">Liminal County</div><div class="kb-card-sub">Series · Concept</div></div>
-      <div class="kb-card" onclick="openProjectDetail('book-begin')"><div class="kb-card-title">Book of Beginnings</div><div class="kb-card-sub">Feature · Concept</div></div>
-      <div class="kb-card" onclick="openProjectDetail('overstood')"><div class="kb-card-title">Overstood</div><div class="kb-card-sub">Short · Concept</div></div>
-      <div class="kb-card" onclick="openProjectDetail('love-me')"><div class="kb-card-title">Love Me Like This</div><div class="kb-card-sub">Short · Concept</div></div>
+      <div class="kb-card" draggable="true" onclick="openProjectDetail('15th-hour')"><div class="kb-card-title">The 15th Hour</div><div class="kb-card-sub">Short · Psychological · In Development</div></div>
+      <div class="kb-card" draggable="true" onclick="openProjectDetail('overstood')"><div class="kb-card-title">Overstood</div><div class="kb-card-sub">Short · Character-driven · In Development</div></div>
+      <div class="kb-card" draggable="true" onclick="openProjectDetail('book-begin')"><div class="kb-card-title">Book of Beginnings</div><div class="kb-card-sub">Short · In Development</div></div>
+      <div class="kb-card" draggable="true" onclick="openProjectDetail('as-is')"><div class="kb-card-title">As Is</div><div class="kb-card-sub">Short/Feature · In Development</div></div>
+      <div class="kb-card" draggable="true" onclick="openProjectDetail('liminal')"><div class="kb-card-title">Liminal County</div><div class="kb-card-sub">Feature · In Development</div></div>
+      <div class="kb-card" draggable="true" onclick="openProjectDetail('blood-dominion')"><div class="kb-card-title">Of Blood and Dominion</div><div class="kb-card-sub">Feature · In Development</div></div>
     </div>
-    <div class="kb-col">
+    <div class="kb-col" id="col-preproduction">
       <div class="kb-col-title"><div class="dot d-pk"></div>Pre-Production</div>
-      <div class="kb-card" onclick="openProjectDetail('tfh')">
+      <div class="kb-card" draggable="true" onclick="openProjectDetail('tfh')">
         <div class="kb-card-title">The Final Hand</div>
-        <div class="kb-card-sub">Short Film · 8-10 min · Afro-Surrealist</div>
+        <div class="kb-card-sub">Short · Afro-Surrealist · Now Casting</div>
         <div class="kb-tags"><div class="kb-tag">Casting Live</div><div class="kb-tag">Crew Open</div><div class="kb-tag">2026</div></div>
       </div>
+      <div class="kb-card" draggable="true" onclick="openProjectDetail('love-me')">
+        <div class="kb-card-title">Love Me Like This</div>
+        <div class="kb-card-sub">Short · Casting Opens Soon</div>
+        <div class="kb-tags"><div class="kb-tag">Casting Soon</div></div>
+      </div>
     </div>
-    <div class="kb-col">
+    <div class="kb-col" id="col-production">
       <div class="kb-col-title"><div class="dot d-d"></div>Production</div>
       <div style="padding:20px 0;text-align:center;font-size:9px;color:var(--text3);font-family:Space Mono,monospace;">NOTHING YET</div>
     </div>
-    <div class="kb-col">
+    <div class="kb-col" id="col-post">
       <div class="kb-col-title"><div class="dot d-gold"></div>Post · Festival</div>
       <div style="padding:20px 0;text-align:center;font-size:9px;color:var(--text3);font-family:Space Mono,monospace;">NOTHING YET</div>
     </div>
@@ -460,7 +477,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
 
 <!-- ═══ SHOT LISTS ═══ -->
 <div id="p-shotlist" class="page">
-  <div class="ph"><div class="ph-left"><div class="ph-title">Shot Lists</div><div class="ph-sub">The Final Hand</div></div><div class="ph-actions"><button class="btn-o" onclick="addShot()">+ Shot</button><button class="btn" onclick="askVixShot()">Vix Generate</button></div></div>
+  <div class="ph"><div class="ph-left"><div class="ph-title">Shot Lists</div><div class="ph-sub">The Final Hand</div></div><div class="ph-actions"><button class="btn-ghost" onclick="addScene()">+ Scene</button><button class="btn-o" onclick="addShot()">+ Shot</button><button class="btn" onclick="askVixShot()">Vix Generate</button></div></div>
   <div class="card">
     <div class="card-accent"></div>
     <div class="card-label">Scene 1 — The Lounge (Opening)</div>
@@ -750,24 +767,24 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
       <div class="card" style="cursor:pointer;border-top:2px solid var(--pk);" onclick="openSeries('slate')">
         <div class="card-label">SERIES 01</div>
         <div style="font-family:Bebas Neue,sans-serif;font-size:22px;letter-spacing:1px;color:var(--text);margin-bottom:6px;">🕯 Slate Night</div>
-        <div style="font-size:10px;color:var(--text2);line-height:1.7;margin-bottom:10px;">Late-night director conversations. Personal. Intimate.<br>@lashaez._ · @z.lashae_</div>
+        <div style="font-size:10px;color:var(--text2);line-height:1.7;margin-bottom:10px;">Late-night director conversations. Personal. Intimate.<br>@lashaez._ on TikTok</div>
         <span class="tag t-pk">CLICK TO MANAGE →</span>
       </div>
       <div class="card" style="cursor:pointer;border-top:2px solid var(--gold);" onclick="openSeries('manifesto')">
         <div class="card-label">SERIES 02</div>
         <div style="font-family:Bebas Neue,sans-serif;font-size:22px;letter-spacing:1px;color:var(--text);margin-bottom:6px;">📚 Manifesto in Motion</div>
-        <div style="font-size:10px;color:var(--text2);line-height:1.7;margin-bottom:10px;">Intellectual. Cultural. Film breakdowns, Black cinema, overlooked creatives.<br>@Bleuskm.studios</div>
+        <div style="font-size:10px;color:var(--text2);line-height:1.7;margin-bottom:10px;">Intellectual. Cultural. Film breakdowns, Black cinema, overlooked creatives.<br>@lashaez._ on TikTok</div>
         <span class="tag t-gold">CLICK TO MANAGE →</span>
       </div>
       <div class="card" style="cursor:pointer;border-top:2px solid rgba(255,255,255,.2);" onclick="openSeries('creative')">
         <div class="card-label">SERIES 03</div>
         <div style="font-family:Bebas Neue,sans-serif;font-size:22px;letter-spacing:1px;color:var(--text);margin-bottom:6px;">🎞 The Creative Room</div>
-        <div style="font-size:10px;color:var(--text2);line-height:1.7;margin-bottom:10px;">Umbrella world. Director's Notes + Artist Days.<br>@Bleuskm.studios</div>
+        <div style="font-size:10px;color:var(--text2);line-height:1.7;margin-bottom:10px;">Umbrella world. Directors Notes + Artist Days.<br>@lashaez._ on TikTok</div>
         <span class="tag t-d">CLICK TO MANAGE →</span>
       </div>
     </div>
   </div>
-  <div id="series-detail" style="display:none;"></div>
+  <div id="series-detail" style="display:none;position:relative;z-index:1;"></div>
 </div>
 
 <!-- ═══ CONTENT CALENDAR ═══ -->
@@ -818,7 +835,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
       <div class="card-accent"></div>
       <div class="card-label">Personal Accounts</div>
       <div class="dlist">
-        <div class="drow"><div class="dot d-pk"></div><div class="drow-main"><div class="drow-label">TikTok @lashaez._</div><div class="drow-sub">Slate Night series · Primary growth platform</div></div><span class="tag t-pk">PRIMARY</span></div>
+        <div class="drow"><div class="dot d-pk"></div><div class="drow-main"><div class="drow-label">TikTok @lashaez._</div><div class="drow-sub">ALL series: Slate Night, Manifesto in Motion, The Creative Room</div></div><span class="tag t-pk">PRIMARY</span></div>
         <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label">Instagram @z.lashae_</div></div><span class="tag t-d">ACTIVE</span></div>
         <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label">Facebook: Zaria Lashae</div></div><span class="tag t-d">ACTIVE</span></div>
       </div>
@@ -946,7 +963,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
       <div class="card-accent"></div>
       <div class="card-label">Hair Health Note</div>
       <div style="font-size:11px;color:var(--text2);line-height:1.9;margin-bottom:12px;">High porosity hair needs consistent moisture and protection. Scalp dry + breakage = moisture-protein balance.<br><br><span style="color:var(--pk);">Priorities:</span> Wash bi-weekly · Deep condition every wash · Seal with oil after moisture · Protective styles between wash days · Scalp massages + oils · Trim split ends quarterly</div>
-      <button class="btn-o" onclick="sendToVixFromApp('Give me a simple bi-weekly hair care routine for high porosity natural hair that breaks and struggles to retain length. I have ADHD — keep it realistic, low-effort, and under 10 steps.')">Vix Build Routine</button>
+      <button class="btn-o" style="color:var(--pk);border-color:var(--pk);" onclick="sendToVixFromApp('Give me a simple bi-weekly hair care routine for high porosity natural hair that breaks and struggles to retain length. I have ADHD — keep it realistic, low-effort, and under 10 steps.')">Vix Build Routine</button>
     </div>
   </div>
 </div>
@@ -954,10 +971,23 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
 <!-- ═══ SETUP ═══ -->
 <div id="p-setup" class="page">
   <div class="ph"><div class="ph-left"><div class="ph-title">Setup</div><div class="ph-sub">ElevenLabs · Twilio · Buffer · GitHub</div></div></div>
-  <div class="card" style="border-left:2px solid var(--pk);">
+  <div class="card" style="border-left:2px solid var(--pk);margin-bottom:13px;">
+    <div class="card-accent"></div>
+    <div class="card-label" style="color:var(--pk);">STEP 0 — Add API Keys to Netlify (Required First)</div>
+    <div style="font-size:11px;color:var(--text2);line-height:1.9;">
+      Go to <strong style="color:var(--gold);">app.netlify.com</strong> → your site → <strong>Site Settings</strong> → <strong>Environment Variables</strong> → Add these:<br><br>
+      <code style="background:rgba(255,255,255,.05);padding:4px 10px;display:block;margin:3px 0;color:var(--pk);">ANTHROPIC_KEY = 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</code>
+      <code style="background:rgba(255,255,255,.05);padding:4px 10px;display:block;margin:3px 0;color:var(--pk);">ELEVENLABS_KEY = sk_eadb32cb06ae1a116ee8d5ab7ef9b2deea6a336d5035f562</code>
+      <code style="background:rgba(255,255,255,.05);padding:4px 10px;display:block;margin:3px 0;color:var(--pk);">ELEVENLABS_VOICE = 6aDn1KB0hjpdcocrUkmq</code>
+      <code style="background:rgba(255,255,255,.05);padding:4px 10px;display:block;margin:3px 0;color:var(--pk);">BREVO_KEY = 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</code>
+      <br>Also upload <strong>anthropic-proxy.js</strong> to your <strong>netlify/functions/</strong> folder on GitHub.<br><br>
+      <span style="color:rgba(255,45,120,.7);">Once those are set, Vix will think, speak, and respond fully.</span>
+    </div>
+  </div>
+<div class="card" style="border-left:2px solid var(--pk);">
     <div class="card-accent"></div>
     <div class="card-label" style="color:var(--pk);">STEP 1 — Vix Voice (ElevenLabs)</div>
-    <div style="font-size:11px;color:var(--text2);line-height:1.9;">1. Go to <strong style="color:var(--gold);">elevenlabs.io</strong> → Free account<br>2. Voice Library → pick a warm voice you love<br>3. Copy Voice ID<br>4. Profile Settings → copy API key<br>5. Open this file in VS Code → find ELEVENLABS_KEY and ELEVENLABS_VOICE → paste both<br>6. Push to GitHub → Vix speaks out loud<br><br><span style="color:rgba(255,45,120,.7);">Free tier = 10,000 chars/month. Enough to start.</span></div>
+    <div style="font-size:11px;color:var(--text2);line-height:1.9;">1. Go to <strong style="color:var(--gold);">elevenlabs.io</strong> → Free account<br>2. Voice Library → pick a warm voice you love<br>3. Copy Voice ID<br>4. Profile Settings → copy API key<br>5. In Netlify → Site Settings → Environment Variables → add: ANTHROPIC_KEY = your key<br>6. Push to GitHub → Vix will think and respond through the proxy<br><br><span style="color:rgba(255,45,120,.7);">Free tier = 10,000 chars/month. Enough to start.</span></div>
   </div>
   <div class="card" style="border-left:2px solid var(--gold);">
     <div class="card-accent"></div>
@@ -1005,7 +1035,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
       <div class="script-editor" id="script-body" contenteditable="true">FADE IN:</div>
       <div style="display:flex;gap:8px;">
         <button class="btn" onclick="saveScript()">Save Script</button>
-        <button class="btn-o" onclick="sendToVixFromApp('Help me write or improve this script scene: ' + document.getElementById('script-body').innerText.substring(0,500))">Vix Help</button>
+        <button class="btn-o" style="color:var(--pk);border-color:var(--pk);" onclick="sendToVixFromApp('Help me write or improve this script scene: ' + document.getElementById('script-body').innerText.substring(0,500))">Vix Help</button>
         <button class="btn-ghost" onclick="deleteScript()">Delete</button>
         <button class="btn-ghost" onclick="shareScript()">Share</button>
       </div>
@@ -1021,7 +1051,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
       <input class="inp" id="nl-subject" placeholder="Subject line...">
       <textarea class="textarea" id="nl-body" rows="7" placeholder="Newsletter body... or ask Vix to draft it for you."></textarea>
       <div style="display:flex;gap:8px;">
-        <button class="btn-o" onclick="sendToVixFromApp('Draft a newsletter email for Bleuskm Studios subscribers about: ' + document.getElementById('nl-body').value)">Vix Draft</button>
+        <button class="btn-o" style="color:var(--pk);border-color:var(--pk);" onclick="sendToVixFromApp('Draft a newsletter email for Bleuskm Studios subscribers about: ' + document.getElementById('nl-body').value)">Vix Draft</button>
         <button class="btn" onclick="sendNewsletter()">Send via Brevo</button>
       </div>
     </div>
@@ -1319,11 +1349,19 @@ function showPage(id,el){
   if(pg)pg.classList.add('active');
   if(el)el.classList.add('active');
   document.getElementById('app-title').textContent=id.toUpperCase().replace(/-/g,' ');
+  // Always close series detail when switching pages
+  const sd=document.getElementById('series-detail');
+  const sh=document.getElementById('series-home');
+  if(sd){sd.style.display='none';sd.innerHTML='';}
+  if(sh&&id==='series')sh.style.display='';
+  // Hide vix overlay
+  const ov=document.getElementById('app-vix-overlay');
+  if(ov&&id!=='series')ov.style.display='none';
   // Load data
   if(id==='casting'||id==='overview')loadCasting();
   if(id==='overview')loadOverview();
   if(id==='crew')loadCrew();
-  if(id==='clients')loadInquiries();
+  if(id==='clients'){loadInquiries();document.getElementById('clients-inq')&&loadInquiries();}
   if(id==='newsletter')loadNewsletter();
   if(id==='content')buildCalendar();
 }
@@ -1520,14 +1558,14 @@ async function loadNewsletter(){
 // ════════ VIX AI ════════
 async function callVix(msg){
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{
+    const r=await fetch('/.netlify/functions/anthropic-proxy',{
       method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':ANTHROPIC_KEY,'anthropic-version':'2023-06-01'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:VIX_SYSTEM,messages:[{role:'user',content:msg}]})
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:msg})
     });
     const d=await r.json();
-    return d.content?.[0]?.text||'Something went sideways — try again.';
-  }catch(e){return 'Network issue, try again real quick.';}
+    return d.text||d.error||'Something went sideways — try again.';
+  }catch(e){return 'Network issue — check your connection and try again.';}
 }
 
 // ════════ VIX HOME SCREEN ════════
@@ -1622,14 +1660,14 @@ async function appVixSend(){
 
 // ════════ PROJECTS ════════
 const projectData={
-  'tfh':{title:'The Final Hand',type:'Short Film',genre:'Afro-Surrealist Thriller',logline:'A confident gambler challenges the legendary High John the Conqueror at blackjack and discovers that power cannot be imitated — only inherited.',status:'Pre-Production',director:'Zaria Lashae',runtime:'8-10 min',year:2026,notes:'Script locked. Casting live. Crew needed.'},
-  '15th-hour':{title:'The 15th Hour',type:'Feature Film',genre:'Drama',logline:'',status:'Development',director:'Zaria Lashae',runtime:'',year:'TBD',notes:''},
-  'as-is':{title:'As Is',type:'Short Film',genre:'',logline:'',status:'Development',director:'Zaria Lashae',runtime:'',year:'TBD',notes:''},
-  'blood-dominion':{title:'Of Blood and Dominion',type:'Feature Film',genre:'',logline:'',status:'Development',director:'Zaria Lashae',runtime:'',year:'TBD',notes:''},
-  'liminal':{title:'Liminal County',type:'Series',genre:'',logline:'',status:'Development',director:'Zaria Lashae',runtime:'',year:'TBD',notes:''},
-  'book-begin':{title:'Book of Beginnings',type:'Feature Film',genre:'',logline:'',status:'Development',director:'Zaria Lashae',runtime:'',year:'TBD',notes:''},
-  'overstood':{title:'Overstood',type:'Short Film',genre:'',logline:'',status:'Development',director:'Zaria Lashae',runtime:'',year:'TBD',notes:''},
-  'love-me':{title:'Love Me Like This',type:'Short Film',genre:'',logline:'',status:'Development',director:'Zaria Lashae',runtime:'',year:'TBD',notes:''},
+  'tfh':{title:'The Final Hand',type:'Short Film',genre:'Afro-Surrealist Psychological',logline:'A confident gambler challenges the legendary High John the Conqueror at blackjack — and discovers that power cannot be imitated, only inherited.',status:'Pre-Production',director:'Zaria Lashae',runtime:'8-10 min',year:2026,notes:'Script locked. Casting live. Crew open.'},
+  '15th-hour':{title:'The 15th Hour',type:'Short Film',genre:'Psychological',logline:'A psychological short film exploring time distortion, ego death, and awakening.',status:'Development',director:'Zaria Lashae',runtime:'Short',year:'TBD',notes:''},
+  'overstood':{title:'Overstood',type:'Short Film',genre:'Character-Driven',logline:'A character-driven short film confronting perception, identity, and inner truth.',status:'Development',director:'Zaria Lashae',runtime:'Short',year:'TBD',notes:''},
+  'book-begin':{title:'Book of Beginnings',type:'Short Film',genre:'',logline:'',status:'Development',director:'Zaria Lashae',runtime:'Short',year:'TBD',notes:''},
+  'love-me':{title:'Love Me Like This',type:'Short Film',genre:'',logline:'',status:'Pre-Production',director:'Zaria Lashae',runtime:'Short',year:'TBD',notes:'Casting opens soon.'},
+  'as-is':{title:'As Is',type:'Short/Feature',genre:'',logline:'',status:'Development',director:'Zaria Lashae',runtime:'TBD',year:'TBD',notes:''},
+  'liminal':{title:'Liminal County',type:'Feature Film',genre:'',logline:'',status:'Development',director:'Zaria Lashae',runtime:'Feature',year:'TBD',notes:''},
+  'blood-dominion':{title:'Of Blood and Dominion',type:'Feature Film',genre:'',logline:'',status:'Development',director:'Zaria Lashae',runtime:'Feature',year:'TBD',notes:''},
 };
 
 function openProjectDetail(id){
@@ -1721,6 +1759,49 @@ function shareScript(i){const s=scripts[i];const url='mailto:?subject='+encodeUR
 
 // ════════ SHOT LIST ════════
 let shotCount=5;
+function addScene(){
+  const sceneName=prompt('Scene name (e.g. Scene 2 — The Table):');
+  if(!sceneName)return;
+  const shotContent=document.getElementById('p-shotlist');
+  const newScene=document.createElement('div');
+  newScene.className='card';
+  newScene.style.marginTop='13px';
+  const sceneId='scene-'+Date.now();
+  newScene.innerHTML='<div class="card-accent"></div>'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">'+
+      '<div class="card-label">'+sceneName.toUpperCase()+'</div>'+
+      '<div style="display:flex;gap:6px;">'+
+        '<button class="btn-ghost" onclick="addShotToScene(this)">+ Shot</button>'+
+        '<button class="btn-danger" onclick="this.closest(\'.card\').remove()">Delete Scene</button>'+
+      '</div>'+
+    '</div>'+
+    '<div style="display:grid;grid-template-columns:28px 90px 58px 58px 1fr 80px 28px;gap:7px;padding:7px 0;border-bottom:1px solid var(--border2);margin-bottom:3px;">'+
+      '<div style="font-family:Space Mono,monospace;font-size:7px;color:var(--text3);">#</div>'+
+      '<div style="font-family:Space Mono,monospace;font-size:7px;color:var(--text3);">TYPE</div>'+
+      '<div style="font-family:Space Mono,monospace;font-size:7px;color:var(--text3);">LENS</div>'+
+      '<div style="font-family:Space Mono,monospace;font-size:7px;color:var(--text3);">ANGLE</div>'+
+      '<div style="font-family:Space Mono,monospace;font-size:7px;color:var(--text3);">DESCRIPTION</div>'+
+      '<div style="font-family:Space Mono,monospace;font-size:7px;color:var(--text3);">STATUS</div>'+
+      '<div></div>'+
+    '</div>'+
+    '<div class="scene-shot-rows" id="'+sceneId+'"></div>';
+  shotContent.appendChild(newScene);
+  addShotToScene(newScene.querySelector('.btn-ghost'));
+}
+function addShotToScene(btn){
+  const sceneRows=btn.closest('.card').querySelector('.scene-shot-rows');
+  const count=sceneRows.querySelectorAll('.shot-row').length+1;
+  const row=document.createElement('div');
+  row.className='shot-row';
+  row.innerHTML='<div class="shot-num">'+String(count).padStart(2,'0')+'</div>'+
+    '<select class="sel" style="font-size:9px;padding:4px 6px;"><option>Wide</option><option>Med Wide</option><option>Medium</option><option>Med Close</option><option>Close-Up</option><option>XCU</option><option>POV</option><option>Insert</option><option>OTS</option><option>Two Shot</option></select>'+
+    '<select class="sel" style="font-size:9px;padding:4px 6px;"><option>14mm</option><option>18mm</option><option>24mm</option><option>35mm</option><option>50mm</option><option>85mm</option><option>100mm</option><option>135mm</option></select>'+
+    '<select class="sel" style="font-size:9px;padding:4px 6px;"><option>Eye Level</option><option>Low</option><option>High</option><option>Dutch</option><option>Birds Eye</option></select>'+
+    '<input class="inp" style="font-size:10px;padding:4px 8px;" placeholder="Shot description...">'+
+    '<select class="sel" style="font-size:9px;padding:4px 6px;"><option>Planned</option><option>Shot</option><option>Approved</option><option>Cut</option></select>'+
+    '<button class="btn-danger" onclick="this.closest(\'.shot-row\').remove()">x</button>';
+  sceneRows.appendChild(row);
+}
 function addShot(){
   shotCount++;
   const row=document.createElement('div');
@@ -1802,19 +1883,19 @@ function calDayClick(d){const ev=prompt('Add event for day '+d+':');if(ev)toast(
 // ════════ SERIES ════════
 const seriesData={
   slate:{
-    name:'Slate Night',sub:'@lashaez._ and @z.lashae_',color:'var(--pk)',
+    name:'Slate Night',sub:'@lashaez._ on TikTok',color:'var(--pk)',
     desc:'Late-night director conversations. Personal. Intimate.',
     topics:['Creative burnout','Fear of success','Being multi-passionate','Inner child conversations','We are really doing this now','Motivation for emerging creatives'],
     notes:'',episodes:[]
   },
   manifesto:{
-    name:'Manifesto in Motion',sub:'@Bleuskm.studios',color:'var(--gold)',
+    name:'Manifesto in Motion',sub:'@lashaez._ on TikTok',color:'var(--gold)',
     desc:'Intellectual. Cultural. Film breakdowns, Black cinema, overlooked creatives.',
     topics:['Film analysis and symbolism','Black folklore in film','If this director made this movie','Forgotten Black creatives','Hidden meanings in films','Visual essays and diaries'],
     notes:'',episodes:[]
   },
   creative:{
-    name:'The Creative Room',sub:'@Bleuskm.studios',color:'rgba(255,255,255,.4)',
+    name:'The Creative Room',sub:'@lashaez._ on TikTok',color:'rgba(255,255,255,.4)',
     desc:'Umbrella world. Directors Notes + Artist Days. Everything lives here.',
     topics:['Directors Notes — BTS, building BLEUSKM','Artist Days — museums, cafes, vinyl','Come to set with me','Creative struggles and pre-prod chaos','Movie theater casual reviews'],
     notes:'',episodes:[]
@@ -1990,7 +2071,7 @@ loadNewsletter();
       '<div id="eps-'+id+'">'+epsHtml+'</div>'+
     '</div>'+
     '<div style="margin-top:12px;">'+
-      '<button class="btn-o" onclick="sendToVixFromApp(\'Give me 5 episode ideas for '+s.name+'\')">Vix Episode Ideas</button>'+
+      '<button class="btn-o" style="color:var(--pk);border-color:var(--pk);" onclick="sendToVixFromApp(\'Give me 5 episode ideas for '+s.name+'\')">Vix Episode Ideas</button>'+
     '</div>';
 }
 >
