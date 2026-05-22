@@ -3,6 +3,12 @@
 
 [build.environment]
   SECRETS_SCAN_ENABLED = "false"
+
+  [[redirects]]
+  from = "/.netlify/functions/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+  force = true
   
 [[redirects]]
   from = "/my-productions.html"
