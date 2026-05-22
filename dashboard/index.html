@@ -239,6 +239,9 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
 
 
 /* Button visibility fixes */
+select option { color: #000 !important; background: #fff !important; }
+.sel option { color: #000 !important; background: #fff !important; }
+.status-select option { color: #000 !important; background: #fff !important; }
 .btn { color: #fff !important; }
 .btn-o { color: var(--pk) !important; }
 .btn-ghost { color: var(--text2) !important; }
@@ -380,12 +383,12 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
       <div class="card-label">Festival Deadlines</div>
       <div class="dlist">
         <div class="drow"><div class="dot d-pk"></div><div class="drow-main"><div class="drow-label">BlackStar Film Festival</div><div class="drow-sub">Early bird — act now</div></div><span class="tag t-pk">URGENT</span></div>
-        <div class="drow"><div class="dot d-pk"></div><div class="drow-main"><div class="drow-label">Denton Black Film Festival</div><div class="drow-sub">Research deadline</div></div><span class="tag t-pk">RESEARCH</span></div>
+        <div class="drow"><div class="dot d-pk"></div><div class="drow-main"><div class="drow-label">Denton Black Film Festival</div><div class="drow-sub">Research deadline</div></div><span class="tag t-pk" style="cursor:pointer;" onclick="sendToVixFromApp('Research Denton Black Film Festival 2026 submission deadlines, fees, and eligibility for short films')">RESEARCH →</span></div>
         <div class="drow"><div class="dot d-gold"></div><div class="drow-main"><div class="drow-label">Sundance Short Film</div><div class="drow-sub">August/September 2026</div></div><span class="tag t-gold">AUG 26</span></div>
         <div class="drow"><div class="dot d-gold"></div><div class="drow-main"><div class="drow-label">SXSW</div><div class="drow-sub">September 2026</div></div><span class="tag t-gold">SEP 26</span></div>
         <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label">Tribeca</div><div class="drow-sub">December 2026</div></div><span class="tag t-d">DEC 26</span></div>
-        <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label">Pan African Film Festival</div><div class="drow-sub">Research</div></div><span class="tag t-d">TRACK</span></div>
-        <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label">American Black Film Festival</div><div class="drow-sub">Research</div></div><span class="tag t-d">TRACK</span></div>
+        <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label">Pan African Film Festival</div><div class="drow-sub">Research</div></div><span class="tag t-d" style="cursor:pointer;" onclick="sendToVixFromApp('Research this festival for The Final Hand submission')">TRACK →</span></div>
+        <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label">American Black Film Festival</div><div class="drow-sub">Research</div></div><span class="tag t-d" style="cursor:pointer;" onclick="sendToVixFromApp('Research this festival for The Final Hand submission')">TRACK →</span></div>
       </div>
     </div>
     <div class="card">
@@ -437,12 +440,66 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
   <div id="kanban-board" class="kanban">
     <div class="kb-col" id="col-development">
       <div class="kb-col-title"><div class="dot d-d"></div>Development</div>
-      <div class="kb-card" draggable="true" onclick="openProjectDetail('15th-hour')"><div class="kb-card-title">The 15th Hour</div><div class="kb-card-sub">Short · Psychological · In Development</div></div>
-      <div class="kb-card" draggable="true" onclick="openProjectDetail('overstood')"><div class="kb-card-title">Overstood</div><div class="kb-card-sub">Short · Character-driven · In Development</div></div>
-      <div class="kb-card" draggable="true" onclick="openProjectDetail('book-begin')"><div class="kb-card-title">Book of Beginnings</div><div class="kb-card-sub">Short · In Development</div></div>
-      <div class="kb-card" draggable="true" onclick="openProjectDetail('as-is')"><div class="kb-card-title">As Is</div><div class="kb-card-sub">Short/Feature · In Development</div></div>
-      <div class="kb-card" draggable="true" onclick="openProjectDetail('liminal')"><div class="kb-card-title">Liminal County</div><div class="kb-card-sub">Feature · In Development</div></div>
-      <div class="kb-card" draggable="true" onclick="openProjectDetail('blood-dominion')"><div class="kb-card-title">Of Blood and Dominion</div><div class="kb-card-sub">Feature · In Development</div></div>
+      <div class="kb-card" draggable="true" onclick="openProjectDetail('15th-hour')">
+        <div class="kb-card-title">The 15th Hour</div>
+        <div class="kb-card-sub">Short · Psychological · In Development</div>
+        <select class="sel" style="margin-top:8px;font-size:9px;padding:3px 6px;color:var(--text);" onclick="event.stopPropagation()" onchange="moveProject('15th-hour',this.value)">
+          <option style="color:#000;">Development</option>
+          <option style="color:#000;">Pre-Production</option>
+          <option style="color:#000;">Production</option>
+          <option style="color:#000;">Post · Festival</option>
+        </select>
+      </div>
+      <div class="kb-card" draggable="true" onclick="openProjectDetail('overstood')">
+        <div class="kb-card-title">Overstood</div>
+        <div class="kb-card-sub">Short · Character-driven · In Development</div>
+        <select class="sel" style="margin-top:8px;font-size:9px;padding:3px 6px;color:var(--text);" onclick="event.stopPropagation()" onchange="moveProject('overstood',this.value)">
+          <option style="color:#000;">Development</option>
+          <option style="color:#000;">Pre-Production</option>
+          <option style="color:#000;">Production</option>
+          <option style="color:#000;">Post · Festival</option>
+        </select>
+      </div>
+      <div class="kb-card" draggable="true" onclick="openProjectDetail('book-begin')">
+        <div class="kb-card-title">Book of Beginnings</div>
+        <div class="kb-card-sub">Short · In Development</div>
+        <select class="sel" style="margin-top:8px;font-size:9px;padding:3px 6px;color:var(--text);" onclick="event.stopPropagation()" onchange="moveProject('book-begin',this.value)">
+          <option style="color:#000;">Development</option>
+          <option style="color:#000;">Pre-Production</option>
+          <option style="color:#000;">Production</option>
+          <option style="color:#000;">Post · Festival</option>
+        </select>
+      </div>
+      <div class="kb-card" draggable="true" onclick="openProjectDetail('as-is')">
+        <div class="kb-card-title">As Is</div>
+        <div class="kb-card-sub">Short/Feature · In Development</div>
+        <select class="sel" style="margin-top:8px;font-size:9px;padding:3px 6px;color:var(--text);" onclick="event.stopPropagation()" onchange="moveProject('as-is',this.value)">
+          <option style="color:#000;">Development</option>
+          <option style="color:#000;">Pre-Production</option>
+          <option style="color:#000;">Production</option>
+          <option style="color:#000;">Post · Festival</option>
+        </select>
+      </div>
+      <div class="kb-card" draggable="true" onclick="openProjectDetail('liminal')">
+        <div class="kb-card-title">Liminal County</div>
+        <div class="kb-card-sub">Feature · In Development</div>
+        <select class="sel" style="margin-top:8px;font-size:9px;padding:3px 6px;color:var(--text);" onclick="event.stopPropagation()" onchange="moveProject('liminal',this.value)">
+          <option style="color:#000;">Development</option>
+          <option style="color:#000;">Pre-Production</option>
+          <option style="color:#000;">Production</option>
+          <option style="color:#000;">Post · Festival</option>
+        </select>
+      </div>
+      <div class="kb-card" draggable="true" onclick="openProjectDetail('blood-dominion')">
+        <div class="kb-card-title">Of Blood and Dominion</div>
+        <div class="kb-card-sub">Feature · In Development</div>
+        <select class="sel" style="margin-top:8px;font-size:9px;padding:3px 6px;color:var(--text);" onclick="event.stopPropagation()" onchange="moveProject('blood-dominion',this.value)">
+          <option style="color:#000;">Development</option>
+          <option style="color:#000;">Pre-Production</option>
+          <option style="color:#000;">Production</option>
+          <option style="color:#000;">Post · Festival</option>
+        </select>
+      </div>
     </div>
     <div class="kb-col" id="col-preproduction">
       <div class="kb-col-title"><div class="dot d-pk"></div>Pre-Production</div>
@@ -662,13 +719,13 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
       <div style="font-family:Space Mono,monospace;font-size:7px;letter-spacing:3px;color:var(--text3);">STATUS</div>
     </div>
     <div class="dlist">
-      <div class="drow" style="display:grid;grid-template-columns:1fr 130px 70px 85px;gap:10px;"><span style="font-size:11px;color:var(--text);font-weight:500;">BlackStar Film Festival</span><span style="font-size:10px;color:var(--pk);">URGENT</span><span style="font-size:10px;color:var(--text3);">~$30</span><span class="tag t-pk">ACT NOW</span></div>
+      <div class="drow" style="display:grid;grid-template-columns:1fr 130px 70px 85px;gap:10px;"><span style="font-size:11px;color:var(--text);font-weight:500;">BlackStar Film Festival</span><span style="font-size:10px;color:var(--pk);">URGENT</span><span style="font-size:10px;color:var(--text3);">~$30</span><a href="https://blackstarfest.org" target="_blank" class="tag t-pk" style="text-decoration:none;cursor:pointer;">SUBMIT NOW →</a></div>
       <div class="drow" style="display:grid;grid-template-columns:1fr 130px 70px 85px;gap:10px;"><span style="font-size:11px;color:var(--text);font-weight:500;">Denton Black Film Festival</span><span style="font-size:10px;color:var(--pk);">Research Now</span><span style="font-size:10px;color:var(--text3);">TBD</span><span class="tag t-pk">PRIORITY</span></div>
       <div class="drow" style="display:grid;grid-template-columns:1fr 130px 70px 85px;gap:10px;"><span style="font-size:11px;color:var(--text);font-weight:500;">Sundance Film Festival</span><span style="font-size:10px;color:var(--text3);">Aug/Sep 2026</span><span style="font-size:10px;color:var(--text3);">~$65</span><span class="tag t-gold">UPCOMING</span></div>
       <div class="drow" style="display:grid;grid-template-columns:1fr 130px 70px 85px;gap:10px;"><span style="font-size:11px;color:var(--text);font-weight:500;">SXSW Film Festival</span><span style="font-size:10px;color:var(--text3);">Sep 2026</span><span style="font-size:10px;color:var(--text3);">~$50</span><span class="tag t-gold">UPCOMING</span></div>
       <div class="drow" style="display:grid;grid-template-columns:1fr 130px 70px 85px;gap:10px;"><span style="font-size:11px;color:var(--text);font-weight:500;">Tribeca Film Festival</span><span style="font-size:10px;color:var(--text3);">Dec 2026</span><span style="font-size:10px;color:var(--text3);">~$75</span><span class="tag t-d">LATER</span></div>
-      <div class="drow" style="display:grid;grid-template-columns:1fr 130px 70px 85px;gap:10px;"><span style="font-size:11px;color:var(--text);font-weight:500;">Pan African Film Festival</span><span style="font-size:10px;color:var(--text3);">Research</span><span style="font-size:10px;color:var(--text3);">Varies</span><span class="tag t-d">TRACK</span></div>
-      <div class="drow" style="display:grid;grid-template-columns:1fr 130px 70px 85px;gap:10px;"><span style="font-size:11px;color:var(--text);font-weight:500;">American Black Film Festival</span><span style="font-size:10px;color:var(--text3);">Research</span><span style="font-size:10px;color:var(--text3);">Varies</span><span class="tag t-d">TRACK</span></div>
+      <div class="drow" style="display:grid;grid-template-columns:1fr 130px 70px 85px;gap:10px;"><span style="font-size:11px;color:var(--text);font-weight:500;">Pan African Film Festival</span><span style="font-size:10px;color:var(--text3);">Research</span><span style="font-size:10px;color:var(--text3);">Varies</span><span class="tag t-d" style="cursor:pointer;" onclick="sendToVixFromApp('Research this festival for The Final Hand submission')">TRACK →</span></div>
+      <div class="drow" style="display:grid;grid-template-columns:1fr 130px 70px 85px;gap:10px;"><span style="font-size:11px;color:var(--text);font-weight:500;">American Black Film Festival</span><span style="font-size:10px;color:var(--text3);">Research</span><span style="font-size:10px;color:var(--text3);">Varies</span><span class="tag t-d" style="cursor:pointer;" onclick="sendToVixFromApp('Research this festival for The Final Hand submission')">TRACK →</span></div>
     </div>
   </div>
 </div>
@@ -698,6 +755,29 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
       <div class="drow"><div class="dot d-pk"></div><div class="drow-main"><div class="drow-label">Post-Production</div><div class="drow-sub">Color, edit, finishing</div></div><span class="tag t-pk">ACTIVE</span></div>
     </div>
   </div>
+  <div class="card">
+    <div class="card-accent"></div>
+    <div class="card-label">Create Proposal</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
+      <input class="inp" id="prop-client" placeholder="Client Name">
+      <input class="inp" id="prop-email" placeholder="Client Email">
+      <select class="sel" id="prop-service">
+        <option>Brand Video / Promo</option>
+        <option>Music Video Production</option>
+        <option>Creative Direction Retainer</option>
+        <option>Photography + Visuals</option>
+        <option>Post-Production</option>
+        <option>Custom Package</option>
+      </select>
+      <input class="inp" id="prop-amount" placeholder="Proposed Amount ($)">
+      <input class="inp" id="prop-timeline" placeholder="Project Timeline">
+      <textarea class="textarea" id="prop-details" rows="3" placeholder="Project details / what's included..."></textarea>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-o" onclick="generateProposal()">Generate Proposal</button>
+        <button class="btn" onclick="generateContract()">Generate Contract</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ═══ NEWSLETTER ═══ -->
@@ -723,7 +803,16 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
     <div class="card"><div class="card-accent"></div><div class="card-label">Month 3 Goal</div><div class="card-val">$1.5K</div></div>
     <div class="card"><div class="card-accent"></div><div class="card-label">Month 6 Goal</div><div class="card-val">$4K</div></div>
   </div>
-  <div class="alert alert-gold">Connect your Stripe account to see live payment data. Vix can generate and send invoices directly from here — ask her.</div>
+  <div class="alert alert-gold">Stripe connected (test mode). Live payments will show once you switch to live mode in your Stripe dashboard.</div>
+  <div class="g4" style="margin-top:0;">
+    <div class="card"><div class="card-accent"></div><div class="card-label">Stripe Balance</div><div class="card-val" id="stripe-balance">Loading...</div><div class="card-sub">Test mode</div></div>
+    <div class="card"><div class="card-accent"></div><div class="card-label">Recent Payments</div><div class="card-val" id="stripe-payments">—</div><div class="card-sub">Last 30 days</div></div>
+  </div>
+  <div class="card" style="margin-top:0;">
+    <div class="card-accent"></div>
+    <div class="card-label">Recent Transactions</div>
+    <div id="stripe-tx"><div style="font-size:10px;color:var(--text3);padding:10px 0;">Loading transactions...</div></div>
+  </div>
 </div>
 
 <!-- ═══ EMAIL HUB ═══ -->
@@ -733,12 +822,12 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
     <div class="card-accent"></div>
     <div class="card-label">Inboxes — Zoho</div>
     <div class="dlist">
-      <div class="drow"><div class="dot d-pk"></div><div class="drow-main"><div class="drow-label">studio@bleuskm.com</div><div class="drow-sub">Main studio inbox · Primary</div></div><span class="tag t-pk">MAIN</span></div>
-      <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label">casting@bleuskm.com</div><div class="drow-sub">Casting submissions → Airtable → Brevo auto-ack Template #1</div></div><span class="tag t-d">LIVE</span></div>
-      <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label">crew@bleuskm.com</div><div class="drow-sub">Crew applications → Airtable → Brevo auto-ack Template #2</div></div><span class="tag t-d">LIVE</span></div>
-      <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label">clients@bleuskm.com</div><div class="drow-sub">Project inquiries → Airtable → Brevo auto-reply Template #5</div></div><span class="tag t-d">LIVE</span></div>
-      <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label">films@bleuskm.com</div><div class="drow-sub">Film notifications — separate from studio inbox</div></div><span class="tag t-d">ACTIVE</span></div>
-      <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label">newsletter@bleuskm.com</div><div class="drow-sub">Newsletter campaigns · Brevo List #2</div></div><span class="tag t-d">ACTIVE</span></div>
+      <div class="drow"><div class="dot d-pk"></div><div class="drow-main"><div class="drow-label"><a href="https://mail.zoho.com" target="_blank" style="color:var(--pk);text-decoration:none;">studio@bleuskm.com ↗</a></div><div class="drow-sub">Main studio inbox · Primary</div></div><span class="tag t-pk">MAIN</span></div>
+      <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label"><a href="https://mail.zoho.com" target="_blank" style="color:var(--pk);text-decoration:none;">casting@bleuskm.com ↗</a></div><div class="drow-sub">Casting submissions → Airtable → Brevo auto-ack Template #1</div></div><span class="tag t-d">LIVE</span></div>
+      <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label"><a href="https://mail.zoho.com" target="_blank" style="color:var(--pk);text-decoration:none;">crew@bleuskm.com ↗</a></div><div class="drow-sub">Crew applications → Airtable → Brevo auto-ack Template #2</div></div><span class="tag t-d">LIVE</span></div>
+      <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label"><a href="https://mail.zoho.com" target="_blank" style="color:var(--pk);text-decoration:none;">clients@bleuskm.com ↗</a></div><div class="drow-sub">Project inquiries → Airtable → Brevo auto-reply Template #5</div></div><span class="tag t-d">LIVE</span></div>
+      <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label"><a href="https://mail.zoho.com" target="_blank" style="color:var(--pk);text-decoration:none;">films@bleuskm.com ↗</a></div><div class="drow-sub">Film notifications — separate from studio inbox</div></div><span class="tag t-d">ACTIVE</span></div>
+      <div class="drow"><div class="dot d-d"></div><div class="drow-main"><div class="drow-label"><a href="https://mail.zoho.com" target="_blank" style="color:var(--pk);text-decoration:none;">newsletter@bleuskm.com ↗</a></div><div class="drow-sub">Newsletter campaigns · Brevo List #2</div></div><span class="tag t-d">ACTIVE</span></div>
     </div>
   </div>
 </div>
@@ -747,6 +836,28 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
 <div id="p-filmnotif" class="page">
   <div class="ph"><div class="ph-left"><div class="ph-title">Film Alerts</div><div class="ph-sub">Subscribers Per Film</div></div></div>
   <div class="alert">People who signed up to be notified when specific films open. Send updates via Brevo Template #4.</div>
+  <div class="card">
+    <div class="card-accent"></div>
+    <div class="card-label">Send Film Alert</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
+      <select class="sel" id="alert-film">
+        <option value="7">The Final Hand (List #7)</option>
+        <option value="14">The 15th Hour (List #14)</option>
+        <option value="13">As Is (List #13)</option>
+        <option value="12">Of Blood and Dominion (List #12)</option>
+        <option value="11">Liminal County (List #11)</option>
+        <option value="10">Book of Beginnings (List #10)</option>
+        <option value="9">Overstood (List #9)</option>
+        <option value="8">Love Me Like This (List #8)</option>
+      </select>
+      <input class="inp" id="alert-subject" placeholder="Subject line (e.g. Casting Now Open — The Final Hand)">
+      <textarea class="textarea" id="alert-body" rows="5" placeholder="Write your film update here... casting open, production start date, film festival news, etc."></textarea>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-o" onclick="sendToVixFromApp('Draft a film notification email for subscribers of ' + document.getElementById('alert-film').options[document.getElementById('alert-film').selectedIndex].text + '. Message: ' + document.getElementById('alert-body').value)">Vix Draft</button>
+        <button class="btn" onclick="sendFilmAlert()">Send Alert</button>
+      </div>
+    </div>
+  </div>
   <div class="card">
     <div class="card-accent"></div>
     <div class="card-label">Per-Film Brevo Lists</div>
@@ -768,19 +879,19 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
   <div class="ph"><div class="ph-left"><div class="ph-title">My Series</div><div class="ph-sub">3 Content Series · All Platforms</div></div></div>
   <div id="series-home">
     <div class="g3">
-      <div class="card" style="cursor:pointer;border-top:2px solid var(--pk);" onclick="openSeries('slate')">
+      <div class="card" style="cursor:pointer;border-top:2px solid var(--pk);" onclick="window.openSeries('slate')">
         <div class="card-label">SERIES 01</div>
         <div style="font-family:Bebas Neue,sans-serif;font-size:22px;letter-spacing:1px;color:var(--text);margin-bottom:6px;">🕯 Slate Night</div>
         <div style="font-size:10px;color:var(--text2);line-height:1.7;margin-bottom:10px;">Late-night director conversations. Personal. Intimate.<br>@lashaez._ on TikTok</div>
         <span class="tag t-pk">CLICK TO MANAGE →</span>
       </div>
-      <div class="card" style="cursor:pointer;border-top:2px solid var(--gold);" onclick="openSeries('manifesto')">
+      <div class="card" style="cursor:pointer;border-top:2px solid var(--gold);" onclick="window.openSeries('manifesto')">
         <div class="card-label">SERIES 02</div>
         <div style="font-family:Bebas Neue,sans-serif;font-size:22px;letter-spacing:1px;color:var(--text);margin-bottom:6px;">📚 Manifesto in Motion</div>
         <div style="font-size:10px;color:var(--text2);line-height:1.7;margin-bottom:10px;">Intellectual. Cultural. Film breakdowns, Black cinema, overlooked creatives.<br>@lashaez._ on TikTok</div>
         <span class="tag t-gold">CLICK TO MANAGE →</span>
       </div>
-      <div class="card" style="cursor:pointer;border-top:2px solid rgba(255,255,255,.2);" onclick="openSeries('creative')">
+      <div class="card" style="cursor:pointer;border-top:2px solid rgba(255,255,255,.2);" onclick="window.openSeries('creative')">
         <div class="card-label">SERIES 03</div>
         <div style="font-family:Bebas Neue,sans-serif;font-size:22px;letter-spacing:1px;color:var(--text);margin-bottom:6px;">🎞 The Creative Room</div>
         <div style="font-size:10px;color:var(--text2);line-height:1.7;margin-bottom:10px;">Umbrella world. Directors Notes + Artist Days.<br>@lashaez._ on TikTok</div>
@@ -1119,7 +1230,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
 <!-- Toast stack -->
 <div class="toast-stack" id="toast-stack"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.174.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.174.0/build/three.min.js" onload="window._threeLoaded=true;if(window._initOrbWhenReady)window._initOrbWhenReady();" onerror="console.warn('Three.js failed')"></script>
 <script>
 
 // THREE loaded via CDN script tag
@@ -1308,9 +1419,15 @@ window._setVixSpeaking=(v)=>{vixSpeaking=v;};
 <script>
 // ════════ CONFIG ════════
 const ANTHROPIC_KEY='';
-const AT_TOKEN='pat4zUowRMotxgqVA.415605c7a68e67cff288f42f8c2b75f48653ef33d98f6b895bd3a4da59931fb4';
+const AT_TOKEN='patmJW5X7Qxgds4pQ.61bb46106cd9ad294922959b4370f0f3f4cc164a8afa12d5ea3c3be4b330947a';
 const AT_BASE='appXf1NxIVhYbuV4j';
-const TBL={casting:'tblLGmXULNb9ebFxH',newsletter:'tblHgLV3iPlFEBW89',inquiries:'tblwfk7tmoFhGIia5',crew:'tblCR7Cg3WugORlwO'};
+const TBL={
+  casting:'tblLGmXULNb9ebFxH',
+  newsletter:'tblSMb3y7vrvjbONx',
+  inquiries:'tblwfk7tmoFhGIia5',
+  crew:'tblCR7Cg3WugORlwO',
+  filmnotif:'tblFilmNotifications'
+};
 const BREVO_KEY='';
 
 const VIX_SYSTEM=`You are Vix — Zaria Lashae's AI studio manager for Bleuskm Studios. You're her personal assistant, PA, social media manager, creative director, script editor, finance manager, and best friend rolled into one.
@@ -1633,20 +1750,17 @@ async function sendVix(override){
 }
 
 async function speakVix(text){
-  // ElevenLabs voice — fill in key when ready
-  const key='';
-  const voiceId='6aDn1KB0hjpdcocrUkmq';
-  // ElevenLabs active
+  if(!text||text.length<2)return;
   try{
-    const r=await fetch('https://api.elevenlabs.io/v1/text-to-speech/'+voiceId,{
+    const r=await fetch('/.netlify/functions/elevenlabs-proxy',{
       method:'POST',
-      headers:{'xi-api-key':key,'Content-Type':'application/json'},
-      body:JSON.stringify({text,voice_settings:{stability:0.5,similarity_boost:0.75}})
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({text:text.substring(0,500)})
     });
+    if(!r.ok)return;
     const blob=await r.blob();
-    new Audio(URL.createObjectURL(blob)).play();
-  }catch(e){}
-}
+    if(blob.size>0){new Audio(URL.createObjectURL(blob)).play();}
+  }catch(e){console.log('Voice:',e);}
 
 // ════════ VOICE ════════
 let recog, listening=false;
@@ -2126,11 +2240,88 @@ async function syncProjectStatuses(){
   });
 }
 
+
+// ════════ STRIPE ════════
+async function loadStripe(){
+  // Stripe balance requires secret key on server side
+  // Using Netlify function for this
+  try{
+    const r=await fetch('/.netlify/functions/stripe-proxy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'balance'})});
+    if(r.ok){
+      const d=await r.json();
+      const el=document.getElementById('stripe-balance');
+      if(el)el.textContent='$'+(d.balance||'0.00');
+      const txEl=document.getElementById('stripe-tx');
+      if(txEl&&d.transactions){
+        txEl.innerHTML=d.transactions.map(function(t){
+          return '<div class="drow"><div class="dot d-pk"></div><div class="drow-main"><div class="drow-label">'+t.description+'</div><div class="drow-sub">'+new Date(t.created*1000).toLocaleDateString()+'</div></div><div style="font-size:11px;color:var(--text);">$'+(t.amount/100).toFixed(2)+'</div></div>';
+        }).join('');
+      }
+    }else{
+      const el=document.getElementById('stripe-balance');
+      if(el)el.textContent='Setup needed';
+      const txEl=document.getElementById('stripe-tx');
+      if(txEl)txEl.innerHTML='<div style="font-size:10px;color:var(--text3);padding:10px 0;">Add STRIPE_SECRET_KEY to Netlify env vars to connect Stripe.</div>';
+    }
+  }catch(e){
+    const el=document.getElementById('stripe-balance');
+    if(el)el.textContent='—';
+  }
+}
+
+// ════════ FILM ALERT ════════
+async function sendFilmAlert(){
+  const filmSel=document.getElementById('alert-film');
+  const subject=document.getElementById('alert-subject')?.value.trim();
+  const body=document.getElementById('alert-body')?.value.trim();
+  const listId=parseInt(filmSel?.value||'7');
+  const filmName=filmSel?.options[filmSel.selectedIndex]?.text||'Film';
+  if(!subject||!body){toast('Fill in subject and message','');return;}
+  try{
+    const r=await fetch('/.netlify/functions/brevo-proxy',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        endpoint:'https://api.brevo.com/v3/smtp/email',
+        payload:{
+          sender:{name:'Zaria Lashae - Bleuskm Studios',email:'films@bleuskm.com'},
+          to:[{email:'films@bleuskm.com'}],
+          subject:subject,
+          textContent:body
+        }
+      })
+    });
+    if(r.ok){toast('Film alert sent!','pk');}
+    else{toast('Send failed — check Brevo','');}
+  }catch(e){toast('Error: '+e.message,'');}
+}
+
+// ════════ PROPOSALS + CONTRACTS ════════
+function generateProposal(){
+  const client=document.getElementById('prop-client')?.value.trim();
+  const service=document.getElementById('prop-service')?.value;
+  const amount=document.getElementById('prop-amount')?.value.trim();
+  const timeline=document.getElementById('prop-timeline')?.value.trim();
+  const details=document.getElementById('prop-details')?.value.trim();
+  if(!client||!service){toast('Fill in client name and service','');return;}
+  sendToVixFromApp('Write a professional project proposal for client '+client+' for '+service+' at $'+amount+'. Timeline: '+timeline+'. Details: '+details+'. From Zaria Lashae, Bleuskm Studios. Include: scope of work, deliverables, investment breakdown, timeline, and next steps. Professional but warm tone.');
+}
+
+function generateContract(){
+  const client=document.getElementById('prop-client')?.value.trim();
+  const service=document.getElementById('prop-service')?.value;
+  const amount=document.getElementById('prop-amount')?.value.trim();
+  const timeline=document.getElementById('prop-timeline')?.value.trim();
+  if(!client||!service){toast('Fill in client details first','');return;}
+  sendToVixFromApp('Write a professional service contract for client '+client+' for '+service+' at $'+amount+'. Timeline: '+timeline+'. From Bleuskm Studios, Zaria Lashae. Include: parties involved, scope of work, payment terms (50% upfront 50% on delivery), revision policy (2 rounds), ownership of final deliverables, cancellation policy, and signature lines. Make it legally sound but readable.');
+}
+
 // ════════ INIT ════════
 loadCasting();
 loadInquiries();
 loadNewsletter();
 syncProjectStatuses();
+loadStripe();
 
 
 function openSeries(id){
@@ -2305,6 +2496,8 @@ function closeSeries(){
   if(modal)modal.style.display='none';
 }
 
+
+}
 </script>
 </body>
 </html>
