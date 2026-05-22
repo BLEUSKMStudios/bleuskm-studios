@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>BLEUSKM OS</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.174.0/build/three.module.js"}}</script>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
@@ -275,8 +275,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
       <button class="htb-btn" onclick="openApp('projects')">PROJECTS</button>
       <button class="htb-btn" onclick="openApp('casting')">CASTING</button>
       <button class="htb-btn" onclick="openApp('content')">CONTENT</button>
-      <button class="htb-btn" onclick="openApp('business')">BUSINESS</button>
-      <button class="htb-btn" onclick="openApp('lifeos')">LIFE OS</button>
+      <button class="htb-btn" onclick="openApp('clients')">BUSINESS</button>
+      <button class="htb-btn" onclick="openApp('schedule')">LIFE OS</button>
     </div>
     <div class="htb-right">
       <div class="live-pill"><div class="live-dot"></div>VIX LIVE</div>
@@ -450,6 +450,9 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
         <div class="kb-card-title">The Final Hand</div>
         <div class="kb-card-sub">Short · Afro-Surrealist · Now Casting</div>
         <div class="kb-tags"><div class="kb-tag">Casting Live</div><div class="kb-tag">Crew Open</div><div class="kb-tag">2026</div></div>
+        <select class="sel" style="margin-top:8px;font-size:9px;padding:3px 6px;" onclick="event.stopPropagation()" onchange="moveProject('tfh',this.value)">
+          <option>Development</option><option selected>Pre-Production</option><option>Production</option><option>Post · Festival</option>
+        </select>
       </div>
       <div class="kb-card" draggable="true" onclick="openProjectDetail('love-me')">
         <div class="kb-card-title">Love Me Like This</div>
@@ -977,11 +980,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
     <div class="card-label" style="color:var(--pk);">STEP 0 — Add API Keys to Netlify (Required First)</div>
     <div style="font-size:11px;color:var(--text2);line-height:1.9;">
       Go to <strong style="color:var(--gold);">app.netlify.com</strong> → your site → <strong>Site Settings</strong> → <strong>Environment Variables</strong> → Add these:<br><br>
-      <code style="background:rgba(255,255,255,.05);padding:4px 10px;display:block;margin:3px 0;color:var(--pk);">ANTHROPIC_KEY = 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</code>
-      <code style="background:rgba(255,255,255,.05);padding:4px 10px;display:block;margin:3px 0;color:var(--pk);">ELEVENLABS_KEY = sk_eadb32cb06ae1a116ee8d5ab7ef9b2deea6a336d5035f562
+      <code style="background:rgba(255,255,255,.05);padding:4px 10px;display:block;margin:3px 0;color:var(--pk);">ANTHROPIC_KEY = YOUR_NEW_ANTHROPIC_KEY</code>
+      <code style="background:rgba(255,255,255,.05);padding:4px 10px;display:block;margin:3px 0;color:var(--pk);">ELEVENLABS_KEY = YOUR_ELEVENLABS_KEY
       Also add: ELEVENLABS_VOICE = 6aDn1KB0hjpdcocrUkmq</code>
       <code style="background:rgba(255,255,255,.05);padding:4px 10px;display:block;margin:3px 0;color:var(--pk);">ELEVENLABS_VOICE = 6aDn1KB0hjpdcocrUkmq</code>
-      <code style="background:rgba(255,255,255,.05);padding:4px 10px;display:block;margin:3px 0;color:var(--pk);">BREVO_KEY = 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</code>
+      <code style="background:rgba(255,255,255,.05);padding:4px 10px;display:block;margin:3px 0;color:var(--pk);">BREVO_KEY = YOUR_BREVO_KEY</code>
       <br>Also upload <strong>anthropic-proxy.js</strong> to your <strong>netlify/functions/</strong> folder on GitHub.<br><br>
       <span style="color:rgba(255,45,120,.7);">Once those are set, Vix will think, speak, and respond fully.</span>
     </div>
@@ -1116,8 +1119,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Inter"
 <!-- Toast stack -->
 <div class="toast-stack" id="toast-stack"></div>
 
-<script type="module">
-import * as THREE from 'three';
+<script src="https://cdn.jsdelivr.net/npm/three@0.174.0/build/three.min.js"></script>
+<script>
+
+// THREE loaded via CDN script tag
 
 // ════════ VIX ORB — NANO PARTICLE SPHERE ════════
 const canvas = document.getElementById('vix-canvas');
@@ -1297,15 +1302,16 @@ window.addEventListener('resize',()=>{
   camera.updateProjectionMatrix();
 });
 window._setVixSpeaking=(v)=>{vixSpeaking=v;};
+
 </script>
 
 <script>
 // ════════ CONFIG ════════
-const ANTHROPIC_KEY='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';
+const ANTHROPIC_KEY='';
 const AT_TOKEN='pat4zUowRMotxgqVA.415605c7a68e67cff288f42f8c2b75f48653ef33d98f6b895bd3a4da59931fb4';
 const AT_BASE='appXf1NxIVhYbuV4j';
 const TBL={casting:'tblLGmXULNb9ebFxH',newsletter:'tblHgLV3iPlFEBW89',inquiries:'tblwfk7tmoFhGIia5',crew:'tblCR7Cg3WugORlwO'};
-const BREVO_KEY='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';
+const BREVO_KEY='';
 
 const VIX_SYSTEM=`You are Vix — Zaria Lashae's AI studio manager for Bleuskm Studios. You're her personal assistant, PA, social media manager, creative director, script editor, finance manager, and best friend rolled into one.
 
@@ -1628,7 +1634,7 @@ async function sendVix(override){
 
 async function speakVix(text){
   // ElevenLabs voice — fill in key when ready
-  const key='sk_eadb32cb06ae1a116ee8d5ab7ef9b2deea6a336d5035f562';
+  const key='';
   const voiceId='6aDn1KB0hjpdcocrUkmq';
   // ElevenLabs active
   try{
@@ -2050,69 +2056,255 @@ function checkTime(){
 }
 setInterval(checkTime,60000);
 
+
+// ════════ PROJECT STATUS SYNC ════════
+// Auto-moves film cards based on casting submissions in Airtable
+async 
+function moveProject(id, newStatus){
+  const cols = {
+    'Development':'col-development',
+    'Pre-Production':'col-preproduction', 
+    'Production':'col-production',
+    'Post · Festival':'col-post'
+  };
+  const targetCol = document.getElementById(cols[newStatus]);
+  if(!targetCol) return;
+  // Find the card
+  const card = document.querySelector('[onclick*="'+id+'"]');
+  if(!card) return;
+  // Remove placeholder text if present
+  const placeholder = targetCol.querySelector('[style*="NOTHING YET"]');
+  if(placeholder) placeholder.style.display='none';
+  // Update select value
+  const sel = card.querySelector('select');
+  if(sel) sel.value = newStatus;
+  targetCol.appendChild(card);
+  toast('Moved to '+newStatus,'pk');
+}
+
+async function syncProjectStatuses(){
+  // Get casting records to determine which films are actively casting
+  const records = await atFetch(TBL.casting);
+  if(!records.length) return;
+  
+  // Count submissions per film
+  const filmCounts = {};
+  records.forEach(function(r){
+    const film = r.fields['Film'] || r.fields['Project'] || '';
+    if(film){
+      filmCounts[film] = (filmCounts[film]||0) + 1;
+    }
+  });
+  
+  // Films with casting submissions are in Pre-Production
+  // Update the kanban cards based on real data
+  const devCol = document.getElementById('col-development');
+  const prepCol = document.getElementById('col-preproduction');
+  if(!devCol || !prepCol) return;
+  
+  // Check each film in dev column - if it has casting submissions, note it
+  const devCards = devCol.querySelectorAll('.kb-card');
+  devCards.forEach(function(card){
+    const title = card.querySelector('.kb-card-title');
+    if(!title) return;
+    const filmName = title.textContent.trim();
+    // Check if this film has casting activity
+    for(const film in filmCounts){
+      if(film.toLowerCase().includes(filmName.toLowerCase()) || filmName.toLowerCase().includes(film.toLowerCase())){
+        if(filmCounts[film] > 0){
+          // Add a subtle indicator this film has activity
+          if(!card.querySelector('.casting-indicator')){
+            const ind = document.createElement('div');
+            ind.className='casting-indicator';
+            ind.style.cssText='margin-top:6px;font-size:8px;color:var(--pk);font-family:Space Mono,monospace;letter-spacing:1px;';
+            ind.textContent=filmCounts[film]+' SUBMISSIONS';
+            card.appendChild(ind);
+          }
+        }
+      }
+    }
+  });
+}
+
 // ════════ INIT ════════
 loadCasting();
 loadInquiries();
 loadNewsletter();
-</script>
-</body>
-</htmlfunction openSeries(id){
+syncProjectStatuses();
+
+
+function openSeries(id){
   const s=seriesData[id];
   if(!s)return;
-  document.getElementById('series-home').style.display='none';
-  const det=document.getElementById('series-detail');
-  det.classList.add('series-open');det.style.cssText='display:block !important;';
+  const modal=document.getElementById('series-modal');
+  const content=document.getElementById('series-modal-content');
+  if(!modal||!content)return;
+  content.innerHTML='';
 
-  let epsHtml='';
-  if(s.episodes.length){
+  // Header row
+  const hdr=document.createElement('div');
+  hdr.style.cssText='display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid rgba(255,45,120,.15);';
+  const titleEl=document.createElement('div');
+  titleEl.style.cssText='font-family:Bebas Neue,sans-serif;font-size:28px;color:#F0ECF5;';
+  titleEl.textContent=s.name;
+  const closeBtn=document.createElement('button');
+  closeBtn.className='btn-ghost';
+  closeBtn.textContent='Close';
+  closeBtn.onclick=closeSeries;
+  hdr.appendChild(titleEl);
+  hdr.appendChild(closeBtn);
+  content.appendChild(hdr);
+
+  // Subtitle
+  const sub=document.createElement('p');
+  sub.style.cssText='font-size:11px;color:rgba(240,236,245,0.25);margin-bottom:20px;';
+  sub.textContent=s.sub+' - '+s.desc;
+  content.appendChild(sub);
+
+  // Two column grid
+  const grid=document.createElement('div');
+  grid.className='g2';
+  grid.style.marginBottom='16px';
+
+  // Topics card
+  const tc=document.createElement('div');
+  tc.className='card';
+  const tcA=document.createElement('div');
+  tcA.className='card-accent';
+  tcA.style.background=s.color;
+  const tcL=document.createElement('div');
+  tcL.className='card-label';
+  tcL.textContent='Topics and Ideas';
+  tc.appendChild(tcA);
+  tc.appendChild(tcL);
+  if(s.topics){
+    s.topics.forEach(function(t){
+      const row=document.createElement('div');
+      row.className='drow';
+      const dot=document.createElement('div');
+      dot.className='dot d-pk';
+      const main=document.createElement('div');
+      main.className='drow-main';
+      const lbl=document.createElement('div');
+      lbl.className='drow-label';
+      lbl.textContent=t;
+      main.appendChild(lbl);
+      row.appendChild(dot);
+      row.appendChild(main);
+      tc.appendChild(row);
+    });
+  }
+  grid.appendChild(tc);
+
+  // Notes card
+  const nc=document.createElement('div');
+  nc.className='card';
+  const ncA=document.createElement('div');
+  ncA.className='card-accent';
+  ncA.style.background=s.color;
+  const ncL=document.createElement('div');
+  ncL.className='card-label';
+  ncL.textContent='Pre-Production Notes';
+  nc.appendChild(ncA);
+  nc.appendChild(ncL);
+  const ta=document.createElement('textarea');
+  ta.className='textarea';
+  ta.rows=6;
+  ta.id='snotes-'+id;
+  ta.placeholder='Filming notes, equipment, locations...';
+  ta.value=s.notes||'';
+  nc.appendChild(ta);
+  const saveBtn=document.createElement('button');
+  saveBtn.className='btn-ghost';
+  saveBtn.style.marginTop='8px';
+  saveBtn.textContent='Save Notes';
+  saveBtn.onclick=function(){seriesData[id].notes=ta.value;toast('Saved','pk');};
+  nc.appendChild(saveBtn);
+  grid.appendChild(nc);
+  content.appendChild(grid);
+
+  // Episodes card
+  const ec=document.createElement('div');
+  ec.className='card';
+  const epHdr=document.createElement('div');
+  epHdr.style.cssText='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;';
+  const epL=document.createElement('div');
+  epL.className='card-label';
+  epL.textContent='Episodes';
+  const addEpBtn=document.createElement('button');
+  addEpBtn.className='btn';
+  addEpBtn.textContent='+ Add Episode';
+  addEpBtn.onclick=function(){openEpModal(id);};
+  epHdr.appendChild(epL);
+  epHdr.appendChild(addEpBtn);
+  ec.appendChild(epHdr);
+  const epList=document.createElement('div');
+  epList.id='eps-'+id;
+  if(s.episodes&&s.episodes.length){
     s.episodes.forEach(function(ep,i){
-      const sel='<select class="sel" style="width:120px;font-size:10px;padding:4px 7px;" onchange="seriesData[\'' +id+ '\'].episodes['+i+'].status=this.value;toast(\'Updated\',\'pk\')">'
-        +'<option'+(ep.status==='Planned'?' selected':'')+'>Planned</option>'
-        +'<option'+(ep.status==='Scripted'?' selected':'')+'>Scripted</option>'
-        +'<option'+(ep.status==='Filmed'?' selected':'')+'>Filmed</option>'
-        +'<option'+(ep.status==='Edited'?' selected':'')+'>Edited</option>'
-        +'<option'+(ep.status==='Posted'?' selected':'')+'>Posted</option>'
-        +'</select>';
-      epsHtml+='<div class="ep-card">'
-        +'<div class="ep-num">'+String(i+1).padStart(2,'0')+'</div>'
-        +'<div class="ep-info"><div class="ep-title">'+ep.title+'</div><div class="ep-status">'+(ep.status||'Planned')+' · '+(ep.desc||'')+'</div></div>'
-        +sel
-        +'<button class="btn-danger" onclick="seriesData[\''+id+'\'].episodes.splice('+i+',1);openSeries(\''+id+'\')">×</button>'
-        +'</div>';
+      const row=document.createElement('div');
+      row.className='ep-card';
+      const num=document.createElement('div');
+      num.className='ep-num';
+      num.textContent=String(i+1).padStart(2,'00');
+      const info=document.createElement('div');
+      info.className='ep-info';
+      const et=document.createElement('div');
+      et.className='ep-title';
+      et.textContent=ep.title;
+      const es=document.createElement('div');
+      es.className='ep-status';
+      es.textContent=(ep.status||'Planned')+' - '+(ep.desc||'');
+      info.appendChild(et);
+      info.appendChild(es);
+      const sel=document.createElement('select');
+      sel.className='sel';
+      sel.style.cssText='width:120px;font-size:10px;padding:4px 7px;';
+      ['Planned','Scripted','Filmed','Edited','Posted'].forEach(function(opt){
+        const o=document.createElement('option');
+        o.value=opt;
+        o.textContent=opt;
+        if(ep.status===opt)o.selected=true;
+        sel.appendChild(o);
+      });
+      sel.onchange=function(){seriesData[id].episodes[i].status=sel.value;};
+      const delBtn=document.createElement('button');
+      delBtn.className='btn-danger';
+      delBtn.textContent='x';
+      delBtn.onclick=function(){seriesData[id].episodes.splice(i,1);openSeries(id);};
+      row.appendChild(num);
+      row.appendChild(info);
+      row.appendChild(sel);
+      row.appendChild(delBtn);
+      epList.appendChild(row);
     });
   } else {
-    epsHtml='<div style="font-size:10px;color:var(--text3);padding:12px 0;">No episodes yet. Click + Add Episode.</div>';
+    const empty=document.createElement('p');
+    empty.style.cssText='font-size:10px;color:rgba(240,236,245,0.25);padding:12px 0;';
+    empty.textContent='No episodes yet. Click + Add Episode.';
+    epList.appendChild(empty);
   }
+  ec.appendChild(epList);
+  content.appendChild(ec);
 
-  det.innerHTML=
-    '<div style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">'+
-      '<button class="btn-ghost" onclick="closeSeries()">← Back to Series</button>'+
-      '<button class="btn" onclick="openEpModal(\''+id+'\')">+ Add Episode</button>'+
-    '</div>'+
-    '<div class="series-header" style="border-color:'+s.color+';">'+
-      '<div class="series-big-title">'+s.name+'</div>'+
-      '<div class="series-big-sub">'+s.sub+' · '+s.desc+'</div>'+
-    '</div>'+
-    '<div class="g2" style="margin-top:13px;">'+
-      '<div class="card">'+
-        '<div class="card-accent" style="background:'+s.color+';"></div>'+
-        '<div class="card-label">Topics and Ideas</div>'+
-        s.topics.map(function(t){return '<div class="drow"><div class="dot d-pk"></div><div class="drow-main"><div class="drow-label">'+t+'</div></div></div>';}).join('')+
-      '</div>'+
-      '<div class="card">'+
-        '<div class="card-accent" style="background:'+s.color+';"></div>'+
-        '<div class="card-label">Pre-Production Notes</div>'+
-        '<textarea class="textarea" id="series-notes-'+id+'" rows="6" placeholder="Filming notes, equipment, locations, scripting ideas...">'+s.notes+'</textarea>'+
-        '<button class="btn-ghost" style="margin-top:8px;" onclick="seriesData[\''+id+'\'].notes=document.getElementById(\'series-notes-'+id+'\').value;toast(\'Saved\',\'pk\')">Save Notes</button>'+
-      '</div>'+
-    '</div>'+
-    '<div class="card" style="margin-top:13px;">'+
-      '<div class="card-accent" style="background:'+s.color+';"></div>'+
-      '<div class="card-label">Episodes</div>'+
-      '<div id="eps-'+id+'">'+epsHtml+'</div>'+
-    '</div>'+
-    '<div style="margin-top:12px;">'+
-      '<button class="btn-o" style="color:var(--pk);border-color:var(--pk);" onclick="sendToVixFromApp(\'Give me 5 episode ideas for '+s.name+'\')">Vix Episode Ideas</button>'+
-    '</div>';
+  // Vix button
+  const vb=document.createElement('div');
+  vb.style.marginTop='12px';
+  const vBtn=document.createElement('button');
+  vBtn.className='btn-o';
+  vBtn.textContent='Vix Episode Ideas';
+  vBtn.onclick=function(){sendToVixFromApp('Give me 5 episode ideas for '+s.name);};
+  vb.appendChild(vBtn);
+  content.appendChild(vb);
+  modal.style.display='block';
 }
->
+window.openSeries=openSeries;
+
+function closeSeries(){
+  const modal=document.getElementById('series-modal');
+  if(modal)modal.style.display='none';
+}
+
+</script>
+</body>
+</html>
