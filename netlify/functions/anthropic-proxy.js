@@ -54,7 +54,7 @@ Do it fully. Make smart assumptions. Deliver. Be her Vix.`;
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-haiku-4-5-20251001',
         max_tokens: 1000,
         system: VIX_SYSTEM,
         messages: [{ role: 'user', content: body.message }]
@@ -62,6 +62,17 @@ Do it fully. Make smart assumptions. Deliver. Be her Vix.`;
     });
 
     const data = await response.json();
+    console.log('Anthropic status:', response.status);
+    console.log('Anthropic response:', JSON.stringify(data).substring(0, 200));
+
+    if (!response.ok) {
+      return {
+        statusCode: 200,
+        headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: 'API error ' + response.status + ': ' + (data.error?.message || JSON.stringify(data)) })
+      };
+    }
+
     const text = data.content?.[0]?.text || 'Something went wrong, try again.';
 
     return {
@@ -73,10 +84,11 @@ Do it fully. Make smart assumptions. Deliver. Be her Vix.`;
       body: JSON.stringify({ text })
     };
   } catch (err) {
+    console.log('Fetch error:', err.message);
     return {
-      statusCode: 500,
-      headers: { 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ error: err.message })
+      statusCode: 200,
+      headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: 'Connection error: ' + err.message })
     };
   }
 };
