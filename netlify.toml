@@ -4,12 +4,16 @@
 [build.environment]
   SECRETS_SCAN_ENABLED = "false"
 
-  [[redirects]]
-  from = "/.netlify/functions/*"
-  to = "/.netlify/functions/:splat"
+[[redirects]]
+  from = "/dashboard"
+  to = "/dashboard/index.html"
   status = 200
-  force = true
-  
+
+[[redirects]]
+  from = "/dashboard/*"
+  to = "/dashboard/index.html"
+  status = 200
+
 [[redirects]]
   from = "/my-productions.html"
   to = "/my-productions"
@@ -152,5 +156,5 @@
   for = "/.netlify/functions/*"
   [headers.values]
     Access-Control-Allow-Origin = "https://bleuskm.com"
-    Access-Control-Allow-Methods = "POST, OPTIONS"
+    Access-Control-Allow-Methods = "GET, POST, PATCH, OPTIONS"
     Access-Control-Allow-Headers = "Content-Type"
