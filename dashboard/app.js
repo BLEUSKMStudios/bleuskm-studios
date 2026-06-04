@@ -31,6 +31,11 @@ function toast(message){ const el = $('#toast'); el.textContent = message; el.hi
 function setStatus(text){ $('#vixStatus').innerHTML = `<span></span> ${text}`; }
 function speak(text){ return fetch('/.netlify/functions/elevenlabs-proxy', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ text: text.slice(0, 650) }) }).then(async r => { if(!r.ok) return; const blob = await r.blob(); if(blob.size) new Audio(URL.createObjectURL(blob)).play().catch(()=>{}); }).catch(()=>{}); }
 async function askVix(message){
+    message = String(message || '').trim();
+  if (!message) {
+    toast('Type something for Vix first.');
+    return '';
+  }
   setStatus('THINKING');
   try{
     const r = await fetch('/.netlify/functions/anthropic-proxy', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ message }) });
