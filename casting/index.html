@@ -724,19 +724,19 @@ body { background: #080808; color: #EADFCF; }
   <p>Select a production below to view roles and submit your audition materials.</p>
 </div>
 
-<!-- OPEN CASTINGS — UNDER REVIEW -->
+<!-- OPEN CASTINGS -->
 <div class="casting-grid-section">
-  <span class="casting-section-label">Under Review</span>
+  <span class="casting-section-label">Now Casting</span>
   <div class="casting-grid">
 
     <!-- THE FINAL HAND — CASTING CLOSED -->
-    <div class="film-cast-card closed-card" style="opacity:0.6;cursor:pointer" onclick="window.location='/final-hand-submissions-closed.html'">
+    <div class="film-cast-card closed-card" style="opacity:0.55;filter:grayscale(0.4)" onclick="openModal('final-hand-closed')">
       <img class="film-cast-img" src="/images/the_final_hand_poster.png" alt="The Final Hand">
       <div class="film-cast-overlay"><span class="cast-status-badge badge-closed">Casting Closed</span></div>
       <div class="film-cast-info">
         <span class="film-cast-format">Short Film · Pre-Production</span>
         <div class="film-cast-title">The Final Hand</div>
-        <span style="display:block;font-family:'League Spartan',sans-serif;font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:#DAAF37;margin-top:6px">Submissions Closed</span>
+        <span class="film-cast-action" style="color:rgba(234,223,207,0.3)">Under Review</span>
       </div>
     </div>
 
@@ -860,6 +860,23 @@ body { background: #080808; color: #EADFCF; }
 <!-- ═══════════════════════════════
      MODALS
 ═══════════════════════════════ -->
+
+<!-- FINAL HAND — CASTING CLOSED MODAL -->
+<div class="modal-overlay" id="modal-final-hand-closed">
+  <div class="modal-box" style="max-width:480px">
+    <button class="modal-close" onclick="closeModal('final-hand-closed')">&times;</button>
+    <div style="padding:36px 40px 40px;text-align:center">
+      <span style="display:inline-block;font-family:'League Spartan',sans-serif;font-size:0.58rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;padding:5px 12px;background:rgba(0,0,0,0.6);color:rgba(234,223,207,0.5);border:1px solid rgba(218,175,55,0.2);margin-bottom:24px">Casting Closed</span>
+      <h2 style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:1.5rem;letter-spacing:3px;text-transform:uppercase;color:#EADFCF;margin:0 0 8px">The Final Hand</h2>
+      <div style="width:28px;height:2px;background:#DAAF37;margin:0 auto 20px"></div>
+      <p style="font-size:0.88rem;color:rgba(234,223,207,0.6);line-height:1.8;margin-bottom:28px">Casting submissions are now closed. The BLEUSKM team is currently reviewing all applicants. Selected talent will be contacted directly with next steps.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;align-items:center">
+        <a href="/final-hand-submissions-closed.html" style="display:inline-block;background:#DAAF37;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.65rem;letter-spacing:3px;text-transform:uppercase;padding:12px 28px;text-decoration:none;width:100%;text-align:center">Read Full Update →</a>
+        <a href="/crew-application" style="display:inline-block;border:1px solid rgba(218,175,55,0.3);color:rgba(218,175,55,0.7);font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.62rem;letter-spacing:2.5px;text-transform:uppercase;padding:11px 28px;text-decoration:none;width:100%;text-align:center;transition:border-color 0.2s,color 0.2s" onmouseover="this.style.borderColor='rgba(218,175,55,0.7)';this.style.color='#DAAF37'" onmouseout="this.style.borderColor='rgba(218,175,55,0.3)';this.style.color='rgba(218,175,55,0.7)'">Interested in Crew? Apply Here →</a>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- FINAL HAND MODAL — OPEN -->
 <div class="modal-overlay" id="modal-final-hand">
