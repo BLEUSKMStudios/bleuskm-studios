@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Submissions Closed: The Final Hand | BLEUSKM Studios</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;800;900&family=Red+Hat+Display:wght@300;400;500;600;700&family=Kalnia:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="icon" type="image/png" href="/images/bleuskm-logo.png">
+
+<style>
+body { background: #080808; color: #EADFCF; font-family: 'Red Hat Display', sans-serif; padding-top: 70px; }
+.article-page { max-width: 820px; margin: 0 auto; padding: 60px 40px 100px; }
+.back-link { font-family: 'League Spartan', sans-serif; font-size: 0.62rem; letter-spacing: 3px; text-transform: uppercase; color: rgba(218,175,55,0.6); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: color 0.2s; }
+.back-link:hover { color: #DAAF37; }
+.article-badge { display: inline-block; font-family: 'League Spartan', sans-serif; font-size: 0.6rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; padding: 6px 14px; margin-bottom: 24px; }
+.badge-casting { background: #DAAF37; color: #000; }
+.badge-announcement { background: rgba(80,40,0,0.7); color: rgba(218,175,55,0.8); border: 1px solid rgba(218,175,55,0.3); }
+.badge-update { background: rgba(149,6,6,0.7); color: rgba(234,223,207,0.8); border: 1px solid rgba(149,6,6,0.4); }
+.article-eyebrow { font-family: 'League Spartan', sans-serif; font-size: 0.6rem; letter-spacing: 4px; text-transform: uppercase; color: rgba(218,175,55,0.5); display: block; margin-bottom: 12px; margin-top: 20px; }
+.article-title { font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: clamp(1.8rem, 4vw, 2.8rem); line-height: 1.1; color: #EADFCF; margin-bottom: 14px; }
+.article-meta { font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(234,223,207,0.35); margin-bottom: 32px; }
+.article-divider { width: 40px; height: 2px; background: #DAAF37; margin-bottom: 40px; }
+.article-body { font-size: 1rem; line-height: 1.85; color: rgba(234,223,207,0.85); }
+.article-body p { margin-bottom: 1.4rem; }
+.article-body strong { color: #EADFCF; }
+.article-body em { color: rgba(218,175,55,0.8); font-style: italic; }
+.deadline-callout { margin: 36px 0; padding: 20px 28px; background: rgba(218,175,55,0.07); border-left: 3px solid #DAAF37; display: flex; align-items: center; gap: 16px; }
+.deadline-callout .deadline-icon { font-size: 1.2rem; }
+.deadline-callout .deadline-text { font-family: 'League Spartan', sans-serif; font-weight: 700; font-size: 0.78rem; letter-spacing: 2px; text-transform: uppercase; color: #DAAF37; }
+.deadline-callout .deadline-sub { font-size: 0.72rem; color: rgba(234,223,207,0.45); letter-spacing: 1px; text-transform: uppercase; margin-top: 3px; }
+.article-cta { margin: 48px 0 32px; padding: 32px; border: 1px solid rgba(218,175,55,0.2); background: rgba(218,175,55,0.03); }
+.article-cta p { margin-bottom: 16px; font-size: 0.9rem; color: rgba(234,223,207,0.7); }
+.article-cta a { display: inline-block; background: #DAAF37; color: #0b0b0b; font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; padding: 14px 28px; text-decoration: none; transition: background 0.2s; }
+.article-cta a:hover { background: #c49b2e; }
+.article-signature { margin-top: 48px; padding-top: 32px; border-top: 1px solid rgba(218,175,55,0.1); font-size: 0.9rem; color: rgba(234,223,207,0.6); }
+.related-section { margin-top: 60px; padding-top: 40px; border-top: 1px solid rgba(218,175,55,0.1); }
+.related-label { font-family: 'League Spartan', sans-serif; font-size: 0.58rem; letter-spacing: 4px; text-transform: uppercase; color: rgba(218,175,55,0.4); display: block; margin-bottom: 20px; }
+.related-link { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid rgba(218,175,55,0.07); text-decoration: none; transition: all 0.2s; }
+.related-link:hover { padding-left: 8px; }
+.related-link-title { font-family: 'League Spartan', sans-serif; font-size: 0.85rem; color: rgba(234,223,207,0.75); font-weight: 600; }
+.related-link:hover .related-link-title { color: #DAAF37; }
+.related-link-tag { font-family: 'League Spartan', sans-serif; font-size: 0.55rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(218,175,55,0.4); }
+@media(max-width:768px) { .article-page { padding: 40px 16px 60px; } }
+
+.navbar{background:rgba(8,8,8,0.92)!important;backdrop-filter:blur(12px);border-bottom:1px solid rgba(218,175,55,0.08)}
+.navbar-brand span{font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37}
+.nav-link{font-family:'League Spartan',sans-serif;font-weight:600;font-size:0.65rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(234,223,207,0.5)!important;transition:color 0.2s;padding:0.5rem 1rem!important}
+.nav-link:hover,.nav-link.active{color:#DAAF37!important}
+</style>
+</head>
+<body>
+<div id="channelsBtn" onclick="toggleChannels()" style="position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:1100;cursor:pointer;background:rgba(8,8,8,0.92);border:1px solid rgba(218,175,55,0.3);border-right:none;padding:14px 10px;backdrop-filter:blur(10px)">
+  <span style="font-family:'League Spartan',sans-serif;font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37;writing-mode:vertical-rl;text-orientation:mixed;user-select:none">Channels</span>
+</div>
+<div id="channelsPopup" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.75);align-items:center;justify-content:center">
+  <div style="background:#0d0d0d;border:1px solid rgba(218,175,55,0.2);padding:40px 48px;max-width:420px;width:90%;position:relative;text-align:center">
+    <button onclick="toggleChannels()" style="position:absolute;top:14px;right:18px;background:none;border:none;color:rgba(234,223,207,0.4);font-size:1.4rem;cursor:pointer;line-height:1">&times;</button>
+    <p style="font-family:'League Spartan',sans-serif;font-size:0.6rem;letter-spacing:4px;text-transform:uppercase;color:rgba(218,175,55,0.5);margin-bottom:6px">BLEUSKM Studios</p>
+    <h2 style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:1.4rem;letter-spacing:3px;text-transform:uppercase;color:#EADFCF;margin:0 0 24px">Official Channels</h2>
+    <div style="display:flex;justify-content:center;gap:28px;margin-bottom:28px">
+      <a href="https://www.instagram.com/bleuskm.studios/" target="_blank" style="color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+      </a>
+      <a href="https://www.threads.net/@bleuskm.studios" target="_blank" style="color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 1.327-.012 2.5-.235 3.485-.67 1.15-.502 1.953-1.258 2.39-2.248.37-.849.507-1.804.395-2.858-.115-1.08-.478-1.964-1.076-2.623-.467-.518-1.067-.878-1.78-1.07.225 1.593-.044 2.89-.797 3.854-.868 1.107-2.166 1.664-3.858 1.657-1.358-.006-2.484-.44-3.253-1.255-.824-.874-1.128-2.07-.857-3.37.257-1.213.95-2.16 2.007-2.737.966-.527 2.17-.748 3.576-.655.492.031.97.085 1.43.16-.044-.28-.107-.533-.19-.757-.348-.95-1.048-1.45-2.08-1.485-.717-.024-1.396.175-2.02.591l-.923-1.668c.898-.573 1.92-.864 3.039-.864h.043c2.342.08 3.79 1.453 4.226 3.982.107.627.162 1.276.163 1.932.003.16.001.32-.004.48.76.348 1.39.844 1.876 1.48.782 1.02 1.222 2.342 1.308 3.932.1 1.862-.16 3.467-.77 4.77-.77 1.654-2.017 2.833-3.706 3.503C15.139 23.74 13.74 24 12.186 24z"/></svg>
+      </a>
+      <a href="https://www.tiktok.com/@bleuskm.studios" target="_blank" style="color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.27 8.27 0 004.84 1.55V6.79a4.85 4.85 0 01-1.07-.1z"/></svg>
+      </a>
+      <a href="https://www.facebook.com/profile.php?id=61587114781982" target="_blank" style="color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047v-2.66c0-3.025 1.791-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.265h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+      </a>
+      <a href="mailto:studio@bleuskm.com" style="color:#EADFCF;transition:color 0.2s" onmouseover="this.style.color='#DAAF37'" onmouseout="this.style.color='#EADFCF'">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg>
+      </a>
+    </div>
+    <p style="font-size:0.78rem;color:rgba(234,223,207,0.4);line-height:1.7;margin:0">Follow us for casting announcements, production updates, and studio news.</p>
+    <a href="/contact" style="display:inline-block;margin-top:20px;background:#DAAF37;color:#0b0b0b;font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.68rem;letter-spacing:3px;text-transform:uppercase;padding:12px 28px;text-decoration:none">Project Inquiry &rarr;</a>
+  </div>
+</div>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand brand-logo" href="/" style="display:flex;align-items:center;gap:10px"><img src="/images/bleuskm-logo.png" alt="BLEUSKM Logo" style="height:32px;width:auto;"><span style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:#DAAF37">BLEUSKM Studios</span></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="/my-productions">Productions</a></li>
+        <li class="nav-item"><a class="nav-link" href="/visuals">Visuals</a></li>
+        <li class="nav-item"><a class="nav-link active" href="/echos">Echos</a></li>
+        <li class="nav-item"><a class="nav-link" href="/casting">Casting</a></li>
+        <li class="nav-item"><a class="nav-link" href="/shop">Shop</a></li>
+        <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="article-page">
+  <a href="/echos" class="back-link" style="margin-bottom:32px">&larr; Back to Echos</a>
+  <span class="article-badge badge-update">Production Update</span>
+  <span class="article-eyebrow">Production Update &middot; June 2026</span>
+  <h1 class="article-title">Submissions Closed &mdash; Cast &amp; Crew Being Assembled</h1>
+  <p class="article-meta">June 2026 &nbsp;&middot;&nbsp; BLEUSKM Studios &nbsp;&middot;&nbsp; The Final Hand</p>
+  <div class="article-divider"></div>
+  <div class="article-body">
+    <p>Casting and crew submissions for <strong><em>The Final Hand</em></strong> are now officially closed. We received a strong response from actors and crew members alike, and we are deeply grateful to everyone who took the time to submit.</p>
+    <p>We are currently in the process of reviewing all materials &mdash; both cast submissions and crew applications &mdash; as we move into the next phase of pre-production. This is where the world of <em>The Final Hand</em> begins to take real shape, and we are building the team with care and intention.</p>
+
+    <div class="deadline-callout">
+      <div class="deadline-icon">&#9993;</div>
+      <div>
+        <div class="deadline-text">Add Us to Your Contacts</div>
+        <div class="deadline-sub">casting@bleuskm.com &nbsp;&middot;&nbsp; crew@bleuskm.com</div>
+      </div>
+    </div>
+
+    <p>Selected cast and crew will be contacted directly over the coming days and weeks to discuss availability, roles, and next steps. Please ensure our emails reach you by adding both addresses above to your contacts.</p>
+    <p>To those who submitted: your materials are in good hands. We approach every submission with the same attention we&rsquo;d want given to our own work. Thank you for believing in this story enough to want to be part of it.</p>
+    <p>Stay tuned to Echos and our social channels for further production announcements as we move closer to principal photography.</p>
+
+    <div class="article-signature">
+      <p><strong>&mdash; Zaria Lashae</strong><br>Writer &amp; Director, BLEUSKM Studios<br>June 2026</p>
+    </div>
+  </div>
+
+  <div class="related-section">
+    <span class="related-label">Continue Reading</span>
+    <a href="/final-hand-casting" class="related-link"><span class="related-link-title">Original Casting Call: The Final Hand</span><span class="related-link-tag">Casting Closed</span></a>
+    <a href="/pro-15th-hour-update" class="related-link"><span class="related-link-title">Production Update: The 15th Hour</span><span class="related-link-tag">Postponed</span></a>
+    <a href="/echos" class="related-link"><span class="related-link-title">All Studio Announcements</span><span class="related-link-tag">Echos</span></a>
+  </div>
+
+  <a href="/echos" class="back-link" style="margin-top:40px">&larr; Back to Echos</a>
+</div>
+
+<footer style="background:#040404;border-top:1px solid rgba(218,175,55,0.1);padding:30px 60px">
+  <div style="border-top:1px solid rgba(218,175,55,0.08);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+    <p style="font-size:0.72rem;color:rgba(234,223,207,0.2);margin:0">&copy; 2026 BLEUSKM Studios. All rights reserved.</p>
+    <div>
+      <a href="/privacy" style="font-size:0.72rem;color:rgba(234,223,207,0.2);text-decoration:none;margin-left:20px">Privacy</a>
+      <a href="/terms" style="font-size:0.72rem;color:rgba(234,223,207,0.2);text-decoration:none;margin-left:20px">Terms</a>
+      <a href="/casting" style="font-size:0.72rem;color:rgba(234,223,207,0.2);text-decoration:none;margin-left:20px">Casting</a>
+      <a href="/contact" style="font-size:0.72rem;color:rgba(234,223,207,0.2);text-decoration:none;margin-left:20px">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function toggleChannels() {
+  var popup = document.getElementById('channelsPopup');
+  popup.style.display = popup.style.display === 'flex' ? 'none' : 'flex';
+  document.body.style.overflow = popup.style.display === 'flex' ? 'hidden' : '';
+}
+document.addEventListener('click', function(e) {
+  var popup = document.getElementById('channelsPopup');
+  var btn = document.getElementById('channelsBtn');
+  if (popup && popup.style.display === 'flex') {
+    var inner = popup.querySelector('div');
+    if (!inner.contains(e.target) && !btn.contains(e.target)) toggleChannels();
+  }
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') { var p = document.getElementById('channelsPopup'); if (p && p.style.display === 'flex') toggleChannels(); }
+});
+</script>
+</body>
+</html>
