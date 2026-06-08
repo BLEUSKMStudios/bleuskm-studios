@@ -724,19 +724,19 @@ body { background: #080808; color: #EADFCF; }
   <p>Select a production below to view roles and submit your audition materials.</p>
 </div>
 
-<!-- OPEN CASTINGS -->
+<!-- OPEN CASTINGS — UNDER REVIEW -->
 <div class="casting-grid-section">
-  <span class="casting-section-label">Now Casting</span>
+  <span class="casting-section-label">Under Review</span>
   <div class="casting-grid">
 
-    <!-- THE FINAL HAND — OPEN -->
-    <div class="film-cast-card open-card" onclick="openModal('final-hand')">
+    <!-- THE FINAL HAND — CASTING CLOSED -->
+    <div class="film-cast-card closed-card" style="opacity:0.6;cursor:pointer" onclick="window.location='/final-hand-submissions-closed.html'">
       <img class="film-cast-img" src="/images/the_final_hand_poster.png" alt="The Final Hand">
-      <div class="film-cast-overlay"><span class="cast-status-badge badge-open">Casting Open</span></div>
+      <div class="film-cast-overlay"><span class="cast-status-badge badge-closed">Casting Closed</span></div>
       <div class="film-cast-info">
         <span class="film-cast-format">Short Film · Pre-Production</span>
         <div class="film-cast-title">The Final Hand</div>
-        <span class="film-cast-action">View Roles &amp; Apply →</span>
+        <span style="display:block;font-family:'League Spartan',sans-serif;font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:#DAAF37;margin-top:6px">Submissions Closed</span>
       </div>
     </div>
 
