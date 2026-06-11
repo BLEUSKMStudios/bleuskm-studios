@@ -41,37 +41,25 @@ document.addEventListener('DOMContentLoaded', () => {
 async function loadSubmissions() {
   showState('loading');
 
-  const url = `https://api.airtable.com/v0/${CONFIG.BASE_ID}/${encodeURIComponent(CONFIG.TABLE_NAME)}`;
-
   try {
-    let records = [];
-    let offset  = null;
+    const res = await fetch('/.netlify/functions/airtable-proxy');
 
-    do {
-      const pageUrl = offset ? `${url}?offset=${offset}` : url;
-      const res = await fetch(pageUrl, {
-        headers: { Authorization: `Bearer ${CONFIG.AIRTABLE_API_KEY}` },
-      });
+    if (!res.ok) {
+      throw new Error(`Proxy error ${res.status}`);
+    }
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err?.error?.message || `Airtable error ${res.status}`);
-      }
-
-      const data = await res.json();
-      records = records.concat(data.records || []);
-      offset  = data.offset || null;
-    } while (offset);
+    const data = await res.json();
+    const records = data.records || [];
 
     allRecords = records;
     el.recordCount.textContent = `${records.length} submission${records.length !== 1 ? 's' : ''}`;
     renderTable();
+
   } catch (err) {
     el.errorMsg.textContent = err.message || 'Could not load submissions.';
     showState('error');
   }
 }
-
 /* ─── Filter ────────────────────────────────────────────────── */
 function bindFilters() {
   document.querySelectorAll('.filter-btn').forEach(btn => {
