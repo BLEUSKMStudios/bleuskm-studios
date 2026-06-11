@@ -1,57 +1,105 @@
-/* ─── Config ────────────────────────────────────────────────── */
-const CONFIG = {
-  AIRTABLE_API_KEY: '',
-  BASE_ID:          'appXf1NxIVhYbuV4j',
-  TABLE_NAME:       'Casting Submissions',
-  BREVO_API_KEY:    '',
-  TEMPLATE: {
-    CALLBACK:  15,
-    REDIRECT:  17,
-    REJECTION: 16,
-  },
+/* ═══════════════════════════════════════════════════════════════
+   BLEUSKM Studios — Casting Portal
+   castingdash.js
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Auth guard ─────────────────────────────────────────────── */
+(function authGuard() {
+  if (sessionStorage.getItem('bleuskm_auth') !== 'true') {
+    window.location.replace('./login.html');
+  }
+})();
+
+/* ── Constants ──────────────────────────────────────────────── */
+const TABLE        = 'Casting Submissions';
+const AIRTABLE_URL = '/.netlify/functions/airtable-proxy';
+const BREVO_URL    = '/.netlify/functions/brevo-proxy';
+const BREVO_EMAIL_ENDPOINT = 'https://api.brevo.com/v3/smtp/email';
+
+const TEMPLATE = {
+  Callback: 15,
+  Redirect: 17,
+  Pass:     null,   // no email
 };
 
-/* ─── State ─────────────────────────────────────────────────── */
-let allRecords    = [];
-let activeFilter  = 'All';
-let sentEmails    = {}; // recordId -> Set of sent types
+const FILM_LINK = 'https://bleuskm.com/my-productions/#notify';
 
-/* ─── DOM refs ───────────────────────────────────────────────── */
+/* ── State ──────────────────────────────────────────────────── */
+let allRecords   = [];   // raw from Airtable
+let activeFilter = 'All';
+let searchQuery  = '';
+let selectedIds  = new Set();
+let sentMap      = {};   // recordId → true (session-only)
+
+/* ── DOM refs ───────────────────────────────────────────────── */
 const el = {
-  loading:     document.getElementById('stateLoading'),
-  error:       document.getElementById('stateError'),
-  errorMsg:    document.getElementById('stateErrorMsg'),
-  empty:       document.getElementById('stateEmpty'),
-  tableWrap:   document.getElementById('tableWrap'),
-  tbody:       document.getElementById('castingTableBody'),
-  recordCount: document.getElementById('recordCount'),
-  filterTally: document.getElementById('filterTally'),
-  refreshBtn:  document.getElementById('refreshBtn'),
-  toastStack:  document.getElementById('toastStack'),
+  loading:      document.getElementById('stateLoading'),
+  error:        document.getElementById('stateError'),
+  errorMsg:     document.getElementById('stateErrorMsg'),
+  empty:        document.getElementById('stateEmpty'),
+  tableWrap:    document.getElementById('tableWrap'),
+  tbody:        document.getElementById('castingTableBody'),
+  recordCount:  document.getElementById('recordCount'),
+  refreshBtn:   document.getElementById('refreshBtn'),
+  logoutBtn:    document.getElementById('logoutBtn'),
+  userChip:     document.getElementById('userChip'),
+  selectAll:    document.getElementById('selectAll'),
+  searchInput:  document.getElementById('searchInput'),
+  searchClear:  document.getElementById('searchClear'),
+  batchCount:   document.getElementById('batchCount'),
+  batchSendBtn: document.getElementById('batchSendBtn'),
+  retryBtn:     document.getElementById('retryBtn'),
+  toastStack:   document.getElementById('toastStack'),
 };
 
-/* ─── Init ──────────────────────────────────────────────────── */
+/* ── Init ───────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
+  // Show logged-in user
+  const user = sessionStorage.getItem('bleuskm_user') || '';
+  el.userChip.textContent = user.toUpperCase();
+
   loadSubmissions();
   bindFilters();
-  el.refreshBtn.addEventListener('click', () => loadSubmissions());
+  bindSearch();
+  bindBatch();
+  bindSelectAll();
+
+  el.refreshBtn.addEventListener('click', loadSubmissions);
+  el.retryBtn.addEventListener('click', loadSubmissions);
+  el.logoutBtn.addEventListener('click', () => {
+    sessionStorage.clear();
+    window.location.replace('./login.html');
+  });
 });
 
-/* ─── Airtable fetch ─────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════
+   AIRTABLE — FETCH ALL
+════════════════════════════════════════════════════════════════ */
 async function loadSubmissions() {
   showState('loading');
+  selectedIds.clear();
+  updateBatchUI();
 
   try {
-    const res = await fetch(
-  `/.netlify/functions/airtable-proxy?table=${encodeURIComponent(CONFIG.TABLE_NAME)}`
-);
+    // Airtable GET paginates at 100; loop via offset
+    let records = [];
+    let offset  = null;
 
-    if (!res.ok) {
-      throw new Error(`Proxy error ${res.status}`);
-    }
+    do {
+      const qs  = offset
+        ? `?table=${encodeURIComponent(TABLE)}&offset=${offset}`
+        : `?table=${encodeURIComponent(TABLE)}`;
+      const res = await fetch(`${AIRTABLE_URL}${qs}`);
 
-    const data = await res.json();
-    const records = data.records || [];
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error?.message || `Airtable ${res.status}`);
+      }
+
+      const data = await res.json();
+      records    = records.concat(data.records || []);
+      offset     = data.offset || null;
+    } while (offset);
 
     allRecords = records;
     el.recordCount.textContent = `${records.length} submission${records.length !== 1 ? 's' : ''}`;
@@ -62,31 +110,240 @@ async function loadSubmissions() {
     showState('error');
   }
 }
-/* ─── Filter ────────────────────────────────────────────────── */
+
+/* ════════════════════════════════════════════════════════════════
+   AIRTABLE — PATCH (inline edit)
+════════════════════════════════════════════════════════════════ */
+async function patchRecord(recordId, fields) {
+  const res = await fetch(AIRTABLE_URL, {
+    method:  'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ table: TABLE, id: recordId, fields }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err?.error?.message || `Patch failed ${res.status}`);
+  }
+
+  return res.json();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   BREVO — SEND EMAIL
+════════════════════════════════════════════════════════════════ */
+async function sendBrevoEmail(email, templateId, params) {
+  const res = await fetch(BREVO_URL, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({
+      endpoint: BREVO_EMAIL_ENDPOINT,
+      payload: {
+        to:         [{ email }],
+        templateId,
+        params,
+      },
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err?.message || `Brevo ${res.status}`);
+  }
+
+  return res.json();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   EMAIL DISPATCH — single record
+════════════════════════════════════════════════════════════════ */
+async function dispatchEmail(record, btn) {
+  const f      = record.fields;
+  const email  = (f['Email'] || '').trim();
+  const role   = (f['Role']  || '').trim();
+  const status = (f['Casting Status'] || '').trim();
+
+  if (!email) { toast('No email address for this record.', 'error'); return; }
+
+  const templateId = TEMPLATE[status];
+  if (!templateId)  { toast('No email template for this status.', 'error'); return; }
+
+  // Build params
+  const params = { ROLE: role };
+
+  if (status === 'Callback') {
+    // Self-tape link uses name derived from email prefix
+    const name = email.split('@')[0];
+    params.SELFTAPE_URL = buildSelfTapeLink(name, role, email);
+  }
+
+  if (status === 'Redirect') {
+    // Callback/Redirect is a multi-select → array of film names
+    const films   = f['Callback/Redirect'] || [];
+    const filmArr = Array.isArray(films) ? films : [films];
+    params.FILM_NAME = filmArr.filter(Boolean).join(', ') || '';
+    params.FILM_LINK = FILM_LINK;
+  }
+
+  // UI feedback
+  if (btn) {
+    btn.classList.add('sending');
+    btn.textContent = '…';
+  }
+
+  try {
+    await sendBrevoEmail(email, templateId, params);
+    sentMap[record.id] = true;
+
+    if (btn) {
+      btn.classList.remove('sending');
+      btn.classList.add('sent');
+      btn.textContent = 'Sent ✓';
+      btn.disabled    = true;
+    }
+
+    toast(`Email sent → ${email}`, 'success');
+
+  } catch (err) {
+    if (btn) {
+      btn.classList.remove('sending');
+      btn.textContent = 'Send Email';
+    }
+    toast(`Failed: ${err.message}`, 'error');
+    throw err; // let batch catch it
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   FILTER + SEARCH
+════════════════════════════════════════════════════════════════ */
 function bindFilters() {
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       activeFilter = btn.dataset.filter;
+      selectedIds.clear();
+      updateBatchUI();
       renderTable();
     });
   });
 }
 
-function getFiltered() {
-  if (activeFilter === 'All') return allRecords;
-  return allRecords.filter(r => {
-    const status = (r.fields['Casting Status'] || '').trim();
-    return status === activeFilter;
+function bindSearch() {
+  el.searchInput.addEventListener('input', () => {
+    searchQuery = el.searchInput.value.trim().toLowerCase();
+    el.searchClear.classList.toggle('hidden', !searchQuery);
+    selectedIds.clear();
+    updateBatchUI();
+    renderTable();
+  });
+
+  el.searchClear.addEventListener('click', () => {
+    el.searchInput.value = '';
+    searchQuery = '';
+    el.searchClear.classList.add('hidden');
+    selectedIds.clear();
+    updateBatchUI();
+    renderTable();
+    el.searchInput.focus();
   });
 }
 
-/* ─── Render ─────────────────────────────────────────────────── */
-function renderTable() {
-  const records = getFiltered();
+function getVisible() {
+  return allRecords.filter(r => {
+    const f      = r.fields;
+    const status = (f['Casting Status'] || '').trim();
 
-  el.filterTally.textContent = `${records.length} shown`;
+    // Filter
+    if (activeFilter !== 'All' && status !== activeFilter) return false;
+
+    // Search
+    if (searchQuery) {
+      const haystack = [
+        f['Email']    || '',
+        f['Role']     || '',
+        f['Location'] || '',
+      ].join(' ').toLowerCase();
+      if (!haystack.includes(searchQuery)) return false;
+    }
+
+    return true;
+  });
+}
+
+/* ════════════════════════════════════════════════════════════════
+   BATCH EMAIL
+════════════════════════════════════════════════════════════════ */
+function bindBatch() {
+  el.batchSendBtn.addEventListener('click', async () => {
+    if (selectedIds.size === 0) return;
+
+    el.batchSendBtn.disabled    = true;
+    el.batchSendBtn.textContent = 'Sending…';
+
+    const targets = allRecords.filter(r => selectedIds.has(r.id));
+    let ok = 0, fail = 0;
+
+    for (const record of targets) {
+      const status = (record.fields['Casting Status'] || '').trim();
+      if (!TEMPLATE[status]) { fail++; continue; }
+
+      try {
+        await dispatchEmail(record, null);
+        // update the matching row button if visible
+        const rowBtn = document.querySelector(`[data-action-id="${record.id}"]`);
+        if (rowBtn) {
+          rowBtn.classList.add('sent');
+          rowBtn.textContent = 'Sent ✓';
+          rowBtn.disabled    = true;
+        }
+        ok++;
+      } catch { fail++; }
+
+      // Small delay to avoid Brevo rate limits
+      await sleep(300);
+    }
+
+    el.batchSendBtn.disabled    = false;
+    el.batchSendBtn.textContent = 'Send Emails to Selected';
+
+    toast(`Batch complete: ${ok} sent${fail ? `, ${fail} failed` : ''}`, fail ? 'error' : 'success');
+    selectedIds.clear();
+    updateBatchUI();
+    renderTable();
+  });
+}
+
+function bindSelectAll() {
+  el.selectAll.addEventListener('change', () => {
+    const visible = getVisible();
+    if (el.selectAll.checked) {
+      visible.forEach(r => {
+        if (TEMPLATE[(r.fields['Casting Status'] || '').trim()]) {
+          selectedIds.add(r.id);
+        }
+      });
+    } else {
+      visible.forEach(r => selectedIds.delete(r.id));
+    }
+    updateBatchUI();
+    renderTable();
+  });
+}
+
+function updateBatchUI() {
+  const count = selectedIds.size;
+  el.batchCount.textContent = `${count} selected`;
+  el.batchCount.classList.toggle('hidden', count === 0);
+  el.batchSendBtn.classList.toggle('hidden', count === 0);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   RENDER TABLE
+════════════════════════════════════════════════════════════════ */
+function renderTable() {
+  const records = getVisible();
 
   if (records.length === 0) {
     showState('empty');
@@ -94,200 +351,217 @@ function renderTable() {
   }
 
   el.tbody.innerHTML = '';
-  records.forEach(record => buildRow(record));
+  records.forEach(r => buildRow(r));
   showState('table');
+
+  // Sync select-all checkbox state
+  const emailable = records.filter(r => TEMPLATE[(r.fields['Casting Status'] || '').trim()]);
+  const allSel    = emailable.length > 0 && emailable.every(r => selectedIds.has(r.id));
+  el.selectAll.checked       = allSel;
+  el.selectAll.indeterminate = !allSel && selectedIds.size > 0;
 }
 
+/* ── Build one table row ─────────────────────────────────────── */
 function buildRow(record) {
   const f      = record.fields;
   const id     = record.id;
-  const email  = (f['Email'] || '').trim();
-  const role   = (f['Role'] || '—').trim();
+  const email  = (f['Email']    || '').trim();
+  const phone  = (f['Phone']    || '').trim();
+  const age    = (f['Age']      || '').toString().trim();
+  const role   = (f['Role']     || '—').trim();
+  const loc    = (f['Location'] || '').trim();
+  const about  = (f['About']    || '').trim();
+  const reel   = (f['Reel/Portfolio Link'] || '').trim();
   const status = (f['Casting Status'] || '').trim();
-const rawFilm = f['Callback/Redirect'];
+  const films  = f['Callback/Redirect'] || [];
+  const filmArr = Array.isArray(films) ? films : (films ? [films] : []);
 
-let film = '';
-
-if (Array.isArray(rawFilm)) {
-  film = rawFilm
-    .map(item => (typeof item === 'object' ? item.name : item))
-    .join(', ');
-} else if (typeof rawFilm === 'string') {
-  film = rawFilm.trim();
-}
+  const isSelected   = selectedIds.has(id);
+  const alreadySent  = sentMap[id] || false;
+  const templateId   = TEMPLATE[status];
+  const isPass       = status === 'Pass';
 
   const tr = document.createElement('tr');
   tr.dataset.id = id;
+  if (isSelected) tr.classList.add('row-selected');
 
-  tr.innerHTML = `
-    <td><span class="cell-email">${escHtml(email) || '—'}</span></td>
-    <td><span class="cell-role">${escHtml(role)}</span></td>
-    <td>${statusBadge(status)}</td>
-    <td>
-      <div class="action-group">
-        <button
-          class="action-btn btn-callback"
-          data-id="${id}"
-          data-type="callback"
-          ${alreadySent(id, 'callback') ? 'disabled data-sent="true"' : ''}>
-          ${alreadySent(id, 'callback') ? 'Sent' : 'Callback'}
-        </button>
-        <button
-          class="action-btn btn-redirect"
-          data-id="${id}"
-          data-type="redirect"
-          ${alreadySent(id, 'redirect') ? 'disabled data-sent="true"' : ''}>
-          ${alreadySent(id, 'redirect') ? 'Sent' : 'Redirect'}
-        </button>
-        <button
-          class="action-btn btn-reject"
-          data-id="${id}"
-          data-type="reject"
-          ${alreadySent(id, 'reject') ? 'disabled data-sent="true"' : ''}>
-          ${alreadySent(id, 'reject') ? 'Sent' : 'Reject'}
-        </button>
-      </div>
-    </td>
-  `;
+  // ── Checkbox ──
+  const tdCheck = document.createElement('td');
+  tdCheck.className = 'col-check';
+  if (!isPass && templateId) {
+    const cb = document.createElement('input');
+    cb.type    = 'checkbox';
+    cb.checked = isSelected;
+    cb.addEventListener('change', () => {
+      if (cb.checked) selectedIds.add(id);
+      else            selectedIds.delete(id);
+      tr.classList.toggle('row-selected', cb.checked);
+      updateBatchUI();
+      // sync header checkbox
+      const visible  = getVisible();
+      const emailable = visible.filter(r => TEMPLATE[(r.fields['Casting Status'] || '').trim()]);
+      el.selectAll.checked = emailable.length > 0 && emailable.every(r => selectedIds.has(r.id));
+      el.selectAll.indeterminate = !el.selectAll.checked && selectedIds.size > 0;
+    });
+    tdCheck.appendChild(cb);
+  }
+  tr.appendChild(tdCheck);
 
-  tr.querySelectorAll('.action-btn').forEach(btn => {
-    if (!btn.disabled) {
-      btn.addEventListener('click', () => handleAction(btn, record));
+  // ── Email ──
+  tr.appendChild(cell(`<span class="cell-email">${esc(email) || '—'}</span>`));
+
+  // ── Phone (editable) ──
+  tr.appendChild(editableCell(id, phone, 'Phone', 'cell-phone'));
+
+  // ── Age ──
+  tr.appendChild(cell(`<span style="font-size:12px;color:var(--text-muted)">${esc(age) || '—'}</span>`));
+
+  // ── Role ──
+  tr.appendChild(cell(`<span class="cell-role">${esc(role)}</span>`));
+
+  // ── Location (editable) ──
+  tr.appendChild(editableCell(id, loc, 'Location', 'cell-location'));
+
+  // ── About (editable, truncated) ──
+  tr.appendChild(editableCell(id, about, 'About', 'cell-about'));
+
+  // ── Reel ──
+  const reelHtml = reel
+    ? `<span class="cell-reel"><a href="${esc(reel)}" target="_blank" rel="noopener">View ↗</a></span>`
+    : `<span style="color:var(--text-dim);font-size:11px;">—</span>`;
+  tr.appendChild(cell(reelHtml));
+
+  // ── Status badge + redirect films ──
+  let statusHtml = statusBadge(status);
+  if (status === 'Redirect' && filmArr.length) {
+    statusHtml += `<span style="display:block;font-size:9px;letter-spacing:0.06em;color:var(--redirect);opacity:0.75;margin-top:4px;line-height:1.4;">${filmArr.map(esc).join('<br>')}</span>`;
+  }
+  tr.appendChild(cell(statusHtml));
+
+  // ── Action button ──
+  const tdAction = document.createElement('td');
+  tdAction.className = 'col-action';
+
+  if (!isPass && templateId) {
+    const btn = document.createElement('button');
+    btn.className        = `action-btn btn-${status.toLowerCase()}`;
+    btn.dataset.actionId = id;
+    btn.textContent      = alreadySent ? 'Sent ✓' : 'Send Email';
+    if (alreadySent) {
+      btn.classList.add('sent');
+      btn.disabled = true;
     }
-  });
+    btn.addEventListener('click', () => dispatchEmail(record, btn));
+    tdAction.appendChild(btn);
+  } else {
+    tdAction.innerHTML = `<span style="font-size:9px;color:var(--text-dim);letter-spacing:0.1em;">—</span>`;
+  }
 
+  tr.appendChild(tdAction);
   el.tbody.appendChild(tr);
 }
 
-function statusBadge(status) {
-  const map = {
-    'Callback': 'callback',
-    'Redirect': 'redirect',
-    'Rejected': 'rejected',
-  };
-  const cls = map[status] || 'unknown';
-  return `<span class="status-badge ${cls}">${escHtml(status) || 'Unknown'}</span>`;
-}
+/* ── Editable cell (Phone, Location, About) ─────────────────── */
+function editableCell(recordId, value, fieldName, className) {
+  const td  = document.createElement('td');
+  const div = document.createElement('div');
 
-/* ─── Email actions ──────────────────────────────────────────── */
-async function handleAction(btn, record) {
-  const f     = record.fields;
-  const id    = record.id;
-  const email = (f['Email'] || '').trim();
-  const role  = (f['Role'] || '').trim();
-  const film  = (f['Callback/Redirect'] || '').trim();
-  const type  = btn.dataset.type;
+  div.className       = `editable ${className}`;
+  div.contentEditable = 'true';
+  div.textContent     = value;
+  div.setAttribute('data-original', value);
+  div.setAttribute('aria-label', `Edit ${fieldName}`);
 
-  if (!email) {
-    toast('No email address for this record.', 'error');
-    return;
-  }
+  // Save on blur if changed
+  div.addEventListener('blur', async () => {
+    const newVal  = div.textContent.trim();
+    const origVal = div.getAttribute('data-original');
+    if (newVal === origVal) return;
 
-  const selfTapeLink = buildSelfTapeLink(email, role);
+    div.classList.add('saving');
+    try {
+      await patchRecord(recordId, { [fieldName]: newVal });
+      div.setAttribute('data-original', newVal);
+      div.classList.remove('saving');
+      div.classList.add('saved');
+      setTimeout(() => div.classList.remove('saved'), 1400);
 
-  let templateId;
-  let params = { ROLE: role, FILM_NAME: film, SELFTAPE_URL: selfTapeLink };
+      // Update local state so filter/search reflects change
+      const rec = allRecords.find(r => r.id === recordId);
+      if (rec) rec.fields[fieldName] = newVal;
 
-  if (type === 'callback') {
-    templateId = CONFIG.TEMPLATE.CALLBACK;
-  } else if (type === 'redirect') {
-    templateId = CONFIG.TEMPLATE.REDIRECT;
-  } else if (type === 'reject') {
-    templateId = CONFIG.TEMPLATE.REJECTION;
-  }
-
-  btn.classList.add('sending');
-  btn.textContent = '…';
-
-  try {
-    await sendBrevoEmail(email, templateId, params);
-    markSent(id, type);
-    btn.classList.remove('sending');
-    btn.classList.add('sent');
-    btn.textContent = 'Sent';
-    btn.disabled = true;
-    toast(`Email sent to ${email}`, 'success');
-  } catch (err) {
-    btn.classList.remove('sending');
-    btn.textContent = type === 'callback' ? 'Callback' : type === 'redirect' ? 'Redirect' : 'Reject';
-    toast(`Failed: ${err.message}`, 'error');
-  }
-}
-
-/* ─── Brevo API ──────────────────────────────────────────────── */
-async function sendBrevoEmail(email, templateId, params) {
-  const res = await fetch('/.netlify/functions/brevo-proxy', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      email,
-      templateId,
-      params
-    })
+    } catch (err) {
+      div.textContent = origVal;
+      div.classList.remove('saving');
+      div.classList.add('err');
+      setTimeout(() => div.classList.remove('err'), 1400);
+      toast(`Save failed: ${err.message}`, 'error');
+    }
   });
 
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err?.message || `Proxy error ${res.status}`);
+  // Prevent newlines in single-line fields
+  if (fieldName !== 'About') {
+    div.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); div.blur(); }
+    });
   }
 
-  return res.json();
-}
-/* ─── Self-tape link ─────────────────────────────────────────── */
-function buildSelfTapeLink(email, role) {
-  const name = email.split('@')[0] || '';
-  return (
-    'https://bleuskm.com/selftape' +
-    '?name=' + encodeURIComponent(name) +
-    '&role=' + encodeURIComponent(role) +
-    '&email=' + encodeURIComponent(email)
-  );
+  td.appendChild(div);
+  return td;
 }
 
-/* ─── Sent tracking (session) ────────────────────────────────── */
-function markSent(id, type) {
-  if (!sentEmails[id]) sentEmails[id] = new Set();
-  sentEmails[id].add(type);
-}
-
-function alreadySent(id, type) {
-  return sentEmails[id]?.has(type) || false;
-}
-
-/* ─── UI state helpers ───────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════
+   UI HELPERS
+════════════════════════════════════════════════════════════════ */
 function showState(state) {
   el.loading.classList.add('hidden');
   el.error.classList.add('hidden');
   el.empty.classList.add('hidden');
   el.tableWrap.classList.add('hidden');
 
-  if (state === 'loading') el.loading.classList.remove('hidden');
-  else if (state === 'error') el.error.classList.remove('hidden');
-  else if (state === 'empty') el.empty.classList.remove('hidden');
-  else if (state === 'table') el.tableWrap.classList.remove('hidden');
+  if      (state === 'loading') el.loading.classList.remove('hidden');
+  else if (state === 'error')   el.error.classList.remove('hidden');
+  else if (state === 'empty')   el.empty.classList.remove('hidden');
+  else if (state === 'table')   el.tableWrap.classList.remove('hidden');
 }
 
-/* ─── Toast ──────────────────────────────────────────────────── */
-function toast(message, type = 'success') {
-  const div = document.createElement('div');
-  div.className = `toast toast-${type}`;
-  div.textContent = message;
-  el.toastStack.appendChild(div);
-
-  setTimeout(() => {
-    div.classList.add('toast-out');
-    div.addEventListener('animationend', () => div.remove(), { once: true });
-  }, 3800);
+function cell(innerHTML) {
+  const td = document.createElement('td');
+  td.innerHTML = innerHTML;
+  return td;
 }
 
-/* ─── Utilities ──────────────────────────────────────────────── */
-function escHtml(str) {
-  return String(str)
+function statusBadge(status) {
+  const cls = { Callback: 'callback', Redirect: 'redirect', Pass: 'pass' }[status] || 'unknown';
+  return `<span class="status-badge ${cls}">${esc(status) || 'Unknown'}</span>`;
+}
+
+function buildSelfTapeLink(name, role, email) {
+  return 'https://bleuskm.com/selftape'
+    + '?name='  + encodeURIComponent(name)
+    + '&role='  + encodeURIComponent(role)
+    + '&email=' + encodeURIComponent(email);
+}
+
+function esc(str) {
+  return String(str ?? '')
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+/* ── Toast ───────────────────────────────────────────────────── */
+function toast(message, type = 'success') {
+  const div = document.createElement('div');
+  div.className   = `toast toast-${type}`;
+  div.textContent = message;
+  el.toastStack.appendChild(div);
+  setTimeout(() => {
+    div.classList.add('toast-out');
+    div.addEventListener('animationend', () => div.remove(), { once: true });
+  }, 4000);
 }
