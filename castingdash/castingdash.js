@@ -216,27 +216,25 @@ async function handleAction(btn, record) {
 
 /* ─── Brevo API ──────────────────────────────────────────────── */
 async function sendBrevoEmail(email, templateId, params) {
-  const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+  const res = await fetch('/.netlify/functions/brevo-proxy', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'api-key': CONFIG.BREVO_API_KEY,
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      to: [{ email }],
+      email,
       templateId,
-      params,
-    }),
+      params
+    })
   });
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err?.message || `Brevo error ${res.status}`);
+    throw new Error(err?.message || `Proxy error ${res.status}`);
   }
 
   return res.json();
 }
-
 /* ─── Self-tape link ─────────────────────────────────────────── */
 function buildSelfTapeLink(email, role) {
   const name = email.split('@')[0] || '';
