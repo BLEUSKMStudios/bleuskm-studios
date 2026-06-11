@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — BLEUSKM Studios Casting Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #080808;
+      --surface:    #0d0d0d;
+      --border:     rgba(218,175,55,0.14);
+      --border-dim: rgba(255,255,255,0.05);
+      --gold:       #DAAF37;
+      --gold-dim:   rgba(218,175,55,0.45);
+      --gold-faint: rgba(218,175,55,0.07);
+      --text:       rgba(234,223,207,0.85);
+      --text-muted: rgba(234,223,207,0.4);
+      --text-dim:   rgba(234,223,207,0.2);
+      --error:      rgba(200,80,80,0.9);
+      --font:       'League Spartan', Arial, sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      background-color: var(--bg);
+      font-family: var(--font);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    /* Background grain texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .login-card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 400px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+
+    /* Top gold rule */
+    .card-rule {
+      height: 2px;
+      background: linear-gradient(to right, var(--gold), rgba(218,175,55,0.08));
+    }
+
+    .card-body {
+      padding: 48px 40px 44px;
+    }
+
+    /* Studio wordmark */
+    .studio-wordmark {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 32px;
+      display: block;
+    }
+
+    .login-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(234,223,207,0.9);
+      margin-bottom: 6px;
+      line-height: 1.1;
+    }
+
+    .login-subtitle {
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-dim);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 140ms ease;
+      -webkit-appearance: none;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      border-color: var(--gold-dim);
+    }
+
+    input[type="text"]::placeholder,
+    input[type="password"]::placeholder {
+      color: rgba(234,223,207,0.15);
+    }
+
+    /* Error */
+    .error-msg {
+      display: none;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: var(--error);
+      margin-bottom: 18px;
+      padding: 10px 14px;
+      border: 1px solid rgba(200,80,80,0.2);
+      background: rgba(200,80,80,0.05);
+    }
+
+    .error-msg.visible { display: block; }
+
+    /* Submit */
+    .submit-btn {
+      width: 100%;
+      background: var(--gold);
+      border: none;
+      color: #080808;
+      font-family: var(--font);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 14px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 140ms ease;
+    }
+
+    .submit-btn:hover { opacity: 0.88; }
+    .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Footer */
+    .card-footer {
+      padding: 16px 40px 20px;
+      border-top: 1px solid var(--border-dim);
+    }
+
+    .card-footer p {
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      color: rgba(234,223,207,0.15);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-card">
+    <div class="card-rule"></div>
+    <div class="card-body">
+      <span class="studio-wordmark">BLEUSKM Studios</span>
+      <h1 class="login-title">Casting<br />Portal</h1>
+      <p class="login-subtitle">Internal access only</p>
+
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" autocomplete="username" placeholder="Enter username" />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" autocomplete="current-password" placeholder="Enter password" />
+      </div>
+
+      <div class="error-msg" id="errorMsg">Incorrect username or password.</div>
+
+      <button class="submit-btn" id="loginBtn">Enter Portal</button>
+    </div>
+    <div class="card-footer">
+      <p>BLEUSKM Studios &nbsp;·&nbsp; Internal Use Only</p>
+    </div>
+  </div>
+
+  <script>
+    // Redirect if already logged in
+    if (sessionStorage.getItem('bleuskm_auth') === 'true') {
+      window.location.replace('./index.html');
+    }
+
+    const USERS = {
+      zaria:  'bleuskm2026',
+      ceion:  'bleuskmcrew',
+      carmen: 'bleuskmcrew',
+    };
+
+    const usernameEl = document.getElementById('username');
+    const passwordEl = document.getElementById('password');
+    const loginBtn   = document.getElementById('loginBtn');
+    const errorMsg   = document.getElementById('errorMsg');
+
+    function attemptLogin() {
+      const u = usernameEl.value.trim().toLowerCase();
+      const p = passwordEl.value;
+
+      if (USERS[u] && USERS[u] === p) {
+        sessionStorage.setItem('bleuskm_auth', 'true');
+        sessionStorage.setItem('bleuskm_user', u);
+        window.location.replace('./index.html');
+      } else {
+        errorMsg.classList.add('visible');
+        passwordEl.value = '';
+        passwordEl.focus();
+      }
+    }
+
+    loginBtn.addEventListener('click', attemptLogin);
+
+    [usernameEl, passwordEl].forEach(el => {
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Enter') attemptLogin();
+        errorMsg.classList.remove('visible');
+      });
+    });
+  </script>
+
+</body>
+</html>
