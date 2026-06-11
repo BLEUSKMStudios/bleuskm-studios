@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Casting Dashboard — BLEUSKM Studios</title>
+  <title>Casting Portal — BLEUSKM Studios</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -11,43 +11,59 @@
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- ── Header ─────────────────────────────────────────────── -->
   <header class="dash-header">
     <div class="header-inner">
       <div class="header-left">
         <span class="studio-label">BLEUSKM STUDIOS</span>
         <span class="header-divider"></span>
-        <span class="page-label">CASTING DASHBOARD</span>
+        <span class="page-label">CASTING PORTAL</span>
       </div>
       <div class="header-right">
         <span class="record-count" id="recordCount">— submissions</span>
-        <button class="refresh-btn" id="refreshBtn" title="Refresh data">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <button class="icon-btn" id="refreshBtn" title="Refresh data">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
             <path d="M12.5 7A5.5 5.5 0 1 1 7 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
             <path d="M7 1.5L9.5 4M7 1.5L9.5 0" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
           Refresh
         </button>
+        <div class="user-chip" id="userChip"></div>
+        <button class="icon-btn logout-btn" id="logoutBtn">Log out</button>
       </div>
     </div>
     <div class="header-rule"></div>
   </header>
 
-  <!-- Main -->
-  <main class="dash-main">
-
-    <!-- Filter bar -->
-    <div class="filter-bar">
-      <div class="filter-group">
-        <button class="filter-btn active" data-filter="All">All</button>
-        <button class="filter-btn" data-filter="Callback">Callback</button>
-        <button class="filter-btn" data-filter="Redirect">Redirect</button>
-        <button class="filter-btn" data-filter="Rejected">Rejected</button>
-      </div>
-      <div class="filter-meta">
-        <span class="filter-tally" id="filterTally"></span>
-      </div>
+  <!-- ── Controls ────────────────────────────────────────────── -->
+  <div class="controls-bar">
+    <!-- Filters -->
+    <div class="filter-group">
+      <button class="filter-btn active" data-filter="All">All</button>
+      <button class="filter-btn" data-filter="Callback">Callback</button>
+      <button class="filter-btn" data-filter="Redirect">Redirect</button>
+      <button class="filter-btn" data-filter="Pass">Pass</button>
     </div>
+
+    <!-- Search -->
+    <div class="search-wrap">
+      <svg class="search-icon" width="13" height="13" viewBox="0 0 16 16" fill="none">
+        <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.4"/>
+        <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <input class="search-input" id="searchInput" type="text" placeholder="Search email, role, location…" />
+      <button class="search-clear hidden" id="searchClear">✕</button>
+    </div>
+
+    <!-- Batch action -->
+    <div class="batch-wrap">
+      <span class="batch-count hidden" id="batchCount">0 selected</span>
+      <button class="batch-btn hidden" id="batchSendBtn">Send Emails to Selected</button>
+    </div>
+  </div>
+
+  <!-- ── Main ────────────────────────────────────────────────── -->
+  <main class="dash-main">
 
     <!-- State: loading -->
     <div class="state-panel" id="stateLoading">
@@ -59,7 +75,7 @@
     <div class="state-panel hidden" id="stateError">
       <p class="state-icon">✕</p>
       <p class="state-text" id="stateErrorMsg">Could not load submissions.</p>
-      <button class="ghost-btn" onclick="loadSubmissions()">Try again</button>
+      <button class="ghost-btn" id="retryBtn">Try again</button>
     </div>
 
     <!-- State: empty -->
@@ -72,10 +88,18 @@
       <table class="casting-table" id="castingTable">
         <thead>
           <tr>
+            <th class="col-check">
+              <input type="checkbox" id="selectAll" title="Select all visible" />
+            </th>
             <th>Email</th>
+            <th>Phone</th>
+            <th>Age</th>
             <th>Role</th>
+            <th>Location</th>
+            <th>About</th>
+            <th>Reel</th>
             <th>Status</th>
-            <th>Actions</th>
+            <th class="col-action">Action</th>
           </tr>
         </thead>
         <tbody id="castingTableBody"></tbody>
@@ -84,7 +108,7 @@
 
   </main>
 
-  <!-- Toast -->
+  <!-- ── Toast stack ─────────────────────────────────────────── -->
   <div class="toast-stack" id="toastStack"></div>
 
   <script src="castingdash.js"></script>
