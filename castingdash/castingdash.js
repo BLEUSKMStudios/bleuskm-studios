@@ -42,7 +42,9 @@ async function loadSubmissions() {
   showState('loading');
 
   try {
-    const res = await fetch('/.netlify/functions/airtable-proxy');
+    const res = await fetch(
+  `/.netlify/functions/airtable-proxy?table=${encodeURIComponent(CONFIG.TABLE_NAME)}`
+);
 
     if (!res.ok) {
       throw new Error(`Proxy error ${res.status}`);
