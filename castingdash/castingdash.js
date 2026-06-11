@@ -104,7 +104,17 @@ function buildRow(record) {
   const email  = (f['Email'] || '').trim();
   const role   = (f['Role'] || '—').trim();
   const status = (f['Casting Status'] || '').trim();
-  const film   = (f['Callback/Redirect'] || '').trim();
+const rawFilm = f['Callback/Redirect'];
+
+let film = '';
+
+if (Array.isArray(rawFilm)) {
+  film = rawFilm
+    .map(item => (typeof item === 'object' ? item.name : item))
+    .join(', ');
+} else if (typeof rawFilm === 'string') {
+  film = rawFilm.trim();
+}
 
   const tr = document.createElement('tr');
   tr.dataset.id = id;
