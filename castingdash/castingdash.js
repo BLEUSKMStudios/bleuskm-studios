@@ -1,9 +1,9 @@
 /* ─── Config ────────────────────────────────────────────────── */
 const CONFIG = {
-  AIRTABLE_API_KEY: 'YOUR_AIRTABLE_API_KEY',
-  BASE_ID:          'YOUR_BASE_ID',
+  AIRTABLE_API_KEY: '',
+  BASE_ID:          'appXf1NxIVhYbuV4j',
   TABLE_NAME:       'Casting Submissions',
-  BREVO_API_KEY:    'YOUR_BREVO_API_KEY',
+  BREVO_API_KEY:    '',
   TEMPLATE: {
     CALLBACK:  15,
     REDIRECT:  17,
