@@ -380,6 +380,12 @@ async function dispatchEmail(record, btn, overrideFilm, overrideRole) {
   const status = (f['Casting Status'] || '').trim();
 
   if (!email) { toast('No email address on this record.', 'error'); return; }
+  // Block if already sent
+  const existingSent = (f['Email Sent'] || '').trim();
+  if (existingSent && existingSent !== 'Availability Sent') {
+    toast('Email already sent to this actor. Check Email Sent field in Airtable to override.', 'error');
+    return;
+  }
   if (status === 'Redirect' && !overrideFilm) { openRedirectModal(record, btn); return; }
 
   let templateId;
@@ -402,6 +408,18 @@ async function dispatchEmail(record, btn, overrideFilm, overrideRole) {
   try {
     await sendEmail(email, templateId, params);
     sentMap[id] = true;
+
+    // Persist to Airtable
+    const sentLabel = status === 'Callback' ? 'Callback Sent'
+                    : status === 'Redirect' ? 'Redirect Sent'
+                    : status === 'Pass'     ? 'Rejection Sent'
+                    : 'Sent';
+    await patchRecord(id, { 'Email Sent': sentLabel }).catch(() => {});
+
+    // Update local record
+    const rec = allRecords.find(r => r.id === id);
+    if (rec) rec.fields['Email Sent'] = sentLabel;
+
     setBtnState(btn, 'sent', 'Sent');
     updateEmailBadge(id, 'sent');
     toast(`Email sent to ${email}`, 'success');
@@ -433,7 +451,10 @@ async function dispatchAvailability(record, btn) {
   try {
     await sendEmail(email, CFG.TEMPLATE.Availability, params);
     scheduledMap[id] = true;
-    setBtnState(btn, 'scheduled', 'Scheduled');
+    await patchRecord(id, { 'Email Sent': 'Availability Sent' }).catch(() => {});
+    const rec = allRecords.find(r => r.id === id);
+    if (rec) rec.fields['Email Sent'] = 'Availability Sent';
+    setBtnState(btn, 'scheduled', 'Availability Sent');
     updateEmailBadge(id, 'scheduled');
     toast(`Availability email sent to ${email}`, 'success');
   } catch (err) {
@@ -666,8 +687,9 @@ function buildRow(record) {
   const filmArr = Array.isArray(redirectFilms) ? redirectFilms : (redirectFilms ? [redirectFilms] : []);
 
   const isSelected   = selectedIds.has(id);
-  const alreadySent  = sentMap[id]     || false;
-  const isScheduled  = scheduledMap[id]|| false;
+  const emailSent    = (f["Email Sent"] || "").trim();
+  const alreadySent  = sentMap[id]      || ["Callback Sent","Redirect Sent","Rejection Sent"].includes(emailSent);
+  const isScheduled  = scheduledMap[id] || emailSent === "Availability Sent";
   const isExpanded   = expandedIds.has(id);
 
   // ── Summary row ──────────────────────────────────────────
