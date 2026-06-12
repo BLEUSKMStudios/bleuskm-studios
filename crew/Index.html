@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crew Portal — BLEUSKM Studios</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="crewdash.css" />
+</head>
+<body>
+
+  <header class="dash-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <span class="studio-label">BLEUSKM STUDIOS</span>
+        <span class="hdivider"></span>
+        <span class="page-label">CREW PORTAL</span>
+      </div>
+      <div class="header-right">
+        <span class="record-count" id="recordCount">— crew members</span>
+        <button class="icon-btn" id="refreshBtn">
+          <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+            <path d="M12.5 7A5.5 5.5 0 1 1 7 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M7 1.5L9.5 4M7 1.5L9.5 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Refresh
+        </button>
+        <span class="user-chip" id="userChip"></span>
+        <button class="icon-btn logout-btn" id="logoutBtn">Log out</button>
+      </div>
+    </div>
+    <div class="header-rule"></div>
+  </header>
+
+  <!-- Stats bar -->
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-card"><span class="stat-num" id="statTotal">—</span><span class="stat-label">Total Crew</span></div>
+    <div class="stat-card"><span class="stat-num" id="statSigned">—</span><span class="stat-label">Contracts Signed</span></div>
+    <div class="stat-card"><span class="stat-num" id="statPending">—</span><span class="stat-label">Awaiting Signature</span></div>
+    <div class="stat-card"><span class="stat-num" id="statConfirmed">—</span><span class="stat-label">Confirmed</span></div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls-bar">
+    <div class="filter-group">
+      <button class="filter-btn active" data-filter="All">All</button>
+      <button class="filter-btn" data-filter="Signed">Signed</button>
+      <button class="filter-btn" data-filter="Sent">Sent</button>
+      <button class="filter-btn" data-filter="Pending">Pending</button>
+    </div>
+    <div class="search-wrap">
+      <svg class="search-icon" width="12" height="12" viewBox="0 0 16 16" fill="none">
+        <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <input class="search-input" id="searchInput" type="text" placeholder="Search name, email, role..." />
+      <button class="search-clear hidden" id="searchClear">&#10005;</button>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <main class="dash-main">
+    <div class="state-panel" id="stateLoading">
+      <div class="loader-ring"></div>
+      <p class="state-text">Loading crew...</p>
+    </div>
+    <div class="state-panel hidden" id="stateError">
+      <p class="state-icon">&#10005;</p>
+      <p class="state-text" id="stateErrorMsg">Could not load crew data.</p>
+      <button class="ghost-btn" id="retryBtn">Try again</button>
+    </div>
+    <div class="state-panel hidden" id="stateEmpty">
+      <p class="state-text">No crew members match this filter.</p>
+    </div>
+    <div class="table-wrap hidden" id="tableWrap">
+      <table class="crew-table">
+        <thead>
+          <tr>
+            <th class="col-arrow"></th>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Contract</th>
+            <th>Date Signed</th>
+            <th class="col-action">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="crewTableBody"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <div class="toast-stack" id="toastStack"></div>
+  <script src="crewdash.js"></script>
+</body>
+</html>
