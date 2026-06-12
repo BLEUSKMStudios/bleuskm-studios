@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   BLEUSKM Studios — Casting Portal v5
+   BLEUSKM Studios — Casting Portal v6
    castingdash.js
 ═══════════════════════════════════════════════════════════════ */
 
@@ -23,25 +23,25 @@ const CFG = {
   SELFTAPE_BASE: 'https://bleuskm.com/selftape',
   TEMPLATE: {
     Callback:     15,
-    Redirect:     17,
-    RedirectRole: 18,
     Pass:         16,
+    Redirect:     17,  // film only
+    RedirectRole: 18,  // role specific
     Availability: 19,
   },
 };
 
-/* ── Role map by film ───────────────────────────────────────── */
-const FILM_ROLES = {
-  'The Final Hand': [
-    'High John — Lead (Black American Male, 35-60)',
-    'The Player — Lead (Caucasian Male, 25-40)',
-    'The Stranger — Supporting (Any Ethnicity Male, 25-40)',
-    'Bartender / Waitress — Supporting (Any Ethnicity Female, 21+)',
-    'Table Patron — Background (Male or Female, 21+)',
-    'The Couple — Background (Male & Female, 21+)',
-    '__custom',
-  ],
-};
+/* ── Exact Airtable Callback/Redirect option values ─────────── */
+const FILM_OPTIONS = [
+  'Liminal County',
+  'Love me like this',
+  'Book of Beginnings',
+  'Of blood and dominion',
+  'As Is',
+  'Overstood',
+  'The 15th Hour',
+];
+
+const TO_ROLE_TRIGGER = 'To Role'; // the multi-select option that triggers template 18
 
 /* ── State ──────────────────────────────────────────────────── */
 let allRecords      = [];
@@ -67,11 +67,9 @@ const el = {
   refreshBtn:      document.getElementById('refreshBtn'),
   logoutBtn:       document.getElementById('logoutBtn'),
   userChip:        document.getElementById('userChip'),
-  selectAll:       document.getElementById('selectAll'),
   searchInput:     document.getElementById('searchInput'),
   searchClear:     document.getElementById('searchClear'),
-  batchCount:      document.getElementById('batchCount'),
-  batchSendBtn:    document.getElementById('batchSendBtn'),
+  batchWrap:       document.getElementById('batchWrap'),
   retryBtn:        document.getElementById('retryBtn'),
   toastStack:      document.getElementById('toastStack'),
   timelineTrack:   document.getElementById('timelineTrack'),
@@ -116,8 +114,6 @@ document.addEventListener('DOMContentLoaded', () => {
   el.logoutBtn.addEventListener('click', () => { sessionStorage.clear(); window.location.replace('./login.html'); });
   bindFilters();
   bindSearch();
-  bindBatch();
-  bindSelectAll();
   bindRedirectModal();
   bindTimelineModal();
   bindCalendar();
@@ -128,8 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
 ═══════════════════════════════════════════════════════════════ */
 async function loadSubmissions() {
   showState('loading');
-  selectedIds.clear();
-  updateBatchUI();
   try {
     let records = [], offset = null;
     do {
@@ -167,15 +161,11 @@ async function loadTimeline() {
     const res  = await fetch(CFG.AIRTABLE + `?table=${encodeURIComponent(CFG.TL_TABLE)}`);
     if (!res.ok) throw new Error('Timeline fetch failed');
     const data = await res.json();
-    // Sort by Start Date
-    tlRecords = (data.records || []).sort((a, b) => {
-      const da = a.fields['Start Date'] || '';
-      const db = b.fields['Start Date'] || '';
-      return da.localeCompare(db);
-    });
+    tlRecords  = (data.records || []).sort((a, b) =>
+      (a.fields['Start Date'] || '').localeCompare(b.fields['Start Date'] || ''));
     renderTimeline();
     renderCalendar();
-  } catch (err) {
+  } catch {
     el.timelineTrack.innerHTML = `<span style="font-size:10px;color:var(--muted);">Could not load timeline.</span>`;
   }
 }
@@ -190,19 +180,13 @@ async function patchTimeline(id, fields) {
 }
 
 function renderTimeline() {
-  if (!tlRecords.length) {
-    el.timelineTrack.innerHTML = `<span style="font-size:10px;color:var(--muted);">No phases found.</span>`;
-    return;
-  }
+  if (!tlRecords.length) { el.timelineTrack.innerHTML = `<span style="font-size:10px;color:var(--muted);">No phases found.</span>`; return; }
   el.timelineTrack.innerHTML = '';
   tlRecords.forEach(record => {
     const f      = record.fields;
     const status = (f['Status'] || 'Upcoming').toLowerCase();
-    const start  = f['Start Date'] || '';
-    const end    = f['End Date']   || '';
-    const dateStr = [formatDate(start), formatDate(end)].filter(Boolean).join(' — ');
-
-    const card = document.createElement('div');
+    const dateStr = [formatDate(f['Start Date']), formatDate(f['End Date'])].filter(Boolean).join(' — ');
+    const card   = document.createElement('div');
     card.className  = `phase-card ${status}`;
     card.dataset.id = record.id;
     card.innerHTML  = `
@@ -231,74 +215,39 @@ function bindCalendar() {
     el.calToggleBtn.style.color = nowHidden ? '' : 'var(--gold)';
     if (!nowHidden) renderCalendar();
   });
-  el.calClose.addEventListener('click', () => {
-    el.calendarWrap.classList.add('hidden');
-    el.calToggleBtn.style.color = '';
-  });
+  el.calClose.addEventListener('click', () => { el.calendarWrap.classList.add('hidden'); el.calToggleBtn.style.color = ''; });
   el.calPrev.addEventListener('click', () => { calCurrentDate.setMonth(calCurrentDate.getMonth() - 1); renderCalendar(); });
   el.calNext.addEventListener('click', () => { calCurrentDate.setMonth(calCurrentDate.getMonth() + 1); renderCalendar(); });
 }
 
 function renderCalendar() {
-  const year  = calCurrentDate.getFullYear();
-  const month = calCurrentDate.getMonth();
-  const today = new Date();
-
+  const year = calCurrentDate.getFullYear(), month = calCurrentDate.getMonth(), today = new Date();
   el.calMonthLabel.textContent = calCurrentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }).toUpperCase();
   el.calGrid.innerHTML = '';
-
   ['SUN','MON','TUE','WED','THU','FRI','SAT'].forEach(d => {
     const h = document.createElement('div'); h.className = 'cal-day-header'; h.textContent = d; el.calGrid.appendChild(h);
   });
-
-  const firstDay    = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const daysInPrev  = new Date(year, month, 0).getDate();
-
-  // Build phase event map
+  const firstDay = new Date(year, month, 1).getDay(), daysInMonth = new Date(year, month + 1, 0).getDate(), daysInPrev = new Date(year, month, 0).getDate();
   const phaseEvents = {};
   tlRecords.forEach(r => {
-    const f = r.fields;
-    if (!f['Start Date']) return;
-    const start = new Date(f['Start Date'] + 'T00:00:00');
-    const end   = f['End Date'] ? new Date(f['End Date'] + 'T00:00:00') : new Date(start);
-    const name  = f['Phase'] || '';
+    const f = r.fields; if (!f['Start Date']) return;
+    const start = new Date(f['Start Date'] + 'T00:00:00'), end = f['End Date'] ? new Date(f['End Date'] + 'T00:00:00') : new Date(start);
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
       if (d.getMonth() !== month || d.getFullYear() !== year) continue;
-      const key  = d.getDate();
-      const isStart = d.getTime() === start.getTime();
-      const isEnd   = d.getTime() === end.getTime();
-      const type = isStart ? 'phase-start' : (isEnd ? 'phase-end' : 'phase-span');
+      const key = d.getDate(), type = d.getTime() === start.getTime() ? 'phase-start' : (d.getTime() === end.getTime() ? 'phase-end' : 'phase-span');
       if (!phaseEvents[key]) phaseEvents[key] = [];
-      phaseEvents[key].push({ name, type });
+      phaseEvents[key].push({ name: f['Phase'] || '', type });
     }
   });
-
-  for (let i = firstDay - 1; i >= 0; i--) {
-    const d = document.createElement('div'); d.className = 'cal-day other-month';
-    d.innerHTML = `<div class="cal-day-num">${daysInPrev - i}</div>`; el.calGrid.appendChild(d);
-  }
-
+  for (let i = firstDay - 1; i >= 0; i--) { const d = document.createElement('div'); d.className = 'cal-day other-month'; d.innerHTML = `<div class="cal-day-num">${daysInPrev - i}</div>`; el.calGrid.appendChild(d); }
   for (let d = 1; d <= daysInMonth; d++) {
     const isToday = d === today.getDate() && month === today.getMonth() && year === today.getFullYear();
-    const cell = document.createElement('div');
-    cell.className = `cal-day${isToday ? ' today' : ''}`;
-    cell.innerHTML = `<div class="cal-day-num">${d}</div>`;
-    (phaseEvents[d] || []).forEach(ev => {
-      const evEl = document.createElement('div');
-      evEl.className = `cal-event ${ev.type}`;
-      evEl.textContent = ev.type === 'phase-span' ? '' : ev.name;
-      if (ev.type === 'phase-span') { evEl.style.height = '4px'; evEl.style.marginBottom = '2px'; }
-      cell.appendChild(evEl);
-    });
+    const cell = document.createElement('div'); cell.className = `cal-day${isToday ? ' today' : ''}`; cell.innerHTML = `<div class="cal-day-num">${d}</div>`;
+    (phaseEvents[d] || []).forEach(ev => { const evEl = document.createElement('div'); evEl.className = `cal-event ${ev.type}`; evEl.textContent = ev.type === 'phase-span' ? '' : ev.name; if (ev.type === 'phase-span') { evEl.style.height = '4px'; evEl.style.marginBottom = '2px'; } cell.appendChild(evEl); });
     el.calGrid.appendChild(cell);
   }
-
   const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
-  for (let d = 1; d <= totalCells - firstDay - daysInMonth; d++) {
-    const cell = document.createElement('div'); cell.className = 'cal-day other-month';
-    cell.innerHTML = `<div class="cal-day-num">${d}</div>`; el.calGrid.appendChild(cell);
-  }
+  for (let d = 1; d <= totalCells - firstDay - daysInMonth; d++) { const cell = document.createElement('div'); cell.className = 'cal-day other-month'; cell.innerHTML = `<div class="cal-day-num">${d}</div>`; el.calGrid.appendChild(cell); }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -307,12 +256,12 @@ function renderCalendar() {
 function openTimelineModal(record) {
   const f = record.fields;
   el.tlModalPhase.textContent = f['Phase'] || 'Phase';
-  el.tlModalId.value           = record.id;
-  el.tlPhaseInput.value        = f['Phase']       || '';
-  el.tlStartInput.value        = f['Start Date']  || '';
-  el.tlEndInput.value          = f['End Date']    || '';
-  el.tlStatusInput.value       = f['Status']      || 'Upcoming';
-  el.tlDescInput.value         = f['Description'] || '';
+  el.tlModalId.value = record.id;
+  el.tlPhaseInput.value  = f['Phase']       || '';
+  el.tlStartInput.value  = f['Start Date']  || '';
+  el.tlEndInput.value    = f['End Date']    || '';
+  el.tlStatusInput.value = f['Status']      || 'Upcoming';
+  el.tlDescInput.value   = f['Description'] || '';
   el.tlModal.classList.remove('hidden');
 }
 
@@ -323,22 +272,9 @@ function bindTimelineModal() {
     const id = el.tlModalId.value;
     el.tlModalSave.disabled = true; el.tlModalSave.textContent = 'Saving...';
     try {
-      await patchTimeline(id, {
-        'Phase':       el.tlPhaseInput.value.trim(),
-        'Start Date':  el.tlStartInput.value  || null,
-        'End Date':    el.tlEndInput.value    || null,
-        'Status':      el.tlStatusInput.value,
-        'Description': el.tlDescInput.value.trim(),
-      });
+      await patchTimeline(id, { 'Phase': el.tlPhaseInput.value.trim(), 'Start Date': el.tlStartInput.value || null, 'End Date': el.tlEndInput.value || null, 'Status': el.tlStatusInput.value, 'Description': el.tlDescInput.value.trim() });
       const rec = tlRecords.find(r => r.id === id);
-      if (rec) {
-        rec.fields['Phase']       = el.tlPhaseInput.value.trim();
-        rec.fields['Start Date']  = el.tlStartInput.value || null;
-        rec.fields['End Date']    = el.tlEndInput.value   || null;
-        rec.fields['Status']      = el.tlStatusInput.value;
-        rec.fields['Description'] = el.tlDescInput.value.trim();
-      }
-      // Re-sort after edit
+      if (rec) { rec.fields['Phase'] = el.tlPhaseInput.value.trim(); rec.fields['Start Date'] = el.tlStartInput.value || null; rec.fields['End Date'] = el.tlEndInput.value || null; rec.fields['Status'] = el.tlStatusInput.value; rec.fields['Description'] = el.tlDescInput.value.trim(); }
       tlRecords.sort((a, b) => (a.fields['Start Date'] || '').localeCompare(b.fields['Start Date'] || ''));
       el.tlModal.classList.add('hidden');
       renderTimeline(); renderCalendar();
@@ -361,8 +297,21 @@ async function sendEmail(email, templateId, params) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   EMAIL DISPATCH
+   DISPATCH LOGIC
+   - Callback → template 15
+   - Pass     → template 16
+   - Redirect, Callback/Redirect = film name → template 17
+   - Redirect, Callback/Redirect = "To Role" → template 18 (uses To Role field)
 ═══════════════════════════════════════════════════════════════ */
+function getRedirectType(record) {
+  const crField = record.fields['Callback/Redirect'] || [];
+  const crArr   = Array.isArray(crField) ? crField : (crField ? [crField] : []);
+  const hasToRole = crArr.includes(TO_ROLE_TRIGGER);
+  const filmName  = crArr.find(v => FILM_OPTIONS.includes(v)) || '';
+  const toRole    = (record.fields['To Role'] || '').trim();
+  return { hasToRole, filmName, toRole };
+}
+
 function buildConsentUrl(recordId, consent, film) {
   return CFG.RESPONSE_BASE + '?id=' + encodeURIComponent(recordId) + '&consent=' + encodeURIComponent(consent) + '&film=' + encodeURIComponent(film);
 }
@@ -380,76 +329,74 @@ async function dispatchEmail(record, btn, overrideFilm, overrideRole) {
   const status = (f['Casting Status'] || '').trim();
 
   if (!email) { toast('No email address on this record.', 'error'); return; }
-  // Block if already sent
-  const existingSent = (f['Email Sent'] || '').trim();
-  if (existingSent && existingSent !== 'Availability Sent') {
-    toast('Email already sent to this actor. Check Email Sent field in Airtable to override.', 'error');
+
+  // Block duplicate sends
+  const emailSent = (f['Email Sent'] || '').trim();
+  if (emailSent && emailSent !== 'Availability Sent') {
+    toast('Email already sent to this actor. Clear the Email Sent field in Airtable to override.', 'error');
     return;
   }
-  if (status === 'Redirect' && !overrideFilm) { openRedirectModal(record, btn); return; }
 
-  let templateId;
-  if (status === 'Callback')      templateId = CFG.TEMPLATE.Callback;
-  else if (status === 'Pass')     templateId = CFG.TEMPLATE.Pass;
-  else if (status === 'Redirect') templateId = overrideRole ? CFG.TEMPLATE.RedirectRole : CFG.TEMPLATE.Redirect;
-  else { toast('No template for this status.', 'error'); return; }
-
-  const params = { NAME: name, ROLE: role };
-  if (status === 'Callback') { params.SELFTAPE_URL = buildSelfTapeUrl(name, role, email, id); params.CALENDLY_URL = CFG.CALENDLY; }
-  if (status === 'Redirect') {
-    params.FILM_NAME       = overrideFilm;
-    params.FILM_LINK       = CFG.FILM_LINK;
-    params.CONSENT_YES_URL = buildConsentUrl(id, 'yes', overrideFilm);
-    params.CONSENT_NO_URL  = buildConsentUrl(id, 'no',  overrideFilm);
-    if (overrideRole) params.TO_ROLE = overrideRole;
+  // Redirect needs modal if not already resolved
+  if (status === 'Redirect' && !overrideFilm && !overrideRole) {
+    openRedirectModal(record, btn);
+    return;
   }
+
+  let templateId, params = { NAME: name, ROLE: role };
+
+  if (status === 'Callback') {
+    templateId = CFG.TEMPLATE.Callback;
+    params.SELFTAPE_URL = buildSelfTapeUrl(name, role, email, id);
+    params.CALENDLY_URL = CFG.CALENDLY;
+  } else if (status === 'Pass') {
+    templateId = CFG.TEMPLATE.Pass;
+  } else if (status === 'Redirect') {
+    if (overrideRole) {
+      // Template 18 — role specific
+      templateId = CFG.TEMPLATE.RedirectRole;
+      params.TO_ROLE        = overrideRole;
+      params.FILM_NAME      = overrideFilm || (f['Film'] || 'The Final Hand').trim();
+      params.CONSENT_YES_URL = buildConsentUrl(id, 'yes', params.FILM_NAME);
+      params.CONSENT_NO_URL  = buildConsentUrl(id, 'no',  params.FILM_NAME);
+    } else {
+      // Template 17 — film only
+      templateId = CFG.TEMPLATE.Redirect;
+      params.FILM_NAME       = overrideFilm;
+      params.FILM_LINK       = CFG.FILM_LINK;
+      params.CONSENT_YES_URL = buildConsentUrl(id, 'yes', overrideFilm);
+      params.CONSENT_NO_URL  = buildConsentUrl(id, 'no',  overrideFilm);
+    }
+  } else {
+    toast('No template for this status.', 'error'); return;
+  }
+
+  const sentLabel = status === 'Callback' ? 'Callback Sent' : status === 'Pass' ? 'Rejection Sent' : 'Redirect Sent';
 
   setBtnState(btn, 'sending', '...');
   try {
     await sendEmail(email, templateId, params);
     sentMap[id] = true;
-
-    // Persist to Airtable
-    const sentLabel = status === 'Callback' ? 'Callback Sent'
-                    : status === 'Redirect' ? 'Redirect Sent'
-                    : status === 'Pass'     ? 'Rejection Sent'
-                    : 'Sent';
     await patchRecord(id, { 'Email Sent': sentLabel }).catch(() => {});
-
-    // Update local record
     const rec = allRecords.find(r => r.id === id);
     if (rec) rec.fields['Email Sent'] = sentLabel;
-
     setBtnState(btn, 'sent', 'Sent');
     updateEmailBadge(id, 'sent');
     toast(`Email sent to ${email}`, 'success');
   } catch (err) {
-    setBtnState(btn, 'idle', actionLabel(status));
+    setBtnState(btn, 'idle', actionLabel(status, record));
     toast(`Failed: ${err.message}`, 'error');
     throw err;
   }
 }
 
 async function dispatchAvailability(record, btn) {
-  const f     = record.fields;
-  const id    = record.id;
-  const email = (f['Email'] || '').trim();
-  const name  = (f['Name']  || '').trim();
-  const role  = (f['Role']  || '').trim();
-  const film  = (f['Film']  || 'The Final Hand').trim();
-
-  if (!email) { toast('No email address on this record.', 'error'); return; }
-
-  const params = {
-    NAME:         name,
-    ROLE:         role,
-    FILM_NAME:    film,
-    CALENDLY_URL: CFG.CALENDLY,
-  };
-
+  const f = record.fields, id = record.id;
+  const email = (f['Email'] || '').trim(), name = (f['Name'] || '').trim(), role = (f['Role'] || '').trim(), film = (f['Film'] || 'The Final Hand').trim();
+  if (!email) { toast('No email address.', 'error'); return; }
   setBtnState(btn, 'sending', '...');
   try {
-    await sendEmail(email, CFG.TEMPLATE.Availability, params);
+    await sendEmail(email, CFG.TEMPLATE.Availability, { NAME: name, ROLE: role, FILM_NAME: film, CALENDLY_URL: CFG.CALENDLY });
     scheduledMap[id] = true;
     await patchRecord(id, { 'Email Sent': 'Availability Sent' }).catch(() => {});
     const rec = allRecords.find(r => r.id === id);
@@ -472,11 +419,14 @@ function setBtnState(btn, state, label) {
   btn.textContent = label;
 }
 
-function actionLabel(status) {
-  return status === 'Callback' ? 'Send Callback'
-       : status === 'Redirect' ? 'Send Redirect'
-       : status === 'Pass'     ? 'Send Rejection'
-       : 'Send Email';
+function actionLabel(status, record) {
+  if (status === 'Callback') return 'Send Callback';
+  if (status === 'Pass')     return 'Send Rejection';
+  if (status === 'Redirect') {
+    const { hasToRole } = getRedirectType(record);
+    return hasToRole ? 'Send Role Invite' : 'Send Redirect';
+  }
+  return 'Send Email';
 }
 
 function updateEmailBadge(id, type) {
@@ -487,48 +437,54 @@ function updateEmailBadge(id, type) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   REDIRECT MODAL — with role auto-populate
+   REDIRECT MODAL — pre-fills from Airtable
 ═══════════════════════════════════════════════════════════════ */
 function openRedirectModal(record, btn) {
   pendingRedirect = { record, btn };
-  const f     = record.fields;
-  const name  = (f['Name'] || f['Email'] || '').trim();
-  const films = f['Callback/Redirect'] || [];
-  const filmArr = Array.isArray(films) ? films : (films ? [films] : []);
+  const f = record.fields;
+  const name = (f['Name'] || f['Email'] || '').trim();
+  const { hasToRole, filmName, toRole } = getRedirectType(record);
 
   el.modalActorName.textContent = name;
   el.customFilmGroup.classList.add('hidden');
   el.customRoleGroup.classList.add('hidden');
-  el.filmSelect.value   = '';
+  el.filmSelect.value      = '';
   el.customFilmInput.value = '';
 
-  // Pre-select film from Airtable
-  if (filmArr.length) {
-    const match = Array.from(el.filmSelect.options).find(o => o.value === filmArr[0]);
-    if (match) { el.filmSelect.value = filmArr[0]; }
-    else { el.filmSelect.value = '__custom'; el.customFilmInput.value = filmArr[0]; el.customFilmGroup.classList.remove('hidden'); }
+  // Pre-fill film
+  if (filmName) {
+    const match = Array.from(el.filmSelect.options).find(o => o.value === filmName);
+    if (match) el.filmSelect.value = filmName;
+    else { el.filmSelect.value = '__custom'; el.customFilmInput.value = filmName; el.customFilmGroup.classList.remove('hidden'); }
   }
 
-  populateRoles(el.filmSelect.value);
+  // Pre-fill role
+  populateRoles(el.filmSelect.value === '__custom' ? '' : el.filmSelect.value);
+  if (hasToRole && toRole) {
+    const match = Array.from(el.roleSelect.options).find(o => o.value === toRole);
+    if (match) el.roleSelect.value = toRole;
+    else { el.roleSelect.value = '__custom'; el.customRoleInput.value = toRole; el.customRoleGroup.classList.remove('hidden'); }
+  }
+
   el.redirectModal.classList.remove('hidden');
 }
 
+const FINAL_HAND_ROLES = [
+  'High John',
+  'The Player',
+  'The Stranger',
+  'Bartender / Waitress',
+  'Table Patron',
+  'The Couple',
+];
+
 function populateRoles(filmName) {
-  const roles  = FILM_ROLES[filmName] || [];
   el.roleSelect.innerHTML = '<option value="">— General redirect (no role) —</option>';
-
+  const roles = filmName === 'The Final Hand' ? FINAL_HAND_ROLES : [];
   roles.forEach(r => {
-    const opt = document.createElement('option');
-    if (r === '__custom') { opt.value = '__custom'; opt.textContent = 'Custom role...'; }
-    else { opt.value = r; opt.textContent = r; }
-    el.roleSelect.appendChild(opt);
+    const opt = document.createElement('option'); opt.value = r; opt.textContent = r; el.roleSelect.appendChild(opt);
   });
-
-  if (!roles.length) {
-    // Non-Final-Hand films — just show free text
-    const opt = document.createElement('option'); opt.value = '__custom'; opt.textContent = 'Enter role...';
-    el.roleSelect.appendChild(opt);
-  }
+  const custom = document.createElement('option'); custom.value = '__custom'; custom.textContent = 'Custom role...'; el.roleSelect.appendChild(custom);
 }
 
 function bindRedirectModal() {
@@ -537,31 +493,27 @@ function bindRedirectModal() {
     populateRoles(el.filmSelect.value === '__custom' ? '' : el.filmSelect.value);
     el.customRoleGroup.classList.add('hidden');
   });
-
   el.roleSelect.addEventListener('change', () => {
     el.customRoleGroup.classList.toggle('hidden', el.roleSelect.value !== '__custom');
   });
-
   el.modalCancel.addEventListener('click', () => el.redirectModal.classList.add('hidden'));
   el.redirectModal.addEventListener('click', e => { if (e.target === el.redirectModal) el.redirectModal.classList.add('hidden'); });
-
   el.modalSend.addEventListener('click', async () => {
     let film = el.filmSelect.value;
     if (film === '__custom') film = el.customFilmInput.value.trim();
     let role = el.roleSelect.value;
     if (role === '__custom') role = el.customRoleInput.value.trim();
     if (role === '') role = null;
-
-    if (!film) { toast('Please select or enter a film name.', 'error'); return; }
+    if (!film && !role) { toast('Please select a film or role.', 'error'); return; }
     const { record, btn } = pendingRedirect;
     el.redirectModal.classList.add('hidden');
     pendingRedirect = null;
-    try { await dispatchEmail(record, btn, film, role); } catch {}
+    try { await dispatchEmail(record, btn, film || null, role || null); } catch {}
   });
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   FILTER + SEARCH
+   FILTER + SEARCH + BATCH
 ═══════════════════════════════════════════════════════════════ */
 function bindFilters() {
   document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -569,7 +521,9 @@ function bindFilters() {
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       activeFilter = btn.dataset.filter;
-      selectedIds.clear(); updateBatchUI(); renderTable();
+      selectedIds.clear();
+      renderTable();
+      updateBatchUI();
     });
   });
 }
@@ -578,19 +532,20 @@ function bindSearch() {
   el.searchInput.addEventListener('input', () => {
     searchQuery = el.searchInput.value.trim().toLowerCase();
     el.searchClear.classList.toggle('hidden', !searchQuery);
-    selectedIds.clear(); updateBatchUI(); renderTable();
+    selectedIds.clear();
+    renderTable();
+    updateBatchUI();
   });
   el.searchClear.addEventListener('click', () => {
     el.searchInput.value = ''; searchQuery = '';
     el.searchClear.classList.add('hidden');
-    selectedIds.clear(); updateBatchUI(); renderTable(); el.searchInput.focus();
+    selectedIds.clear(); renderTable(); updateBatchUI(); el.searchInput.focus();
   });
 }
 
 function getVisible() {
   return allRecords.filter(r => {
-    const f = r.fields;
-    const status = (f['Casting Status'] || '').trim();
+    const f = r.fields, status = (f['Casting Status'] || '').trim();
     if (activeFilter !== 'All' && status !== activeFilter) return false;
     if (searchQuery) {
       const hay = [f['Name']||'', f['Email']||'', f['Role']||'', f['Location']||''].join(' ').toLowerCase();
@@ -600,55 +555,79 @@ function getVisible() {
   });
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   BATCH
-═══════════════════════════════════════════════════════════════ */
-function bindBatch() {
-  el.batchSendBtn.addEventListener('click', async () => {
-    if (!selectedIds.size) return;
-    el.batchSendBtn.disabled = true; el.batchSendBtn.textContent = 'Sending...';
-    const targets = allRecords.filter(r => selectedIds.has(r.id));
-    let ok = 0, skip = 0, fail = 0;
-    for (const record of targets) {
-      const status = (record.fields['Casting Status'] || '').trim();
-      const stStatus = (record.fields['Self Tape Status'] || '').trim();
-      // Availability batch
-      if (stStatus === 'Selected for Final Round') {
-        const rowBtn = document.querySelector(`[data-avail-id="${record.id}"]`);
-        try { await dispatchAvailability(record, rowBtn); ok++; } catch { fail++; }
-      } else if (status === 'Redirect') {
-        const films   = record.fields['Callback/Redirect'] || [];
-        const filmArr = Array.isArray(films) ? films : (films ? [films] : []);
-        const film    = filmArr[0] || '';
-        if (!film) { skip++; continue; }
-        const rowBtn = document.querySelector(`[data-action-id="${record.id}"]`);
-        try { await dispatchEmail(record, rowBtn, film, null); ok++; } catch { fail++; }
-      } else if (CFG.TEMPLATE[status]) {
-        const rowBtn = document.querySelector(`[data-action-id="${record.id}"]`);
-        try { await dispatchEmail(record, rowBtn); ok++; } catch { fail++; }
-      } else { skip++; }
-      await sleep(280);
-    }
-    el.batchSendBtn.disabled = false; el.batchSendBtn.textContent = 'Send Emails to Selected';
-    toast(`Batch: ${ok} sent${skip ? `, ${skip} skipped` : ''}${fail ? `, ${fail} failed` : ''}`, fail ? 'error' : 'success');
-    selectedIds.clear(); updateBatchUI(); renderTable();
-  });
-}
-
-function bindSelectAll() {
-  el.selectAll.addEventListener('change', () => {
-    const visible = getVisible();
-    if (el.selectAll.checked) visible.forEach(r => selectedIds.add(r.id));
-    else                       visible.forEach(r => selectedIds.delete(r.id));
-    updateBatchUI(); renderTable();
-  });
-}
-
+/* ── Batch send — only active when a specific status is filtered ── */
 function updateBatchUI() {
-  const n = selectedIds.size;
-  el.batchCount.textContent = `${n} selected`;
-  el.batchCount.classList.toggle('hidden', n === 0);
-  el.batchSendBtn.classList.toggle('hidden', n === 0);
+  if (!el.batchWrap) return;
+
+  // Only show batch when a specific status filter is active (not All)
+  if (activeFilter === 'All' || searchQuery) {
+    el.batchWrap.innerHTML = '';
+    return;
+  }
+
+  const visible = getVisible();
+  const selCount = visible.filter(r => selectedIds.has(r.id)).length;
+
+  el.batchWrap.innerHTML = `
+    <label style="display:flex;align-items:center;gap:7px;font-size:9px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);cursor:pointer;">
+      <input type="checkbox" id="batchSelectAll" ${selCount === visible.length && visible.length > 0 ? 'checked' : ''} style="accent-color:var(--gold);width:13px;height:13px;" />
+      Select All
+    </label>
+    ${selCount > 0 ? `
+      <span style="font-size:10px;color:var(--golddim);">${selCount} selected</span>
+      <button class="batch-btn" id="batchSendBtn">Send ${activeFilter} Emails to Selected</button>
+    ` : ''}
+  `;
+
+  const batchSelectAll = document.getElementById('batchSelectAll');
+  if (batchSelectAll) {
+    batchSelectAll.addEventListener('change', () => {
+      if (batchSelectAll.checked) visible.forEach(r => selectedIds.add(r.id));
+      else visible.forEach(r => selectedIds.delete(r.id));
+      renderTable(); updateBatchUI();
+    });
+  }
+
+  const batchSendBtn = document.getElementById('batchSendBtn');
+  if (batchSendBtn) {
+    batchSendBtn.addEventListener('click', async () => {
+      const targets = allRecords.filter(r => selectedIds.has(r.id));
+      if (!targets.length) return;
+      batchSendBtn.disabled = true; batchSendBtn.textContent = 'Sending...';
+      let ok = 0, skip = 0, fail = 0;
+
+      for (const record of targets) {
+        const status   = (record.fields['Casting Status'] || '').trim();
+        const stStatus = (record.fields['Self Tape Status'] || '').trim();
+        const emailSent= (record.fields['Email Sent'] || '').trim();
+
+        // Skip already sent
+        if (emailSent && emailSent !== 'Availability Sent') { skip++; continue; }
+
+        if (stStatus === 'Selected for Final Round') {
+          const rowBtn = document.querySelector(`[data-avail-id="${record.id}"]`);
+          try { await dispatchAvailability(record, rowBtn); ok++; } catch { fail++; }
+        } else if (status === 'Redirect') {
+          const { hasToRole, filmName, toRole } = getRedirectType(record);
+          if (hasToRole && toRole) {
+            const rowBtn = document.querySelector(`[data-action-id="${record.id}"]`);
+            try { await dispatchEmail(record, rowBtn, null, toRole); ok++; } catch { fail++; }
+          } else if (filmName) {
+            const rowBtn = document.querySelector(`[data-action-id="${record.id}"]`);
+            try { await dispatchEmail(record, rowBtn, filmName, null); ok++; } catch { fail++; }
+          } else { skip++; }
+        } else if (CFG.TEMPLATE[status]) {
+          const rowBtn = document.querySelector(`[data-action-id="${record.id}"]`);
+          try { await dispatchEmail(record, rowBtn); ok++; } catch { fail++; }
+        } else { skip++; }
+
+        await sleep(280);
+      }
+
+      toast(`Batch: ${ok} sent${skip ? `, ${skip} skipped` : ''}${fail ? `, ${fail} failed` : ''}`, fail ? 'error' : 'success');
+      selectedIds.clear(); renderTable(); updateBatchUI();
+    });
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -660,15 +639,10 @@ function renderTable() {
   el.tbody.innerHTML = '';
   records.forEach(r => buildRow(r));
   showState('table');
-  const allSel = records.length > 0 && records.every(r => selectedIds.has(r.id));
-  el.selectAll.checked       = allSel;
-  el.selectAll.indeterminate = !allSel && selectedIds.size > 0;
 }
 
 function buildRow(record) {
-  const f  = record.fields;
-  const id = record.id;
-
+  const f  = record.fields, id = record.id;
   const name     = (f['Name']     || '').trim();
   const email    = (f['Email']    || '').trim();
   const phone    = (f['Phone']    || '').trim();
@@ -683,90 +657,89 @@ function buildRow(record) {
   const stUrl    = (f['Self Tape URL']    || '').trim();
   const stStatus = (f['Self Tape Status'] || 'Not Submitted').trim();
   const castStatus = (f['Cast Status'] || '').trim();
+  const emailSent  = (f['Email Sent']   || '').trim();
+  const toRoleVal  = (f['To Role']      || '').trim();
   const redirectFilms = f['Callback/Redirect'] || [];
   const filmArr = Array.isArray(redirectFilms) ? redirectFilms : (redirectFilms ? [redirectFilms] : []);
+  const { hasToRole, filmName } = getRedirectType(record);
 
-  const isSelected   = selectedIds.has(id);
-  const emailSent    = (f["Email Sent"] || "").trim();
-  const alreadySent  = sentMap[id]      || ["Callback Sent","Redirect Sent","Rejection Sent"].includes(emailSent);
-  const isScheduled  = scheduledMap[id] || emailSent === "Availability Sent";
-  const isExpanded   = expandedIds.has(id);
+  const isSelected  = selectedIds.has(id);
+  const alreadySent = sentMap[id] || ['Callback Sent','Redirect Sent','Rejection Sent'].includes(emailSent);
+  const isScheduled = scheduledMap[id] || emailSent === 'Availability Sent';
+  const isExpanded  = expandedIds.has(id);
 
-  // ── Summary row ──────────────────────────────────────────
+  // Summary row
   const summaryRow = document.createElement('tr');
-  summaryRow.className = `summary-row${isSelected ? ' row-sel' : ''}${isExpanded ? ' expanded' : ''}`;
+  summaryRow.className = `summary-row${isExpanded ? ' expanded' : ''}${isSelected ? ' row-sel' : ''}`;
   summaryRow.dataset.id = id;
 
-  // Checkbox td
-  const tdCb = document.createElement('td');
-  tdCb.className = 'col-check';
-  const cb = document.createElement('input');
-  cb.type = 'checkbox'; cb.checked = isSelected;
-  cb.addEventListener('change', e => {
-    e.stopPropagation();
-    if (cb.checked) selectedIds.add(id); else selectedIds.delete(id);
-    summaryRow.classList.toggle('row-sel', cb.checked);
-    updateBatchUI(); syncSelectAll();
-  });
-  tdCb.appendChild(cb); summaryRow.appendChild(tdCb);
+  // Checkbox (only when filter is active)
+  if (activeFilter !== 'All') {
+    const tdCb = document.createElement('td');
+    tdCb.className = 'col-check';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox'; cb.checked = isSelected;
+    cb.addEventListener('change', e => {
+      e.stopPropagation();
+      if (cb.checked) selectedIds.add(id); else selectedIds.delete(id);
+      summaryRow.classList.toggle('row-sel', cb.checked);
+      updateBatchUI();
+    });
+    tdCb.appendChild(cb); summaryRow.appendChild(tdCb);
+  }
 
-  // Name + expand arrow
-  summaryRow.appendChild(makeTd(`
-    <span class="cell-name">${esc(name) || '—'}</span>
-    <span class="expand-arrow">&#9654;</span>
-  `));
+  // Name
+  summaryRow.appendChild(makeTd(`<span class="cell-name">${esc(name) || '—'}</span><span class="expand-arrow">&#9654;</span>`));
 
-  // Role
-  summaryRow.appendChild(makeTd(`<span class="cell-role">${esc(role) || '—'}</span>`));
+  // Role — show To Role if set
+  const roleDisplay = (hasToRole && toRoleVal) ? `${esc(role)} <span style="font-size:9px;color:var(--golddim);">&#8594; ${esc(toRoleVal)}</span>` : esc(role) || '—';
+  summaryRow.appendChild(makeTd(`<span class="cell-role">${roleDisplay}</span>`));
 
   // Status badge
   const statusTd = document.createElement('td');
   let statusHtml = statusBadge(status);
-  if (consent) {
-    const cc = consent === 'Accepted' ? 'var(--sent)' : 'var(--muted)';
-    statusHtml += `<span style="display:block;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:${cc};margin-top:4px;">${esc(consent)}</span>`;
+  if (filmArr.length) {
+    const displayFilms = filmArr.filter(v => v !== TO_ROLE_TRIGGER);
+    if (displayFilms.length) statusHtml += `<span style="display:block;font-size:9px;color:var(--redirect);opacity:0.7;margin-top:4px;line-height:1.5;">${displayFilms.map(esc).join('<br>')}</span>`;
+    if (hasToRole && toRoleVal) statusHtml += `<span style="display:block;font-size:9px;color:var(--gold);opacity:0.7;margin-top:2px;">${esc(toRoleVal)}</span>`;
   }
+  if (consent) { const cc = consent === 'Accepted' ? 'var(--sent)' : 'var(--muted)'; statusHtml += `<span style="display:block;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:${cc};margin-top:5px;">${esc(consent)}</span>`; }
   statusTd.innerHTML = statusHtml; summaryRow.appendChild(statusTd);
 
-  // Self-tape status
+  // Self-tape
   const stTd = document.createElement('td');
-  const stCls = stStatus === 'Selected for Final Round' ? 'selected'
-              : stStatus === 'Reviewed'   ? 'reviewed'
-              : stStatus === 'Submitted'  ? 'submitted'
-              : 'not-submitted';
+  const stCls = stStatus === 'Selected for Final Round' ? 'selected' : stStatus === 'Reviewed' ? 'reviewed' : stStatus === 'Submitted' ? 'submitted' : 'not-submitted';
   const stLabel = stStatus === 'Selected for Final Round' ? 'Selected' : stStatus;
   stTd.innerHTML = `<span class="st-badge ${stCls}" data-st-badge="${id}">${esc(stLabel)}</span>`;
   summaryRow.appendChild(stTd);
 
-  // Email status badge
+  // Email status
   const emailBadgeTd = document.createElement('td');
   let ebClass = 'not-sent', ebText = 'Not Sent';
-  if (isScheduled)  { ebClass = 'scheduled'; ebText = 'Scheduled'; }
-  else if (alreadySent) { ebClass = 'sent'; ebText = 'Sent'; }
+  if (isScheduled)       { ebClass = 'scheduled'; ebText = 'Availability Sent'; }
+  else if (alreadySent)  { ebClass = 'sent';       ebText = 'Sent'; }
   emailBadgeTd.innerHTML = `<span class="email-badge ${ebClass}" data-email-badge="${id}">${ebText}</span>`;
   summaryRow.appendChild(emailBadgeTd);
 
-  // Action buttons
+  // Action
   const tdAction = document.createElement('td');
   tdAction.className = 'col-action';
   const actionGroup = document.createElement('div');
   actionGroup.className = 'action-group';
 
-  // Primary email action
   if (['Callback','Redirect','Pass'].includes(status)) {
     const btn = document.createElement('button');
     btn.className = `action-btn btn-${status.toLowerCase()}`;
     btn.dataset.actionId = id;
-    btn.textContent = alreadySent ? 'Sent' : actionLabel(status);
+    btn.textContent = alreadySent ? 'Sent' : actionLabel(status, record);
     if (alreadySent) { btn.classList.add('sent'); btn.disabled = true; }
     btn.addEventListener('click', e => { e.stopPropagation(); dispatchEmail(record, btn); });
     actionGroup.appendChild(btn);
   }
 
-  // Availability button — only for Selected for Final Round
   if (stStatus === 'Selected for Final Round') {
     const availBtn = document.createElement('button');
-    availBtn.className = `action-btn btn-availability`;
+    availBtn.className = 'action-btn btn-availability';
     availBtn.dataset.availId = id;
     availBtn.textContent = isScheduled ? 'Availability Sent' : 'Send Availability';
     if (isScheduled) { availBtn.classList.add('scheduled'); availBtn.disabled = true; }
@@ -774,112 +747,84 @@ function buildRow(record) {
     actionGroup.appendChild(availBtn);
   }
 
-  // Mark reviewed button
   if (stStatus === 'Submitted') {
     const revBtn = document.createElement('button');
     revBtn.className = 'action-btn';
     revBtn.textContent = 'Mark Reviewed';
     revBtn.addEventListener('click', async e => {
-      e.stopPropagation();
-      revBtn.textContent = '...'; revBtn.disabled = true;
+      e.stopPropagation(); revBtn.textContent = '...'; revBtn.disabled = true;
       try {
         await patchRecord(id, { 'Self Tape Status': 'Reviewed' });
         const rec = allRecords.find(r => r.id === id);
         if (rec) rec.fields['Self Tape Status'] = 'Reviewed';
         const badge = document.querySelector(`[data-st-badge="${id}"]`);
         if (badge) { badge.textContent = 'Reviewed'; badge.className = 'st-badge reviewed'; }
-        revBtn.remove();
-        toast('Marked as reviewed', 'success');
+        revBtn.remove(); toast('Marked as reviewed', 'success');
       } catch (err) { revBtn.textContent = 'Mark Reviewed'; revBtn.disabled = false; toast(`Failed: ${err.message}`, 'error'); }
     });
     actionGroup.appendChild(revBtn);
   }
 
-  if (!actionGroup.children.length) {
-    tdAction.innerHTML = `<span style="font-size:9px;color:var(--dim)">—</span>`;
-  } else {
-    tdAction.appendChild(actionGroup);
-  }
+  if (!actionGroup.children.length) tdAction.innerHTML = `<span style="font-size:9px;color:var(--dim)">—</span>`;
+  else tdAction.appendChild(actionGroup);
   summaryRow.appendChild(tdAction);
 
-  // Click row to expand (not checkbox or buttons)
   summaryRow.addEventListener('click', e => {
     if (e.target.closest('input, button, a')) return;
     toggleExpand(id, detailRow);
     summaryRow.classList.toggle('expanded', expandedIds.has(id));
   });
-
   el.tbody.appendChild(summaryRow);
 
-  // ── Detail row ───────────────────────────────────────────
+  // Detail row
   const detailRow = document.createElement('tr');
   detailRow.className = `detail-row${isExpanded ? ' open' : ''}`;
   const detailTd = document.createElement('td');
-  detailTd.colSpan = 7;
-
+  detailTd.colSpan = activeFilter !== 'All' ? 7 : 6;
   const panel = document.createElement('div');
   panel.className = 'detail-panel';
 
-  // Contact info
   panel.appendChild(detailField('EMAIL', `<a href="mailto:${esc(email)}">${esc(email) || '—'}</a>`));
   panel.appendChild(detailEditField(id, phone, 'Phone', 'PHONE'));
   panel.appendChild(detailField('FILM', esc(film) || '—'));
   panel.appendChild(detailEditField(id, loc, 'Location', 'LOCATION'));
 
-  // Media
   let mediaHtml = '';
   if (reel) mediaHtml += `<a href="${esc(reel)}" target="_blank" rel="noopener">Reel &#8599;</a><br>`;
   if (head) mediaHtml += `<a href="${esc(head)}" target="_blank" rel="noopener">Headshot &#8599;</a>`;
   if (!reel && !head) mediaHtml = '<span style="color:var(--dim)">—</span>';
   panel.appendChild(detailField('MEDIA', mediaHtml));
 
-  // Self-tape link
-  if (stUrl) {
-    panel.appendChild(detailField('SELF-TAPE', `<a href="${esc(stUrl)}" target="_blank" rel="noopener">View Tape &#8599;</a>`));
-  }
+  if (stUrl) panel.appendChild(detailField('SELF-TAPE', `<a href="${esc(stUrl)}" target="_blank" rel="noopener">View Tape &#8599;</a>`));
+  if (toRoleVal) panel.appendChild(detailField('TO ROLE', esc(toRoleVal)));
+  if (filmArr.filter(v => v !== TO_ROLE_TRIGGER).length) panel.appendChild(detailField('REDIRECT FILM', filmArr.filter(v => v !== TO_ROLE_TRIGGER).map(esc).join(', ')));
+  if (castStatus) panel.appendChild(detailField('CAST STATUS', esc(castStatus)));
+  if (emailSent) panel.appendChild(detailField('EMAIL SENT', esc(emailSent)));
 
-  // Redirect films
-  if (filmArr.length) {
-    panel.appendChild(detailField('REDIRECT TO', filmArr.map(esc).join(', ')));
-  }
-
-  // Cast status
-  if (castStatus) {
-    panel.appendChild(detailField('CAST STATUS', esc(castStatus)));
-  }
-
-  // Notes (editable, full width)
   const notesDf = document.createElement('div');
-  notesDf.className = 'detail-field';
-  notesDf.style.gridColumn = 'span 3';
-  const notesLabel = document.createElement('span');
-  notesLabel.className = 'detail-label'; notesLabel.textContent = 'NOTES';
+  notesDf.className = 'detail-field'; notesDf.style.gridColumn = 'span 3';
+  const notesLabel = document.createElement('span'); notesLabel.className = 'detail-label'; notesLabel.textContent = 'NOTES';
   const notesTA = document.createElement('textarea');
-  notesTA.className = 'notes-edit'; notesTA.value = notes; notesTA.rows = 2;
-  notesTA.placeholder = 'Add note...';
+  notesTA.className = 'notes-edit'; notesTA.value = notes; notesTA.rows = 2; notesTA.placeholder = 'Add note...';
   notesTA.setAttribute('data-original', notes);
   notesTA.addEventListener('blur', async () => {
     const newVal = notesTA.value, origVal = notesTA.getAttribute('data-original');
     if (newVal === origVal) return;
     try {
-      await patchRecord(id, { Notes: newVal });
-      notesTA.setAttribute('data-original', newVal);
-      const rec = allRecords.find(r => r.id === id);
-      if (rec) rec.fields['Notes'] = newVal;
+      await patchRecord(id, { Notes: newVal }); notesTA.setAttribute('data-original', newVal);
+      const rec = allRecords.find(r => r.id === id); if (rec) rec.fields['Notes'] = newVal;
       flashSaved(notesTA);
     } catch (err) { notesTA.value = origVal; flashError(notesTA); toast(`Note save failed: ${err.message}`, 'error'); }
   });
-  notesDf.appendChild(notesLabel); notesDf.appendChild(notesTA);
-  panel.appendChild(notesDf);
+  notesDf.appendChild(notesLabel); notesDf.appendChild(notesTA); panel.appendChild(notesDf);
 
-  detailTd.appendChild(panel);
-  detailRow.appendChild(detailTd);
+  detailTd.appendChild(panel); detailRow.appendChild(detailTd);
   el.tbody.appendChild(detailRow);
 }
 
 function toggleExpand(id, detailRow) {
   if (expandedIds.has(id)) { expandedIds.delete(id); detailRow.classList.remove('open'); }
-  else                      { expandedIds.add(id);    detailRow.classList.add('open'); }
+  else { expandedIds.add(id); detailRow.classList.add('open'); }
 }
 
 function detailField(label, valueHtml) {
@@ -891,37 +836,25 @@ function detailField(label, valueHtml) {
 function detailEditField(recordId, value, fieldName, label) {
   const df = document.createElement('div'); df.className = 'detail-field';
   const lbl = document.createElement('span'); lbl.className = 'detail-label'; lbl.textContent = label;
-  const div = document.createElement('div');
-  div.className = 'editable detail-value'; div.contentEditable = 'true';
+  const div = document.createElement('div'); div.className = 'editable detail-value'; div.contentEditable = 'true';
   div.textContent = value; div.setAttribute('data-original', value);
   div.addEventListener('blur', async () => {
     const newVal = div.textContent.trim(), origVal = div.getAttribute('data-original');
     if (newVal === origVal) return;
     div.classList.add('saving');
     try {
-      await patchRecord(recordId, { [fieldName]: newVal });
-      div.setAttribute('data-original', newVal); div.classList.remove('saving');
-      const rec = allRecords.find(r => r.id === recordId);
-      if (rec) rec.fields[fieldName] = newVal;
+      await patchRecord(recordId, { [fieldName]: newVal }); div.setAttribute('data-original', newVal); div.classList.remove('saving');
+      const rec = allRecords.find(r => r.id === recordId); if (rec) rec.fields[fieldName] = newVal;
       flashSaved(div);
     } catch (err) { div.textContent = origVal; div.classList.remove('saving'); flashError(div); toast(`Save failed: ${err.message}`, 'error'); }
   });
   div.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); div.blur(); } });
-  df.appendChild(lbl); df.appendChild(div);
-  return df;
+  df.appendChild(lbl); df.appendChild(div); return df;
 }
 
 /* ── Helpers ────────────────────────────────────────────────── */
 function flashSaved(el) { el.classList.add('saved'); setTimeout(() => el.classList.remove('saved'), 1400); }
 function flashError(el) { el.classList.add('saveerr'); setTimeout(() => el.classList.remove('saveerr'), 1400); }
-
-function syncSelectAll() {
-  const visible = getVisible();
-  const allSel  = visible.length > 0 && visible.every(r => selectedIds.has(r.id));
-  el.selectAll.checked       = allSel;
-  el.selectAll.indeterminate = !allSel && selectedIds.size > 0;
-}
-
 function showState(state) {
   [el.loading, el.error, el.empty, el.tableWrap].forEach(e => e.classList.add('hidden'));
   if      (state === 'loading') el.loading.classList.remove('hidden');
@@ -929,23 +862,15 @@ function showState(state) {
   else if (state === 'empty')   el.empty.classList.remove('hidden');
   else if (state === 'table')   el.tableWrap.classList.remove('hidden');
 }
-
 function makeTd(html) { const td = document.createElement('td'); td.innerHTML = html; return td; }
-
 function statusBadge(status) {
   const cls = { Callback:'callback', Redirect:'redirect', Pass:'pass' }[status] || 'unknown';
   return `<span class="badge ${cls}">${esc(status) || '—'}</span>`;
 }
-
-function esc(s) {
-  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-
+function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
 function toast(msg, type = 'success') {
-  const d = document.createElement('div');
-  d.className = `toast t${type}`; d.textContent = msg;
+  const d = document.createElement('div'); d.className = `toast t${type}`; d.textContent = msg;
   el.toastStack.appendChild(d);
   setTimeout(() => { d.classList.add('tout'); d.addEventListener('animationend', () => d.remove(), { once: true }); }, 4200);
 }
