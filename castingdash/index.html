@@ -35,7 +35,7 @@
     <div class="header-rule"></div>
   </header>
 
-  <!-- Production Timeline Panel -->
+  <!-- Timeline -->
   <div class="timeline-panel" id="timelinePanel">
     <div class="timeline-panel-header">
       <div class="timeline-panel-left">
@@ -54,17 +54,16 @@
       </div>
     </div>
     <div class="timeline-track" id="timelineTrack">
-      <div class="timeline-loading">
-        <div class="loader-ring-sm"></div>
-        <span>Loading timeline...</span>
-      </div>
+      <div class="timeline-loading"><div class="loader-ring-sm"></div><span>Loading...</span></div>
     </div>
-    <!-- Calendar -->
     <div class="calendar-wrap hidden" id="calendarWrap">
       <div class="calendar-header">
-        <button class="cal-nav" id="calPrev">&#8592;</button>
         <span class="cal-month-label" id="calMonthLabel"></span>
-        <button class="cal-nav" id="calNext">&#8594;</button>
+        <div class="cal-header-actions">
+          <button class="cal-nav" id="calPrev">&#8592;</button>
+          <button class="cal-nav" id="calNext">&#8594;</button>
+          <button class="cal-close" id="calClose">Close</button>
+        </div>
       </div>
       <div class="calendar-grid" id="calendarGrid"></div>
     </div>
@@ -92,7 +91,7 @@
     </div>
   </div>
 
-  <!-- Main table -->
+  <!-- Main -->
   <main class="dash-main">
     <div class="state-panel" id="stateLoading">
       <div class="loader-ring"></div>
@@ -112,16 +111,10 @@
           <tr>
             <th class="col-check"><input type="checkbox" id="selectAll" title="Select all" /></th>
             <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
             <th>Role</th>
-            <th>Film</th>
-            <th>Location</th>
-            <th>Media</th>
             <th>Status</th>
             <th>Self-Tape</th>
             <th>Email Status</th>
-            <th>Notes</th>
             <th class="col-action">Action</th>
           </tr>
         </thead>
@@ -135,12 +128,13 @@
     <div class="modal">
       <div class="modal-rule"></div>
       <div class="modal-body">
-        <p class="modal-label">SEND REDIRECT EMAIL</p>
+        <span class="modal-label">SEND REDIRECT EMAIL</span>
         <p class="modal-name" id="modalActorName"></p>
-        <div class="form-group" style="margin-top:20px;">
+        <div class="form-group">
           <label class="field-label">Redirect Film</label>
           <select class="modal-select" id="filmSelect">
             <option value="">— Choose film —</option>
+            <option value="The Final Hand">The Final Hand</option>
             <option value="Overstood">Overstood</option>
             <option value="Love Me Like This">Love Me Like This</option>
             <option value="Liminal County">Liminal County</option>
@@ -157,9 +151,15 @@
         </div>
         <div class="form-group">
           <label class="field-label">Specific Role (optional)</label>
-          <input type="text" class="modal-input" id="toRoleInput" placeholder="e.g. Mama Rose — leave blank for general redirect" />
-          <p style="margin-top:6px;font-size:10px;color:var(--dim);letter-spacing:0.03em;">Filling this sends template 18 (role-specific). Leaving blank sends template 17 (film only).</p>
+          <select class="modal-select" id="roleSelect">
+            <option value="">— General redirect (no role) —</option>
+          </select>
         </div>
+        <div class="form-group hidden" id="customRoleGroup">
+          <label class="field-label">Custom Role</label>
+          <input type="text" class="modal-input" id="customRoleInput" placeholder="Enter role name" />
+        </div>
+        <p class="form-hint" style="margin-top:10px;">Selecting a role sends template 18 (role-specific). Leaving blank sends template 17 (film only).</p>
         <div class="modal-actions">
           <button class="modal-cancel" id="modalCancel">Cancel</button>
           <button class="modal-send" id="modalSend">Send Email</button>
@@ -173,14 +173,14 @@
     <div class="modal">
       <div class="modal-rule"></div>
       <div class="modal-body">
-        <p class="modal-label">EDIT PHASE</p>
+        <span class="modal-label">EDIT PHASE</span>
         <p class="modal-name" id="tlModalPhase"></p>
         <input type="hidden" id="tlModalId" />
-        <div class="form-group" style="margin-top:20px;">
+        <div class="form-group">
           <label class="field-label">Phase Name</label>
           <input type="text" class="modal-input" id="tlPhaseInput" />
         </div>
-        <div class="form-group" style="margin-top:12px; display:flex; gap:10px;">
+        <div class="form-group" style="display:flex;gap:10px;">
           <div style="flex:1;">
             <label class="field-label">Start Date</label>
             <input type="date" class="modal-input" id="tlStartInput" />
@@ -190,7 +190,7 @@
             <input type="date" class="modal-input" id="tlEndInput" />
           </div>
         </div>
-        <div class="form-group" style="margin-top:12px;">
+        <div class="form-group">
           <label class="field-label">Status</label>
           <select class="modal-select" id="tlStatusInput">
             <option value="Upcoming">Upcoming</option>
@@ -198,9 +198,9 @@
             <option value="Complete">Complete</option>
           </select>
         </div>
-        <div class="form-group" style="margin-top:12px;">
+        <div class="form-group">
           <label class="field-label">Description</label>
-          <textarea class="modal-input" id="tlDescInput" rows="3" style="resize:vertical;"></textarea>
+          <textarea class="modal-input" id="tlDescInput" rows="3"></textarea>
         </div>
         <div class="modal-actions">
           <button class="modal-cancel" id="tlModalCancel">Cancel</button>
