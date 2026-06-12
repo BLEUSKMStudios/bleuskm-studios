@@ -461,8 +461,8 @@ function actionLabel(status) {
 function updateEmailBadge(id, type) {
   const b = document.querySelector(`[data-email-badge="${id}"]`);
   if (!b) return;
-  if (type === 'sent')      { b.textContent = 'Sent';      b.className = 'email-badge sent'; }
-  if (type === 'scheduled') { b.textContent = 'Scheduled'; b.className = 'email-badge scheduled'; }
+  if (type === 'sent')      { b.textContent = 'Sent';             b.className = 'email-badge sent'; }
+  if (type === 'scheduled') { b.textContent = 'Availability Sent'; b.className = 'email-badge scheduled'; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -746,7 +746,7 @@ function buildRow(record) {
     const availBtn = document.createElement('button');
     availBtn.className = `action-btn btn-availability`;
     availBtn.dataset.availId = id;
-    availBtn.textContent = isScheduled ? 'Scheduled' : 'Send Availability';
+    availBtn.textContent = isScheduled ? 'Availability Sent' : 'Send Availability';
     if (isScheduled) { availBtn.classList.add('scheduled'); availBtn.disabled = true; }
     availBtn.addEventListener('click', e => { e.stopPropagation(); dispatchAvailability(record, availBtn); });
     actionGroup.appendChild(availBtn);
