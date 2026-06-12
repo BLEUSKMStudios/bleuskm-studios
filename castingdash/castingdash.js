@@ -636,6 +636,21 @@ function updateBatchUI() {
 function renderTable() {
   const records = getVisible();
   if (!records.length) { showState('empty'); return; }
+
+  // Rebuild thead to match current column count
+  const showCheckbox = activeFilter !== 'All' && !searchQuery;
+  const thead = document.getElementById('castingTableHead');
+  thead.innerHTML = `<tr>
+    ${showCheckbox ? '<th class="col-check" id="thCheck"></th>' : ''}
+    <th class="col-arrow"></th>
+    <th>Name</th>
+    <th>Role</th>
+    <th>Status</th>
+    <th>Self-Tape</th>
+    <th>Email Status</th>
+    <th class="col-action">Action</th>
+  </tr>`;
+
   el.tbody.innerHTML = '';
   records.forEach(r => buildRow(r));
   showState('table');
@@ -688,8 +703,14 @@ function buildRow(record) {
     tdCb.appendChild(cb); summaryRow.appendChild(tdCb);
   }
 
+  // Expand arrow — own cell so alignment is always consistent
+  const tdArrow = document.createElement('td');
+  tdArrow.className = 'col-arrow';
+  tdArrow.innerHTML = '<span class="expand-arrow">&#9654;</span>';
+  summaryRow.appendChild(tdArrow);
+
   // Name
-  summaryRow.appendChild(makeTd(`<span class="cell-name">${esc(name) || '—'}</span><span class="expand-arrow">&#9654;</span>`));
+  summaryRow.appendChild(makeTd(`<span class="cell-name">${esc(name) || '—'}</span>`));
 
   // Role — show To Role if set
   const roleDisplay = (hasToRole && toRoleVal) ? `${esc(role)} <span style="font-size:9px;color:var(--golddim);">&#8594; ${esc(toRoleVal)}</span>` : esc(role) || '—';
@@ -772,7 +793,10 @@ function buildRow(record) {
   summaryRow.addEventListener('click', e => {
     if (e.target.closest('input, button, a')) return;
     toggleExpand(id, detailRow);
-    summaryRow.classList.toggle('expanded', expandedIds.has(id));
+    const isNowExpanded = expandedIds.has(id);
+    summaryRow.classList.toggle('expanded', isNowExpanded);
+    const arrow = summaryRow.querySelector('.expand-arrow');
+    if (arrow) arrow.style.transform = isNowExpanded ? 'rotate(90deg)' : '';
   });
   el.tbody.appendChild(summaryRow);
 
@@ -780,7 +804,8 @@ function buildRow(record) {
   const detailRow = document.createElement('tr');
   detailRow.className = `detail-row${isExpanded ? ' open' : ''}`;
   const detailTd = document.createElement('td');
-  detailTd.colSpan = activeFilter !== 'All' ? 7 : 6;
+  const colCount = (activeFilter !== 'All' && !searchQuery ? 1 : 0) + 7; // checkbox + arrow + 5 cols + action
+  detailTd.colSpan = colCount;
   const panel = document.createElement('div');
   panel.className = 'detail-panel';
 
