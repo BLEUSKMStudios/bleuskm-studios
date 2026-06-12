@@ -85,10 +85,8 @@
       <input class="search-input" id="searchInput" type="text" placeholder="Search name, email, role, location..." />
       <button class="search-clear hidden" id="searchClear">&#10005;</button>
     </div>
-    <div class="batch-wrap">
-      <span class="batch-count hidden" id="batchCount"></span>
-      <button class="batch-btn hidden" id="batchSendBtn">Send Emails to Selected</button>
-    </div>
+    <!-- Batch UI injected here by JS when a status filter is active -->
+    <div class="batch-wrap" id="batchWrap"></div>
   </div>
 
   <!-- Main -->
@@ -106,17 +104,9 @@
       <p class="state-text">No submissions match this filter.</p>
     </div>
     <div class="table-wrap hidden" id="tableWrap">
-      <table class="casting-table">
-        <thead>
-          <tr>
-            <th class="col-check"><input type="checkbox" id="selectAll" title="Select all" /></th>
-            <th>Name</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Self-Tape</th>
-            <th>Email Status</th>
-            <th class="col-action">Action</th>
-          </tr>
+      <table class="casting-table" id="castingTable">
+        <thead id="castingTableHead">
+          <!-- Rebuilt by JS based on active filter -->
         </thead>
         <tbody id="castingTableBody"></tbody>
       </table>
@@ -136,9 +126,9 @@
             <option value="">— Choose film —</option>
             <option value="The Final Hand">The Final Hand</option>
             <option value="Overstood">Overstood</option>
-            <option value="Love Me Like This">Love Me Like This</option>
+            <option value="Love me like this">Love me like this</option>
             <option value="Liminal County">Liminal County</option>
-            <option value="Of Blood and Dominion">Of Blood and Dominion</option>
+            <option value="Of blood and dominion">Of blood and dominion</option>
             <option value="As Is">As Is</option>
             <option value="The 15th Hour">The 15th Hour</option>
             <option value="Book of Beginnings">Book of Beginnings</option>
@@ -159,7 +149,7 @@
           <label class="field-label">Custom Role</label>
           <input type="text" class="modal-input" id="customRoleInput" placeholder="Enter role name" />
         </div>
-        <p class="form-hint" style="margin-top:10px;">Selecting a role sends template 18 (role-specific). Leaving blank sends template 17 (film only).</p>
+        <p class="form-hint" style="margin-top:10px;">Selecting a role sends template 18. Leaving blank sends template 17.</p>
         <div class="modal-actions">
           <button class="modal-cancel" id="modalCancel">Cancel</button>
           <button class="modal-send" id="modalSend">Send Email</button>
