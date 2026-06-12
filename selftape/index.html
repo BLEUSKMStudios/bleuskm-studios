@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Self-Tape Submission — BLEUSKM Studios</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="selftape.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="st-header">
+    <div class="st-header-inner">
+      <span class="wordmark">BLEUSKM STUDIOS</span>
+      <span class="header-rule-v"></span>
+      <span class="page-label">SELF-TAPE SUBMISSION</span>
+    </div>
+    <div class="header-rule"></div>
+  </header>
+
+  <main class="st-main">
+
+    <!-- Actor info bar -->
+    <div class="actor-bar" id="actorBar">
+      <div class="actor-detail">
+        <span class="actor-label">NAME</span>
+        <span class="actor-value" id="actorName">—</span>
+      </div>
+      <div class="actor-detail">
+        <span class="actor-label">ROLE</span>
+        <span class="actor-value" id="actorRole">—</span>
+      </div>
+      <div class="actor-detail">
+        <span class="actor-label">PROJECT</span>
+        <span class="actor-value">The Final Hand</span>
+      </div>
+    </div>
+
+    <!-- Global instructions -->
+    <section class="instructions-block" id="globalInstructions">
+      <div class="section-header" id="globalToggle">
+        <div class="section-header-left">
+          <span class="section-eyebrow">SELF-TAPE INSTRUCTIONS</span>
+          <h2 class="section-title">The Final Hand</h2>
+        </div>
+        <button class="toggle-btn" id="globalToggleBtn" aria-expanded="true">
+          <span>Collapse</span>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="instructions-body" id="globalBody">
+        <p class="intro-text">This project is a psychological, Afro-surrealist short film exploring themes of power, perception, and inherited knowledge.</p>
+
+        <div class="instr-block">
+          <p class="instr-label">DIRECTOR APPROACH</p>
+          <p class="instr-text">You are not required to perform this scene one specific way.</p>
+          <ul class="instr-list">
+            <li>You may follow the script exactly</li>
+            <li>You may interpret the scene in your own way</li>
+            <li>You may adjust pacing, tone, and intention</li>
+          </ul>
+          <p class="instr-text" style="margin-top:12px;">We are interested in how you think, how you listen, how you exist in the moment. If something feels true to you, follow it.</p>
+        </div>
+
+        <div class="instr-block">
+          <p class="instr-label">TECHNICAL REQUIREMENTS</p>
+          <ul class="instr-list">
+            <li><strong>Framing:</strong> Chest-up (unless otherwise noted per role)</li>
+            <li><strong>Orientation:</strong> Horizontal</li>
+            <li><strong>Lighting:</strong> Soft, even lighting</li>
+            <li><strong>Background:</strong> Plain / minimal</li>
+            <li><strong>Audio:</strong> Clear</li>
+            <li><strong>File format:</strong> MP4 or MOV</li>
+          </ul>
+        </div>
+
+        <div class="instr-block">
+          <p class="instr-label">SLATE (REQUIRED)</p>
+          <ul class="instr-list">
+            <li>Name</li>
+            <li>Age</li>
+            <li>Location</li>
+            <li>Role</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Role-specific instructions (shown based on URL param) -->
+    <section class="role-block" id="roleSection">
+      <!-- Injected by JS -->
+    </section>
+
+    <!-- Submission form -->
+    <section class="submit-block">
+      <div class="submit-header">
+        <span class="section-eyebrow">SUBMIT YOUR SELF-TAPE</span>
+        <h2 class="section-title">Paste Your Link Below</h2>
+      </div>
+      <p class="submit-note">Upload your self-tape to Google Drive, Vimeo, Dropbox, or WeTransfer and paste the shareable link below. Make sure the link is set to "Anyone with the link can view."</p>
+
+      <div class="form-group" id="formGroup">
+        <label class="field-label" for="selfTapeUrl">Self-Tape Link</label>
+        <input type="url" id="selfTapeUrl" class="url-input" placeholder="https://drive.google.com/..." autocomplete="off" />
+        <p class="field-hint">Google Drive, Vimeo, Dropbox, WeTransfer, or any shareable video link</p>
+      </div>
+
+      <div class="error-msg hidden" id="errorMsg"></div>
+
+      <button class="submit-btn" id="submitBtn">Submit Self-Tape</button>
+
+      <!-- Success state -->
+      <div class="success-block hidden" id="successBlock">
+        <div class="success-icon">✦</div>
+        <p class="success-label">SUBMISSION RECEIVED</p>
+        <h3 class="success-title">Thank You, <span id="successName"></span>.</h3>
+        <p class="success-text">Your self-tape has been received by BLEUSKM Studios. We will review submissions and be in touch directly.</p>
+        <p class="success-text" style="margin-top:8px;">Keep an eye on your inbox and follow <strong>@bleuskm.studios</strong> for updates.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="st-footer">
+    <p>BLEUSKM Studios &nbsp;&middot;&nbsp; <a href="https://bleuskm.com" target="_blank">bleuskm.com</a> &nbsp;&middot;&nbsp; The Final Hand</p>
+  </footer>
+
+  <script src="selftape.js"></script>
+</body>
+</html>
