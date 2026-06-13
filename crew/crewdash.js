@@ -421,9 +421,11 @@ function getVisible() {
     const email    = (f['Email'] || '').trim();
     const contract = findContract(email);
     const status   = contract ? 'Signed' : (f['Contract Status'] || 'Pending');
-    if (activeFilter === 'Signed'  && status !== 'Signed')  return false;
-    if (activeFilter === 'Sent'    && status !== 'Sent')    return false;
-    if (activeFilter === 'Pending' && status === 'Signed')  return false;
+    const contractSentThisSession = sessionSent[r.id] === CFG.TEMPLATE.Contract;
+    const cStatus = findContract((r.fields['Email']||'').trim()) ? 'Signed' : contractSentThisSession ? 'Sent' : '';
+    if (activeFilter === 'Signed'  && cStatus !== 'Signed') return false;
+    if (activeFilter === 'Sent'    && cStatus !== 'Sent')   return false;
+    if (activeFilter === 'Pending' && cStatus !== 'Sent')   return false;
     if (searchQuery) {
       const hay = [f['Name']||'', f['Email']||'', f['Role']||''].join(' ').toLowerCase();
       if (!hay.includes(searchQuery)) return false;
@@ -459,7 +461,9 @@ function buildRow(record) {
   const isExpanded = expandedIds.has(id);
   const alreadySent = !!sessionSent[id];
 
-  const contractStatus = contract ? 'Signed' : (f['Contract Status'] || 'Pending');
+  // Contract status: Signed = contract record exists, Sent = template 21 sent this session, otherwise blank
+  const contractSent   = sessionSent[id] === CFG.TEMPLATE.Contract;
+  const contractStatus = contract ? 'Signed' : contractSent ? 'Sent' : '';
   const dateSigned     = contract ? (contract.fields['Date Signed'] || '') : '';
   const sigUrl         = contract
     ? (Array.isArray(contract.fields['Signature'])
@@ -511,8 +515,11 @@ function buildRow(record) {
   summaryRow.appendChild(makeTd(`<span class="cell-role">${roleDisplay}</span>`));
 
   // Contract badge
-  const badgeCls = contractStatus === 'Signed' ? 'signed' : contractStatus === 'Sent' ? 'sent' : 'pending';
-  summaryRow.appendChild(makeTd(`<span class="contract-badge ${badgeCls}">${esc(contractStatus)}</span>`));
+  const badgeCls = contractStatus === 'Signed' ? 'signed' : contractStatus === 'Sent' ? 'sent' : '';
+  const badgeHtml = contractStatus
+    ? `<span class="contract-badge ${badgeCls}">${esc(contractStatus)}</span>`
+    : `<span style="color:var(--dim);font-size:11px;">—</span>`;
+  summaryRow.appendChild(makeTd(badgeHtml));
 
   // Date
   summaryRow.appendChild(makeTd(
@@ -529,73 +536,51 @@ function buildRow(record) {
 
   if (name && email) {
 
-    // ── Per-row status email button ───────────────────────────
-    const emailBtnMap = {
-      role_redirect: { label: 'Send Role Redirect',    tid: CFG.TEMPLATE.RoleRedirect },
-      not_project:   { label: 'Send Not This Project', tid: CFG.TEMPLATE.NotProject },
-      support:       { label: 'Send Support Email',    tid: CFG.TEMPLATE.Support },
-      core:          { label: 'Send Core Email',       tid: CFG.TEMPLATE.Core },
+    const f2       = record.fields;
+    const baseParams = {
+      NAME:                       (f2['Name']     || '').trim(),
+      ROLE:                       (f2['Role']     || '').trim(),
+      LT_ROLES:                   (f2['LT_Roles'] || '').trim(),
+      FILM:                       'The Final Hand',
+      PREFERRED_ROLE_BY_DIRECTOR: (f2['Preferred_role_by_Director'] || '').trim(),
     };
 
-    if (emailBtnMap[group]) {
-      const { label, tid } = emailBtnMap[group];
-      const emailBtn       = document.createElement('button');
-      emailBtn.className   = 'action-btn';
-      if (alreadySent && sessionSent[id] === tid) {
-        emailBtn.textContent       = 'Sent';
-        emailBtn.style.color       = 'var(--signed)';
-        emailBtn.style.borderColor = 'rgba(120,180,130,0.28)';
-        emailBtn.disabled          = true;
-      } else {
-        emailBtn.textContent = label;
-      }
-      emailBtn.addEventListener('click', async e => {
-        e.stopPropagation();
-        const orig = emailBtn.textContent;
-        emailBtn.disabled = true; emailBtn.textContent = '...';
-        const f2 = record.fields;
-        const params = {
-          NAME:                       (f2['Name']     || '').trim(),
-          ROLE:                       (f2['Role']     || '').trim(),
-          LT_ROLES:                   (f2['LT_Roles'] || '').trim(),
-          FILM:                       'The Final Hand',
-          PREFERRED_ROLE_BY_DIRECTOR: (f2['Preferred_role_by_Director'] || '').trim(),
-        };
-        try {
-          await sendEmail(email, tid, params);
-          sessionSent[id]            = tid;
-          emailBtn.textContent       = 'Sent';
-          emailBtn.style.color       = 'var(--signed)';
-          emailBtn.style.borderColor = 'rgba(120,180,130,0.28)';
-          toast(`Email sent to ${email}`, 'success');
-        } catch (err) {
-          emailBtn.disabled    = false;
-          emailBtn.textContent = orig;
-          toast(`Failed: ${err.message}`, 'error');
-        }
-      });
-      ag.appendChild(emailBtn);
+    // ── Template 20 — Role Redirect ───────────────────────────
+    if (group === 'role_redirect') {
+      addEmailBtn(ag, id, email, 'Send Role Redirect', CFG.TEMPLATE.RoleRedirect, baseParams);
     }
 
-    // ── Send Contract — ONLY for Final Hand group ─────────────
+    // ── Template 21 — Final Hand: send contract email + contract link ──
     if (group === 'contract') {
-      const sendBtn     = document.createElement('button');
-      sendBtn.className = 'action-btn';
       if (contractStatus === 'Signed') {
-        sendBtn.textContent       = 'Contract Signed';
-        sendBtn.style.color       = 'var(--signed)';
-        sendBtn.style.borderColor = 'rgba(120,180,130,0.28)';
-        sendBtn.disabled          = true;
-      } else if (alreadySent && sessionSent[id] === CFG.TEMPLATE.Contract) {
-        sendBtn.textContent       = 'Sent';
-        sendBtn.style.color       = 'var(--signed)';
-        sendBtn.style.borderColor = 'rgba(120,180,130,0.28)';
-        sendBtn.disabled          = true;
+        const signedBtn       = document.createElement('button');
+        signedBtn.className   = 'action-btn';
+        signedBtn.textContent = '✓ Contract Signed';
+        signedBtn.style.color       = 'var(--signed)';
+        signedBtn.style.borderColor = 'rgba(120,180,130,0.28)';
+        signedBtn.disabled          = true;
+        ag.appendChild(signedBtn);
       } else {
-        sendBtn.textContent = 'Send Contract';
+        addEmailBtn(ag, id, email, 'Send Contract Email', CFG.TEMPLATE.Contract, {
+          ...baseParams,
+          CONTRACT_LINK: buildContractLink(name, email, role, (f2['Film'] || 'The Final Hand').trim()),
+        });
       }
-      sendBtn.addEventListener('click', e => { e.stopPropagation(); sendContractEmail(record, sendBtn); });
-      ag.appendChild(sendBtn);
+    }
+
+    // ── Template 22 — Not This Project ───────────────────────
+    if (group === 'not_project') {
+      addEmailBtn(ag, id, email, 'Send Not This Project', CFG.TEMPLATE.NotProject, baseParams);
+    }
+
+    // ── Template 23 — Support ─────────────────────────────────
+    if (group === 'support') {
+      addEmailBtn(ag, id, email, 'Send Support Email', CFG.TEMPLATE.Support, baseParams);
+    }
+
+    // ── Template 25 — Core ───────────────────────────────────
+    if (group === 'core') {
+      addEmailBtn(ag, id, email, 'Send Core Email', CFG.TEMPLATE.Core, baseParams);
     }
 
     // ── View Signature — only when signed ─────────────────────
@@ -685,6 +670,38 @@ function buildRow(record) {
 
   detailTd.appendChild(panel); detailRow.appendChild(detailTd);
   el.tbody.appendChild(detailRow);
+}
+
+/* ── addEmailBtn helper ─────────────────────────────────────── */
+function addEmailBtn(ag, id, email, label, tid, params) {
+  const btn       = document.createElement('button');
+  btn.className   = 'action-btn';
+  if (sessionSent[id] === tid) {
+    btn.textContent       = 'Sent ✓';
+    btn.style.color       = 'var(--signed)';
+    btn.style.borderColor = 'rgba(120,180,130,0.28)';
+    btn.disabled          = true;
+  } else {
+    btn.textContent = label;
+  }
+  btn.addEventListener('click', async e => {
+    e.stopPropagation();
+    const orig = btn.textContent;
+    btn.disabled = true; btn.textContent = '...';
+    try {
+      await sendEmail(email, tid, params);
+      sessionSent[id]         = tid;
+      btn.textContent         = 'Sent ✓';
+      btn.style.color         = 'var(--signed)';
+      btn.style.borderColor   = 'rgba(120,180,130,0.28)';
+      toast(`Email sent to ${email}`, 'success');
+    } catch (err) {
+      btn.disabled    = false;
+      btn.textContent = orig;
+      toast(`Failed: ${err.message}`, 'error');
+    }
+  });
+  ag.appendChild(btn);
 }
 
 /* ── Airtable PATCH ─────────────────────────────────────────── */
