@@ -34,12 +34,46 @@
     <div class="header-rule"></div>
   </header>
 
-  <!-- Stats bar -->
+  <!-- Stats -->
   <div class="stats-bar">
     <div class="stat-card"><span class="stat-num" id="statTotal">—</span><span class="stat-label">Total Crew</span></div>
     <div class="stat-card"><span class="stat-num" id="statSigned">—</span><span class="stat-label">Contracts Signed</span></div>
     <div class="stat-card"><span class="stat-num" id="statPending">—</span><span class="stat-label">Awaiting Signature</span></div>
     <div class="stat-card"><span class="stat-num" id="statConfirmed">—</span><span class="stat-label">Active Crew</span></div>
+  </div>
+
+  <!-- Production Timeline -->
+  <div class="timeline-panel" id="timelinePanel">
+    <div class="timeline-panel-header">
+      <div class="timeline-panel-left">
+        <span class="panel-eyebrow">PRODUCTION TIMELINE</span>
+        <span class="panel-film">The Final Hand</span>
+      </div>
+      <div class="timeline-panel-right">
+        <button class="icon-btn" id="timelineRefreshBtn">Sync</button>
+        <button class="icon-btn" id="calendarToggleBtn">
+          <svg width="11" height="11" viewBox="0 0 14 14" fill="none">
+            <rect x="1" y="2" width="12" height="11" rx="1" stroke="currentColor" stroke-width="1.3"/>
+            <path d="M1 6h12M4 1v2M10 1v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+          Calendar
+        </button>
+      </div>
+    </div>
+    <div class="timeline-track" id="timelineTrack">
+      <div class="timeline-loading"><div class="loader-ring-sm"></div><span>Loading...</span></div>
+    </div>
+    <div class="calendar-wrap hidden" id="calendarWrap">
+      <div class="calendar-header">
+        <span class="cal-month-label" id="calMonthLabel"></span>
+        <div class="cal-header-actions">
+          <button class="cal-nav" id="calPrev">&#8592;</button>
+          <button class="cal-nav" id="calNext">&#8594;</button>
+          <button class="cal-close" id="calClose">Close</button>
+        </div>
+      </div>
+      <div class="calendar-grid" id="calendarGrid"></div>
+    </div>
   </div>
 
   <!-- Status email panel -->
@@ -49,10 +83,11 @@
       <span class="panel-sub">Send one group at a time. Tracks sends per session.</span>
     </div>
     <div class="status-panel-right">
-      <button class="status-btn btn-not-project" id="btnNotProject">Send to Not This Project</button>
-      <button class="status-btn btn-support"     id="btnSupport">Send to Support</button>
-      <button class="status-btn btn-core"        id="btnCore">Send to Core</button>
-      <button class="status-btn btn-team"        id="btnTeam">Send to Team</button>
+      <button class="status-btn btn-role-redirect" id="btnRoleRedirect">Send Role Redirect</button>
+      <button class="status-btn btn-contract"      id="btnContract">Send Contract</button>
+      <button class="status-btn btn-not-project"   id="btnNotProject">Send to Not This Project</button>
+      <button class="status-btn btn-support"       id="btnSupport">Send to Support</button>
+      <button class="status-btn btn-core"          id="btnCore">Send to Core</button>
     </div>
   </div>
 
@@ -74,7 +109,7 @@
     </div>
   </div>
 
-  <!-- Main -->
+  <!-- Table -->
   <main class="dash-main">
     <div class="state-panel" id="stateLoading">
       <div class="loader-ring"></div>
@@ -94,6 +129,7 @@
           <tr>
             <th class="col-arrow"></th>
             <th>Name</th>
+            <th>Email</th>
             <th>Role</th>
             <th>Contract</th>
             <th>Date Signed</th>
