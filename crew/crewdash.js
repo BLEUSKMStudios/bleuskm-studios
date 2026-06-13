@@ -15,7 +15,13 @@ const CFG = {
   CREW_TABLE:     'Crew applications',
   CONTRACT_TABLE: 'Contracts',
   AIRTABLE:       '/.netlify/functions/airtable-proxy',
+  BREVO:          '/.netlify/functions/brevo-proxy',
+  BREVO_EMAIL:    'https://api.brevo.com/v3/smtp/email',
   CONTRACT_BASE:  'https://bleuskm.com/crew/contract',
+  TEMPLATE: {
+    Contract: 21,
+    RoleConfirm: 20,
+  },
 };
 
 /* ── State ──────────────────────────────────────────────────── */
@@ -234,9 +240,22 @@ function buildRow(record) {
   actionGroup.className = 'action-group';
 
   if (name && email) {
+    // Send contract email button
+    const sendBtn = document.createElement('button');
+    sendBtn.className   = 'action-btn';
+    sendBtn.textContent = contractStatus === 'Signed' ? 'Contract Signed' : 'Send Contract';
+    if (contractStatus === 'Signed') {
+      sendBtn.style.color       = 'var(--signed)';
+      sendBtn.style.borderColor = 'rgba(120,180,130,0.28)';
+      sendBtn.disabled          = true;
+    }
+    sendBtn.addEventListener('click', e => { e.stopPropagation(); sendContractEmail(record, sendBtn); });
+    actionGroup.appendChild(sendBtn);
+
+    // Copy link button
     const copyBtn = document.createElement('button');
     copyBtn.className   = 'action-btn';
-    copyBtn.textContent = 'Copy Contract Link';
+    copyBtn.textContent = 'Copy Link';
     copyBtn.addEventListener('click', e => { e.stopPropagation(); copyLink(name, email, role, copyBtn); });
     actionGroup.appendChild(copyBtn);
   }
@@ -325,6 +344,44 @@ async function patchCrew(id, fields) {
   });
   if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e?.error?.message || 'Patch failed'); }
   return res.json();
+}
+
+/* ─── Send Brevo email ──────────────────────────────────────── */
+async function sendEmail(email, templateId, params) {
+  const res = await fetch(CFG.BREVO, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ endpoint: CFG.BREVO_EMAIL, payload: { to: [{ email }], templateId, params } }),
+  });
+  if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e?.message || `Brevo ${res.status}`); }
+  return res.json();
+}
+
+async function sendContractEmail(record, btn) {
+  const f     = record.fields;
+  const name  = (f['Name']  || '').trim();
+  const email = (f['Email'] || '').trim();
+  const role  = (f['Role']  || f['Department'] || '').trim();
+
+  if (!email) { toast('No email address for this crew member.', 'error'); return; }
+
+  const contractLink = buildContractLink(name, email, role);
+
+  const orig = btn.textContent;
+  btn.textContent = '...'; btn.disabled = true;
+  try {
+    await sendEmail(email, CFG.TEMPLATE.Contract, {
+      NAME:          name,
+      ROLE:          role,
+      CONTRACT_LINK: contractLink,
+    });
+    btn.textContent = 'Sent';
+    btn.style.color = 'var(--signed)';
+    btn.style.borderColor = 'rgba(120,180,130,0.28)';
+    toast(`Contract email sent to ${email}`, 'success');
+  } catch (err) {
+    btn.textContent = orig; btn.disabled = false;
+    toast(`Failed: ${err.message}`, 'error');
+  }
 }
 
 /* ─── Helpers ───────────────────────────────────────────────── */
