@@ -26,7 +26,7 @@
     <div class="crew-bar" id="crewBar">
       <div class="crew-detail"><span class="crew-label">NAME</span><span class="crew-value" id="crewName">—</span></div>
       <div class="crew-detail"><span class="crew-label">ROLE</span><span class="crew-value" id="crewRole">—</span></div>
-      <div class="crew-detail"><span class="crew-label">PROJECT</span><span class="crew-value">The Final Hand</span></div>
+      <div class="crew-detail"><span class="crew-label">PROJECT</span><span class="crew-value" id="crewFilm">—</span></div>
       <div class="crew-detail"><span class="crew-label">PRODUCTION</span><span class="crew-value">BLEUSKM Studios</span></div>
     </div>
 
@@ -34,7 +34,7 @@
     <section class="contract-section">
       <div class="section-header">
         <span class="section-eyebrow">SHORT FILM PRODUCTION AGREEMENT</span>
-        <h1 class="section-title">The Final Hand</h1>
+        <h1 class="section-title" id="contractTitle">BLEUSKM Studios</h1>
         <p class="section-sub">BLEUSKM Studios &nbsp;&middot;&nbsp; Denton, TX &nbsp;&middot;&nbsp; 2026</p>
       </div>
 
@@ -44,7 +44,7 @@
           <p class="clause-num">1</p>
           <div class="clause-content">
             <p class="clause-title">PARTIES</p>
-            <p class="clause-text">This Production Agreement ("Agreement") is entered into between <strong>BLEUSKM Studios</strong>, an independent film production company based in Denton, Texas ("Production"), and the individual identified above ("Crew Member"), in connection with the short film production <em>The Final Hand</em>.</p>
+            <p class="clause-text">This Production Agreement ("Agreement") is entered into between <strong>BLEUSKM Studios</strong>, an independent film production company based in Denton, Texas ("Production"), and the individual identified above ("Crew Member"), in connection with the short film production identified as the project above.</p>
           </div>
         </div>
 
@@ -60,7 +60,7 @@
           <p class="clause-num">3</p>
           <div class="clause-content">
             <p class="clause-title">IMDb CREDIT</p>
-            <p class="clause-text">In recognition of their contribution, Crew Member will receive an official IMDb credit for their designated role in <em>The Final Hand</em>. Production will make reasonable efforts to submit accurate credits following completion of post-production. IMDb credit is the sole form of recognition provided under this Agreement.</p>
+            <p class="clause-text">In recognition of their contribution, Crew Member will receive an official IMDb credit for their designated role in this production. Production will make reasonable efforts to submit accurate credits following completion of post-production. IMDb credit is the sole form of recognition provided under this Agreement.</p>
           </div>
         </div>
 
@@ -68,7 +68,7 @@
           <p class="clause-num">4</p>
           <div class="clause-content">
             <p class="clause-title">MEDIA USAGE RIGHTS</p>
-            <p class="clause-text">Crew Member grants BLEUSKM Studios a perpetual, royalty-free, worldwide license to use any footage, photography, or materials produced during the production of <em>The Final Hand</em> for purposes including, but not limited to: film distribution, film festival submissions, promotional materials, marketing campaigns, social media content, press materials, and archival use. Crew Member retains the right to use materials from this production for their personal portfolio, demo reel, and professional self-promotion, provided that BLEUSKM Studios receives appropriate credit.</p>
+            <p class="clause-text">Crew Member grants BLEUSKM Studios a perpetual, royalty-free, worldwide license to use any footage, photography, or materials produced during this production for purposes including, but not limited to: film distribution, film festival submissions, promotional materials, marketing campaigns, social media content, press materials, and archival use. Crew Member retains the right to use materials from this production for their personal portfolio, demo reel, and professional self-promotion, provided that BLEUSKM Studios receives appropriate credit.</p>
           </div>
         </div>
 
@@ -93,11 +93,8 @@
           <div class="clause-content">
             <p class="clause-title">PRODUCTION DETAILS</p>
             <p class="clause-text">
-              <strong>Production:</strong> The Final Hand<br>
               <strong>Production Company:</strong> BLEUSKM Studios<br>
               <strong>Location:</strong> Denton, Texas<br>
-              <strong>Primary Shoot Window:</strong> July 19 – July 25, 2026 (2–3 day shoot)<br>
-              <strong>Backup Window:</strong> Week of July 28, 2026<br>
               <strong>Format:</strong> Independent short film<br>
               <strong>Genre:</strong> Afro-surrealist / Psychological drama
             </p>
@@ -140,13 +137,11 @@
 
       <div class="sig-body">
 
-        <!-- Sig mode toggle -->
         <div class="sig-tabs">
           <button class="sig-tab active" id="tabDraw" data-mode="draw">Draw</button>
           <button class="sig-tab" id="tabType" data-mode="type">Type</button>
         </div>
 
-        <!-- Draw mode -->
         <div class="sig-panel" id="panelDraw">
           <div class="canvas-wrap">
             <canvas id="sigCanvas" width="560" height="160"></canvas>
@@ -155,34 +150,28 @@
           <button class="clear-btn" id="clearBtn">Clear</button>
         </div>
 
-        <!-- Type mode -->
         <div class="sig-panel hidden" id="panelType">
           <input type="text" class="type-sig-input" id="typedSig" placeholder="Type your full name" autocomplete="off" />
           <p class="type-preview-label">Preview</p>
           <div class="type-preview" id="typePreview"></div>
         </div>
 
-        <!-- Agreement checkbox -->
         <div class="agree-wrap">
           <label class="agree-label">
             <input type="checkbox" id="agreeCheck" />
-            <span>I agree that my signature serves as my legal electronic signature and I agree to all terms of this production agreement with BLEUSKM Studios for <em>The Final Hand</em>.</span>
+            <span>I agree that my signature serves as my legal electronic signature and I agree to all terms of this production agreement with BLEUSKM Studios for <em id="contractFilmName">The Final Hand</em>.</span>
           </label>
         </div>
 
-        <!-- Date -->
         <div class="date-row">
           <span class="date-label">DATE SIGNED</span>
           <span class="date-value" id="dateSigned"></span>
         </div>
 
-        <!-- Error -->
         <div class="error-msg hidden" id="errorMsg"></div>
 
-        <!-- Submit -->
         <button class="submit-btn" id="submitBtn">Submit Agreement</button>
 
-        <!-- Success -->
         <div class="success-block hidden" id="successBlock">
           <div class="success-icon">✦</div>
           <p class="success-label">AGREEMENT RECEIVED</p>
@@ -197,7 +186,7 @@
   </main>
 
   <footer class="contract-footer">
-    <p>BLEUSKM Studios &nbsp;&middot;&nbsp; <a href="https://bleuskm.com" target="_blank">bleuskm.com</a> &nbsp;&middot;&nbsp; The Final Hand &nbsp;&middot;&nbsp; Denton, TX</p>
+    <p>BLEUSKM Studios &nbsp;&middot;&nbsp; <a href="https://bleuskm.com" target="_blank">bleuskm.com</a> &nbsp;&middot;&nbsp; Denton, TX</p>
   </footer>
 
   <script src="contract.js"></script>
