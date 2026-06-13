@@ -237,11 +237,11 @@ function getGroup(record) {
   const fh     = isForFinalHand(f);
   const pref   = hasPrefRole(f);
 
-  if (pref)                              return 'role_redirect'; // template 20
-  if (fh && !pref)                       return 'contract';      // template 21
-  if (status === 'not this project')     return 'not_project';   // template 22
-  if (status === 'support')              return 'support';        // template 23
-  if (status === 'core' && !fh)         return 'core';           // template 25
+  if (pref)                          return 'role_redirect'; // template 20 — has redirect role
+  if (fh && !pref)                   return 'contract';      // template 21 — Final Hand, no redirect
+  if (status === 'not this project') return 'not_project';   // template 22
+  if (status === 'support')          return 'support';       // template 23
+  if (status === 'core' && !fh)      return 'core';          // template 25
   return 'unassigned';
 }
 
@@ -473,15 +473,15 @@ function buildRow(record) {
     not_project:   'Not This Project',
     support:       'Support',
     core:          'Core',
-    unassigned:    ''
+    unassigned:    '',
   };
   const groupColors = {
-    role_redirect: 'rgba(218,175,55,0.7)',
-    contract:      'rgba(120,180,130,0.7)',
-    not_project:   'rgba(200,80,80,0.7)',
-    support:       'rgba(130,170,220,0.7)',
-    core:          'rgba(218,175,55,0.7)',
-    unassigned:    'var(--dim)'
+    role_redirect: 'rgba(218,175,55,0.85)',
+    contract:      'rgba(120,180,130,0.85)',
+    not_project:   'rgba(200,80,80,0.85)',
+    support:       'rgba(130,170,220,0.85)',
+    core:          'rgba(180,140,220,0.85)',
+    unassigned:    'var(--dim)',
   };
 
   const summaryRow = document.createElement('tr');
@@ -527,7 +527,56 @@ function buildRow(record) {
   ag.className = 'action-group';
 
   if (name && email) {
-    // Send Contract — only for Final Hand crew (group = contract)
+
+    // ── Per-row status email button ───────────────────────────
+    const emailBtnMap = {
+      role_redirect: { label: 'Send Role Redirect',    tid: CFG.TEMPLATE.RoleRedirect },
+      not_project:   { label: 'Send Not This Project', tid: CFG.TEMPLATE.NotProject },
+      support:       { label: 'Send Support Email',    tid: CFG.TEMPLATE.Support },
+      core:          { label: 'Send Core Email',       tid: CFG.TEMPLATE.Core },
+    };
+
+    if (emailBtnMap[group]) {
+      const { label, tid } = emailBtnMap[group];
+      const emailBtn       = document.createElement('button');
+      emailBtn.className   = 'action-btn';
+      if (alreadySent && sessionSent[id] === tid) {
+        emailBtn.textContent       = 'Sent';
+        emailBtn.style.color       = 'var(--signed)';
+        emailBtn.style.borderColor = 'rgba(120,180,130,0.28)';
+        emailBtn.disabled          = true;
+      } else {
+        emailBtn.textContent = label;
+      }
+      emailBtn.addEventListener('click', async e => {
+        e.stopPropagation();
+        const orig = emailBtn.textContent;
+        emailBtn.disabled = true; emailBtn.textContent = '...';
+        const f2 = record.fields;
+        const params = {
+          NAME:                       (f2['Name']     || '').trim(),
+          ROLE:                       (f2['Role']     || '').trim(),
+          LT_ROLES:                   (f2['LT_Roles'] || '').trim(),
+          FILM:                       'The Final Hand',
+          PREFERRED_ROLE_BY_DIRECTOR: (f2['Preferred_role_by_Director'] || '').trim(),
+        };
+        try {
+          await sendEmail(email, tid, params);
+          sessionSent[id]            = tid;
+          emailBtn.textContent       = 'Sent';
+          emailBtn.style.color       = 'var(--signed)';
+          emailBtn.style.borderColor = 'rgba(120,180,130,0.28)';
+          toast(`Email sent to ${email}`, 'success');
+        } catch (err) {
+          emailBtn.disabled    = false;
+          emailBtn.textContent = orig;
+          toast(`Failed: ${err.message}`, 'error');
+        }
+      });
+      ag.appendChild(emailBtn);
+    }
+
+    // ── Send Contract — ONLY for Final Hand group ─────────────
     if (group === 'contract') {
       const sendBtn     = document.createElement('button');
       sendBtn.className = 'action-btn';
@@ -548,20 +597,11 @@ function buildRow(record) {
       ag.appendChild(sendBtn);
     }
 
-    // Copy Link — only after signed
-    if (contractStatus === 'Signed' && sigUrl) {
-      const copyBtn       = document.createElement('button');
-      copyBtn.className   = 'action-btn';
-      copyBtn.textContent = 'Copy Link';
-      copyBtn.addEventListener('click', e => { e.stopPropagation(); copyLink(name, email, role, copyBtn); });
-      ag.appendChild(copyBtn);
-    }
-
-    // View Signature
+    // ── View Signature — only when signed ─────────────────────
     if (sigUrl) {
       const viewBtn       = document.createElement('button');
       viewBtn.className   = 'action-btn';
-      viewBtn.textContent = 'View Signature';
+      viewBtn.textContent = 'View Sig';
       viewBtn.addEventListener('click', e => { e.stopPropagation(); window.open(sigUrl, '_blank'); });
       ag.appendChild(viewBtn);
     }
