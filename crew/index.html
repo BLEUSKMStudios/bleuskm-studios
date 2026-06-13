@@ -35,11 +35,25 @@
   </header>
 
   <!-- Stats bar -->
-  <div class="stats-bar" id="statsBar">
+  <div class="stats-bar">
     <div class="stat-card"><span class="stat-num" id="statTotal">—</span><span class="stat-label">Total Crew</span></div>
     <div class="stat-card"><span class="stat-num" id="statSigned">—</span><span class="stat-label">Contracts Signed</span></div>
     <div class="stat-card"><span class="stat-num" id="statPending">—</span><span class="stat-label">Awaiting Signature</span></div>
-    <div class="stat-card"><span class="stat-num" id="statConfirmed">—</span><span class="stat-label">Confirmed</span></div>
+    <div class="stat-card"><span class="stat-num" id="statConfirmed">—</span><span class="stat-label">Active Crew</span></div>
+  </div>
+
+  <!-- Status email panel -->
+  <div class="status-panel">
+    <div class="status-panel-left">
+      <span class="panel-eyebrow">SEND STATUS EMAILS</span>
+      <span class="panel-sub">Send one group at a time. Tracks sends per session.</span>
+    </div>
+    <div class="status-panel-right">
+      <button class="status-btn btn-not-project" id="btnNotProject">Send to Not This Project</button>
+      <button class="status-btn btn-support"     id="btnSupport">Send to Support</button>
+      <button class="status-btn btn-core"        id="btnCore">Send to Core</button>
+      <button class="status-btn btn-team"        id="btnTeam">Send to Team</button>
+    </div>
   </div>
 
   <!-- Controls -->
