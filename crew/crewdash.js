@@ -17,12 +17,14 @@ const CFG = {
   BREVO:          '/.netlify/functions/brevo-proxy',
   BREVO_EMAIL:    'https://api.brevo.com/v3/smtp/email',
   CONTRACT_BASE:  'https://bleuskm.com/crew/contract',
+  LOCATION:       'Denton, TX',  // Update this per production
   TEMPLATE: {
     RoleRedirect: 20,  // Has Preferred_role_by_Director value
     Contract:     21,  // For the Final Hand checked + no Preferred_role_by_Director
     NotProject:   22,  // Status = not this project
     Support:      23,  // Status = support
     Core:         25,  // Status = core + For the Final Hand unchecked
+    Guide:        26,  // Department guide
   },
 };
 
@@ -365,6 +367,22 @@ async function sendContractEmail(record, btn) {
 /* ═══════════════════════════════════════════════════════════════
    CONTRACT LINK
 ═══════════════════════════════════════════════════════════════ */
+/* ── Get shoot dates from Production Timeline ────────────────── */
+function getShootDates() {
+  const phase = tlRecords.find(r => {
+    const p = (r.fields['Phase'] || '').toLowerCase();
+    return p.includes('production') && !p.includes('pre') && !p.includes('post');
+  });
+  if (!phase) return 'July 19–25, 2026'; // fallback
+  const start = phase.fields['Start Date'], end = phase.fields['End Date'];
+  if (!start) return '';
+  try {
+    const s = new Date(start + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+    const e = end ? new Date(end + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
+    return e ? `${s}–${e}` : s;
+  } catch { return start; }
+}
+
 function buildContractLink(name, email, role, film) {
   return CFG.CONTRACT_BASE
     + '?name='  + encodeURIComponent(name)
@@ -589,6 +607,50 @@ function buildRow(record) {
       viewBtn.textContent = 'View Sig';
       viewBtn.addEventListener('click', e => { e.stopPropagation(); window.open(sigUrl, '_blank'); });
       ag.appendChild(viewBtn);
+    }
+
+    // ── Send Guide — only for Final Hand crew who have signed + have a Guide Link ──
+    if (group === 'contract' && isSigned) {
+      const guideLink = (f['Guide Link'] || '').trim();
+      const guideBtn  = document.createElement('button');
+      guideBtn.className = 'action-btn';
+      if (!guideLink) {
+        guideBtn.textContent = 'No Guide Yet';
+        guideBtn.disabled    = true;
+        guideBtn.style.opacity = '0.35';
+      } else if (sessionSent[id] === CFG.TEMPLATE.Guide) {
+        guideBtn.textContent       = 'Guide Sent ✓';
+        guideBtn.disabled          = true;
+        guideBtn.style.color       = 'var(--signed)';
+        guideBtn.style.borderColor = 'rgba(120,180,130,0.28)';
+      } else {
+        guideBtn.textContent = 'Send Guide';
+        guideBtn.addEventListener('click', async e => {
+          e.stopPropagation();
+          guideBtn.disabled = true; guideBtn.textContent = '...';
+          const onSetRole = (f['Preferred_role_by_Director'] || '').trim() || (f['Role'] || '').trim();
+          try {
+            await sendBrevo(email, CFG.TEMPLATE.Guide, {
+              NAME:           name,
+              ROLE:           onSetRole,
+              FILM:           'The Final Hand',
+              GUIDE_LINK:     guideLink,
+              SHOOT_DATES:    getShootDates(),
+              SHOOT_LOCATION: CFG.LOCATION,
+            });
+            sessionSent[id]            = CFG.TEMPLATE.Guide;
+            guideBtn.textContent       = 'Guide Sent ✓';
+            guideBtn.style.color       = 'var(--signed)';
+            guideBtn.style.borderColor = 'rgba(120,180,130,0.28)';
+            toast(`Guide sent to ${email}`, 'success');
+          } catch (err) {
+            guideBtn.disabled    = false;
+            guideBtn.textContent = 'Send Guide';
+            toast(`Failed: ${err.message}`, 'error');
+          }
+        });
+      }
+      ag.appendChild(guideBtn);
     }
   }
 
