@@ -420,7 +420,6 @@ function getVisible() {
     const f        = r.fields;
     const email    = (f['Email'] || '').trim();
     const contract = findContract(email);
-    const status   = contract ? 'Signed' : (f['Contract Status'] || 'Pending');
     const contractSentThisSession = sessionSent[r.id] === CFG.TEMPLATE.Contract;
     const cStatus = findContract((r.fields['Email']||'').trim()) ? 'Signed' : contractSentThisSession ? 'Sent' : '';
     if (activeFilter === 'Signed'  && cStatus !== 'Signed') return false;
