@@ -12,11 +12,17 @@ const params    = new URLSearchParams(window.location.search);
 const crewName  = decodeURIComponent(params.get('name')  || '').trim();
 const crewEmail = decodeURIComponent(params.get('email') || '').trim();
 const crewRole  = decodeURIComponent(params.get('role')  || '').trim();
+const crewFilm  = decodeURIComponent(params.get('film')  || 'The Final Hand').trim();
 
 /* ── Populate crew bar ───────────────────────────────────────── */
-document.getElementById('crewName').textContent  = crewName  || '—';
-document.getElementById('crewRole').textContent  = crewRole  || '—';
-document.getElementById('successName').textContent = crewName || 'Crew Member';
+document.getElementById('crewName').textContent    = crewName  || '—';
+document.getElementById('crewRole').textContent    = crewRole  || '—';
+document.getElementById('crewFilm').textContent    = crewFilm;
+document.getElementById('successName').textContent = crewName  || 'Crew Member';
+
+/* ── Populate agree checkbox film name ───────────────────────── */
+const filmNameEl = document.getElementById('contractFilmName');
+if (filmNameEl) filmNameEl.textContent = crewFilm;
 
 /* ── Auto-fill date ──────────────────────────────────────────── */
 const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
@@ -40,7 +46,6 @@ const ctx     = canvas.getContext('2d');
 let drawing   = false;
 let hasDrawn  = false;
 
-// Set canvas resolution
 function resizeCanvas() {
   const rect  = canvas.getBoundingClientRect();
   const ratio = window.devicePixelRatio || 1;
@@ -81,7 +86,7 @@ document.getElementById('clearBtn').addEventListener('click', () => {
 });
 
 /* ── Type signature preview ──────────────────────────────────── */
-const typedSig   = document.getElementById('typedSig');
+const typedSig    = document.getElementById('typedSig');
 const typePreview = document.getElementById('typePreview');
 typedSig.addEventListener('input', () => {
   typePreview.textContent = typedSig.value;
@@ -96,8 +101,6 @@ function generateSignatureBlob() {
     } else {
       const text = typedSig.value.trim();
       if (!text) { reject(new Error('Please type your signature.')); return; }
-
-      // Render typed sig to offscreen canvas
       const offscreen = document.createElement('canvas');
       offscreen.width  = 560;
       offscreen.height = 160;
@@ -156,14 +159,11 @@ submitBtn.addEventListener('click', async () => {
   submitBtn.textContent = 'Uploading signature...';
 
   try {
-    // 1. Generate blob
     const blob = await generateSignatureBlob();
 
-    // 2. Upload to Cloudinary
     submitBtn.textContent = 'Saving agreement...';
     const signatureUrl = await uploadToCloudinary(blob);
 
-    // 3. Submit to Airtable via Netlify
     const res = await fetch(CONTRACT_SUBMIT, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -181,7 +181,6 @@ submitBtn.addEventListener('click', async () => {
       throw new Error(err.error || 'Submission failed');
     }
 
-    // 4. Success
     submitBtn.classList.add('hidden');
     agreeCheck.closest('.agree-wrap').classList.add('hidden');
     document.querySelector('.date-row').classList.add('hidden');
