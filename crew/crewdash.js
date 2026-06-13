@@ -307,7 +307,7 @@ async function sendGroupEmails(group, templateId, btn) {
       params.PREFERRED_ROLE_BY_DIRECTOR = prefRole;
     }
     if (templateId === CFG.TEMPLATE.Contract) {
-      params.CONTRACT_LINK = buildContractLink(name, email, role);
+      params.CONTRACT_LINK = buildContractLink(name, email, role, (record.fields['Film'] || 'The Final Hand').trim());
     }
 
     try {
@@ -349,7 +349,7 @@ async function sendContractEmail(record, btn) {
   try {
     await sendEmail(email, CFG.TEMPLATE.Contract, {
       NAME: name, ROLE: role,
-      CONTRACT_LINK: buildContractLink(name, email, role),
+      CONTRACT_LINK: buildContractLink(name, email, role, (record.fields['Film'] || 'The Final Hand').trim()),
     });
     sessionSent[record.id] = CFG.TEMPLATE.Contract;
     btn.textContent       = 'Sent';
@@ -365,15 +365,16 @@ async function sendContractEmail(record, btn) {
 /* ═══════════════════════════════════════════════════════════════
    CONTRACT LINK
 ═══════════════════════════════════════════════════════════════ */
-function buildContractLink(name, email, role) {
+function buildContractLink(name, email, role, film) {
   return CFG.CONTRACT_BASE
     + '?name='  + encodeURIComponent(name)
     + '&email=' + encodeURIComponent(email)
-    + '&role='  + encodeURIComponent(role);
+    + '&role='  + encodeURIComponent(role)
+    + '&film='  + encodeURIComponent(film || 'The Final Hand');
 }
 
 async function copyLink(name, email, role, btn) {
-  const link = buildContractLink(name, email, role);
+  const link = buildContractLink(name, email, role, (record.fields['Film'] || 'The Final Hand').trim());
   try { await navigator.clipboard.writeText(link); }
   catch {
     const ta = document.createElement('textarea');
