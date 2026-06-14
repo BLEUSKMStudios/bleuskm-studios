@@ -269,7 +269,7 @@ async function loadCrewContacts() {
     const res  = await fetch(CFG.AIRTABLE + `?table=${encodeURIComponent(CFG.CREW_TABLE)}`);
     const data = res.ok ? await res.json() : { records: [] };
     crewRecords = (data.records || []).filter(r =>
-      (r.fields['Status'] || '').trim() === 'Core'
+      (r.fields['Name'] || '').trim() && (r.fields['Email'] || '').trim()
     );
     renderContacts();
   } catch { crewRecords = []; renderContacts(); }
@@ -288,6 +288,10 @@ async function patchRecord(id, fields) {
    CONTACTS PANEL
 ═══════════════════════════════════════════════════════════════ */
 function bindContactsPanel() {
+  // Open by default
+  el.contactsBody.classList.remove('hidden');
+  el.contactsArrow.style.transform = 'rotate(90deg)';
+
   el.contactsPanelToggle.addEventListener('click', () => {
     const hidden = el.contactsBody.classList.toggle('hidden');
     el.contactsArrow.style.transform = hidden ? '' : 'rotate(90deg)';
@@ -298,62 +302,56 @@ function bindContactsPanel() {
 }
 
 function renderContacts(query = '') {
-  // Core crew from Airtable (Status = Core)
-  const coreCrewContacts = crewRecords;
+  const coreCrewContacts  = crewRecords.filter(r => (r.fields['Status'] || '').trim() === 'Core');
+  const otherCrewContacts = crewRecords.filter(r => (r.fields['Status'] || '').trim() !== 'Core');
+  const castContacts      = allRecords.filter(r => (r.fields['Email'] || '').trim());
 
-  // Confirmed cast from casting submissions
-  const castContacts = allRecords.filter(r => {
-    const cs = (r.fields['Cast Status'] || '').toLowerCase();
-    return cs === 'confirmed' || cs === 'cast';
-  });
-
-  const totalCount = coreCrewContacts.length + castContacts.length;
-  el.contactsCounts.textContent = `${coreCrewContacts.length} crew · ${castContacts.length} cast`;
+  el.contactsCounts.textContent = `${crewRecords.length} crew · ${castContacts.length} cast`;
 
   function filtered(arr, keys) {
     if (!query) return arr;
     return arr.filter(r => keys.some(k => (r.fields[k] || '').toLowerCase().includes(query)));
   }
 
-  const filteredCrew = filtered(coreCrewContacts, ['Name', 'Email', 'Phone']);
-  const filteredCast = filtered(castContacts, ['Name', 'Email', 'Location']);
+  const filteredCore  = filtered(coreCrewContacts,  ['Name','Email','Phone','Role']);
+  const filteredOther = filtered(otherCrewContacts, ['Name','Email','Phone','Role']);
+  const filteredCast  = filtered(castContacts, ['Name','Email','Location','Role']);
 
-  if (!filteredCrew.length && !filteredCast.length) {
+  if (!filteredCore.length && !filteredOther.length && !filteredCast.length) {
     el.contactsGrid.innerHTML = `<p style="font-size:10px;color:var(--muted);padding:16px 0;">No contacts match.</p>`;
     return;
   }
 
   el.contactsGrid.innerHTML = '';
 
-  if (filteredCrew.length) {
+  if (filteredCore.length) {
     const hdr = document.createElement('div');
     hdr.className = 'contacts-section-label'; hdr.textContent = 'CORE CREW';
     el.contactsGrid.appendChild(hdr);
-    filteredCrew.forEach(r => {
+    filteredCore.forEach(r => {
       const f = r.fields;
-      el.contactsGrid.appendChild(makeContactCard(
-        f['Name'] || '—',
-        f['Email'] || '',
-        f['Phone'] || '',
-        f['Role'] || '',
-        'crew'
-      ));
+      el.contactsGrid.appendChild(makeContactCard(f['Name']||'—', f['Email']||'', f['Phone']||f['Location']||'', f['Role']||'', 'crew'));
+    });
+  }
+
+  if (filteredOther.length) {
+    const hdr = document.createElement('div');
+    hdr.className = 'contacts-section-label'; hdr.textContent = 'ALL CREW';
+    el.contactsGrid.appendChild(hdr);
+    filteredOther.forEach(r => {
+      const f = r.fields;
+      el.contactsGrid.appendChild(makeContactCard(f['Name']||'—', f['Email']||'', f['Phone']||f['Location']||'', f['Role']||'', 'crew'));
     });
   }
 
   if (filteredCast.length) {
     const hdr = document.createElement('div');
-    hdr.className = 'contacts-section-label'; hdr.textContent = 'CONFIRMED CAST';
+    hdr.className = 'contacts-section-label'; hdr.textContent = 'CASTING SUBMISSIONS';
     el.contactsGrid.appendChild(hdr);
     filteredCast.forEach(r => {
       const f = r.fields;
-      el.contactsGrid.appendChild(makeContactCard(
-        f['Name'] || '—',
-        f['Email'] || '',
-        f['Location'] || '',
-        f['Role'] || '',
-        'cast'
-      ));
+      const statusLabel = f['Casting Status'] ? ` · ${f['Casting Status']}` : '';
+      el.contactsGrid.appendChild(makeContactCard(f['Name']||'—', f['Email']||'', (f['Location']||'') + statusLabel, f['Role']||'', 'cast'));
     });
   }
 }
@@ -465,7 +463,8 @@ function bindContractsPanel() {
 
 function openContractModal(existingId = null) {
   editingContractId = existingId;
-  el.contractModalTitle.textContent = existingId ? 'Edit Contract' : 'New Contract';
+  el.contractModalTitle.textContent = existingId ? 'EDIT CONTRACT' : 'PRODUCTION AGREEMENT';
+  setContractDate();
 
   if (existingId) {
     const c = contracts.find(x => x.id === existingId);
@@ -583,17 +582,12 @@ function buildContractHtml(c) {
 }
 
 function printContract() {
-  const name  = el.contractName.value.trim() || 'Draft';
-  const terms = el.contractTerms.value.trim();
-  const film  = el.contractFilm.value;
-  const type  = el.contractType.value;
-  const role  = el.contractRole.value.trim();
-  const sig   = getSigValue();
-  const html  = buildContractHtml({ film, type, name, role, terms, signature: sig, created: new Date().toISOString() });
-  const win   = window.open('', '_blank');
-  win.document.write(`<!DOCTYPE html><html><head><title>Contract — ${name}</title><style>body{margin:0;padding:0;}@media print{@page{margin:1in;}}</style></head><body>${html}</body></html>`);
-  win.document.close();
-  win.print();
+  window.print();
+}
+
+function setContractDate() {
+  const el2 = document.getElementById('contractDateSigned');
+  if (el2) el2.textContent = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 }
 
 function renderContracts() {
@@ -1420,9 +1414,13 @@ function buildRow(record) {
 
   // Self-tape
   const stTd = document.createElement('td');
-  const stCls = stStatus === 'Selected for Final Round' ? 'selected' : stStatus === 'Reviewed' ? 'reviewed' : stStatus === 'Submitted' ? 'submitted' : 'not-submitted';
-  const stLabel = stStatus === 'Selected for Final Round' ? 'Selected' : stStatus;
-  stTd.innerHTML = `<span class="st-badge ${stCls}" data-st-badge="${id}">${esc(stLabel)}</span>`;
+  if (status === 'Pass') {
+    stTd.innerHTML = `<span style="color:var(--dim);font-size:9px;">—</span>`;
+  } else {
+    const stCls = stStatus === 'Selected for Final Round' ? 'selected' : stStatus === 'Reviewed' ? 'reviewed' : stStatus === 'Submitted' ? 'submitted' : 'not-submitted';
+    const stLabel = stStatus === 'Selected for Final Round' ? 'Selected' : stStatus;
+    stTd.innerHTML = `<span class="st-badge ${stCls}" data-st-badge="${id}">${esc(stLabel)}</span>`;
+  }
   summaryRow.appendChild(stTd);
 
   // Email badge
