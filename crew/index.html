@@ -101,6 +101,24 @@
     </div>
   </div>
 
+  <!-- Contracts Panel -->
+  <div class="contracts-panel" id="contractsPanel">
+    <div class="contracts-panel-header" id="contractsPanelToggle">
+      <div class="contracts-panel-left">
+        <span class="panel-eyebrow">SIGNED CONTRACTS</span>
+        <span class="contracts-count" id="contractsCount">—</span>
+      </div>
+      <div class="contracts-panel-right">
+        <span class="contracts-toggle-arrow" id="contractsArrow">&#9654;</span>
+      </div>
+    </div>
+    <div class="contracts-body hidden" id="contractsBody">
+      <div class="contracts-grid" id="contractsGrid">
+        <div class="contracts-loading"><div class="loader-ring-sm"></div><span>Loading...</span></div>
+      </div>
+    </div>
+  </div>
+
   <!-- Batch send bar (appears when checkboxes selected) -->
   <div class="batch-bar hidden" id="batchBar">
     <span class="batch-count" id="batchCount">0 selected</span>
@@ -112,6 +130,7 @@
       <option value="23">T23 — Support</option>
       <option value="25">T25 — Core</option>
       <option value="26">T26 — Department Guide</option>
+      <option value="27">T27 — Contract Only</option>
     </select>
     <button class="batch-send-btn" id="batchSendBtn">Send to Selected</button>
     <button class="batch-clear-btn" id="batchClearBtn">Clear</button>
@@ -230,6 +249,7 @@
             <option value="23">T23 — Support / Collaborator Pool</option>
             <option value="25">T25 — Core / Future Collaborator</option>
             <option value="26">T26 — Department Guide</option>
+            <option value="27">T27 — Contract Only</option>
           </select>
         </div>
         <div class="modal-field hidden" id="guideLinkField">
