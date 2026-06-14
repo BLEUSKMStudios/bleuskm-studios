@@ -16,10 +16,14 @@
       <div class="header-left">
         <span class="studio-label">BLEUSKM STUDIOS</span>
         <span class="hdivider"></span>
-        <span class="page-label">CREW PORTAL</span>
+        <span class="page-label" id="portalLabel">CREW PORTAL</span>
       </div>
       <div class="header-right">
-        <span class="record-count" id="recordCount">— crew members</span>
+        <span class="record-count" id="recordCount">— members</span>
+        <button class="icon-btn cast-toggle-btn hidden" id="castingToggleBtn">
+          <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="5" r="3.5" stroke="currentColor" stroke-width="1.4"/><path d="M1 13c0-3 2.686-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          Casting Portal
+        </button>
         <button class="icon-btn" id="refreshBtn">
           <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
             <path d="M12.5 7A5.5 5.5 0 1 1 7 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -43,11 +47,11 @@
   </div>
 
   <!-- Production Timeline -->
-  <div class="timeline-panel" id="timelinePanel">
+  <div class="timeline-panel">
     <div class="timeline-panel-header">
       <div class="timeline-panel-left">
         <span class="panel-eyebrow">PRODUCTION TIMELINE</span>
-        <span class="panel-film">The Final Hand</span>
+        <span class="panel-film" id="tlFilmLabel">The Final Hand</span>
       </div>
       <div class="timeline-panel-right">
         <button class="icon-btn" id="timelineRefreshBtn">Sync</button>
@@ -76,19 +80,41 @@
     </div>
   </div>
 
-  <!-- Status email panel -->
-  <div class="status-panel">
-    <div class="status-panel-left">
-      <span class="panel-eyebrow">SEND STATUS EMAILS</span>
-      <span class="panel-sub">Send one group at a time. Tracks sends per session.</span>
+  <!-- Contacts Panel -->
+  <div class="contacts-panel" id="contactsPanel">
+    <div class="contacts-panel-header" id="contactsPanelToggle">
+      <div class="contacts-panel-left">
+        <span class="panel-eyebrow">CONTACTS DATABASE</span>
+        <span class="contacts-counts" id="contactsCounts">—</span>
+      </div>
+      <div class="contacts-panel-right">
+        <span class="contacts-toggle-arrow" id="contactsArrow">&#9654;</span>
+      </div>
     </div>
-    <div class="status-panel-right">
-      <button class="status-btn btn-role-redirect" id="btnRoleRedirect">Send Role Redirect</button>
-      <button class="status-btn btn-contract"      id="btnContract">Send Contract</button>
-      <button class="status-btn btn-not-project"   id="btnNotProject">Send to Not This Project</button>
-      <button class="status-btn btn-support"       id="btnSupport">Send to Support</button>
-      <button class="status-btn btn-core"          id="btnCore">Send to Core</button>
+    <div class="contacts-body hidden" id="contactsBody">
+      <div class="contacts-search-wrap">
+        <input class="contacts-search" id="contactsSearch" type="text" placeholder="Search contacts..." />
+      </div>
+      <div class="contacts-grid" id="contactsGrid">
+        <div class="contacts-loading"><div class="loader-ring-sm"></div><span>Loading...</span></div>
+      </div>
     </div>
+  </div>
+
+  <!-- Batch send bar (appears when checkboxes selected) -->
+  <div class="batch-bar hidden" id="batchBar">
+    <span class="batch-count" id="batchCount">0 selected</span>
+    <select class="batch-template-select" id="batchTemplateSelect">
+      <option value="">— Choose email template —</option>
+      <option value="20">T20 — Role Redirect</option>
+      <option value="21">T21 — Crew Contract</option>
+      <option value="22">T22 — Not This Project</option>
+      <option value="23">T23 — Support</option>
+      <option value="25">T25 — Core</option>
+      <option value="26">T26 — Department Guide</option>
+    </select>
+    <button class="batch-send-btn" id="batchSendBtn">Send to Selected</button>
+    <button class="batch-clear-btn" id="batchClearBtn">Clear</button>
   </div>
 
   <!-- Controls -->
@@ -127,6 +153,7 @@
       <table class="crew-table">
         <thead>
           <tr>
+            <th class="col-check"><input type="checkbox" id="selectAllCheck" title="Select all" /></th>
             <th class="col-arrow"></th>
             <th>Name</th>
             <th>Email</th>
@@ -140,6 +167,82 @@
       </table>
     </div>
   </main>
+
+  <!-- Timeline Edit Modal -->
+  <div class="modal-overlay hidden" id="tlModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title" id="tlModalPhase">Edit Phase</span>
+        <button class="modal-close" id="tlModalClose">&#10005;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-field">
+          <label class="modal-label">PHASE NAME</label>
+          <input class="modal-input" id="tlPhaseInput" type="text" />
+        </div>
+        <div class="modal-row">
+          <div class="modal-field">
+            <label class="modal-label">START DATE</label>
+            <input class="modal-input" id="tlStartInput" type="date" />
+          </div>
+          <div class="modal-field">
+            <label class="modal-label">END DATE</label>
+            <input class="modal-input" id="tlEndInput" type="date" />
+          </div>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">STATUS</label>
+          <select class="modal-input" id="tlStatusInput">
+            <option value="Upcoming">Upcoming</option>
+            <option value="Active">Active</option>
+            <option value="Complete">Complete</option>
+          </select>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">DESCRIPTION</label>
+          <textarea class="modal-input" id="tlDescInput" rows="2"></textarea>
+        </div>
+        <input type="hidden" id="tlModalId" />
+      </div>
+      <div class="modal-footer">
+        <button class="modal-cancel" id="tlModalCancel">Cancel</button>
+        <button class="modal-save" id="tlModalSave">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Send Email Modal -->
+  <div class="modal-overlay hidden" id="emailModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Send Email</span>
+        <button class="modal-close" id="emailModalClose">&#10005;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-recipient" id="emailModalRecipient"></p>
+        <div class="modal-field">
+          <label class="modal-label">SELECT TEMPLATE</label>
+          <select class="modal-input" id="emailModalTemplate">
+            <option value="">— Choose template —</option>
+            <option value="20">T20 — Role Redirect (Preferred Role)</option>
+            <option value="21">T21 — Crew Contract + Agreement Link</option>
+            <option value="22">T22 — Not This Project</option>
+            <option value="23">T23 — Support / Collaborator Pool</option>
+            <option value="25">T25 — Core / Future Collaborator</option>
+            <option value="26">T26 — Department Guide</option>
+          </select>
+        </div>
+        <div class="modal-field hidden" id="guideLinkField">
+          <label class="modal-label">GUIDE LINK (for T26)</label>
+          <input class="modal-input" id="guideLinkInput" type="url" placeholder="Paste Canva viewer link..." />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-cancel" id="emailModalCancel">Cancel</button>
+        <button class="modal-save" id="emailModalSend">Send Email</button>
+      </div>
+    </div>
+  </div>
 
   <div class="toast-stack" id="toastStack"></div>
   <script src="crewdash.js"></script>
