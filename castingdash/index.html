@@ -21,6 +21,7 @@
       </div>
       <div class="header-right">
         <span class="record-count" id="recordCount">— submissions</span>
+        <button class="icon-btn hidden" id="crewDashBtn">&#8652; Crew Dash</button>
         <button class="icon-btn" id="refreshBtn">
           <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
             <path d="M12.5 7A5.5 5.5 0 1 1 7 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -69,6 +70,87 @@
     </div>
   </div>
 
+  <!-- Contacts Panel -->
+  <div class="contacts-panel" id="contactsPanel">
+    <div class="contacts-panel-header" id="contactsPanelToggle">
+      <div class="contacts-panel-left">
+        <span class="panel-eyebrow">CONTACTS DATABASE</span>
+        <span class="contacts-counts" id="contactsCounts">—</span>
+      </div>
+      <div class="contacts-panel-right">
+        <span class="contacts-toggle-arrow" id="contactsArrow">&#9654;</span>
+      </div>
+    </div>
+    <div class="contacts-body hidden" id="contactsBody">
+      <div class="contacts-search-wrap">
+        <input class="contacts-search" id="contactsSearch" type="text" placeholder="Search contacts..." />
+      </div>
+      <div class="contacts-grid" id="contactsGrid">
+        <div class="contacts-loading"><div class="loader-ring-sm"></div><span>Loading...</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contracts Section -->
+  <div class="contracts-panel" id="contractsPanel">
+    <div class="contracts-panel-header" id="contractsPanelToggle">
+      <div class="contacts-panel-left">
+        <span class="panel-eyebrow">CONTRACTS</span>
+        <span class="contacts-counts" id="contractCounts">—</span>
+      </div>
+      <div class="contacts-panel-right">
+        <button class="icon-btn" id="newContractBtn" style="margin-right:8px;">+ New Contract</button>
+        <span class="contacts-toggle-arrow" id="contractsArrow">&#9654;</span>
+      </div>
+    </div>
+    <div class="contracts-body hidden" id="contractsBody">
+      <div class="contracts-tabs">
+        <button class="contracts-tab active" data-tab="cast">Cast</button>
+        <button class="contracts-tab" data-tab="crew">Crew</button>
+        <button class="contracts-tab" data-tab="location">Location</button>
+      </div>
+      <div class="contracts-list" id="contractsList">
+        <p style="font-size:10px;color:var(--muted);padding:16px 0;">No contracts yet. Click &ldquo;+ New Contract&rdquo; to create one.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Location Tracker -->
+  <div class="location-panel" id="locationPanel">
+    <div class="location-panel-header" id="locationPanelToggle">
+      <div class="contacts-panel-left">
+        <span class="panel-eyebrow">LOCATION TRACKER</span>
+        <span class="contacts-counts" id="locationCounts">—</span>
+      </div>
+      <div class="contacts-panel-right">
+        <button class="icon-btn" id="addLocationBtn" style="margin-right:8px;">+ Add Location</button>
+        <span class="contacts-toggle-arrow" id="locationArrow">&#9654;</span>
+      </div>
+    </div>
+    <div class="location-body hidden" id="locationBody">
+      <div class="location-search-wrap">
+        <input class="contacts-search" id="locationSearch" type="text" placeholder="Search saved locations..." />
+      </div>
+      <div class="location-grid" id="locationGrid">
+        <p style="font-size:10px;color:var(--muted);padding:16px 0;">No locations saved yet.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Batch bar (appears when checkboxes selected) -->
+  <div class="batch-bar hidden" id="batchBar">
+    <span class="batch-count" id="batchCount">0 selected</span>
+    <select class="batch-template-select" id="batchTemplateSelect">
+      <option value="">— Choose email template —</option>
+      <option value="16">T16 — Casting Rejection</option>
+      <option value="17">T17 — Direct Offer (Film)</option>
+      <option value="18">T18 — Cross Casting (Role)</option>
+      <option value="19">T19 — Final Callback + Calendly</option>
+    </select>
+    <button class="batch-send-btn" id="batchSendBtn">Send to Selected</button>
+    <button class="batch-clear-btn" id="batchClearBtn">Clear</button>
+  </div>
+
   <!-- Controls -->
   <div class="controls-bar">
     <div class="filter-group">
@@ -85,8 +167,6 @@
       <input class="search-input" id="searchInput" type="text" placeholder="Search name, email, role, location..." />
       <button class="search-clear hidden" id="searchClear">&#10005;</button>
     </div>
-    <!-- Batch UI injected here by JS when a status filter is active -->
-    <div class="batch-wrap" id="batchWrap"></div>
   </div>
 
   <!-- Main -->
@@ -105,15 +185,50 @@
     </div>
     <div class="table-wrap hidden" id="tableWrap">
       <table class="casting-table" id="castingTable">
-        <thead id="castingTableHead">
-          <!-- Rebuilt by JS based on active filter -->
-        </thead>
+        <thead id="castingTableHead"></thead>
         <tbody id="castingTableBody"></tbody>
       </table>
     </div>
   </main>
 
-  <!-- Redirect modal -->
+  <!-- ═══ MODALS ═══ -->
+
+  <!-- Send Email Modal (per-row template picker) -->
+  <div class="modal-overlay hidden" id="emailModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Send Email</span>
+        <button class="modal-close" id="emailModalClose">&#10005;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-recipient" id="emailModalRecipient"></p>
+        <div class="modal-field">
+          <label class="modal-label">SELECT TEMPLATE</label>
+          <select class="modal-input" id="emailModalTemplate">
+            <option value="">— Choose template —</option>
+            <option value="16">T16 — Casting Rejection</option>
+            <option value="17">T17 — Direct Offer (Film Redirect)</option>
+            <option value="18">T18 — Cross Casting (Specific Role)</option>
+            <option value="19">T19 — Final Callback + Calendly</option>
+          </select>
+        </div>
+        <div class="modal-field hidden" id="emailFilmField">
+          <label class="modal-label">FILM NAME</label>
+          <input class="modal-input" id="emailFilmInput" type="text" placeholder="e.g. Overstood" />
+        </div>
+        <div class="modal-field hidden" id="emailRoleField">
+          <label class="modal-label">TO ROLE</label>
+          <input class="modal-input" id="emailRoleInput" type="text" placeholder="e.g. High John" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-cancel" id="emailModalCancel">Cancel</button>
+        <button class="modal-save" id="emailModalSend">Send Email</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Redirect modal (legacy — kept for redirect flow) -->
   <div class="modal-overlay hidden" id="redirectModal">
     <div class="modal">
       <div class="modal-rule"></div>
@@ -196,6 +311,186 @@
           <button class="modal-cancel" id="tlModalCancel">Cancel</button>
           <button class="modal-send" id="tlModalSave">Save Changes</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contract Builder Modal -->
+  <div class="modal-overlay hidden" id="contractModal">
+    <div class="modal-card modal-wide">
+      <div class="modal-header">
+        <span class="modal-title" id="contractModalTitle">New Contract</span>
+        <button class="modal-close" id="contractModalClose">&#10005;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-row">
+          <div class="modal-field">
+            <label class="modal-label">CONTRACT TYPE</label>
+            <select class="modal-input" id="contractType">
+              <option value="cast">Cast Agreement</option>
+              <option value="crew">Crew Agreement</option>
+              <option value="location">Location Agreement</option>
+            </select>
+          </div>
+          <div class="modal-field">
+            <label class="modal-label">FILM</label>
+            <select class="modal-input" id="contractFilm">
+              <option value="The Final Hand">The Final Hand</option>
+              <option value="Overstood">Overstood</option>
+              <option value="Love me like this">Love me like this</option>
+              <option value="Liminal County">Liminal County</option>
+              <option value="Of blood and dominion">Of blood and dominion</option>
+              <option value="As Is">As Is</option>
+              <option value="The 15th Hour">The 15th Hour</option>
+              <option value="Book of Beginnings">Book of Beginnings</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-row">
+          <div class="modal-field">
+            <label class="modal-label">RECIPIENT NAME</label>
+            <input class="modal-input" id="contractName" type="text" placeholder="Full name" />
+          </div>
+          <div class="modal-field">
+            <label class="modal-label">RECIPIENT EMAIL</label>
+            <input class="modal-input" id="contractEmail" type="email" placeholder="email@example.com" />
+          </div>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">ROLE / POSITION / LOCATION</label>
+          <input class="modal-input" id="contractRole" type="text" placeholder="e.g. High John, Director of Photography, Main Street Warehouse" />
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">CONTRACT TERMS</label>
+          <textarea class="modal-input" id="contractTerms" rows="8" placeholder="Enter contract terms, scope of work, compensation, dates, conditions..."></textarea>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">SIGNATURE — Type or Draw</label>
+          <div class="sig-tabs">
+            <button class="sig-tab active" id="sigTypeTab">Type</button>
+            <button class="sig-tab" id="sigDrawTab">Draw</button>
+          </div>
+          <div id="sigTypeArea">
+            <input class="modal-input sig-type-input" id="sigTypeInput" type="text" placeholder="Type your full name to sign" />
+          </div>
+          <div class="hidden" id="sigDrawArea">
+            <canvas id="sigCanvas" class="sig-canvas" width="560" height="120"></canvas>
+            <div style="display:flex;gap:8px;margin-top:6px;">
+              <button class="icon-btn" id="sigClearBtn">Clear</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-cancel" id="contractModalCancel">Cancel</button>
+        <button class="icon-btn" id="contractPrintBtn" style="color:var(--muted);">&#128438; Print</button>
+        <button class="modal-save" id="contractSaveBtn">Save &amp; Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Location Add/Edit Modal -->
+  <div class="modal-overlay hidden" id="locationModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title" id="locationModalTitle">Add Location</span>
+        <button class="modal-close" id="locationModalClose">&#10005;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-field">
+          <label class="modal-label">LOCATION NAME</label>
+          <input class="modal-input" id="locName" type="text" placeholder="e.g. Main Street Warehouse" />
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">ADDRESS (search to auto-fill)</label>
+          <input class="modal-input" id="locAddress" type="text" placeholder="Search address..." autocomplete="off" />
+          <div class="loc-suggestions hidden" id="locSuggestions"></div>
+        </div>
+        <div class="modal-row">
+          <div class="modal-field">
+            <label class="modal-label">TYPE</label>
+            <select class="modal-input" id="locType">
+              <option value="Primary">Primary</option>
+              <option value="Backup">Backup</option>
+            </select>
+          </div>
+          <div class="modal-field">
+            <label class="modal-label">FILM</label>
+            <select class="modal-input" id="locFilm">
+              <option value="The Final Hand">The Final Hand</option>
+              <option value="Overstood">Overstood</option>
+              <option value="Love me like this">Love me like this</option>
+              <option value="Liminal County">Liminal County</option>
+              <option value="Of blood and dominion">Of blood and dominion</option>
+              <option value="As Is">As Is</option>
+              <option value="The 15th Hour">The 15th Hour</option>
+              <option value="Book of Beginnings">Book of Beginnings</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">CONTACT NAME (owner/manager)</label>
+          <input class="modal-input" id="locContact" type="text" placeholder="Contact person" />
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">CONTACT PHONE</label>
+          <input class="modal-input" id="locPhone" type="tel" placeholder="(555) 000-0000" />
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">STATUS</label>
+          <select class="modal-input" id="locStatus">
+            <option value="Not Contacted">Not Contacted</option>
+            <option value="Called">Called (No Answer)</option>
+            <option value="Maybe">Maybe (Follow Up)</option>
+            <option value="Accepted">Accepted</option>
+            <option value="Declined">Declined</option>
+          </select>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">NOTES</label>
+          <textarea class="modal-input" id="locNotes" rows="3" placeholder="Parking, hours, restrictions, follow-up dates..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-cancel" id="locationModalCancel">Cancel</button>
+        <button class="modal-save" id="locationModalSave">Save Location</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compose Email Modal (Zoho aliases) -->
+  <div class="modal-overlay hidden" id="composeModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Compose Email</span>
+        <button class="modal-close" id="composeModalClose">&#10005;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-row">
+          <div class="modal-field">
+            <label class="modal-label">FROM</label>
+            <select class="modal-input" id="composeFrom">
+              <option value="casting@bleuskm.com">casting@bleuskm.com</option>
+              <option value="crew@bleuskm.com">crew@bleuskm.com</option>
+            </select>
+          </div>
+          <div class="modal-field">
+            <label class="modal-label">TO</label>
+            <input class="modal-input" id="composeTo" type="email" placeholder="recipient@email.com" />
+          </div>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">SUBJECT</label>
+          <input class="modal-input" id="composeSubject" type="text" placeholder="Subject" />
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">MESSAGE</label>
+          <textarea class="modal-input" id="composeBody" rows="8" placeholder="Write your message..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-cancel" id="composeModalCancel">Cancel</button>
+        <button class="modal-save" id="composeModalSend">Send Email</button>
       </div>
     </div>
   </div>
