@@ -268,8 +268,9 @@ async function loadCrewContacts() {
   try {
     const res  = await fetch(CFG.AIRTABLE + `?table=${encodeURIComponent(CFG.CREW_TABLE)}`);
     const data = res.ok ? await res.json() : { records: [] };
+    // Only Core crew — Status field must equal "Core"
     crewRecords = (data.records || []).filter(r =>
-      (r.fields['Name'] || '').trim() && (r.fields['Email'] || '').trim()
+      (r.fields['Status'] || '').trim() === 'Core'
     );
     renderContacts();
   } catch { crewRecords = []; renderContacts(); }
@@ -302,10 +303,8 @@ function bindContactsPanel() {
 }
 
 function renderContacts(query = '') {
-  const coreCrewContacts  = crewRecords.filter(r => (r.fields['Status'] || '').trim() === 'Core');
-  const otherCrewContacts = crewRecords.filter(r => (r.fields['Status'] || '').trim() !== 'Core');
-  const castContacts      = allRecords.filter(r => (r.fields['Email'] || '').trim());
-
+  // crewRecords already filtered to Core-only by loadCrewContacts
+  const castContacts = allRecords.filter(r => (r.fields['Email'] || '').trim());
   el.contactsCounts.textContent = `${crewRecords.length} crew · ${castContacts.length} cast`;
 
   function filtered(arr, keys) {
@@ -313,34 +312,25 @@ function renderContacts(query = '') {
     return arr.filter(r => keys.some(k => (r.fields[k] || '').toLowerCase().includes(query)));
   }
 
-  const filteredCore  = filtered(coreCrewContacts,  ['Name','Email','Phone','Role']);
-  const filteredOther = filtered(otherCrewContacts, ['Name','Email','Phone','Role']);
-  const filteredCast  = filtered(castContacts, ['Name','Email','Location','Role']);
+  const filteredCrew = filtered(crewRecords, ['Name','Email','Phone','Role']);
+  const filteredCast = filtered(castContacts, ['Name','Email','Location','Role','Casting Status']);
 
-  if (!filteredCore.length && !filteredOther.length && !filteredCast.length) {
+  if (!filteredCrew.length && !filteredCast.length) {
     el.contactsGrid.innerHTML = `<p style="font-size:10px;color:var(--muted);padding:16px 0;">No contacts match.</p>`;
     return;
   }
 
   el.contactsGrid.innerHTML = '';
 
-  if (filteredCore.length) {
+  if (filteredCrew.length) {
     const hdr = document.createElement('div');
     hdr.className = 'contacts-section-label'; hdr.textContent = 'CORE CREW';
     el.contactsGrid.appendChild(hdr);
-    filteredCore.forEach(r => {
+    filteredCrew.forEach(r => {
       const f = r.fields;
-      el.contactsGrid.appendChild(makeContactCard(f['Name']||'—', f['Email']||'', f['Phone']||f['Location']||'', f['Role']||'', 'crew'));
-    });
-  }
-
-  if (filteredOther.length) {
-    const hdr = document.createElement('div');
-    hdr.className = 'contacts-section-label'; hdr.textContent = 'ALL CREW';
-    el.contactsGrid.appendChild(hdr);
-    filteredOther.forEach(r => {
-      const f = r.fields;
-      el.contactsGrid.appendChild(makeContactCard(f['Name']||'—', f['Email']||'', f['Phone']||f['Location']||'', f['Role']||'', 'crew'));
+      // Role: use Preferred_role_by_Director if set, else Role field
+      const displayRole = (f['Preferred_role_by_Director'] || '').trim() || (f['Role'] || '').trim();
+      el.contactsGrid.appendChild(makeContactCard(f['Name']||'—', f['Email']||'', f['Phone']||'', displayRole, 'crew'));
     });
   }
 
@@ -351,6 +341,7 @@ function renderContacts(query = '') {
     filteredCast.forEach(r => {
       const f = r.fields;
       const statusLabel = f['Casting Status'] ? ` · ${f['Casting Status']}` : '';
+      // Role for cast: use original Role field (casting role they applied for)
       el.contactsGrid.appendChild(makeContactCard(f['Name']||'—', f['Email']||'', (f['Location']||'') + statusLabel, f['Role']||'', 'cast'));
     });
   }
