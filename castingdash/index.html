@@ -315,75 +315,114 @@
     </div>
   </div>
 
-  <!-- Contract Builder Modal -->
+  <!-- Contract Builder Modal — Full BLEUSKM Production Agreement -->
   <div class="modal-overlay hidden" id="contractModal">
-    <div class="modal-card modal-wide">
-      <div class="modal-header">
-        <span class="modal-title" id="contractModalTitle">New Contract</span>
-        <button class="modal-close" id="contractModalClose">&#10005;</button>
+    <div class="contract-modal-full">
+      <div class="cmodal-header">
+        <div class="cmodal-header-left">
+          <span class="cmodal-eyebrow">BLEUSKM STUDIOS</span>
+          <span class="cmodal-title" id="contractModalTitle">PRODUCTION AGREEMENT</span>
+        </div>
+        <div class="cmodal-header-right">
+          <button class="icon-btn" id="contractPrintBtn">&#128438; Print</button>
+          <button class="modal-close" id="contractModalClose">&#10005;</button>
+        </div>
       </div>
-      <div class="modal-body">
-        <div class="modal-row">
-          <div class="modal-field">
-            <label class="modal-label">CONTRACT TYPE</label>
-            <select class="modal-input" id="contractType">
-              <option value="cast">Cast Agreement</option>
-              <option value="crew">Crew Agreement</option>
-              <option value="location">Location Agreement</option>
-            </select>
-          </div>
-          <div class="modal-field">
-            <label class="modal-label">FILM</label>
-            <select class="modal-input" id="contractFilm">
-              <option value="The Final Hand">The Final Hand</option>
-              <option value="Overstood">Overstood</option>
-              <option value="Love me like this">Love me like this</option>
-              <option value="Liminal County">Liminal County</option>
-              <option value="Of blood and dominion">Of blood and dominion</option>
-              <option value="As Is">As Is</option>
-              <option value="The 15th Hour">The 15th Hour</option>
-              <option value="Book of Beginnings">Book of Beginnings</option>
-            </select>
-          </div>
+
+      <!-- Info bar -->
+      <div class="cmodal-infobar">
+        <div class="cmodal-info-field">
+          <label class="modal-label">NAME</label>
+          <input class="modal-input" id="contractName" type="text" placeholder="Full name" />
         </div>
-        <div class="modal-row">
-          <div class="modal-field">
-            <label class="modal-label">RECIPIENT NAME</label>
-            <input class="modal-input" id="contractName" type="text" placeholder="Full name" />
-          </div>
-          <div class="modal-field">
-            <label class="modal-label">RECIPIENT EMAIL</label>
-            <input class="modal-input" id="contractEmail" type="email" placeholder="email@example.com" />
-          </div>
+        <div class="cmodal-info-field">
+          <label class="modal-label">ROLE / POSITION</label>
+          <input class="modal-input" id="contractRole" type="text" placeholder="e.g. Director of Photography" />
         </div>
-        <div class="modal-field">
-          <label class="modal-label">ROLE / POSITION / LOCATION</label>
-          <input class="modal-input" id="contractRole" type="text" placeholder="e.g. High John, Director of Photography, Main Street Warehouse" />
+        <div class="cmodal-info-field">
+          <label class="modal-label">FILM</label>
+          <select class="modal-input" id="contractFilm">
+            <option value="The Final Hand">The Final Hand</option>
+            <option value="Overstood">Overstood</option>
+            <option value="Love me like this">Love me like this</option>
+            <option value="Liminal County">Liminal County</option>
+            <option value="Of blood and dominion">Of blood and dominion</option>
+            <option value="As Is">As Is</option>
+            <option value="The 15th Hour">The 15th Hour</option>
+            <option value="Book of Beginnings">Book of Beginnings</option>
+          </select>
         </div>
-        <div class="modal-field">
-          <label class="modal-label">CONTRACT TERMS</label>
-          <textarea class="modal-input" id="contractTerms" rows="8" placeholder="Enter contract terms, scope of work, compensation, dates, conditions..."></textarea>
+        <div class="cmodal-info-field">
+          <label class="modal-label">TYPE</label>
+          <select class="modal-input" id="contractType">
+            <option value="crew">Crew Agreement</option>
+            <option value="cast">Cast Agreement</option>
+            <option value="location">Location Agreement</option>
+          </select>
         </div>
-        <div class="modal-field">
-          <label class="modal-label">SIGNATURE — Type or Draw</label>
-          <div class="sig-tabs">
+        <div class="cmodal-info-field">
+          <label class="modal-label">EMAIL (to send)</label>
+          <input class="modal-input" id="contractEmail" type="email" placeholder="email@example.com" />
+        </div>
+      </div>
+
+      <!-- Contract body — all clauses -->
+      <div class="cmodal-body">
+        <div class="cmodal-section-header">
+          <span class="cmodal-section-eyebrow">SHORT FILM PRODUCTION AGREEMENT</span>
+          <h2 class="cmodal-section-title">BLEUSKM Studios</h2>
+          <p class="cmodal-section-sub">BLEUSKM Studios &nbsp;&middot;&nbsp; Denton, TX &nbsp;&middot;&nbsp; 2026</p>
+        </div>
+
+        <div class="cmodal-clause"><span class="cmodal-clause-num">1</span><div class="cmodal-clause-body"><p class="cmodal-clause-title">PARTIES</p><p class="cmodal-clause-text">This Production Agreement (&ldquo;Agreement&rdquo;) is entered into between <strong>BLEUSKM Studios</strong>, an independent film production company based in Denton, Texas (&ldquo;Production&rdquo;), and the individual identified above (&ldquo;Crew Member&rdquo;), in connection with the short film production identified as the project above.</p></div></div>
+
+        <div class="cmodal-clause"><span class="cmodal-clause-num">2</span><div class="cmodal-clause-body"><p class="cmodal-clause-title">VOLUNTARY, NON-PAID PARTICIPATION</p><p class="cmodal-clause-text">Crew Member acknowledges and agrees that participation in this production is entirely voluntary and unpaid. No compensation, monetary or otherwise, is promised, implied, or expected &mdash; now or in the future &mdash; in exchange for services rendered on this production. Crew Member agrees to this arrangement knowingly and without coercion.</p></div></div>
+
+        <div class="cmodal-clause"><span class="cmodal-clause-num">3</span><div class="cmodal-clause-body"><p class="cmodal-clause-title">IMDb CREDIT</p><p class="cmodal-clause-text">In recognition of their contribution, Crew Member will receive an official IMDb credit for their designated role in this production. Production will make reasonable efforts to submit accurate credits following completion of post-production. IMDb credit is the sole form of recognition provided under this Agreement.</p></div></div>
+
+        <div class="cmodal-clause"><span class="cmodal-clause-num">4</span><div class="cmodal-clause-body"><p class="cmodal-clause-title">MEDIA USAGE RIGHTS</p><p class="cmodal-clause-text">Crew Member grants BLEUSKM Studios a perpetual, royalty-free, worldwide license to use any footage, photography, or materials produced during this production for purposes including, but not limited to: film distribution, film festival submissions, promotional materials, marketing campaigns, social media content, press materials, and archival use. Crew Member retains the right to use materials from this production for their personal portfolio, demo reel, and professional self-promotion, provided that BLEUSKM Studios receives appropriate credit.</p></div></div>
+
+        <div class="cmodal-clause"><span class="cmodal-clause-num">5</span><div class="cmodal-clause-body"><p class="cmodal-clause-title">LIABILITY WAIVER</p><p class="cmodal-clause-text">Crew Member voluntarily assumes all risks associated with participation in this production, including but not limited to: physical activity on set, travel, equipment handling, and environmental conditions. Crew Member hereby releases, discharges, and holds harmless BLEUSKM Studios, its directors, producers, and representatives from any and all claims, liabilities, damages, injuries, or losses arising from or in connection with participation in this production, to the fullest extent permitted by applicable law.</p></div></div>
+
+        <div class="cmodal-clause"><span class="cmodal-clause-num">6</span><div class="cmodal-clause-body"><p class="cmodal-clause-title">COMMITMENT &amp; AVAILABILITY</p><p class="cmodal-clause-text">Crew Member agrees to communicate their availability promptly and accurately throughout pre-production and production. If confirmed for a scheduled shoot day, Crew Member commits to attending unless an emergency arises, in which case advance notice must be provided as early as possible. Consistent, reliable communication is expected from all confirmed crew.</p></div></div>
+
+        <div class="cmodal-clause"><span class="cmodal-clause-num">7</span><div class="cmodal-clause-body"><p class="cmodal-clause-title">PRODUCTION DETAILS</p><p class="cmodal-clause-text"><strong>Production Company:</strong> BLEUSKM Studios<br><strong>Location:</strong> Denton, Texas<br><strong>Format:</strong> Independent short film<br><strong>Genre:</strong> Afro-surrealist / Psychological drama</p></div></div>
+
+        <div class="cmodal-clause"><span class="cmodal-clause-num">8</span><div class="cmodal-clause-body"><p class="cmodal-clause-title">CONFIDENTIALITY</p><p class="cmodal-clause-text">Crew Member agrees to keep the details of the script, production materials, and any unreleased content confidential until BLEUSKM Studios makes an official public announcement or release. This includes, but is not limited to, sharing script content, behind-the-scenes footage, or production information on social media without express written permission from BLEUSKM Studios.</p></div></div>
+
+        <div class="cmodal-clause"><span class="cmodal-clause-num">9</span><div class="cmodal-clause-body"><p class="cmodal-clause-title">ELECTRONIC SIGNATURE</p><p class="cmodal-clause-text">Crew Member acknowledges and agrees that a typed or drawn electronic signature on this Agreement constitutes a legal and binding signature, equivalent in legal effect to a handwritten signature, pursuant to applicable electronic signature laws including the Electronic Signatures in Global and National Commerce Act (E-SIGN Act) and the Uniform Electronic Transactions Act (UETA). By signing below, Crew Member confirms they have read, understood, and voluntarily agreed to all terms in this Agreement.</p></div></div>
+
+        <div class="cmodal-clause" style="border-bottom:none;margin-bottom:0;padding-bottom:0;"><span class="cmodal-clause-num">10</span><div class="cmodal-clause-body"><p class="cmodal-clause-title">GOVERNING LAW</p><p class="cmodal-clause-text">This Agreement shall be governed by and construed in accordance with the laws of the State of Texas. Any disputes arising from this Agreement shall be resolved in Denton County, Texas.</p></div></div>
+
+        <!-- Additional terms (custom/editable) -->
+        <div class="cmodal-addl-section">
+          <p class="modal-label" style="margin-bottom:8px;">ADDITIONAL TERMS (optional)</p>
+          <textarea class="modal-input" id="contractTerms" rows="4" placeholder="Add shoot dates, specific obligations, compensation details, location agreements, or any additional terms..."></textarea>
+        </div>
+
+        <!-- Signature section -->
+        <div class="cmodal-sig-section">
+          <p class="cmodal-clause-title" style="margin-bottom:14px;">SIGNATURE</p>
+          <div class="sig-tabs" style="margin-bottom:14px;">
             <button class="sig-tab active" id="sigTypeTab">Type</button>
             <button class="sig-tab" id="sigDrawTab">Draw</button>
           </div>
           <div id="sigTypeArea">
-            <input class="modal-input sig-type-input" id="sigTypeInput" type="text" placeholder="Type your full name to sign" />
+            <input class="modal-input sig-type-input" id="sigTypeInput" type="text" placeholder="Type your full name to sign" autocomplete="off" />
           </div>
           <div class="hidden" id="sigDrawArea">
             <canvas id="sigCanvas" class="sig-canvas" width="560" height="120"></canvas>
-            <div style="display:flex;gap:8px;margin-top:6px;">
-              <button class="icon-btn" id="sigClearBtn">Clear</button>
-            </div>
+            <button class="icon-btn" id="sigClearBtn" style="margin-top:6px;">Clear</button>
+          </div>
+          <div class="cmodal-date-row">
+            <span class="modal-label">DATE</span>
+            <span id="contractDateSigned" style="font-size:12px;color:var(--muted);"></span>
           </div>
         </div>
       </div>
-      <div class="modal-footer">
+
+      <div class="cmodal-footer">
         <button class="modal-cancel" id="contractModalCancel">Cancel</button>
-        <button class="icon-btn" id="contractPrintBtn" style="color:var(--muted);">&#128438; Print</button>
         <button class="modal-save" id="contractSaveBtn">Save &amp; Send</button>
       </div>
     </div>
