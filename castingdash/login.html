@@ -77,6 +77,16 @@
     .add-btn:hover { background: rgba(218,175,55,0.12); }
     .admin-msg { font-size: 10px; color: var(--success); margin-top: 10px; display: none; }
     .admin-msg.show { display: block; }
+    .user-actions { display: flex; gap: 6px; align-items: center; }
+    .user-edit { background: none; border: none; color: var(--golddim); font-size: 11px; cursor: pointer; padding: 2px 6px; transition: color 130ms; }
+    .user-edit:hover { color: var(--gold); }
+    .edit-row { display: none; padding: 10px 0 6px; border-bottom: 1px solid var(--borderdim); flex-wrap: wrap; gap: 6px; }
+    .edit-row.open { display: flex; }
+    .edit-row input, .edit-row select { background: rgba(255,255,255,0.02); border: 1px solid var(--borderdim); color: var(--text); font-family: var(--font); font-size: 12px; padding: 6px 9px; outline: none; transition: border-color 130ms; flex: 1; min-width: 80px; }
+    .edit-row input:focus, .edit-row select:focus { border-color: var(--golddim); }
+    .edit-row select option { background: #1a1a1a; }
+    .save-btn { background: var(--goldfaint); border: 1px solid var(--golddim); color: var(--gold); font-family: var(--font); font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; padding: 6px 12px; cursor: pointer; white-space: nowrap; transition: background 130ms; }
+    .save-btn:hover { background: rgba(218,175,55,0.12); }
   </style>
 </head>
 <body>
@@ -117,6 +127,12 @@
       <div class="add-user-form">
         <input type="text" id="newUser" placeholder="Username" autocomplete="off" />
         <input type="password" id="newPass" placeholder="Password" autocomplete="off" />
+        <select id="newRole" style="background:rgba(255,255,255,0.02);border:1px solid var(--borderdim);color:var(--text);font-family:var(--font);font-size:12px;padding:8px 10px;outline:none;">
+          <option value="Producer">Producer</option>
+          <option value="Crew">Crew</option>
+          <option value="Director">Director</option>
+          <option value="PA">PA</option>
+        </select>
         <button class="add-btn" id="addUserBtn">Add</button>
       </div>
       <p class="admin-msg" id="adminMsg"></p>
@@ -126,28 +142,32 @@
 </div>
 
 <script>
-  // ── Default users (always present) ──────────────────────────
-  const DEFAULT_USERS = {
-    zaria:  { password: 'bleuskm2026', role: 'Admin', deletable: false },
-    ceion:  { password: 'bleuskmcrew', role: 'Producer', deletable: false },
-    carmen: { password: 'bleuskmcrew', role: 'Producer', deletable: false },
+  // ── Only zaria is permanently locked ────────────────────────
+  const LOCKED_USERS = {
+    zaria: { password: 'bleuskm2026', role: 'Admin' },
   };
 
-  // ── Load crew from localStorage ──────────────────────────────
+  // ── All other users live in localStorage ────────────────────
   function loadUsers() {
     try {
       const stored = JSON.parse(localStorage.getItem('bleuskm_crew') || '{}');
-      return Object.assign({}, DEFAULT_USERS, stored);
-    } catch { return Object.assign({}, DEFAULT_USERS); }
+      // Seed ceion + carmen if never been set up
+      if (!stored.__seeded) {
+        stored.ceion  = stored.ceion  || { password: 'bleuskmcrew', role: 'Producer' };
+        stored.carmen = stored.carmen || { password: 'bleuskmcrew', role: 'Producer' };
+        stored.__seeded = true;
+        localStorage.setItem('bleuskm_crew', JSON.stringify(stored));
+      }
+      return stored;
+    } catch { return {}; }
   }
 
-  function saveCrewUsers(users) {
-    // Only save non-default (added) users
-    const extra = {};
-    Object.entries(users).forEach(([k, v]) => {
-      if (!DEFAULT_USERS[k]) extra[k] = v;
-    });
-    localStorage.setItem('bleuskm_crew', JSON.stringify(extra));
+  function saveUsers(users) {
+    localStorage.setItem('bleuskm_crew', JSON.stringify(users));
+  }
+
+  function getAllUsers() {
+    return Object.assign({}, LOCKED_USERS, loadUsers());
   }
 
   // ── Redirect if already logged in ────────────────────────────
@@ -155,10 +175,10 @@
     window.location.replace('./index.html');
   }
 
-  const unameEl   = document.getElementById('uname');
-  const pwordEl   = document.getElementById('pword');
-  const loginBtn  = document.getElementById('loginBtn');
-  const errMsg    = document.getElementById('errMsg');
+  const unameEl     = document.getElementById('uname');
+  const pwordEl     = document.getElementById('pword');
+  const loginBtn    = document.getElementById('loginBtn');
+  const errMsg      = document.getElementById('errMsg');
   const adminToggle = document.getElementById('adminToggle');
   const adminLink   = document.getElementById('adminLink');
   const adminPanel  = document.getElementById('adminPanel');
@@ -166,7 +186,7 @@
   function attemptLogin() {
     const u = unameEl.value.trim().toLowerCase();
     const p = pwordEl.value;
-    const users = loadUsers();
+    const users = getAllUsers();
 
     if (users[u] && users[u].password === p) {
       sessionStorage.setItem('bleuskm_auth', 'true');
@@ -177,14 +197,13 @@
       errMsg.classList.add('show');
       pwordEl.value = '';
       pwordEl.focus();
-      // Show admin panel link only if username is zaria
       if (u === 'zaria') adminToggle.style.display = 'block';
     }
   }
 
   loginBtn.addEventListener('click', attemptLogin);
-  [unameEl, pwordEl].forEach(el => {
-    el.addEventListener('keydown', e => {
+  [unameEl, pwordEl].forEach(inp => {
+    inp.addEventListener('keydown', e => {
       if (e.key === 'Enter') attemptLogin();
       errMsg.classList.remove('show');
     });
@@ -197,47 +216,114 @@
     if (!open) renderUserList();
   });
 
+  const ROLE_OPTIONS = ['Producer', 'Director', 'Crew', 'PA'];
+
   function renderUserList() {
-    const users = loadUsers();
-    const list  = document.getElementById('userList');
+    const stored = loadUsers();
+    const list   = document.getElementById('userList');
     list.innerHTML = '';
-    Object.entries(users).forEach(([username, data]) => {
+
+    // Locked row — zaria
+    const zariaRow = document.createElement('div');
+    zariaRow.className = 'user-row';
+    zariaRow.innerHTML = `
+      <div><span class="user-name">zaria</span><span class="user-role" style="margin-left:10px;">Admin</span></div>
+      <span style="font-size:9px;color:var(--dim);">locked</span>`;
+    list.appendChild(zariaRow);
+
+    // All stored users (editable/deletable)
+    Object.entries(stored).forEach(([username, data]) => {
+      if (username === '__seeded') return;
+
+      const wrapper = document.createElement('div');
+
       const row = document.createElement('div');
       row.className = 'user-row';
+      row.dataset.user = username;
       row.innerHTML = `
         <div>
           <span class="user-name">${username}</span>
           <span class="user-role" style="margin-left:10px;">${data.role || 'Crew'}</span>
         </div>
-        ${data.deletable !== false ? `<button class="user-del" data-user="${username}">Remove</button>` : '<span style="font-size:9px;color:var(--dim);">locked</span>'}
-      `;
-      list.appendChild(row);
-    });
+        <div class="user-actions">
+          <button class="user-edit" data-user="${username}" title="Edit">&#9998; Edit</button>
+          <button class="user-del" data-user="${username}" title="Remove">&#10005; Remove</button>
+        </div>`;
 
-    list.querySelectorAll('.user-del').forEach(btn => {
-      btn.addEventListener('click', () => {
+      const editRow = document.createElement('div');
+      editRow.className = 'edit-row';
+      editRow.innerHTML = `
+        <input type="text"     class="edit-uname" value="${username}" placeholder="Username" autocomplete="off" />
+        <input type="password" class="edit-pass"  value=""            placeholder="New password (leave blank to keep)" autocomplete="off" />
+        <select class="edit-role">
+          ${ROLE_OPTIONS.map(r => `<option value="${r}" ${data.role === r ? 'selected' : ''}>${r}</option>`).join('')}
+        </select>
+        <button class="save-btn">Save</button>`;
+
+      // Edit toggle
+      row.querySelector('.user-edit').addEventListener('click', () => {
+        editRow.classList.toggle('open');
+      });
+
+      // Delete
+      row.querySelector('.user-del').addEventListener('click', () => {
+        if (!confirm(`Remove ${username}?`)) return;
         const users = loadUsers();
-        delete users[btn.dataset.user];
-        saveCrewUsers(users);
-        showAdminMsg(`${btn.dataset.user} removed.`);
+        delete users[username];
+        saveUsers(users);
+        showAdminMsg(`${username} removed.`);
         renderUserList();
       });
+
+      // Save edit
+      editRow.querySelector('.save-btn').addEventListener('click', () => {
+        const newUser = editRow.querySelector('.edit-uname').value.trim().toLowerCase();
+        const newPass = editRow.querySelector('.edit-pass').value.trim();
+        const newRole = editRow.querySelector('.edit-role').value;
+
+        if (!newUser) { showAdminMsg('Username cannot be empty.', true); return; }
+
+        const users = loadUsers();
+        const existing = users[username];
+
+        // If username changed, delete old key
+        if (newUser !== username) {
+          if (users[newUser] || LOCKED_USERS[newUser]) {
+            showAdminMsg('That username is already taken.', true); return;
+          }
+          delete users[username];
+        }
+
+        users[newUser] = {
+          password: newPass || existing.password,
+          role: newRole,
+        };
+        saveUsers(users);
+        showAdminMsg(`${newUser} updated.`);
+        renderUserList();
+      });
+
+      wrapper.appendChild(row);
+      wrapper.appendChild(editRow);
+      list.appendChild(wrapper);
     });
   }
 
+  // ── Add user ─────────────────────────────────────────────────
   document.getElementById('addUserBtn').addEventListener('click', () => {
     const u = document.getElementById('newUser').value.trim().toLowerCase();
     const p = document.getElementById('newPass').value.trim();
+    const r = document.getElementById('newRole').value;
     if (!u || !p) { showAdminMsg('Enter both username and password.', true); return; }
 
     const users = loadUsers();
-    if (users[u]) { showAdminMsg('Username already exists.', true); return; }
+    if (users[u] || LOCKED_USERS[u]) { showAdminMsg('Username already exists.', true); return; }
 
-    users[u] = { password: p, role: 'Crew', deletable: true };
-    saveCrewUsers(users);
+    users[u] = { password: p, role: r };
+    saveUsers(users);
     document.getElementById('newUser').value = '';
     document.getElementById('newPass').value = '';
-    showAdminMsg(`${u} added successfully.`);
+    showAdminMsg(`${u} added as ${r}.`);
     renderUserList();
   });
 
