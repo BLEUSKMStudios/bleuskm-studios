@@ -454,8 +454,10 @@ function bindContractsPanel() {
 
 function openContractModal(existingId = null) {
   editingContractId = existingId;
-  el.contractModalTitle.textContent = existingId ? 'EDIT CONTRACT' : 'PRODUCTION AGREEMENT';
-  setContractDate();
+  const typeVal = document.getElementById('contractType')?.value || 'crew';
+  const tmpl = CONTRACT_TEMPLATES[typeVal] || CONTRACT_TEMPLATES.crew;
+  if (el.contractModalTitle) el.contractModalTitle.textContent = existingId ? `EDIT — ${tmpl.title}` : tmpl.title;
+  renderContractBody(typeVal);
 
   if (existingId) {
     const c = contracts.find(x => x.id === existingId);
@@ -1598,3 +1600,414 @@ window.printContractById = printContractById;
 window.deleteContract = deleteContract;
 window.openLocationModal = openLocationModal;
 window.deleteLocation = deleteLocation;
+
+/* ═══════════════════════════════════════════════════════════════
+   HUB NAVIGATION
+═══════════════════════════════════════════════════════════════ */
+const HUB_LABELS = {
+  applications: 'CASTING PORTAL',
+  email:        'EMAIL HUB',
+  contracts:    'CONTRACTS HUB',
+  contacts:     'CONTACTS DATABASE',
+  locations:    'LOCATION TRACKER',
+  timeline:     'PRODUCTION TIMELINE',
+  admin:        'ADMIN PANEL',
+};
+
+function initHubs() {
+  document.querySelectorAll('.hub-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchHub(btn.dataset.hub));
+  });
+
+  // Show admin tab only for zaria
+  if (isAdmin) {
+    document.querySelectorAll('.admin-only').forEach(el2 => el2.classList.remove('hidden'));
+    initAdminPanel();
+  }
+  initProductionLocks();
+
+  // Email hub quick-send
+  const qSend = document.getElementById('qSendBtn');
+  if (qSend) qSend.addEventListener('click', sendQuickEmail);
+
+  // Sync inline contacts search
+  const cs = document.getElementById('contactsSearch');
+  if (cs) cs.addEventListener('input', () => renderContacts(cs.value.trim().toLowerCase()));
+
+  // Location search
+  const ls = document.getElementById('locationSearch');
+  if (ls) ls.addEventListener('input', () => renderLocations(ls.value.trim().toLowerCase()));
+}
+
+function switchHub(hub) {
+  document.querySelectorAll('.hub-btn').forEach(b => b.classList.toggle('active', b.dataset.hub === hub));
+  document.querySelectorAll('.hub-panel').forEach(p => p.classList.toggle('active', p.id === `hub-${hub}`));
+  const lbl = document.getElementById('activeHubLabel');
+  if (lbl) lbl.textContent = HUB_LABELS[hub] || 'CASTING PORTAL';
+  // Lazy-load contacts when switching to that hub
+  if (hub === 'contacts') renderContacts();
+  if (hub === 'locations') renderLocations();
+  if (hub === 'timeline' && !tlRecords.length) loadTimeline();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ADMIN PANEL
+═══════════════════════════════════════════════════════════════ */
+const LOCKED_ADMIN = { zaria: { password: 'bleuskm2026', role: 'Admin' } };
+
+function loadAdminUsers() {
+  try {
+    const s = JSON.parse(localStorage.getItem('bleuskm_crew') || '{}');
+    if (!s.__seeded) {
+      s.ceion  = s.ceion  || { password: 'bleuskmcrew', role: 'Producer' };
+      s.carmen = s.carmen || { password: 'bleuskmcrew', role: 'Producer' };
+      s.__seeded = true;
+      localStorage.setItem('bleuskm_crew', JSON.stringify(s));
+    }
+    return s;
+  } catch { return {}; }
+}
+
+function saveAdminUsers(users) { localStorage.setItem('bleuskm_crew', JSON.stringify(users)); }
+
+function initAdminPanel() {
+  renderAdminUsers();
+  const addBtn = document.getElementById('adminAddUserBtn');
+  if (addBtn) addBtn.addEventListener('click', addAdminUser);
+}
+
+function renderAdminUsers() {
+  const list = document.getElementById('adminUserList');
+  if (!list) return;
+  list.innerHTML = '';
+  const stored = loadAdminUsers();
+
+  // Locked row
+  const zariaRow = document.createElement('div');
+  zariaRow.className = 'admin-user-row';
+  zariaRow.innerHTML = `<div class="admin-user-info"><span class="admin-uname">zaria</span><span class="admin-urole">Admin</span></div><span class="admin-ulocked">locked</span>`;
+  list.appendChild(zariaRow);
+
+  // Editable rows
+  Object.entries(stored).forEach(([username, data]) => {
+    if (username === '__seeded') return;
+    const wrapper = document.createElement('div');
+
+    const row = document.createElement('div');
+    row.className = 'admin-user-row';
+    row.innerHTML = `
+      <div class="admin-user-info">
+        <span class="admin-uname">${esc(username)}</span>
+        <span class="admin-urole">${esc(data.role || 'Crew')}</span>
+      </div>
+      <div class="admin-user-actions">
+        <button class="contact-action-btn edit-toggle">&#9998; Edit</button>
+        <button class="contact-action-btn" style="color:var(--err);" data-del="${esc(username)}">&#10005; Remove</button>
+      </div>`;
+
+    const editRow = document.createElement('div');
+    editRow.className = 'admin-edit-row';
+    editRow.innerHTML = `
+      <input type="text" class="modal-input er-uname" value="${esc(username)}" placeholder="Username" style="max-width:140px;" />
+      <input type="password" class="modal-input er-pass" value="" placeholder="New password (blank = keep)" style="max-width:180px;" />
+      <select class="modal-input er-role" style="max-width:130px;">
+        ${['Producer','Director','Crew','PA'].map(r => `<option value="${r}" ${data.role===r?'selected':''}>${r}</option>`).join('')}
+      </select>
+      <button class="modal-save er-save" style="padding:7px 14px;">Save</button>`;
+
+    row.querySelector('.edit-toggle').addEventListener('click', () => editRow.classList.toggle('open'));
+
+    row.querySelector('[data-del]').addEventListener('click', () => {
+      if (!confirm(`Remove ${username}?`)) return;
+      const u = loadAdminUsers(); delete u[username]; saveAdminUsers(u);
+      showAdminMsg(`${username} removed.`); renderAdminUsers();
+    });
+
+    editRow.querySelector('.er-save').addEventListener('click', () => {
+      const newU = editRow.querySelector('.er-uname').value.trim().toLowerCase();
+      const newP = editRow.querySelector('.er-pass').value.trim();
+      const newR = editRow.querySelector('.er-role').value;
+      if (!newU) { showAdminMsg('Username required.', true); return; }
+      const u = loadAdminUsers();
+      if (newU !== username) {
+        if (u[newU] || LOCKED_ADMIN[newU]) { showAdminMsg('Username taken.', true); return; }
+        delete u[username];
+      }
+      u[newU] = { password: newP || data.password, role: newR };
+      saveAdminUsers(u); showAdminMsg(`${newU} updated.`); renderAdminUsers();
+    });
+
+    wrapper.appendChild(row); wrapper.appendChild(editRow); list.appendChild(wrapper);
+  });
+}
+
+function addAdminUser() {
+  const u = (document.getElementById('adminNewUser').value || '').trim().toLowerCase();
+  const p = (document.getElementById('adminNewPass').value || '').trim();
+  const r = document.getElementById('adminNewRole').value;
+  if (!u || !p) { showAdminMsg('Fill in username and password.', true); return; }
+  const users = loadAdminUsers();
+  if (users[u] || LOCKED_ADMIN[u]) { showAdminMsg('Username already exists.', true); return; }
+  users[u] = { password: p, role: r };
+  saveAdminUsers(users);
+  document.getElementById('adminNewUser').value = '';
+  document.getElementById('adminNewPass').value = '';
+  showAdminMsg(`${u} added as ${r}.`); renderAdminUsers();
+}
+
+function showAdminMsg(msg, isErr = false) {
+  const el2 = document.getElementById('adminMsg');
+  if (!el2) return;
+  el2.textContent = msg;
+  el2.className = `admin-msg ${isErr ? 'err' : 'ok'}`;
+  setTimeout(() => { el2.textContent = ''; }, 3000);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PRODUCTION LOCKS (Admin only)
+═══════════════════════════════════════════════════════════════ */
+const PRODUCTIONS = [
+  'The Final Hand','Overstood','Love me like this','Liminal County',
+  'Of blood and dominion','As Is','The 15th Hour','Book of Beginnings',
+];
+
+function loadLocks() {
+  try { return JSON.parse(localStorage.getItem('bleuskm_prod_locks') || '{}'); } catch { return {}; }
+}
+function saveLocks(locks) { localStorage.setItem('bleuskm_prod_locks', JSON.stringify(locks)); }
+
+function initProductionLocks() {
+  const grid = document.getElementById('prodLocksGrid');
+  if (!grid) return;
+  const locks = loadLocks();
+  grid.innerHTML = '';
+  PRODUCTIONS.forEach(prod => {
+    const locked = locks[prod] !== false; // default unlocked
+    const card = document.createElement('div');
+    card.className = 'prod-lock-card';
+    const chkId = `lock_${prod.replace(/\s+/g,'_')}`;
+    card.innerHTML = `
+      <span class="prod-lock-name">${esc(prod)}</span>
+      <label class="lock-toggle" title="${locked ? 'Locked' : 'Unlocked'}">
+        <input type="checkbox" id="${chkId}" ${!locked ? 'checked' : ''} />
+        <span class="lock-slider"></span>
+      </label>`;
+    const chk = card.querySelector('input');
+    chk.addEventListener('change', () => {
+      const l = loadLocks();
+      l[prod] = !chk.checked; // checked = unlocked
+      saveLocks(l);
+      toast(`${prod} ${chk.checked ? 'unlocked' : 'locked'}`, 'success');
+    });
+    grid.appendChild(card);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   EMAIL HUB — quick compose + batch from hub
+═══════════════════════════════════════════════════════════════ */
+async function sendQuickEmail() {
+  const from    = (document.getElementById('qFrom')?.value || '').trim();
+  const to      = (document.getElementById('qTo')?.value || '').trim();
+  const subject = (document.getElementById('qSubject')?.value || '').trim();
+  const body    = (document.getElementById('qBody')?.value || '').trim();
+  const btn     = document.getElementById('qSendBtn');
+  if (!to || !subject || !body) { toast('Fill in all fields.', 'error'); return; }
+  btn.disabled = true; btn.textContent = 'Sending...';
+  try {
+    const res = await fetch(CFG.BREVO, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ endpoint: CFG.BREVO_EMAIL, payload: { sender: { name: 'BLEUSKM Studios', email: from }, to: [{ email: to }], subject, textContent: body } }),
+    });
+    if (!res.ok) throw new Error(`Brevo ${res.status}`);
+    toast(`Sent from ${from} to ${to}`, 'success');
+    document.getElementById('qTo').value = '';
+    document.getElementById('qSubject').value = '';
+    document.getElementById('qBody').value = '';
+  } catch (err) { toast(`Failed: ${err.message}`, 'error'); }
+  finally { btn.disabled = false; btn.textContent = 'Send Email'; }
+}
+
+function openBatchFromEmailHub(tid) {
+  // Switch to applications hub, pre-set template, show batch bar
+  switchHub('applications');
+  const sel = document.getElementById('batchTemplateSelect');
+  if (sel) sel.value = String(tid);
+  toast(`Switched to Applications. Check boxes then send.`, 'success');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CONTRACT TYPES — dynamic clause rendering
+═══════════════════════════════════════════════════════════════ */
+const CONTRACT_TEMPLATES = {
+  crew: {
+    title: 'CREW PRODUCTION AGREEMENT',
+    party: 'Crew Member',
+    clauses: [
+      ['PARTIES', 'This Agreement is entered into between <strong>BLEUSKM Studios</strong>, an independent film production company based in Denton, Texas ("Production"), and the individual identified above ("Crew Member"), in connection with the short film production identified as the project above.'],
+      ['VOLUNTARY, NON-PAID PARTICIPATION', 'Crew Member acknowledges and agrees that participation in this production is entirely voluntary and unpaid. No compensation, monetary or otherwise, is promised, implied, or expected — now or in the future — in exchange for services rendered. Crew Member agrees to this arrangement knowingly and without coercion.'],
+      ['IMDb CREDIT', 'In recognition of their contribution, Crew Member will receive an official IMDb credit for their designated role. Production will make reasonable efforts to submit accurate credits following post-production.'],
+      ['MEDIA USAGE RIGHTS', 'Crew Member grants BLEUSKM Studios a perpetual, royalty-free, worldwide license to use footage and materials produced during this production for distribution, festivals, marketing, and archival use. Crew Member may use materials for personal portfolio and self-promotion with attribution to BLEUSKM Studios.'],
+      ['LIABILITY WAIVER', 'Crew Member voluntarily assumes all risks associated with participation, including physical activity, travel, and equipment handling. Crew Member releases BLEUSKM Studios and its representatives from any claims, liabilities, or losses arising from participation, to the fullest extent permitted by law.'],
+      ['COMMITMENT &amp; AVAILABILITY', 'Crew Member agrees to communicate availability promptly. If confirmed for a shoot day, Crew Member commits to attending unless an emergency arises, with advance notice provided as early as possible.'],
+      ['CONFIDENTIALITY', 'Crew Member agrees to keep script details, production materials, and unreleased content confidential until an official BLEUSKM Studios public announcement or release.'],
+      ['ELECTRONIC SIGNATURE', 'A typed or drawn electronic signature constitutes a legal and binding signature, equivalent to a handwritten signature under the E-SIGN Act and UETA. By signing, Crew Member confirms they have read, understood, and voluntarily agreed to all terms.'],
+      ['GOVERNING LAW', 'This Agreement is governed by the laws of the State of Texas. Disputes shall be resolved in Denton County, Texas.'],
+    ],
+  },
+  cast: {
+    title: 'CAST / PERFORMER AGREEMENT',
+    party: 'Performer',
+    clauses: [
+      ['PARTIES', 'This Agreement is entered into between <strong>BLEUSKM Studios</strong> ("Production") and the Performer identified above, in connection with the short film production identified as the project above.'],
+      ['ROLE &amp; PERFORMANCE', 'Performer agrees to portray the role specified above in the production. Performer will be available for all scheduled rehearsals, shoot days, and reshoots as reasonably required by Production.'],
+      ['VOLUNTARY, NON-PAID PARTICIPATION', 'Performer acknowledges participation is entirely voluntary and unpaid. No compensation is promised in exchange for services. Performer agrees to this arrangement knowingly and without coercion.'],
+      ['IMDb CREDIT', 'Performer will receive an official IMDb acting credit for their role. Production will submit accurate credits following post-production completion.'],
+      ['LIKENESS &amp; MEDIA RIGHTS', 'Performer grants BLEUSKM Studios a perpetual, royalty-free, worldwide license to use their performance, voice, likeness, and image captured during production for distribution, festival submissions, marketing, social media, and archival use in connection with this project.'],
+      ['TALENT RELEASE', 'Performer hereby releases BLEUSKM Studios from any claims related to the use of their likeness, performance, or image as permitted under this Agreement.'],
+      ['LIABILITY WAIVER', 'Performer voluntarily assumes all risks of participation including physical activity on set, and releases BLEUSKM Studios and its representatives from any claims or liabilities arising from participation.'],
+      ['CONFIDENTIALITY', 'Performer agrees to keep script content, production materials, and unreleased footage confidential until official public release by BLEUSKM Studios.'],
+      ['ELECTRONIC SIGNATURE', 'A typed or drawn electronic signature constitutes a legal and binding signature under the E-SIGN Act and UETA. By signing, Performer confirms they have read, understood, and agreed to all terms.'],
+      ['GOVERNING LAW', 'This Agreement is governed by the laws of the State of Texas. Disputes shall be resolved in Denton County, Texas.'],
+    ],
+  },
+  location: {
+    title: 'LOCATION AGREEMENT',
+    party: 'Location Owner',
+    clauses: [
+      ['PARTIES', 'This Location Agreement is entered into between <strong>BLEUSKM Studios</strong> ("Production") and the Location Owner/Manager identified above ("Owner"), for the use of the location specified above.'],
+      ['GRANT OF LICENSE', 'Owner grants Production a non-exclusive license to use the location on the agreed shoot dates for the purposes of filming, photographing, and recording scenes for the above-named production.'],
+      ['SHOOT DATES &amp; HOURS', 'Production agrees to occupy the location only during mutually agreed-upon dates and hours. Any extension must be approved by Owner in advance.'],
+      ['COMPENSATION', 'The terms of any compensation, if applicable, are as agreed separately. If no compensation is specified, this license is granted on a voluntary basis.'],
+      ['RESTORATION', 'Production agrees to leave the location in substantially the same condition as found. Production is responsible for any damages caused directly by crew or equipment during filming.'],
+      ['MEDIA USAGE', 'Owner grants Production the right to use footage, photographs, and recordings of the location in the final film and all related promotional, festival, and distribution materials, in perpetuity worldwide.'],
+      ['LIABILITY', 'Production agrees to carry appropriate liability coverage for the shoot period and to indemnify Owner against claims arising from Production\'s negligence on the property.'],
+      ['CANCELLATION', 'Either party may cancel with reasonable advance notice. Production will make reasonable efforts to accommodate alternative arrangements.'],
+      ['ELECTRONIC SIGNATURE', 'A typed or drawn electronic signature constitutes a legal and binding signature under the E-SIGN Act and UETA. By signing, Owner confirms they have read, understood, and agreed to all terms.'],
+      ['GOVERNING LAW', 'This Agreement is governed by the laws of the State of Texas. Disputes shall be resolved in Denton County, Texas.'],
+    ],
+  },
+  talent_release: {
+    title: 'TALENT / ACTOR RELEASE FORM',
+    party: 'Talent',
+    clauses: [
+      ['PARTIES', 'This Talent Release is entered into between <strong>BLEUSKM Studios</strong> ("Production") and the individual identified above ("Talent").'],
+      ['GRANT OF RIGHTS', 'Talent hereby grants Production the irrevocable right to photograph, film, record, and otherwise capture their appearance, voice, likeness, and performance in connection with the above-named project.'],
+      ['USAGE', 'Production may use, reproduce, distribute, exhibit, and create derivative works from any recordings of Talent in connection with the project, including for distribution, festival submissions, marketing, press, and social media, in perpetuity, worldwide, in all media now known or hereafter developed.'],
+      ['COMPENSATION', 'Talent agrees that participation is voluntary and may be uncompensated except as separately agreed. Talent waives any right to additional compensation for uses permitted herein.'],
+      ['WAIVER OF CLAIMS', 'Talent waives any right to review, approve, or object to how their likeness or performance is used in connection with this production, and releases Production from any and all claims arising from such use.'],
+      ['MINOR CONSENT', 'If Talent is under 18 years of age, a parent or legal guardian must also sign this release on their behalf.'],
+      ['ELECTRONIC SIGNATURE', 'A typed or drawn electronic signature constitutes a legal and binding signature under the E-SIGN Act and UETA. By signing, Talent confirms they have read, understood, and agreed to all terms.'],
+      ['GOVERNING LAW', 'This Agreement is governed by the laws of the State of Texas.'],
+    ],
+  },
+  background: {
+    title: 'BACKGROUND ACTOR / EXTRA RELEASE',
+    party: 'Background Actor',
+    clauses: [
+      ['PARTIES', 'This Background Actor Release is entered into between <strong>BLEUSKM Studios</strong> ("Production") and the individual identified above ("Background Actor").'],
+      ['ROLE', 'Background Actor agrees to appear as a non-speaking background performer in the above-named production on the agreed shoot date(s).'],
+      ['GRANT OF RIGHTS', 'Background Actor grants Production the irrevocable, perpetual, worldwide right to use their appearance and likeness captured during filming for any purpose related to this production, including distribution, marketing, and promotional materials.'],
+      ['COMPENSATION', 'Background Actor acknowledges participation is voluntary. No compensation, monetary or otherwise, is promised unless separately agreed in writing.'],
+      ['WAIVER', 'Background Actor waives any right to compensation, approval, or credit for their appearance in the production, and releases Production from any claims arising from such appearance.'],
+      ['ELECTRONIC SIGNATURE', 'A typed or drawn electronic signature constitutes a legal and binding signature under the E-SIGN Act and UETA. By signing, Background Actor confirms they have read, understood, and agreed to all terms.'],
+      ['GOVERNING LAW', 'This Agreement is governed by the laws of the State of Texas.'],
+    ],
+  },
+  composer: {
+    title: 'COMPOSER / MUSIC RELEASE',
+    party: 'Composer',
+    clauses: [
+      ['PARTIES', 'This Composer Release is entered into between <strong>BLEUSKM Studios</strong> ("Production") and the Composer identified above.'],
+      ['COMPOSITION &amp; DELIVERY', 'Composer agrees to create and deliver original musical compositions and/or recordings for use in the above-named production as mutually agreed.'],
+      ['GRANT OF RIGHTS', 'Composer grants Production a perpetual, royalty-free, worldwide license to synchronize, reproduce, distribute, and publicly perform the compositions in connection with the production, including in the final film, trailers, promotional materials, streaming, broadcast, and distribution.'],
+      ['OWNERSHIP &amp; CREDIT', 'Composer retains ownership of the underlying musical compositions. Production retains the synchronization license granted herein. Composer will receive appropriate music credit in the film.'],
+      ['COMPENSATION', 'Compensation, if any, is as separately agreed. If no compensation is specified, this license is granted voluntarily.'],
+      ['WARRANTIES', 'Composer warrants that the compositions are original works, do not infringe any third-party rights, and that Composer has the full right to grant the licenses herein.'],
+      ['ELECTRONIC SIGNATURE', 'A typed or drawn electronic signature constitutes a legal and binding signature under the E-SIGN Act and UETA. By signing, Composer confirms they have read, understood, and agreed to all terms.'],
+      ['GOVERNING LAW', 'This Agreement is governed by the laws of the State of Texas.'],
+    ],
+  },
+  custom: {
+    title: 'CUSTOM AGREEMENT',
+    party: 'Party',
+    clauses: [
+      ['PARTIES', 'This Agreement is entered into between <strong>BLEUSKM Studios</strong> ("Production") and the individual identified above.'],
+    ],
+  },
+};
+
+function renderContractBody(type) {
+  const body = document.getElementById('contractBody');
+  if (!body) return;
+  const tmpl = CONTRACT_TEMPLATES[type] || CONTRACT_TEMPLATES.crew;
+  const isCustom = type === 'custom';
+
+  let html = `
+    <div class="cmodal-section-header">
+      <span class="cmodal-section-eyebrow">SHORT FILM PRODUCTION AGREEMENT</span>
+      <h2 class="cmodal-section-title">BLEUSKM Studios</h2>
+      <p class="cmodal-section-sub">BLEUSKM Studios &nbsp;&middot;&nbsp; Denton, TX &nbsp;&middot;&nbsp; 2026</p>
+    </div>`;
+
+  tmpl.clauses.forEach((clause, i) => {
+    const isLast = i === tmpl.clauses.length - 1 && !isCustom;
+    html += `<div class="cmodal-clause" ${isLast?'style="border-bottom:none;margin-bottom:0;padding-bottom:0;"':''}>
+      <span class="cmodal-clause-num">${i+1}</span>
+      <div class="cmodal-clause-body">
+        <p class="cmodal-clause-title">${clause[0]}</p>
+        <p class="cmodal-clause-text">${clause[1]}</p>
+      </div>
+    </div>`;
+  });
+
+  html += `<div class="cmodal-addl-section">
+    <p class="modal-label" style="margin-bottom:8px;">ADDITIONAL TERMS${isCustom?' / FULL AGREEMENT TEXT':' (optional)'}</p>
+    <textarea class="modal-input" id="contractTerms" rows="${isCustom?14:4}" placeholder="${isCustom?'Write the full custom agreement here...':'Add shoot dates, specific obligations, compensation details, or any additional terms...'}"></textarea>
+  </div>
+  <div class="cmodal-sig-section">
+    <p class="cmodal-clause-title" style="margin-bottom:14px;">SIGNATURE</p>
+    <div class="sig-tabs" style="margin-bottom:14px;">
+      <button class="sig-tab active" id="sigTypeTab">Type</button>
+      <button class="sig-tab" id="sigDrawTab">Draw</button>
+    </div>
+    <div id="sigTypeArea">
+      <input class="modal-input sig-type-input" id="sigTypeInput" type="text" placeholder="Type your full name to sign" autocomplete="off" />
+    </div>
+    <div class="hidden" id="sigDrawArea">
+      <canvas id="sigCanvas" class="sig-canvas" width="560" height="120"></canvas>
+      <button class="icon-btn" id="sigClearBtn" style="margin-top:6px;">Clear</button>
+    </div>
+    <div class="cmodal-date-row">
+      <span class="modal-label">DATE</span>
+      <span id="contractDateSigned" style="font-size:12px;color:var(--muted);"></span>
+    </div>
+  </div>`;
+
+  body.innerHTML = html;
+  setContractDate();
+  // Re-bind sig canvas after re-render
+  sigCtx = null;
+  const newTypeTab = document.getElementById('sigTypeTab');
+  const newDrawTab = document.getElementById('sigDrawTab');
+  const newTypeArea = document.getElementById('sigTypeArea');
+  const newDrawArea = document.getElementById('sigDrawArea');
+  const newClearBtn = document.getElementById('sigClearBtn');
+  if (newTypeTab) newTypeTab.addEventListener('click', () => { newTypeTab.classList.add('active'); newDrawTab.classList.remove('active'); newTypeArea.classList.remove('hidden'); newDrawArea.classList.add('hidden'); });
+  if (newDrawTab) newDrawTab.addEventListener('click', () => { newDrawTab.classList.add('active'); newTypeTab.classList.remove('active'); newDrawArea.classList.remove('hidden'); newTypeArea.classList.add('hidden'); initSigCanvas(); });
+  if (newClearBtn) newClearBtn.addEventListener('click', () => { if (sigCtx) sigCtx.clearRect(0, 0, el.sigCanvas?.width || 560, el.sigCanvas?.height || 120); });
+}
+
+// Re-wire contractType select to re-render clauses dynamically
+document.addEventListener('DOMContentLoaded', () => {
+  const typeSelect = document.getElementById('contractType');
+  if (typeSelect) {
+    typeSelect.addEventListener('change', () => {
+      renderContractBody(typeSelect.value);
+      const tmpl = CONTRACT_TEMPLATES[typeSelect.value] || CONTRACT_TEMPLATES.crew;
+      const titleEl = document.getElementById('contractModalTitle');
+      if (titleEl) titleEl.textContent = tmpl.title;
+    });
+  }
+  initHubs();
+});
