@@ -1,320 +1,60 @@
 (function () {
-  const ARCHIVE_KEY = 'bleuskm_casting_email_archive';
   const rawFetch = window.fetch.bind(window);
+  const PASSCODE = 'bleuskm2026';
+  const A = '/.netlify/functions/airtable-proxy';
+  const B = '/.netlify/functions/brevo-proxy';
+  const ARCHIVE_KEY = 'bleuskm_casting_email_archive';
+  const templateNames = {16:'Casting Rejection',17:'Direct Offer - Film Redirect',18:'Cross Casting - Specific Role',19:'Final Callback + Calendly'};
 
-  function text(value) {
-    if (Array.isArray(value)) return value.map(text).filter(Boolean).join(', ');
-    if (value && typeof value === 'object') return value.name || value.url || value.filename || '';
-    return String(value ?? '').trim();
-  }
+  function t(v){ if(Array.isArray(v)) return v.map(t).filter(Boolean).join(', '); if(v && typeof v==='object') return v.name || v.url || v.filename || ''; return String(v ?? '').trim(); }
+  function esc(v){ return String(v ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  async function getTable(table){ const r=await rawFetch(`${A}?table=${encodeURIComponent(table)}`); return r.ok ? (await r.json()).records || [] : []; }
+  function normCrew(r){ const f=r.fields||{}; f.Status=t(f.Status); f.Preferred_role_by_Director=t(f['Preferred role by Director']||f.Preferred_role_by_Director); f.LT_Roles=t(f['LT Roles']||f.LT_Roles); return r; }
+  function normCast(r){ const f=r.fields||{}; f['Cast Status']=t(f['Cast Status']); f['Casting Status']=t(f['Casting Status']); f['To Role']=t(f['To Role']); return r; }
+  function crewRole(f){ return t(f['Preferred role by Director']||f.Preferred_role_by_Director) || t(f.Role); }
+  function contractLink(name,email,role){ const qs=new URLSearchParams({name:name||'',email:email||'',role:role||'',film:'The Final Hand'}); return `https://bleuskm.com/crew/contract?${qs}`; }
+  function toast(msg){ if(window.toast) window.toast(msg,'success'); else alert(msg); }
 
-  function normalizeCrewRecord(record) {
-    const f = record.fields || {};
-    f.Status = normalizeStatus(f.Status);
-    f.Preferred_role_by_Director = text(f['Preferred role by Director'] || f.Preferred_role_by_Director);
-    f.LT_Roles = text(f['LT Roles'] || f.LT_Roles);
-    if (f['For the final Hand'] !== undefined && f['For the Final Hand'] === undefined) {
-      f['For the Final Hand'] = f['For the final Hand'];
-    }
-    return record;
-  }
+  function addStyles(){ if(document.getElementById('finalPortalFixStyles')) return; document.head.insertAdjacentHTML('beforeend', `<style id="finalPortalFixStyles">
+    .hub-panel.active{display:block!important}.portal-card-grid,.contacts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}.portal-person-card,.contact-card,.portal-note{position:relative;background:var(--surface2,#111);border:1px solid var(--borderdim,rgba(255,255,255,.08));padding:16px;border-radius:6px}.portal-card-check{position:absolute;right:10px;top:10px}.portal-card-open{display:grid;gap:6px;width:100%;text-align:left;background:transparent;border:0;color:var(--text,#eadfcf);font-family:inherit;cursor:pointer}.portal-card-open strong{font-size:16px}.portal-card-open span,.portal-card-open small,.portal-note p{color:var(--muted,rgba(234,223,207,.55));font-size:11px;line-height:1.5}.portal-card-open em{width:max-content;border:1px solid var(--borderdim);padding:4px 7px;font-style:normal;font-size:9px;text-transform:uppercase;color:var(--gold,#DAAF37)}.portal-bulk-bar{display:flex;align-items:center;gap:8px;margin:0 0 14px;padding:10px 12px;border:1px solid var(--borderdim);background:var(--surface2,#111)}.portal-bulk-bar button,.portal-action,.portal-contract-actions button,.phase-delete-btn{border:1px solid rgba(218,175,55,.35);background:transparent;color:var(--gold,#DAAF37);font:700 9px inherit;letter-spacing:.14em;text-transform:uppercase;padding:8px 10px;cursor:pointer}.portal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.86);z-index:9500;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:38px 18px}.portal-modal,.portal-contract-doc{background:#0d0d0d;border:1px solid rgba(218,175,55,.24);width:min(780px,96vw);padding:24px;position:relative;color:var(--text,#eadfcf)}.portal-x{position:absolute;right:14px;top:12px;background:transparent;border:0;color:var(--muted);font-size:22px;cursor:pointer}.portal-links{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.portal-links a{color:var(--gold,#DAAF37)}.portal-contract-top{display:flex;justify-content:space-between;border-bottom:2px solid var(--gold,#DAAF37);padding-bottom:14px}.portal-contract-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:16px 0}.portal-contract-info label{font-size:8px;color:var(--gold);font-weight:700;letter-spacing:.2em;text-transform:uppercase}.portal-contract-info input,.portal-contract-info span{display:block;width:100%;margin-top:6px;background:#151515;border:1px solid var(--borderdim);color:var(--text);padding:10px}.portal-contract-clause{display:flex;gap:16px;border-bottom:1px solid var(--borderdim);padding:14px 0}.portal-contract-clause>span{color:var(--gold);font-weight:700}.portal-contract-clause p{color:var(--muted);line-height:1.65}.portal-signature-block{margin-top:20px;padding:16px;background:#111;border:1px solid var(--borderdim)}.portal-signature-block img{max-width:250px;background:#fff;padding:8px;display:block;margin:10px 0}.portal-notes-panel{margin-top:28px;border-top:1px solid var(--borderdim);padding-top:18px}.portal-notes-list{display:grid;gap:8px;margin-bottom:12px}.portal-note span{font-size:9px;color:var(--gold);text-transform:uppercase}.portal-note-compose{display:grid;gap:8px}.contact-picker{position:absolute;z-index:9600;width:min(420px,90vw);max-height:260px;overflow:auto;background:#111;border:1px solid var(--borderdim);box-shadow:0 18px 40px rgba(0,0,0,.45);margin-top:4px}.contact-picker-row{display:block;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid var(--borderdim);color:var(--text);padding:10px 12px;cursor:pointer;font-family:inherit}.contact-picker-row:hover{background:rgba(218,175,55,.08)}.contact-picker-row strong{display:block;font-size:11px}.contact-picker-row span,.contact-picker-empty{display:block;font-size:10px;line-height:1.45;color:var(--muted);padding:10px 12px}
+  </style>`); }
 
-  function normalizeCastingRecord(record) {
-    const f = record.fields || {};
-    f['Cast Status'] = text(f['Cast Status']);
-    f['Casting Status'] = text(f['Casting Status']);
-    f['To Role'] = text(f['To Role']);
-    return record;
-  }
+  async function enrichCasting(body){ const p=body.payload||{}, id=Number(p.templateId); if(![16,17,18,19].includes(id)) return body; const email=t(p.to?.[0]?.email); const rec=(await getTable('Casting Submissions')).map(normCast).find(r=>t(r.fields?.Email).toLowerCase()===email.toLowerCase()); if(!rec) return body; const f=rec.fields||{}, film=t(f.Film)||'The Final Hand', role=t(f.Role), toRole=t(f['To Role']); p.params={...(p.params||{}),NAME:t(f.Name),EMAIL:email,PHONE:t(f.Phone),LOCATION:t(f.Location),ROLE:role,FILM_NAME:film}; if(id===17){p.params.FILM_LINK=p.params.FILM_LINK||'https://bleuskm.com/casting/';p.params.CONSENT_YES_URL=`https://bleuskm.com/redirect-response?id=${rec.id}&response=yes&film=${encodeURIComponent(film)}`;p.params.CONSENT_NO_URL=`https://bleuskm.com/redirect-response?id=${rec.id}&response=no&film=${encodeURIComponent(film)}`;} if(id===18){p.params.TO_ROLE=toRole||role;p.params.NEW_ROLE=p.params.TO_ROLE;p.params.CONSENT_YES_URL=`https://bleuskm.com/redirect-response?id=${rec.id}&response=yes&film=${encodeURIComponent(film)}`;p.params.CONSENT_NO_URL=`https://bleuskm.com/redirect-response?id=${rec.id}&response=no&film=${encodeURIComponent(film)}`;} if(id===19){p.params.CALENDLY_URL=p.params.CALENDLY_URL||'https://calendly.com/studio-bleuskm/30min';p.params.SELFTAPE_URL=p.params.SELFTAPE_URL||`https://bleuskm.com/selftape?${new URLSearchParams({name:t(f.Name),role,email,id:rec.id})}`;} return body; }
 
-  function normalizeStatus(value) {
-    const status = text(value);
-    return status.toLowerCase() === 'core' ? 'Core' : status;
-  }
+  window.fetch=async function(input,init={}){ const url=typeof input==='string'?input:input?.url||''; if(url.includes('/.netlify/functions/brevo-proxy')&&init.body){ let body; try{body=JSON.parse(init.body)}catch{} if(body?.payload){ body=await enrichCasting(body); init={...init,body:JSON.stringify(body)}; } const res=await rawFetch(input,init); if(res.ok&&body?.payload) archive({from:body.payload.sender?.email,to:body.payload.to?.[0]?.email,templateId:body.payload.templateId,name:body.payload.params?.NAME}); return res; } const res=await rawFetch(input,init); if(url.includes('/.netlify/functions/airtable-proxy')&&res.ok){ const table=new URL(url,location.href).searchParams.get('table'); if(table==='Crew applications'||table==='Casting Submissions'){ const data=await res.clone().json(); data.records=(data.records||[]).map(table==='Crew applications'?normCrew:normCast); return new Response(JSON.stringify(data),{status:res.status,statusText:res.statusText,headers:{'Content-Type':'application/json'}}); } } return res; };
 
-  function endpointUrl(input) {
-    if (typeof input === 'string') return input;
-    if (input && typeof input.url === 'string') return input.url;
-    return '';
-  }
+  function archive(entry){ let items=[]; try{items=JSON.parse(sessionStorage.getItem(ARCHIVE_KEY)||'[]')}catch{} items.unshift({at:new Date().toISOString(),...entry}); sessionStorage.setItem(ARCHIVE_KEY,JSON.stringify(items.slice(0,80))); renderArchive(); }
+  function renderArchive(){ const list=document.getElementById('emailArchiveList'); if(!list) return; let items=[]; try{items=JSON.parse(sessionStorage.getItem(ARCHIVE_KEY)||'[]')}catch{} list.innerHTML=items.length?items.map(i=>`<div class="archive-row"><div><strong>T${esc(i.templateId||'')}</strong><span>${esc(i.name||i.to||'')}</span></div><div>${esc(i.from||'')} -> ${esc(i.to||'')}</div></div>`).join(''):'<p style="font-size:10px;color:var(--muted);padding:12px 0;">No emails sent this session.</p>'; }
 
-  function isCoreCrew(record) {
-    return normalizeStatus(record.fields?.Status).toLowerCase() === 'core';
-  }
+  async function contacts(){ const [crew,cast]=await Promise.all([getTable('Crew applications'),getTable('Casting Submissions')]); return {crew:crew.map(normCrew).filter(r=>t(r.fields?.Status).toLowerCase()==='core'),cast:cast.map(normCast).filter(r=>t(r.fields?.['Cast Status']).toLowerCase()==='confirmed')}; }
+  async function pickerContacts(){ const c=await contacts(); return [...c.crew.map(r=>({type:'Crew',name:t(r.fields.Name),email:t(r.fields.Email),role:crewRole(r.fields)})),...c.cast.map(r=>({type:'Cast',name:t(r.fields.Name),email:t(r.fields.Email),role:t(r.fields.Role)}))].filter(x=>x.email); }
+  async function attachPickers(){ const list=await pickerContacts(); ['qTo','composeTo','templateComposerTo'].forEach(id=>attachPicker(document.getElementById(id),list)); }
+  function attachPicker(input,list){ if(!input||input.dataset.contactPickerReady) return; input.dataset.contactPickerReady='1'; const wrap=document.createElement('div'); wrap.className='contact-picker hidden'; input.insertAdjacentElement('afterend',wrap); const render=()=>{ const q=input.value.toLowerCase(); const m=list.filter(c=>!q||[c.name,c.email,c.role,c.type].join(' ').toLowerCase().includes(q)).slice(0,40); wrap.innerHTML=m.map(c=>`<button type="button" class="contact-picker-row" data-email="${esc(c.email)}"><strong>${esc(c.name||c.email)}</strong><span>${esc(c.type)}${c.role?' - '+esc(c.role):''}<br>${esc(c.email)}</span></button>`).join('')||'<div class="contact-picker-empty">No matching contacts.</div>'; wrap.classList.remove('hidden'); }; input.addEventListener('focus',render); input.addEventListener('click',render); input.addEventListener('input',render); wrap.addEventListener('mousedown',e=>{ const row=e.target.closest('[data-email]'); if(row){e.preventDefault(); input.value=row.dataset.email; wrap.classList.add('hidden'); updateTemplateLink();}}); document.addEventListener('click',e=>{ if(e.target!==input&&!wrap.contains(e.target)) wrap.classList.add('hidden'); }); }
 
-  function isConfirmedCast(record) {
-    return text(record.fields?.['Cast Status']).toLowerCase() === 'confirmed';
-  }
+  function repairTabs(hub){ document.querySelectorAll('.hub-panel').forEach(p=>{ const on=p.id===`hub-${hub}`; p.classList.toggle('active',on); p.classList.toggle('hidden',!on); }); }
+  async function renderContacts(){ const grid=document.getElementById('contactsGrid'), counts=document.getElementById('contactsCounts'); if(!grid) return; const c=await contacts(); if(counts) counts.textContent=`${c.crew.length} crew - ${c.cast.length} confirmed cast`; const card=(r,type)=>{ const f=r.fields||{}, email=t(f.Email), role=type==='crew'?crewRole(f):t(f.Role); return `<div class="contact-card"><div class="contact-card-name">${esc(t(f.Name)||'---')}</div><div class="contact-card-detail">${esc(email)}<br>${esc(type==='crew'?role:[t(f.Location),role].filter(Boolean).join(' - '))}</div><div class="contact-card-actions">${email?`<button class="contact-action-btn" data-email-contact="${esc(email)}">Email</button>`:''}</div></div>`; }; grid.innerHTML=`<div class="contacts-section-label">CORE CREW - THE FINAL HAND</div>${c.crew.map(r=>card(r,'crew')).join('')}<div class="contacts-section-label">CONFIRMED CAST - THE FINAL HAND</div>${c.cast.map(r=>card(r,'cast')).join('')||'<p style="font-size:10px;color:var(--muted);">No confirmed cast yet.</p>'}`; grid.querySelectorAll('[data-email-contact]').forEach(b=>b.onclick=()=>window.openComposeModal?.(b.dataset.emailContact)); }
 
-  function archive(entry) {
-    let items = [];
-    try { items = JSON.parse(sessionStorage.getItem(ARCHIVE_KEY) || '[]'); } catch {}
-    items.unshift({
-      at: new Date().toISOString(),
-      from: entry.from || 'Brevo template',
-      to: entry.to || '',
-      subject: entry.subject || '',
-      templateId: entry.templateId || '',
-      name: entry.name || '',
-    });
-    sessionStorage.setItem(ARCHIVE_KEY, JSON.stringify(items.slice(0, 80)));
-    renderArchive();
-  }
+  function emailHub(){ const hub=document.getElementById('hub-email'); if(!hub) return; hub.querySelector('.hub-sub')?.remove(); [...hub.querySelectorAll('.hub-section-label')].forEach(x=>{ if(/BREVO TEMPLATES|COMPOSE DIRECT EMAIL/i.test(x.textContent)) x.remove(); }); hub.querySelector('.compose-quickform')?.classList.add('hidden'); hub.querySelectorAll('.tc-send-btn').forEach(btn=>{ const id=Number((btn.getAttribute('onclick')||'').match(/\d+/)?.[0]); if(!id) return; btn.textContent='Compose Direct Email'; btn.onclick=e=>{ e?.preventDefault?.(); openTemplate(id); return false; }; }); }
+  function ensureTemplateModal(){ if(document.getElementById('templateComposerModal')) return; document.body.insertAdjacentHTML('beforeend',`<div class="modal-overlay hidden" id="templateComposerModal"><div class="modal-card" style="max-width:520px;"><div class="modal-header"><span class="modal-title" id="templateComposerTitle">Send Template</span><button class="modal-close" id="templateComposerClose">&times;</button></div><div class="modal-body"><input type="hidden" id="templateComposerId"><div class="modal-row"><div class="modal-field"><label class="modal-label">FROM</label><select class="modal-input" id="templateComposerFrom"><option value="casting@bleuskm.com">casting@bleuskm.com</option><option value="studio@bleuskm.com">studio@bleuskm.com</option><option value="crew@bleuskm.com">crew@bleuskm.com</option></select></div><div class="modal-field"><label class="modal-label">TO</label><input class="modal-input" id="templateComposerTo" type="email" placeholder="recipient@email.com"></div></div><p style="font-size:10px;color:var(--muted);line-height:1.5;">Airtable fields autofill the Brevo template params based on recipient.</p></div><div class="modal-footer"><button class="modal-cancel" id="templateComposerCancel">Cancel</button><button class="modal-save" id="templateComposerSend">Send Template</button></div></div></div>`); const close=()=>document.getElementById('templateComposerModal').classList.add('hidden'); document.getElementById('templateComposerClose').onclick=close; document.getElementById('templateComposerCancel').onclick=close; document.getElementById('templateComposerSend').onclick=sendTemplate; }
+  async function openTemplate(id,email=''){ ensureTemplateModal(); document.getElementById('templateComposerId').value=id; document.getElementById('templateComposerTitle').textContent=`Send T${id} - ${templateNames[id]||'Template'}`; document.getElementById('templateComposerTo').value=email; document.getElementById('templateComposerModal').classList.remove('hidden'); await attachPickers(); }
+  async function sendTemplateTo(id,email,from='casting@bleuskm.com'){ const res=await fetch(B,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({endpoint:'https://api.brevo.com/v3/smtp/email',payload:{sender:{email:from,name:'BLEUSKM Studios'},to:[{email}],templateId:Number(id),params:{}}})}); if(!res.ok) throw new Error(`Could not send T${id} to ${email}`); }
+  async function sendTemplate(){ const id=document.getElementById('templateComposerId').value, email=t(document.getElementById('templateComposerTo').value), from=document.getElementById('templateComposerFrom').value; if(!email) return alert('Choose a recipient.'); await sendTemplateTo(id,email,from); document.getElementById('templateComposerModal').classList.add('hidden'); toast('Template sent.'); }
 
-  function ensureArchive() {
-    if (!document.getElementById('emailArchiveList')) {
-      const templateGrid = document.querySelector('#hub-email .template-grid');
-      if (templateGrid) {
-        templateGrid.insertAdjacentHTML('afterend', '<div class="hub-section-label" style="margin-top:32px;">SENT EMAIL ARCHIVE</div><div class="email-archive-list" id="emailArchiveList"></div>');
-      }
-    }
-    if (!document.getElementById('liveFixArchiveStyle')) {
-      document.head.insertAdjacentHTML('beforeend', '<style id="liveFixArchiveStyle">.email-archive-list{display:grid;gap:8px}.archive-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:10px 12px;background:var(--surface2);border:1px solid var(--borderdim);border-radius:var(--r)}.archive-row strong{display:block;color:var(--text);font-size:10px;letter-spacing:.08em;text-transform:uppercase}.archive-row span,.archive-row>div:last-child{color:var(--muted);font-size:10px;line-height:1.45}.contact-picker{position:absolute;z-index:9000;width:min(420px,90vw);max-height:260px;overflow:auto;background:#111;border:1px solid var(--borderdim);box-shadow:0 18px 40px rgba(0,0,0,.45);margin-top:4px}.contact-picker-row{display:block;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid var(--borderdim);color:var(--text);padding:10px 12px;cursor:pointer;font-family:inherit}.contact-picker-row:hover{background:var(--goldfaint)}.contact-picker-row strong{display:block;font-size:11px}.contact-picker-row span,.contact-picker-empty{display:block;font-size:10px;line-height:1.45;color:var(--muted);padding:10px 12px}</style>');
-    }
-    renderArchive();
-  }
+  async function appCards(){ if(document.querySelector('.hub-panel.active')) return; const table=document.getElementById('tableWrap'); if(!table||document.getElementById('portalApplicationsGrid')) return; const recs=(await getTable('Casting Submissions')).map(normCast); const grid=document.createElement('div'); grid.id='portalApplicationsGrid'; grid.className='portal-card-grid'; table.insertAdjacentElement('afterend',grid); table.classList.add('hidden'); grid.innerHTML=recs.map(r=>{const f=r.fields||{};return `<article class="portal-person-card"><input class="portal-card-check" type="checkbox" data-card-email="${esc(t(f.Email))}"><button type="button" class="portal-card-open" data-open-person="${r.id}"><strong>${esc(t(f.Name)||'---')}</strong><span>${esc(t(f.Role)||'Role not set')}</span><em>${esc(t(f['Casting Status'])||t(f['Cast Status'])||'Pending')}</em><small>${esc(t(f.Email))}</small></button></article>`}).join(''); grid.onclick=e=>{ const b=e.target.closest('[data-open-person]'); if(b){ const r=recs.find(x=>x.id===b.dataset.openPerson); if(r) personModal(r,'cast'); } }; bulkBar(grid,19); }
+  function bulkBar(anchor,def){ if(document.getElementById('portalBulkBar')) return; anchor.insertAdjacentHTML('beforebegin',`<div id="portalBulkBar" class="portal-bulk-bar"><span id="portalBulkCount">0 selected</span><button type="button" id="portalBulkChoose">Select Template</button><button type="button" id="portalBulkSend">Send Template</button></div>`); let chosen=def; document.getElementById('portalBulkChoose').onclick=()=>{ const v=prompt('Template number to send:',String(chosen)); if(v) chosen=Number(v); }; document.getElementById('portalBulkSend').onclick=async()=>{ const emails=[...document.querySelectorAll('.portal-card-check:checked')].map(x=>x.dataset.cardEmail).filter(Boolean); if(!emails.length) return alert('Select at least one person first.'); for(const e of emails) await sendTemplateTo(chosen,e); toast(`T${chosen} sent to ${emails.length} contact(s).`); }; document.addEventListener('change',e=>{ if(e.target.matches('.portal-card-check')) document.getElementById('portalBulkCount').textContent=`${document.querySelectorAll('.portal-card-check:checked').length} selected`; }); }
+  function personModal(r,type){ const f=r.fields||{}, email=t(f.Email), role=type==='crew'?crewRole(f):t(f.Role), status=type==='crew'?t(f.Status):t(f['Casting Status'])||t(f['Cast Status']); const links=[['Headshot',f.Headshot],['Resume / Portfolio',f['Resume / Portfolio Link']||f['Reel/Portfolio Link']],['Reel / Work Samples',f['Reel / Work Samples']||f['Additional Materials']]].map(([l,v])=>t(v)?`<a href="${esc(t(v))}" target="_blank" rel="noopener">${esc(l)}</a>`:'').join(''); overlay(`<div class="portal-modal"><button class="portal-x" data-close>&times;</button><small>${esc(status||'Status not set')}</small><h3>${esc(t(f.Name)||'---')}</h3><p>${esc(role||'Role not set')}<br>${esc(email)}</p><div class="portal-links">${links||'<span>No media links stored.</span>'}</div><div>${esc(t(f.About||f.Notes||''))}</div><div style="margin-top:14px"><button class="portal-action" data-send="${esc(email)}">Send Brevo Template</button></div></div>`,o=>{ const s=o.querySelector('[data-send]'); if(s) s.onclick=()=>openTemplate(type==='crew'?21:19,s.dataset.send); }); }
 
-  function renderArchive() {
-    const list = document.getElementById('emailArchiveList');
-    if (!list) return;
-    let items = [];
-    try { items = JSON.parse(sessionStorage.getItem(ARCHIVE_KEY) || '[]'); } catch {}
-    if (!items.length) {
-      list.innerHTML = '<p style="font-size:10px;color:var(--muted);padding:12px 0;">No emails sent this session.</p>';
-      return;
-    }
-    list.innerHTML = items.map(item => {
-      const when = item.at ? new Date(item.at).toLocaleString([], { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' }) : '';
-      const label = item.templateId ? `T${item.templateId}` : escapeHtml(item.subject || 'Direct email');
-      return `<div class="archive-row"><div><strong>${escapeHtml(label)}</strong><span>${escapeHtml(item.name || item.to)}</span></div><div>${escapeHtml(item.from)} -> ${escapeHtml(item.to)}<br>${escapeHtml(when)}</div></div>`;
-    }).join('');
-  }
+  async function renderContracts(){ const list=document.getElementById('contractsList'); if(!list) return; const active=document.querySelector('.contracts-tab.active')?.dataset.tab; if(active&&active!=='crew') return; const signed=(await getTable('Contracts')).filter(r=>t(r.fields?.['Contract Status']).toLowerCase()==='signed'||t(r.fields?.Signature)); list.innerHTML=signed.length?signed.map(r=>{const f=r.fields||{}, sig=Array.isArray(f.Signature)?f.Signature[0]?.url:t(f.Signature), link=contractLink(t(f.Name),t(f.Email),t(f.Role)); return `<div class="contract-card"><div class="contract-card-header"><div><div class="contract-card-name">${esc(t(f.Name)||'---')}</div><div class="contract-card-role">${esc(t(f.Role)||'Crew')}</div></div><span class="contract-status-badge signed">Signed</span></div><div style="font-size:10px;color:var(--muted);line-height:1.5;">${esc(t(f.Email))}<br>${esc(t(f['Date Signed']))}</div><div class="contract-card-actions"><button class="contact-action-btn" data-view-contract="${r.id}">View Contract</button><button class="contact-action-btn" data-copy-link="${esc(link)}">Copy Direct Link</button>${sig?`<a class="contact-action-btn" href="${esc(sig)}" target="_blank" rel="noopener" style="text-decoration:none;">View Signature</a>`:''}</div></div>`}).join(''):'<p style="font-size:10px;color:var(--muted);padding:16px 0;">No signed crew contracts yet.</p>'; list.querySelectorAll('[data-view-contract]').forEach(b=>b.onclick=()=>{ const r=signed.find(x=>x.id===b.dataset.viewContract), f=r?.fields||{}, sig=Array.isArray(f.Signature)?f.Signature[0]?.url:t(f.Signature); contractModal({name:t(f.Name),role:t(f.Role),date:t(f['Date Signed']),sig}); }); list.querySelectorAll('[data-copy-link]').forEach(b=>b.onclick=async()=>{ await navigator.clipboard?.writeText(b.dataset.copyLink); toast('Direct contract link copied.'); }); }
+  function contractModal(d){ if(prompt(`Please enter passcode to open ${d.name||'this contract'}.`)!==PASSCODE) return; const clause=(n,h,p)=>`<div class="portal-contract-clause"><span>${n}</span><div><strong>${h}</strong><p>${p}</p></div></div>`; overlay(`<div class="portal-contract-doc"><div class="portal-contract-top"><div><small>BLEUSKM STUDIOS</small><h2>Production Agreement</h2></div><button class="portal-x" data-close>&times;</button></div><div class="portal-contract-info"><label>NAME<input value="${esc(d.name)}"></label><label>ROLE<input value="${esc(d.role)}"></label><label>PROJECT<span>The Final Hand</span></label><label>DATE SIGNED<span>${esc(d.date||'')}</span></label></div>${clause('1','PARTIES','This agreement is between BLEUSKM Studios and the individual identified above for The Final Hand.')}${clause('2','VOLUNTARY PARTICIPATION','Participation is voluntary and unpaid unless separately agreed in writing.')}${clause('3','CREDIT','Participant receives appropriate credit for the designated role.')}${clause('4','MEDIA USAGE RIGHTS','BLEUSKM Studios may use production materials for distribution, festivals, marketing, archival, and promotional purposes.')}${clause('5','LIABILITY WAIVER','Participant assumes ordinary production risks to the fullest extent allowed by law.')}${clause('6','CONFIDENTIALITY','Participant keeps unreleased materials confidential until release or permission.')}${clause('7','ELECTRONIC SIGNATURE','Electronic signature is valid and binding.')}${clause('8','GOVERNING LAW','Texas law governs this agreement.')}<div class="portal-signature-block"><strong>SIGNATURE</strong>${d.sig?`<img src="${esc(d.sig)}" alt="Signature">`:'<p>No signature image stored.</p>'}<span>Date signed: ${esc(d.date||'')}</span></div><div class="portal-contract-actions"><button data-print>Print</button><button data-close>Close</button></div></div>`,o=>{ const p=o.querySelector('[data-print]'); if(p) p.onclick=()=>window.print(); }); }
+  function overlay(html,cb){ const o=document.createElement('div'); o.className='portal-overlay'; o.innerHTML=html; o.onclick=e=>{ if(e.target===o||e.target.closest('[data-close]')) o.remove(); }; document.body.appendChild(o); cb?.(o); }
 
-  function escapeHtml(value) {
-    return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  }
+  function repairNewContract(){ const b=document.getElementById('newContractBtn'); if(!b||b.dataset.ready) return; b.dataset.ready='1'; b.onclick=e=>{e.preventDefault(); e.stopPropagation(); if(window.openContractModal) window.openContractModal(); else document.getElementById('contractModal')?.classList.remove('hidden');}; }
+  async function timelineTools(){ const hub=document.getElementById('hub-timeline'); if(!hub||document.getElementById('portalTimelineTools')) return; hub.querySelector('.hub-header-row > div:last-child')?.insertAdjacentHTML('beforeend','<button class="icon-btn" id="portalAddEventBtn">+ Event</button>'); hub.querySelector('.hub-inner')?.insertAdjacentHTML('beforeend',`<div class="portal-notes-panel"><div class="hub-section-label">PRODUCTION NOTES</div><div id="portalNotesList" class="portal-notes-list"></div><div class="portal-note-compose"><input class="modal-input" id="portalNoteTitle" placeholder="Note title"><textarea class="modal-input" id="portalNoteBody" rows="3" placeholder="Leave a note for the team..."></textarea><button class="modal-save" id="portalNoteSave">Post Note</button></div></div><div id="portalTimelineTools"></div>`); document.getElementById('portalAddEventBtn').onclick=()=>timelineModal(); document.getElementById('portalNoteSave').onclick=saveNote; loadNotes(); }
+  function timelineModal(rec=null){ const id=rec?.id||'', f=rec?.fields||{}; overlay(`<div class="portal-modal"><button class="portal-x" data-close>&times;</button><h3>${id?'Edit':'Add'} Event</h3><label class="modal-label">TITLE</label><input class="modal-input" id="ptTitle" value="${esc(t(f.Phase))}"><label class="modal-label">START</label><input class="modal-input" type="date" id="ptStart" value="${esc(t(f['Start Date']))}"><label class="modal-label">END</label><input class="modal-input" type="date" id="ptEnd" value="${esc(t(f['End Date']))}"><label class="modal-label">STATUS</label><select class="modal-input" id="ptStatus"><option>Upcoming</option><option>Active</option><option>Complete</option></select><label class="modal-label">DESCRIPTION</label><textarea class="modal-input" id="ptDesc" rows="3">${esc(t(f.Description))}</textarea><div class="modal-footer">${id?'<button class="modal-cancel" data-del>Delete</button>':''}<button class="modal-save" data-save>Save</button></div></div>`,o=>{ o.querySelector('#ptStatus').value=t(f.Status)||'Upcoming'; o.querySelector('[data-save]').onclick=async()=>{ await rawFetch(A,{method:id?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({table:'Production Timeline',id,fields:{Phase:t(o.querySelector('#ptTitle').value)||'Untitled Event','Start Date':o.querySelector('#ptStart').value||null,'End Date':o.querySelector('#ptEnd').value||null,Status:o.querySelector('#ptStatus').value,Description:t(o.querySelector('#ptDesc').value)}})}); location.reload(); }; const del=o.querySelector('[data-del]'); if(del) del.onclick=async()=>{ if(confirm('Delete this event?')){ await rawFetch(A,{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({table:'Production Timeline',id})}); location.reload(); }}; }); }
+  async function loadNotes(){ const list=document.getElementById('portalNotesList'); if(!list) return; const notes=(await getTable('Portal Notes')).filter(r=>t(r.fields?.Status||'Open')!=='Archived'); list.innerHTML=notes.length?notes.map(r=>`<div class="portal-note"><strong>${esc(t(r.fields.Title)||'Note')}</strong><span>${esc(t(r.fields.Author)||'BLEUSKM')}</span><p>${esc(t(r.fields.Note))}</p></div>`).join(''):'<p style="font-size:10px;color:var(--muted);">No notes yet.</p>'; }
+  async function saveNote(){ const note=t(document.getElementById('portalNoteBody').value); if(!note) return alert('Write a note first.'); await rawFetch(A,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({table:'Portal Notes',fields:{Title:t(document.getElementById('portalNoteTitle').value)||'Production Note',Production:'The Final Hand',Author:sessionStorage.getItem('bleuskm_user')||'Zaria',Audience:'All',Note:note,Status:'Open'}})}); document.getElementById('portalNoteTitle').value=''; document.getElementById('portalNoteBody').value=''; loadNotes(); }
 
-  async function findCastingByEmail(email) {
-    if (!email) return null;
-    const res = await rawFetch(`/.netlify/functions/airtable-proxy?table=${encodeURIComponent('Casting Submissions')}`);
-    if (!res.ok) return null;
-    const data = await res.json();
-    return (data.records || []).find(r => text(r.fields?.Email).toLowerCase() === email.toLowerCase()) || null;
-  }
-
-  function consentUrl(id, answer, film) {
-    return `https://bleuskm.com/redirect-response?id=${encodeURIComponent(id)}&response=${answer}&film=${encodeURIComponent(film || 'The Final Hand')}`;
-  }
-
-  function selfTapeUrl(f, id) {
-    const qs = new URLSearchParams({ name: text(f.Name), role: text(f.Role), email: text(f.Email), id });
-    return `https://bleuskm.com/selftape?${qs.toString()}`;
-  }
-
-  async function loadProductionContacts() {
-    const [crewRes, castRes] = await Promise.all([
-      rawFetch(`/.netlify/functions/airtable-proxy?table=${encodeURIComponent('Crew applications')}`),
-      rawFetch(`/.netlify/functions/airtable-proxy?table=${encodeURIComponent('Casting Submissions')}`),
-    ]);
-    const crewData = crewRes.ok ? await crewRes.json() : { records: [] };
-    const castData = castRes.ok ? await castRes.json() : { records: [] };
-    const crew = (crewData.records || []).map(normalizeCrewRecord).filter(isCoreCrew);
-    const cast = (castData.records || []).map(normalizeCastingRecord).filter(isConfirmedCast);
-    return { crew, cast };
-  }
-
-  function contactCard(record, type) {
-    const f = record.fields || {};
-    const email = text(f.Email);
-    const name = text(f.Name) || '---';
-    const role = type === 'crew' ? text(f.Preferred_role_by_Director) || text(f.Role) : text(f.Role);
-    const detail = type === 'crew' ? [text(f.Phone), role].filter(Boolean).join(' - ') : [text(f.Location), role].filter(Boolean).join(' - ');
-    const alias = type === 'crew' ? 'crew@bleuskm.com' : 'casting@bleuskm.com';
-    return `<div class="contact-card"><div class="contact-card-name">${escapeHtml(name)}</div><div class="contact-card-detail">${escapeHtml(email)}<br>${escapeHtml(detail)}</div><div class="contact-card-actions">${email ? `<button class="contact-action-btn" data-pick-email="${escapeHtml(email)}" data-pick-name="${escapeHtml(name)}" data-pick-alias="${alias}">&#9993; Email</button>` : ''}</div></div>`;
-  }
-
-  async function renderProductionContacts() {
-    const grid = document.getElementById('contactsGrid');
-    const counts = document.getElementById('contactsCounts');
-    if (!grid) return;
-    grid.innerHTML = '<div class="contacts-loading"><div class="loader-ring-sm"></div><span>Loading...</span></div>';
-    const { crew, cast } = await loadProductionContacts();
-    if (counts) counts.textContent = `${crew.length} crew - ${cast.length} confirmed cast`;
-    const parts = [];
-    if (crew.length) {
-      parts.push('<div class="contacts-section-label">CORE CREW - THE FINAL HAND</div>');
-      parts.push(...crew.map(r => contactCard(r, 'crew')));
-    }
-    if (cast.length) {
-      parts.push('<div class="contacts-section-label">CONFIRMED CAST - THE FINAL HAND</div>');
-      parts.push(...cast.map(r => contactCard(r, 'cast')));
-    }
-    grid.innerHTML = parts.length ? parts.join('') : '<p style="font-size:10px;color:var(--muted);padding:16px 0;">No production contacts match yet.</p>';
-    grid.querySelectorAll('[data-pick-email]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (typeof window.openComposeModal === 'function') window.openComposeModal(btn.dataset.pickEmail, btn.dataset.pickName, btn.dataset.pickAlias);
-      });
-    });
-  }
-
-  async function setupRecipientPicker() {
-    const { crew, cast } = await loadProductionContacts();
-    const contacts = [
-      ...crew.map(r => ({ type: 'Crew', name: text(r.fields.Name), email: text(r.fields.Email), role: text(r.fields.Preferred_role_by_Director) || text(r.fields.Role) })),
-      ...cast.map(r => ({ type: 'Cast', name: text(r.fields.Name), email: text(r.fields.Email), role: text(r.fields.Role) })),
-    ].filter(c => c.email);
-    ['qTo', 'composeTo'].forEach(id => attachPicker(document.getElementById(id), contacts));
-  }
-
-  function attachPicker(input, contacts) {
-    if (!input || input.dataset.contactPickerReady) return;
-    input.dataset.contactPickerReady = 'true';
-    const wrap = document.createElement('div');
-    wrap.className = 'contact-picker hidden';
-    input.insertAdjacentElement('afterend', wrap);
-    const render = () => {
-      const q = input.value.trim().toLowerCase();
-      const matches = contacts.filter(c => !q || [c.name, c.email, c.role, c.type].join(' ').toLowerCase().includes(q)).slice(0, 30);
-      wrap.innerHTML = matches.map(c => `<button type="button" class="contact-picker-row" data-email="${escapeHtml(c.email)}"><strong>${escapeHtml(c.name || c.email)}</strong><span>${escapeHtml(c.type)}${c.role ? ` - ${escapeHtml(c.role)}` : ''}<br>${escapeHtml(c.email)}</span></button>`).join('') || '<div class="contact-picker-empty">No matching contacts.</div>';
-      wrap.classList.remove('hidden');
-    };
-    input.addEventListener('focus', render);
-    input.addEventListener('input', render);
-    wrap.addEventListener('mousedown', event => {
-      const row = event.target.closest('[data-email]');
-      if (!row) return;
-      event.preventDefault();
-      input.value = row.dataset.email;
-      wrap.classList.add('hidden');
-    });
-    document.addEventListener('click', event => {
-      if (event.target !== input && !wrap.contains(event.target)) wrap.classList.add('hidden');
-    });
-  }
-
-  async function renderCrewContracts() {
-    const list = document.getElementById('contractsList');
-    const activeTab = document.querySelector('.contracts-tab.active')?.dataset.tab;
-    if (!list || activeTab !== 'crew') return;
-    list.innerHTML = '<p style="font-size:10px;color:var(--muted);padding:16px 0;">Loading signed crew contracts...</p>';
-    const res = await rawFetch(`/.netlify/functions/airtable-proxy?table=${encodeURIComponent('Contracts')}`);
-    const data = res.ok ? await res.json() : { records: [] };
-    const signed = (data.records || []).filter(r => text(r.fields?.['Contract Status']).toLowerCase() === 'signed' || text(r.fields?.Signature));
-    if (!signed.length) {
-      list.innerHTML = '<p style="font-size:10px;color:var(--muted);padding:16px 0;">No signed crew contracts yet.</p>';
-      return;
-    }
-    list.innerHTML = signed.map(r => {
-      const f = r.fields || {};
-      const sig = Array.isArray(f.Signature) ? f.Signature[0]?.url : text(f.Signature);
-      return `<div class="contract-card"><div class="contract-card-header"><div><div class="contract-card-name">${escapeHtml(text(f.Name) || '---')}</div><div class="contract-card-role">${escapeHtml(text(f.Role) || 'Crew')}</div></div><span class="contract-status-badge signed">Signed</span></div><div style="font-size:10px;color:var(--muted);line-height:1.5;">${escapeHtml(text(f.Email))}<br>${escapeHtml(text(f['Date Signed']))}</div><div class="contract-card-actions">${sig ? `<a class="contact-action-btn" href="${escapeHtml(sig)}" target="_blank" rel="noopener" style="text-decoration:none;">View Signature</a>` : ''}</div></div>`;
-    }).join('');
-  }
-
-  function repairNewContractButton() {
-    const btn = document.getElementById('newContractBtn');
-    if (!btn || btn.dataset.liveFixReady) return;
-    btn.dataset.liveFixReady = 'true';
-    btn.addEventListener('click', event => {
-      event.preventDefault();
-      event.stopPropagation();
-      if (typeof window.openContractModal === 'function') window.openContractModal();
-      else document.getElementById('contractModal')?.classList.remove('hidden');
-    }, true);
-  }
-
-  function limitProductionLocks() {
-    document.querySelectorAll('#prodLocksGrid > *').forEach(card => {
-      if (!/The Final Hand/i.test(card.textContent || '')) card.remove();
-    });
-  }
-
-  async function enrichCastingParams(body) {
-    const payload = body.payload || {};
-    const templateId = Number(payload.templateId);
-    if (![16, 17, 18, 19].includes(templateId)) return body;
-    const to = text(payload.to?.[0]?.email);
-    const record = await findCastingByEmail(to);
-    if (!record) return body;
-    const f = record.fields || {};
-    const film = text(payload.params?.FILM_NAME) || text(f.Film) || 'The Final Hand';
-    const role = text(f.Role);
-    const toRole = text(payload.params?.TO_ROLE) || text(f['To Role']);
-    payload.params = { ...(payload.params || {}), NAME: text(f.Name), EMAIL: to, PHONE: text(f.Phone), LOCATION: text(f.Location), ROLE: role, FILM_NAME: film };
-    if (templateId === 17) {
-      payload.params.FILM_LINK = payload.params.FILM_LINK || 'https://bleuskm.com/casting/';
-      payload.params.CONSENT_YES_URL = consentUrl(record.id, 'yes', film);
-      payload.params.CONSENT_NO_URL = consentUrl(record.id, 'no', film);
-    }
-    if (templateId === 18) {
-      payload.params.TO_ROLE = toRole || role;
-      payload.params.NEW_ROLE = payload.params.TO_ROLE;
-      payload.params.CONSENT_YES_URL = consentUrl(record.id, 'yes', film);
-      payload.params.CONSENT_NO_URL = consentUrl(record.id, 'no', film);
-    }
-    if (templateId === 19) {
-      payload.params.CALENDLY_URL = payload.params.CALENDLY_URL || 'https://calendly.com/studio-bleuskm/30min';
-      payload.params.SELFTAPE_URL = payload.params.SELFTAPE_URL || selfTapeUrl(f, record.id);
-    }
-    return body;
-  }
-
-  window.fetch = async function patchedFetch(input, init = {}) {
-    const url = endpointUrl(input);
-    if (url.includes('/.netlify/functions/brevo-proxy') && init && init.body) {
-      let body;
-      try { body = JSON.parse(init.body); } catch {}
-      if (body?.payload) {
-        body = await enrichCastingParams(body);
-        init = { ...init, body: JSON.stringify(body) };
-      }
-      const res = await rawFetch(input, init);
-      if (res.ok && body?.payload) archive({ from: body.payload.sender?.email, to: body.payload.to?.[0]?.email, subject: body.payload.subject, templateId: body.payload.templateId, name: body.payload.params?.NAME });
-      return res;
-    }
-    const res = await rawFetch(input, init);
-    if (url.includes('/.netlify/functions/airtable-proxy')) {
-      const parsed = new URL(url, window.location.href);
-      if (parsed.searchParams.get('table') === 'Crew applications' && res.ok) {
-        const data = await res.clone().json();
-        data.records = (data.records || []).map(normalizeCrewRecord);
-        return new Response(JSON.stringify(data), { status: res.status, statusText: res.statusText, headers: { 'Content-Type': 'application/json' } });
-      }
-      if (parsed.searchParams.get('table') === 'Casting Submissions' && res.ok) {
-        const data = await res.clone().json();
-        data.records = (data.records || []).map(normalizeCastingRecord);
-        return new Response(JSON.stringify(data), { status: res.status, statusText: res.statusText, headers: { 'Content-Type': 'application/json' } });
-      }
-    }
-    return res;
-  };
-
-  function repairTabs(hub) {
-    if (!hub) return;
-    document.querySelectorAll('.hub-panel').forEach(panel => {
-      const active = panel.id === `hub-${hub}`;
-      panel.classList.toggle('active', active);
-      panel.classList.toggle('hidden', !active);
-    });
-  }
-
-  document.addEventListener('click', event => {
-    const btn = event.target.closest('.hub-btn[data-hub]');
-    if (btn) setTimeout(() => {
-      repairTabs(btn.dataset.hub);
-      if (btn.dataset.hub === 'contacts') renderProductionContacts();
-      if (btn.dataset.hub === 'contracts') renderCrewContracts();
-      if (btn.dataset.hub === 'admin') setTimeout(limitProductionLocks, 250);
-    }, 0);
-    if (event.target.closest('.contracts-tab[data-tab="crew"]')) setTimeout(renderCrewContracts, 100);
-  });
-
-  document.addEventListener('DOMContentLoaded', () => {
-    ensureArchive();
-    repairNewContractButton();
-    setupRecipientPicker().catch(() => {});
-    setTimeout(limitProductionLocks, 1000);
-    const active = document.querySelector('.hub-btn.active[data-hub]');
-    if (active) repairTabs(active.dataset.hub);
-  });
+  function updateTemplateLink(){}
+  document.addEventListener('click',e=>{ const hub=e.target.closest('.hub-btn[data-hub]'); if(hub) setTimeout(()=>{ repairTabs(hub.dataset.hub); if(hub.dataset.hub==='contacts') renderContacts(); if(hub.dataset.hub==='contracts') renderContracts(); if(hub.dataset.hub==='timeline') timelineTools(); },0); if(e.target.closest('.contracts-tab[data-tab="crew"]')) setTimeout(renderContracts,100); const phase=e.target.closest('.phase-card'); if(phase&&!e.target.closest('[data-delete-phase]')) getTable('Production Timeline').then(rs=>timelineModal(rs.find(r=>r.id===phase.dataset.id))); });
+  document.addEventListener('DOMContentLoaded',()=>{ addStyles(); renderArchive(); emailHub(); ensureTemplateModal(); repairNewContract(); attachPickers(); setTimeout(appCards,900); setTimeout(timelineTools,900); const a=document.querySelector('.hub-btn.active[data-hub]'); if(a) repairTabs(a.dataset.hub); });
 })();
