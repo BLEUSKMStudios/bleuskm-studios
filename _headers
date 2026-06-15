@@ -1,0 +1,14 @@
+/castingdash/castingdash.js
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/castingdash/castingdash-live-fixes.js
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/castingdash/index.html
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/crew/crewdash.js
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/crew/index.html
+  Cache-Control: no-cache, no-store, must-revalidate
