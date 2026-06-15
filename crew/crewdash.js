@@ -29,6 +29,7 @@ const CFG = {
     Support:      23,
     Core:         25,
     Guide:        26,
+    ContractOnly: 27,
   },
 };
 
@@ -142,6 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
   bindEmailModal();
   bindContactsPanel();
   bindContractsPanel();
+  initCrewHubs();
 });
 
 /* ═══════════════════════════════════════════════════════════════
@@ -599,10 +601,7 @@ function bindEmailModal() {
 
     el.emailModalSend.disabled = true; el.emailModalSend.textContent = '...';
     try {
-      if (tid === CFG.T.ContractOnly) {
-    params.CONTRACT_LINK = buildContractLink(name, email, onSetRole, 'The Final Hand');
-  }
-  if (tid === CFG.T.Guide) {
+      if (tid === CFG.T.Guide) {
         const guideLink = el.guideLinkInput.value.trim();
         if (!guideLink) { toast('Paste the guide link first.', 'error'); el.emailModalSend.disabled=false; el.emailModalSend.textContent='Send Email'; return; }
         await fireEmail(pendingEmailRecord, tid, guideLink);
@@ -1375,8 +1374,3 @@ function showCrewAdminMsg(msg, isErr = false) {
   el2.style.color = isErr ? 'rgba(200,80,80,0.8)' : 'rgba(120,180,130,0.8)';
   setTimeout(() => { el2.textContent = ''; }, 3000);
 }
-
-/* Wire hub init into DOMContentLoaded — append after existing init */
-document.addEventListener('DOMContentLoaded', () => {
-  initCrewHubs();
-});
