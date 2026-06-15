@@ -2,47 +2,227 @@
   const rawFetch = window.fetch.bind(window);
   const A = '/.netlify/functions/airtable-proxy';
   const B = '/.netlify/functions/brevo-proxy';
-  const SELF_TAPE_DEADLINE = 'June 20th, 2026';
-  const templateNames = {15:'Self Tape Invitation',16:'Casting Rejection',17:'Direct Offer - Film Redirect',18:'Cross Casting - Specific Role',19:'Final Callback + Calendly'};
+  const DEADLINE = 'June 20th, 2026';
+  const TYPES = {
+    cast: 'Cast / Performer Agreement',
+    location: 'Location Agreement',
+    talent_release: 'Talent / Actor Release',
+    background: 'Background Actor Release',
+    composer: 'Composer / Music Release',
+    custom: 'Custom Agreement',
+  };
 
-  function t(v){ if(Array.isArray(v)) return v.map(t).filter(Boolean).join(', '); if(v&&typeof v==='object') return v.name||v.url||v.filename||''; return String(v??'').trim(); }
-  function esc(v){ return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-  async function table(name){ const r=await rawFetch(`${A}?table=${encodeURIComponent(name)}`); return r.ok ? (await r.json()).records || [] : []; }
-  function role(f){ return t(f['Preferred role by Director']||f.Preferred_role_by_Director)||t(f.Role); }
-  function contractLink(name,email,onSetRole){ return `https://bleuskm.com/crew/contract?${new URLSearchParams({name:name||'',email:email||'',role:onSetRole||'',film:'The Final Hand'})}`; }
-  function toast(msg){ if(window.toast) window.toast(msg,'success'); else alert(msg); }
+  const text = v => Array.isArray(v) ? v.map(text).filter(Boolean).join(', ') : (v && typeof v === 'object' ? (v.name || v.url || v.filename || '') : String(v ?? '').trim());
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const user = () => sessionStorage.getItem('bleuskm_user') || localStorage.getItem('bleuskm_user') || 'Zaria';
 
-  function styles(){ if(document.getElementById('bleuskmHotfixStyles')) return; document.head.insertAdjacentHTML('beforeend',`<style id="bleuskmHotfixStyles">.hub-panel.active{display:block!important}.portal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.86);z-index:9999;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:38px 18px}.portal-modal,.portal-contract-doc{background:#0d0d0d;border:1px solid rgba(218,175,55,.24);width:min(780px,96vw);padding:24px;position:relative;color:var(--text,#eadfcf)}.portal-x{position:absolute;right:14px;top:12px;background:transparent;border:0;color:var(--muted,#8f8679);font-size:22px;cursor:pointer}.portal-contract-top{display:flex;justify-content:space-between;border-bottom:2px solid var(--gold,#DAAF37);padding-bottom:14px}.portal-contract-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:16px 0}.portal-contract-info label{font-size:8px;color:var(--gold,#DAAF37);font-weight:700;letter-spacing:.2em;text-transform:uppercase}.portal-contract-info input,.portal-contract-info span{display:block;width:100%;margin-top:6px;background:#151515;border:1px solid var(--borderdim,rgba(255,255,255,.08));color:var(--text,#eadfcf);padding:10px}.portal-contract-clause{display:flex;gap:16px;border-bottom:1px solid var(--borderdim,rgba(255,255,255,.08));padding:14px 0}.portal-contract-clause>span{color:var(--gold,#DAAF37);font-weight:700}.portal-contract-clause p{color:var(--muted,#8f8679);line-height:1.65}.portal-contract-actions,.portal-row-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.portal-contract-actions button,.portal-row-actions button,.portal-action{border:1px solid rgba(218,175,55,.35);background:transparent;color:var(--gold,#DAAF37);font:700 9px inherit;letter-spacing:.14em;text-transform:uppercase;padding:8px 10px;cursor:pointer}.portal-card-grid,.contacts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}.portal-note,.contact-card{background:var(--surface2,#111);border:1px solid var(--borderdim,rgba(255,255,255,.08));padding:14px;border-radius:6px}.portal-notes-panel{margin-top:28px;border-top:1px solid var(--borderdim);padding-top:18px}.portal-notes-list{display:grid;gap:8px;margin-bottom:12px}.portal-note span{font-size:9px;color:var(--gold);text-transform:uppercase}.portal-note p{font-size:12px;color:var(--muted);line-height:1.5}.contact-picker{position:absolute;z-index:9600;width:min(420px,90vw);max-height:260px;overflow:auto;background:#111;border:1px solid var(--borderdim);box-shadow:0 18px 40px rgba(0,0,0,.45);margin-top:4px}.contact-picker-row{display:block;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid var(--borderdim);color:var(--text);padding:10px 12px;cursor:pointer;font-family:inherit}.contact-picker-row:hover{background:rgba(218,175,55,.08)}.contact-picker-row strong{display:block;font-size:11px}.contact-picker-row span,.contact-picker-empty{display:block;font-size:10px;line-height:1.45;color:var(--muted);padding:10px 12px}</style>`); }
-
-  function overlay(html, cb){ const o=document.createElement('div'); o.className='portal-overlay'; o.innerHTML=html; o.addEventListener('click',e=>{ if(e.target===o||e.target.closest('[data-close]')) o.remove(); }); document.body.appendChild(o); cb?.(o); return o; }
-
-  function openNewContractModal(){
-    const type=(document.querySelector('.contracts-tab.active')?.dataset.tab||'cast').replace(/_/g,' ');
-    overlay(`<div class="portal-contract-doc"><div class="portal-contract-top"><div><small>BLEUSKM STUDIOS</small><h2>New ${esc(type)} Contract</h2></div><button class="portal-x" data-close>&times;</button></div><div class="portal-contract-info"><label>NAME<input id="hfName" placeholder="Full name"></label><label>EMAIL<input id="hfEmail" placeholder="recipient@email.com"></label><label>ROLE<input id="hfRole" placeholder="Role / position"></label><label>PROJECT<span>The Final Hand</span></label></div><div class="portal-contract-clause"><span>1</span><div><strong>DIRECT AGREEMENT LINK</strong><p>Fill this out and copy a direct signing link. This avoids email-client link blocking and uses the same crew agreement page.</p></div></div><label class="modal-label">DIRECT LINK</label><input class="modal-input" id="hfLink" readonly><div class="portal-contract-actions"><button type="button" data-copy>Copy Direct Link</button><button type="button" data-close>Close</button></div></div>`, o=>{ const update=()=>{ o.querySelector('#hfLink').value=contractLink(t(o.querySelector('#hfName').value),t(o.querySelector('#hfEmail').value),t(o.querySelector('#hfRole').value)); }; o.addEventListener('input',update); o.querySelector('[data-copy]').onclick=async()=>{ update(); await navigator.clipboard?.writeText(o.querySelector('#hfLink').value); toast('Direct contract link copied.'); }; update(); setTimeout(()=>o.querySelector('#hfName')?.focus(),50); });
+  async function table(name) {
+    const res = await rawFetch(`${A}?table=${encodeURIComponent(name)}`);
+    return res.ok ? (await res.json()).records || [] : [];
   }
 
-  function repairNewContract(){ const btn=document.getElementById('newContractBtn')||[...document.querySelectorAll('button')].find(b=>/new contract/i.test(b.textContent||'')); if(!btn||btn.dataset.hotfixNewContract) return; btn.dataset.hotfixNewContract='1'; btn.addEventListener('click',e=>{ e.preventDefault(); e.stopImmediatePropagation(); openNewContractModal(); },true); }
+  function contractLink(name, email, role) {
+    return `https://bleuskm.com/crew/contract?${new URLSearchParams({
+      name: name || '',
+      email: email || '',
+      role: role || '',
+      film: 'The Final Hand',
+    })}`;
+  }
 
-  function selfTapeUrl(f,id){ return `https://bleuskm.com/selftape?${new URLSearchParams({name:t(f.Name),role:t(f.Role),email:t(f.Email),id})}`; }
-  async function enrichCasting(body){ const p=body.payload||{}, id=Number(p.templateId); if(![15,16,17,18,19].includes(id)) return body; const email=t(p.to?.[0]?.email); const rec=(await table('Casting Submissions')).find(r=>t(r.fields?.Email).toLowerCase()===email.toLowerCase()); if(!rec) return body; const f=rec.fields||{}, film=t(f.Film)||'The Final Hand', baseRole=t(f.Role), toRole=t(f['To Role']); p.params={...(p.params||{}),NAME:t(f.Name),EMAIL:email,PHONE:t(f.Phone),LOCATION:t(f.Location),ROLE:baseRole,FILM:film,FILM_NAME:film,DEADLINE:p.params?.DEADLINE||SELF_TAPE_DEADLINE}; if(id===15){p.params.SELFTAPE_URL=p.params.SELFTAPE_URL||selfTapeUrl(f,rec.id);} if(id===17){p.params.FILM_LINK=p.params.FILM_LINK||'https://bleuskm.com/casting/';p.params.CONSENT_YES_URL=`https://bleuskm.com/redirect-response?id=${rec.id}&response=yes&film=${encodeURIComponent(film)}`;p.params.CONSENT_NO_URL=`https://bleuskm.com/redirect-response?id=${rec.id}&response=no&film=${encodeURIComponent(film)}`;} if(id===18){p.params.TO_ROLE=toRole||baseRole;p.params.NEW_ROLE=p.params.TO_ROLE;p.params.CONSENT_YES_URL=`https://bleuskm.com/redirect-response?id=${rec.id}&response=yes&film=${encodeURIComponent(film)}`;p.params.CONSENT_NO_URL=`https://bleuskm.com/redirect-response?id=${rec.id}&response=no&film=${encodeURIComponent(film)}`;} if(id===19){p.params.CALENDLY_URL=p.params.CALENDLY_URL||'https://calendly.com/studio-bleuskm/30min';p.params.SELFTAPE_URL=p.params.SELFTAPE_URL||selfTapeUrl(f,rec.id);} return body; }
+  function styles() {
+    if (document.getElementById('castingOnlyFixStyles')) return;
+    document.head.insertAdjacentHTML('beforeend', `<style id="castingOnlyFixStyles">
+      .hub-panel.active{display:block!important}.portal-note{background:var(--surface2,#111);border:1px solid var(--borderdim,rgba(255,255,255,.08));padding:14px;border-radius:6px}.portal-note-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.portal-note strong{display:block;color:var(--text);font-size:14px}.portal-note span{font-size:9px;color:var(--gold);text-transform:uppercase}.portal-note p{font-size:12px;color:var(--muted);line-height:1.55;margin-top:8px}.portal-row-actions{display:flex;gap:8px;flex-wrap:wrap}.portal-action,.portal-row-actions button,.portal-link-button{border:1px solid rgba(218,175,55,.35);background:transparent;color:var(--gold,#DAAF37);font:700 9px inherit;letter-spacing:.14em;text-transform:uppercase;padding:8px 10px;cursor:pointer}.portal-danger{color:#ff8b8b!important;border-color:rgba(255,139,139,.45)!important}.portal-notes-panel{margin-top:28px;border-top:1px solid var(--borderdim);padding-top:18px}.portal-notes-list{display:grid;gap:8px;margin-bottom:12px}.portal-note-compose{display:grid;gap:8px}.contract-builder-hint{font-size:10px;color:var(--muted);line-height:1.5;margin:10px 0}.contracts-tab[data-tab="crew"],#contractType option[value="crew"]{display:none!important}
+    </style>`);
+  }
 
-  window.fetch=async function(input,init={}){ const url=typeof input==='string'?input:input?.url||''; if(url.includes('/.netlify/functions/brevo-proxy')&&init.body){ let body; try{body=JSON.parse(init.body)}catch{} if(body?.payload){ body=await enrichCasting(body); init={...init,body:JSON.stringify(body)}; } return rawFetch(input,init); } return rawFetch(input,init); };
+  function repairTabs(hub) {
+    document.querySelectorAll('.hub-panel').forEach(panel => {
+      const active = panel.id === `hub-${hub}`;
+      panel.classList.toggle('active', active);
+      panel.classList.toggle('hidden', !active);
+    });
+  }
 
-  async function contactList(){ const [crew,cast]=await Promise.all([table('Crew applications'),table('Casting Submissions')]); return [...crew.filter(r=>t(r.fields?.Status).toLowerCase()==='core').map(r=>({type:'Crew',name:t(r.fields.Name),email:t(r.fields.Email),role:role(r.fields)})),...cast.filter(r=>t(r.fields?.['Cast Status']).toLowerCase()==='confirmed').map(r=>({type:'Cast',name:t(r.fields.Name),email:t(r.fields.Email),role:t(r.fields.Role)}))].filter(c=>c.email); }
-  async function attachPickers(){ const contacts=await contactList(); ['qTo','composeTo','templateComposerTo'].forEach(id=>{ const input=document.getElementById(id); if(!input||input.dataset.pickerReady) return; input.dataset.pickerReady='1'; const w=document.createElement('div'); w.className='contact-picker hidden'; input.insertAdjacentElement('afterend',w); const render=()=>{ const q=input.value.toLowerCase(); const m=contacts.filter(c=>!q||[c.name,c.email,c.role,c.type].join(' ').toLowerCase().includes(q)).slice(0,40); w.innerHTML=m.map(c=>`<button type="button" class="contact-picker-row" data-email="${esc(c.email)}"><strong>${esc(c.name||c.email)}</strong><span>${esc(c.type)}${c.role?' - '+esc(c.role):''}<br>${esc(c.email)}</span></button>`).join('')||'<div class="contact-picker-empty">No matching contacts.</div>'; w.classList.remove('hidden'); }; input.addEventListener('focus',render); input.addEventListener('click',render); input.addEventListener('input',render); w.addEventListener('mousedown',e=>{ const row=e.target.closest('[data-email]'); if(row){ e.preventDefault(); input.value=row.dataset.email; w.classList.add('hidden'); }}); }); }
+  function activeContractType() {
+    const tab = document.querySelector('.contracts-tab.active')?.dataset.tab;
+    return tab && tab !== 'crew' ? tab : 'cast';
+  }
 
-  function repairTabs(hub){ document.querySelectorAll('.hub-panel').forEach(p=>{ const active=p.id===`hub-${hub}`; p.classList.toggle('active',active); p.classList.toggle('hidden',!active); }); }
-  function ensureTemplate15(){ ['batchTemplateSelect','emailModalTemplate'].forEach(id=>{ const s=document.getElementById(id); if(!s||s.querySelector('option[value="15"]')) return; const o=document.createElement('option'); o.value='15'; o.textContent='T15 — Self Tape Invitation'; const before=[...s.options].find(opt=>Number(opt.value)>15); s.insertBefore(o,before||null); }); const grid=document.querySelector('#hub-email .template-grid'); if(grid&&!grid.querySelector('[data-t15-card]')) grid.insertAdjacentHTML('afterbegin',`<div class="template-card" data-t15-card><div class="tc-num">T15</div><div class="tc-name">Self Tape Invitation</div><div class="tc-desc">Sent to callback applicants selected for self tape.</div><button class="tc-send-btn" onclick="openBatchFromEmailHub(15)">Send to Selected</button></div>`); }
-  function repairEmailHub(){ ensureTemplate15(); const hub=document.getElementById('hub-email'); if(!hub) return; hub.querySelector('.hub-sub')?.remove(); [...hub.querySelectorAll('.hub-section-label')].forEach(x=>{ if(/BREVO TEMPLATES|COMPOSE DIRECT EMAIL/i.test(x.textContent||'')) x.remove(); }); hub.querySelector('.compose-quickform')?.classList.add('hidden'); hub.querySelectorAll('.tc-send-btn').forEach(btn=>{ const id=Number((btn.getAttribute('onclick')||'').match(/\d+/)?.[0]); if(!id) return; btn.textContent='Compose Direct Email'; btn.onclick=e=>{ e?.preventDefault?.(); openTemplateModal(id); return false; }; }); }
-  function ensureTemplateModal(){ if(document.getElementById('templateComposerModal')) return; document.body.insertAdjacentHTML('beforeend',`<div class="modal-overlay hidden" id="templateComposerModal"><div class="modal-card" style="max-width:520px"><div class="modal-header"><span class="modal-title" id="templateComposerTitle">Send Template</span><button class="modal-close" id="templateComposerClose">&times;</button></div><div class="modal-body"><input type="hidden" id="templateComposerId"><div class="modal-row"><div class="modal-field"><label class="modal-label">FROM</label><select class="modal-input" id="templateComposerFrom"><option value="casting@bleuskm.com">casting@bleuskm.com</option><option value="studio@bleuskm.com">studio@bleuskm.com</option><option value="crew@bleuskm.com">crew@bleuskm.com</option></select></div><div class="modal-field"><label class="modal-label">TO</label><input class="modal-input" id="templateComposerTo" type="email" placeholder="recipient@email.com"></div></div><p style="font-size:10px;color:var(--muted);line-height:1.5">Airtable fields autofill Brevo params based on recipient. T15 self tape deadline: ${SELF_TAPE_DEADLINE}.</p></div><div class="modal-footer"><button class="modal-cancel" id="templateComposerCancel">Cancel</button><button class="modal-save" id="templateComposerSend">Send Template</button></div></div></div>`); const close=()=>document.getElementById('templateComposerModal').classList.add('hidden'); document.getElementById('templateComposerClose').onclick=close; document.getElementById('templateComposerCancel').onclick=close; document.getElementById('templateComposerSend').onclick=sendTemplate; }
-  async function openTemplateModal(id){ ensureTemplateModal(); document.getElementById('templateComposerId').value=id; document.getElementById('templateComposerTitle').textContent=`Send T${id} - ${templateNames[id]||'Template'}`; document.getElementById('templateComposerModal').classList.remove('hidden'); await attachPickers(); }
-  async function sendTemplate(){ const id=document.getElementById('templateComposerId').value,email=t(document.getElementById('templateComposerTo').value),from=document.getElementById('templateComposerFrom').value; if(!email) return alert('Choose a recipient.'); const res=await fetch(B,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({endpoint:'https://api.brevo.com/v3/smtp/email',payload:{sender:{email:from,name:'BLEUSKM Studios'},to:[{email}],templateId:Number(id),params:{}}})}); if(!res.ok) return alert('Email failed.'); document.getElementById('templateComposerModal').classList.add('hidden'); toast('Template sent.'); }
+  function removeCrewContractTab() {
+    document.querySelectorAll('.contracts-tab[data-tab="crew"], #contractType option[value="crew"]').forEach(el => el.remove());
+    const active = document.querySelector('.contracts-tab.active');
+    if (!active || active.dataset.tab === 'crew') {
+      const cast = document.querySelector('.contracts-tab[data-tab="cast"]');
+      cast?.classList.add('active');
+      window.activeContractTab = 'cast';
+    }
+  }
 
-  async function timelineTools(){ const hub=document.getElementById('hub-timeline'); if(!hub||document.getElementById('portalTimelineTools')) return; hub.querySelector('.hub-header-row > div:last-child')?.insertAdjacentHTML('beforeend','<button class="icon-btn" id="portalAddEventBtn">+ Event</button>'); hub.querySelector('.hub-inner')?.insertAdjacentHTML('beforeend',`<div class="portal-notes-panel"><div class="hub-section-label">PRODUCTION NOTES</div><div id="portalNotesList" class="portal-notes-list"></div><div class="portal-note-compose"><input class="modal-input" id="portalNoteTitle" placeholder="Note title"><textarea class="modal-input" id="portalNoteBody" rows="3" placeholder="Leave a note for the team..."></textarea><button class="modal-save" id="portalNoteSave">Post Note</button></div></div><div id="portalTimelineTools"></div>`); document.getElementById('portalAddEventBtn').onclick=()=>alert('Add event is ready on the timeline modal.'); document.getElementById('portalNoteSave').onclick=saveNote; loadNotes(); }
-  async function loadNotes(){ const list=document.getElementById('portalNotesList'); if(!list) return; const notes=(await table('Portal Notes')).filter(r=>t(r.fields?.Status||'Open')!=='Archived'); list.innerHTML=notes.length?notes.map(r=>`<div class="portal-note"><strong>${esc(t(r.fields.Title)||'Note')}</strong><span>${esc(t(r.fields.Author)||'BLEUSKM')}</span><p>${esc(t(r.fields.Note))}</p></div>`).join(''):'<p style="font-size:10px;color:var(--muted)">No notes yet.</p>'; }
-  async function saveNote(){ const note=t(document.getElementById('portalNoteBody').value); if(!note) return alert('Write a note first.'); await rawFetch(A,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({table:'Portal Notes',fields:{Title:t(document.getElementById('portalNoteTitle').value)||'Production Note',Production:'The Final Hand',Author:sessionStorage.getItem('bleuskm_user')||'Zaria',Audience:'All',Note:note,Status:'Open'}})}); document.getElementById('portalNoteTitle').value=''; document.getElementById('portalNoteBody').value=''; loadNotes(); }
+  function setContractType(type) {
+    const safeType = TYPES[type] ? type : 'cast';
+    const select = document.getElementById('contractType');
+    if (select) {
+      select.value = safeType;
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    const title = document.getElementById('contractModalTitle');
+    if (title) title.textContent = TYPES[safeType].toUpperCase();
+    const hint = document.getElementById('castingContractHint') || document.createElement('p');
+    hint.id = 'castingContractHint';
+    hint.className = 'contract-builder-hint';
+    hint.textContent = 'Enter the recipient name, role/position, and email here. The signing link they receive stamps those values into the contract so the recipient cannot edit them.';
+    document.querySelector('.cmodal-infobar')?.insertAdjacentElement('afterend', hint);
+  }
 
-  document.addEventListener('click',e=>{ const h=e.target.closest('.hub-btn[data-hub]'); if(h) setTimeout(()=>{ repairTabs(h.dataset.hub); repairNewContract(); ensureTemplate15(); if(h.dataset.hub==='email') repairEmailHub(); if(h.dataset.hub==='timeline') timelineTools(); },0); },true);
-  document.addEventListener('DOMContentLoaded',()=>{ styles(); ensureTemplate15(); repairEmailHub(); ensureTemplateModal(); repairNewContract(); attachPickers(); setTimeout(repairNewContract,500); setTimeout(ensureTemplate15,500); const a=document.querySelector('.hub-btn.active[data-hub]'); if(a) repairTabs(a.dataset.hub); });
-  setInterval(()=>{ repairNewContract(); ensureTemplate15(); },1000);
+  function repairContractBuilder() {
+    removeCrewContractTab();
+    document.querySelectorAll('.contracts-tab').forEach(tab => {
+      if (tab.dataset.castingFix) return;
+      tab.dataset.castingFix = '1';
+      tab.addEventListener('click', () => setTimeout(() => setContractType(activeContractType()), 50), true);
+    });
+    const btn = document.getElementById('newContractBtn');
+    if (btn && !btn.dataset.castingFix) {
+      btn.dataset.castingFix = '1';
+      btn.addEventListener('click', () => setTimeout(() => setContractType(activeContractType()), 80), true);
+    }
+    const save = document.getElementById('contractSaveBtn');
+    if (save && !save.dataset.castingLinkFix) {
+      save.dataset.castingLinkFix = '1';
+      save.insertAdjacentHTML('beforebegin', '<button class="modal-cancel" id="copyContractDirectLink" type="button">Copy Direct Link</button>');
+      document.getElementById('copyContractDirectLink')?.addEventListener('click', async () => {
+        const name = text(document.getElementById('contractName')?.value);
+        const email = text(document.getElementById('contractEmail')?.value);
+        const role = text(document.getElementById('contractRole')?.value);
+        if (!name || !email) return alert('Enter a name and email first.');
+        await navigator.clipboard?.writeText(contractLink(name, email, role));
+        alert('Direct contract link copied.');
+      });
+    }
+  }
+
+  async function loadNotes() {
+    const list = document.getElementById('portalNotesList');
+    if (!list) return;
+    const notes = (await table('Portal Notes')).filter(r => text(r.fields?.Status || 'Open').toLowerCase() !== 'archived');
+    list.innerHTML = notes.length ? notes.map(r => {
+      const f = r.fields || {};
+      return `<div class="portal-note" data-note-id="${esc(r.id)}">
+        <div class="portal-note-head">
+          <div><strong>${esc(text(f.Title) || 'Note')}</strong><span>${esc(text(f.Author) || 'BLEUSKM')}</span></div>
+          <div class="portal-row-actions"><button type="button" data-edit-note="${esc(r.id)}">Edit</button><button type="button" class="portal-danger" data-delete-note="${esc(r.id)}">Delete</button></div>
+        </div>
+        <p>${esc(text(f.Note))}</p>
+      </div>`;
+    }).join('') : '<p style="font-size:10px;color:var(--muted);">No notes yet.</p>';
+  }
+
+  async function saveNote() {
+    const titleEl = document.getElementById('portalNoteTitle');
+    const bodyEl = document.getElementById('portalNoteBody');
+    const id = document.getElementById('portalNoteSave')?.dataset.editingNote || '';
+    const note = text(bodyEl?.value);
+    if (!note) return alert('Write a note first.');
+    const payload = { table: 'Portal Notes', fields: { Title: text(titleEl?.value) || 'Production Note', Production: 'The Final Hand', Author: user(), Audience: 'All', Note: note, Status: 'Open' } };
+    if (id) payload.id = id;
+    const res = await rawFetch(A, { method: id ? 'PATCH' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    if (!res.ok) return alert('Could not save note. Check Airtable connection.');
+    titleEl.value = '';
+    bodyEl.value = '';
+    delete document.getElementById('portalNoteSave').dataset.editingNote;
+    document.getElementById('portalNoteSave').textContent = 'Post Note';
+    loadNotes();
+  }
+
+  async function editNote(id) {
+    const rec = (await table('Portal Notes')).find(r => r.id === id);
+    if (!rec) return;
+    document.getElementById('portalNoteTitle').value = text(rec.fields?.Title);
+    document.getElementById('portalNoteBody').value = text(rec.fields?.Note);
+    const save = document.getElementById('portalNoteSave');
+    save.dataset.editingNote = id;
+    save.textContent = 'Save Note';
+    document.getElementById('portalNoteBody').focus();
+  }
+
+  async function deleteNote(id) {
+    if (!confirm('Delete this note for everyone?')) return;
+    const res = await rawFetch(A, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ table: 'Portal Notes', id }) });
+    if (!res.ok) return alert('Could not delete note. Check Airtable connection.');
+    loadNotes();
+  }
+
+  function ensureNotesPanel() {
+    const hub = document.getElementById('hub-timeline');
+    if (!hub) return;
+    if (!document.getElementById('portalNotesList')) {
+      hub.querySelector('.hub-inner')?.insertAdjacentHTML('beforeend', `<div class="portal-notes-panel">
+        <div class="hub-section-label">PRODUCTION NOTES</div>
+        <div id="portalNotesList" class="portal-notes-list"></div>
+        <div class="portal-note-compose"><input class="modal-input" id="portalNoteTitle" placeholder="Note title" /><textarea class="modal-input" id="portalNoteBody" rows="3" placeholder="Leave a note for the team..."></textarea><button class="modal-save" id="portalNoteSave">Post Note</button></div>
+      </div>`);
+    }
+    const save = document.getElementById('portalNoteSave');
+    if (save && !save.dataset.bound) {
+      save.dataset.bound = '1';
+      save.addEventListener('click', saveNote);
+    }
+    loadNotes();
+  }
+
+  async function findCastingByEmail(email) {
+    return (await table('Casting Submissions')).find(r => text(r.fields?.Email).toLowerCase() === email.toLowerCase());
+  }
+
+  function selfTapeUrl(f, id) {
+    return `https://bleuskm.com/selftape?${new URLSearchParams({ id, name: text(f.Name), email: text(f.Email), role: text(f['To Role']) || text(f.Role), film: text(f.Film) || 'The Final Hand' })}`;
+  }
+
+  async function enrichCasting(body) {
+    const payload = body.payload || {};
+    const templateId = Number(payload.templateId);
+    if (![15, 16, 17, 18, 19].includes(templateId)) return body;
+    const email = text(payload.to?.[0]?.email);
+    const rec = await findCastingByEmail(email);
+    if (!rec) return body;
+    const f = rec.fields || {};
+    payload.params = { ...(payload.params || {}), NAME: text(f.Name), EMAIL: email, ROLE: text(f['To Role']) || text(f.Role), FILM_NAME: text(f.Film) || 'The Final Hand', DEADLINE };
+    if (templateId === 15 || templateId === 19) payload.params.SELFTAPE_URL = payload.params.SELFTAPE_URL || selfTapeUrl(f, rec.id);
+    return body;
+  }
+
+  window.fetch = async function patchedFetch(input, init = {}) {
+    const url = typeof input === 'string' ? input : input?.url || '';
+    if (url.includes('/.netlify/functions/brevo-proxy') && init.body) {
+      let body;
+      try { body = JSON.parse(init.body); } catch {}
+      if (body?.payload) init = { ...init, body: JSON.stringify(await enrichCasting(body)) };
+    }
+    return rawFetch(input, init);
+  };
+
+  document.addEventListener('click', event => {
+    const hub = event.target.closest('.hub-btn[data-hub]');
+    if (hub) setTimeout(() => {
+      repairTabs(hub.dataset.hub);
+      repairContractBuilder();
+      if (hub.dataset.hub === 'timeline') ensureNotesPanel();
+      if (hub.dataset.hub === 'contracts') repairContractBuilder();
+    }, 0);
+    const edit = event.target.closest('[data-edit-note]');
+    if (edit) editNote(edit.dataset.editNote);
+    const del = event.target.closest('[data-delete-note]');
+    if (del) deleteNote(del.dataset.deleteNote);
+  }, true);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    styles();
+    repairContractBuilder();
+    const active = document.querySelector('.hub-btn.active[data-hub]');
+    if (active) repairTabs(active.dataset.hub);
+    if (document.getElementById('hub-timeline')?.classList.contains('active')) ensureNotesPanel();
+  });
+  setInterval(repairContractBuilder, 1000);
 })();
