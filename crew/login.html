@@ -3,88 +3,85 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login — BLEUSKM Studios Crew Portal</title>
+  <title>Login - BLEUSKM Studios Crew Portal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #080808; --surface: #0d0d0d; --border: rgba(218,175,55,0.14);
-      --gold: #DAAF37; --golddim: rgba(218,175,55,0.45); --goldfaint: rgba(218,175,55,0.07);
-      --text: rgba(234,223,207,0.85); --muted: rgba(234,223,207,0.4); --dim: rgba(234,223,207,0.2);
-      --err: rgba(200,80,80,0.9); --font: 'League Spartan', Arial, sans-serif;
-    }
+    :root { --bg:#080808; --surface:#0d0d0d; --border:rgba(218,175,55,.14); --borderdim:rgba(255,255,255,.05); --gold:#DAAF37; --golddim:rgba(218,175,55,.45); --text:rgba(234,223,207,.85); --muted:rgba(234,223,207,.4); --err:rgba(200,80,80,.9); --font:'League Spartan',Arial,sans-serif; }
     html, body { height: 100%; background: var(--bg); font-family: var(--font); -webkit-font-smoothing: antialiased; }
-    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; }
+    body { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
     .card { width: 100%; max-width: 400px; background: var(--surface); border: 1px solid var(--border); }
-    .card-rule { height: 2px; background: linear-gradient(to right, var(--gold), rgba(218,175,55,0.06)); }
+    .card-rule { height: 2px; background: linear-gradient(to right,var(--gold),rgba(218,175,55,.06)); }
     .card-body { padding: 48px 40px 40px; }
-    .wordmark { font-size: 9px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--golddim); display: block; margin-bottom: 28px; }
-    .title { font-size: 22px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: rgba(234,223,207,0.92); line-height: 1.1; margin-bottom: 4px; }
-    .subtitle { font-size: 10px; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 36px; }
+    .wordmark { display: block; margin-bottom: 28px; color: var(--golddim); font-size: 9px; font-weight: 700; letter-spacing: .24em; text-transform: uppercase; }
+    .title { margin-bottom: 4px; color: rgba(234,223,207,.92); font-size: 22px; font-weight: 700; letter-spacing: .04em; line-height: 1.1; text-transform: uppercase; }
+    .subtitle { margin-bottom: 36px; color: var(--muted); font-size: 10px; letter-spacing: .1em; }
     .form-group { margin-bottom: 16px; }
-    label { display: block; font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 7px; }
-    input { width: 100%; background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.05); color: var(--text); font-family: var(--font); font-size: 14px; padding: 11px 13px; outline: none; transition: border-color 130ms; -webkit-appearance: none; }
+    label { display: block; margin-bottom: 7px; color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
+    input { width: 100%; padding: 11px 13px; border: 1px solid var(--borderdim); background: rgba(255,255,255,.025); color: var(--text); font: 14px var(--font); outline: none; }
     input:focus { border-color: var(--golddim); }
-    input::placeholder { color: rgba(234,223,207,0.12); }
-    .error-msg { display: none; font-size: 11px; color: var(--err); padding: 9px 13px; border: 1px solid rgba(200,80,80,0.2); background: rgba(200,80,80,0.05); margin-bottom: 16px; }
+    input::placeholder { color: rgba(234,223,207,.12); }
+    .error-msg { display: none; margin-bottom: 16px; padding: 9px 13px; border: 1px solid rgba(200,80,80,.2); background: rgba(200,80,80,.05); color: var(--err); font-size: 11px; }
     .error-msg.show { display: block; }
-    .submit-btn { width: 100%; background: var(--gold); border: none; color: #080808; font-family: var(--font); font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; padding: 14px; cursor: pointer; margin-top: 6px; transition: opacity 130ms; }
-    .submit-btn:hover { opacity: 0.87; }
-    .card-foot { padding: 14px 40px 18px; border-top: 1px solid rgba(255,255,255,0.04); text-align: center; }
-    .card-foot p { font-size: 9px; letter-spacing: 0.1em; color: rgba(234,223,207,0.12); }
+    .submit-btn { width: 100%; margin-top: 6px; padding: 14px; border: 0; background: var(--gold); color: #080808; cursor: pointer; font: 700 10px var(--font); letter-spacing: .22em; text-transform: uppercase; }
+    .submit-btn:hover { opacity: .87; }
+    .card-foot { padding: 14px 40px 18px; border-top: 1px solid var(--borderdim); text-align: center; }
+    .card-foot p { color: rgba(234,223,207,.12); font-size: 9px; letter-spacing: .1em; }
   </style>
 </head>
 <body>
-<div class="card">
-  <div class="card-rule"></div>
-  <div class="card-body">
-    <span class="wordmark">BLEUSKM STUDIOS</span>
-    <h1 class="title">Crew<br/>Portal</h1>
-    <p class="subtitle">Internal access only</p>
-    <div class="form-group">
-      <label for="uname">Username</label>
-      <input type="text" id="uname" autocomplete="username" placeholder="Enter username" />
+  <div class="card">
+    <div class="card-rule"></div>
+    <div class="card-body">
+      <span class="wordmark">BLEUSKM STUDIOS</span>
+      <h1 class="title">Crew<br />Portal</h1>
+      <p class="subtitle">Internal access only</p>
+      <div class="form-group"><label for="uname">Username</label><input type="text" id="uname" autocomplete="username" placeholder="Enter username" /></div>
+      <div class="form-group"><label for="pword">Password</label><input type="password" id="pword" autocomplete="current-password" placeholder="Enter password" /></div>
+      <div class="error-msg" id="errMsg">Incorrect username or password.</div>
+      <button class="submit-btn" id="loginBtn">Enter Portal</button>
     </div>
-    <div class="form-group">
-      <label for="pword">Password</label>
-      <input type="password" id="pword" autocomplete="current-password" placeholder="Enter password" />
-    </div>
-    <div class="error-msg" id="errMsg">Incorrect username or password.</div>
-    <button class="submit-btn" id="loginBtn">Enter Portal</button>
+    <div class="card-foot"><p>BLEUSKM Studios &nbsp;-&nbsp; Internal Use Only</p></div>
   </div>
-  <div class="card-foot"><p>BLEUSKM Studios &nbsp;&middot;&nbsp; Internal Use Only</p></div>
-</div>
-<script>
-  const DEFAULT_USERS = {
-    zaria:  { password: 'bleuskm2026', role: 'Admin' },
-    ceion:  { password: 'bleuskmcrew', role: 'Producer' },
-    carmen: { password: 'bleuskmcrew', role: 'Producer' },
-  };
-  function loadUsers() {
-    try { return Object.assign({}, DEFAULT_USERS, JSON.parse(localStorage.getItem('bleuskm_crew') || '{}')); }
-    catch { return Object.assign({}, DEFAULT_USERS); }
-  }
-  if (sessionStorage.getItem('bleuskm_crew_auth') === 'true') window.location.replace('./index.html');
-  const unameEl = document.getElementById('uname');
-  const pwordEl = document.getElementById('pword');
-  const errMsg  = document.getElementById('errMsg');
-  function attemptLogin() {
-    const u = unameEl.value.trim().toLowerCase(), p = pwordEl.value;
-    const users = loadUsers();
-    if (users[u] && users[u].password === p) {
-      sessionStorage.setItem('bleuskm_crew_auth', 'true');
-      sessionStorage.setItem('bleuskm_crew_user', u);
-      window.location.replace('./index.html');
-    } else {
-      errMsg.classList.add('show'); pwordEl.value = ''; pwordEl.focus();
+  <script>
+    const DEFAULT_USERS = {
+      zaria:  { password: 'bleuskm2026', role: 'Admin' },
+      ceion:  { password: 'bleuskmcrew', role: 'Producer' },
+      carmen: { password: 'bleuskmcrew', role: 'Producer' },
+      ftorres:{ password: 'bleuskmcrew', role: 'Producer' },
+      creeves:{ password: 'bleuskmcrew', role: 'Producer' },
+      cscott: { password: 'bleuskmcrew', role: 'Producer' },
+    };
+    function loadUsers() {
+      try { return Object.assign({}, JSON.parse(localStorage.getItem('bleuskm_crew') || '{}'), DEFAULT_USERS); }
+      catch { return Object.assign({}, DEFAULT_USERS); }
     }
-  }
-  document.getElementById('loginBtn').addEventListener('click', attemptLogin);
-  [unameEl, pwordEl].forEach(el => {
-    el.addEventListener('keydown', e => { if (e.key === 'Enter') attemptLogin(); errMsg.classList.remove('show'); });
-  });
-</script>
+    if (sessionStorage.getItem('bleuskm_crew_auth') === 'true') window.location.replace('./index.html');
+    const unameEl = document.getElementById('uname');
+    const pwordEl = document.getElementById('pword');
+    const errMsg = document.getElementById('errMsg');
+    function attemptLogin() {
+      const username = unameEl.value.trim().toLowerCase();
+      const password = pwordEl.value;
+      const user = loadUsers()[username];
+      if (user && user.password === password) {
+        sessionStorage.setItem('bleuskm_crew_auth', 'true');
+        sessionStorage.setItem('bleuskm_crew_user', username);
+        sessionStorage.setItem('bleuskm_crew_role', user.role || 'Producer');
+        window.location.replace('./index.html');
+        return;
+      }
+      errMsg.classList.add('show');
+      pwordEl.value = '';
+      pwordEl.focus();
+    }
+    document.getElementById('loginBtn').addEventListener('click', attemptLogin);
+    [unameEl, pwordEl].forEach(input => input.addEventListener('keydown', event => {
+      if (event.key === 'Enter') attemptLogin();
+      errMsg.classList.remove('show');
+    }));
+  </script>
 </body>
 </html>
