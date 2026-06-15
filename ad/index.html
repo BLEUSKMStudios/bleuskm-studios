@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Assistant Director Dashboard | BLEUSKM Studios</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="ad.css" />
+</head>
+<body>
+  <section class="login-view" id="loginView">
+    <form class="login-card" id="loginForm">
+      <span class="wordmark">BLEUSKM STUDIOS</span>
+      <h1>Assistant Director</h1>
+      <input id="loginUser" autocomplete="username" placeholder="Username" />
+      <input id="loginPass" autocomplete="current-password" type="password" placeholder="Password" />
+      <button type="submit">Log In</button>
+      <p id="loginError"></p>
+    </form>
+  </section>
+
+  <section class="dash hidden" id="dashView">
+    <header class="topbar">
+      <div><span class="wordmark">BLEUSKM STUDIOS</span><span class="pipe"></span><span id="pageLabel">AD TODAY</span></div>
+      <div class="top-actions"><button id="refreshBtn">Refresh</button><button id="logoutBtn">Log Out</button></div>
+    </header>
+    <nav class="tabs" id="tabs">
+      <button class="active" data-tab="today">Today</button>
+      <button data-tab="schedule">Schedule</button>
+      <button data-tab="callbacks">Callbacks</button>
+      <button data-tab="callsheets">Call Sheets</button>
+      <button data-tab="contacts">Contacts</button>
+      <button data-tab="tasks">Tasks</button>
+      <button data-tab="messages">Messages</button>
+    </nav>
+
+    <main class="content">
+      <section class="panel active" id="tab-today">
+        <div class="section-head"><div><p>Overview</p><h2>The Final Hand</h2></div></div>
+        <div class="stat-grid" id="todayStats"></div>
+        <div class="split">
+          <div><h3>Upcoming Schedule</h3><div class="list" id="todaySchedule"></div></div>
+          <div><h3>Callback Watch</h3><div class="list" id="todayCallbacks"></div></div>
+        </div>
+      </section>
+
+      <section class="panel" id="tab-schedule">
+        <div class="section-head"><div><p>Timeline</p><h2>Schedule</h2></div><button id="newEventBtn">+ Event</button></div>
+        <div class="list" id="scheduleList"></div>
+      </section>
+
+      <section class="panel" id="tab-callbacks">
+        <div class="section-head"><div><p>Final Callback Coordination</p><h2>Callbacks</h2></div><button id="newCallbackBtn">+ Callback</button></div>
+        <div class="list" id="callbackList"></div>
+      </section>
+
+      <section class="panel" id="tab-callsheets">
+        <div class="section-head"><div><p>AD Tool</p><h2>Call Sheets</h2></div></div>
+        <div class="builder">
+          <div class="form-grid">
+            <input id="csTitle" placeholder="Call sheet title" value="The Final Hand - General Call" />
+            <input id="csDate" type="date" />
+            <input id="csDay" placeholder="Day 1 of 4" />
+            <input id="csCall" placeholder="General call time" />
+            <input id="csLocation" placeholder="Location / address" />
+            <input id="csParking" placeholder="Parking details" />
+            <input id="csHospital" placeholder="Nearest hospital" />
+            <input id="csWeather" placeholder="Weather notes" />
+          </div>
+          <textarea id="csScenes" rows="3" placeholder="Scenes / set descriptions"></textarea>
+          <textarea id="csNotes" rows="4" placeholder="Set notes, special instructions, breakfast/lunch notes, reminders"></textarea>
+          <div class="recipient-box"><div class="recipient-head"><strong>Recipients</strong><button id="selectAllRecipients">Select All</button></div><div id="callSheetRecipients"></div></div>
+          <div class="row-actions"><button id="previewCallSheet">Preview</button><button id="saveCallSheet">Save Draft</button><button id="sendCallSheet">Send Batch Email</button></div>
+        </div>
+        <h3>Saved Call Sheets</h3>
+        <div class="list" id="callSheetList"></div>
+      </section>
+
+      <section class="panel" id="tab-contacts">
+        <div class="section-head"><div><p>Email Only</p><h2>Core Crew + Confirmed Cast</h2></div><input id="contactSearch" placeholder="Search contacts" /></div>
+        <div class="card-grid" id="contactGrid"></div>
+      </section>
+
+      <section class="panel" id="tab-tasks">
+        <div class="section-head"><div><p>Coordination</p><h2>Tasks</h2></div></div>
+        <div class="inline-form"><input id="taskTitle" placeholder="Task title" /><input id="taskOwner" placeholder="Owner" /><button id="addTaskBtn">Add Task</button></div>
+        <div class="list" id="taskList"></div>
+      </section>
+
+      <section class="panel" id="tab-messages">
+        <div class="section-head"><div><p>Shared Notes</p><h2>AD + Producers</h2></div></div>
+        <div class="message-form"><input id="msgTitle" placeholder="Subject" /><select id="msgTag"><option>General</option><option>Schedule</option><option>Crew</option><option>Cast</option><option>Urgent</option></select><textarea id="msgBody" rows="4" placeholder="Write an update..."></textarea><button id="postMessageBtn">Post Message</button></div>
+        <div class="list" id="messageList"></div>
+      </section>
+    </main>
+  </section>
+
+  <div class="modal hidden" id="modal"><div class="modal-card"><button class="x" id="modalClose">&times;</button><div id="modalBody"></div></div></div>
+  <script src="ad.js"></script>
+</body>
+</html>
