@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>BLEUSKM Studios — Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#080808;--surface:#0d0d0d;--gold:#DAAF37;--golddim:rgba(218,175,55,0.45);--text:rgba(234,223,207,0.85);--muted:rgba(234,223,207,0.35);--border:rgba(218,175,55,0.18);--err:rgba(200,80,80,0.8);--font:'League Spartan',sans-serif}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.wrap{width:100%;max-width:400px}
+.brand{text-align:center;margin-bottom:36px}
+.studio{font-size:9px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:var(--golddim);margin-bottom:8px}
+.title{font-size:26px;font-weight:700;letter-spacing:0.05em;color:var(--text)}
+.card{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--gold);padding:36px}
+label{display:block;font-size:8px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+input{width:100%;background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.07);color:var(--text);font-family:var(--font);font-size:13px;padding:11px 13px;outline:none;margin-bottom:20px;transition:border-color 120ms}
+input:focus{border-color:var(--border)}
+.btn{width:100%;background:var(--gold);border:none;color:#080808;font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;padding:14px;cursor:pointer;transition:opacity 120ms;margin-top:4px}
+.btn:hover{opacity:0.87}
+.err{font-size:11px;color:var(--err);text-align:center;margin-top:14px;min-height:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <div class="studio">BLEUSKM Studios</div>
+    <div class="title">Production Portal</div>
+  </div>
+  <div class="card">
+    <label for="u">Username</label>
+    <input id="u" type="text" autocomplete="username" autocapitalize="none"/>
+    <label for="p">Password</label>
+    <input id="p" type="password" autocomplete="current-password"/>
+    <button class="btn" id="btn">Enter Portal</button>
+    <div class="err" id="err"></div>
+  </div>
+</div>
+<script>
+// Hardcoded users — zaria goes to portal (casting+crew), producers go to castingdash only
+const USERS = {
+  zaria:  { password: 'bleuskm2026', role: 'admin' },
+  ceion:  { password: 'bleuskmcrew', role: 'producer' },
+  carmen: { password: 'bleuskmcrew', role: 'producer' },
+};
+
+function login() {
+  const u = (document.getElementById('u').value || '').trim().toLowerCase();
+  const p = (document.getElementById('p').value || '').trim();
+  const err = document.getElementById('err');
+  err.textContent = '';
+  if (!u || !p) { err.textContent = 'Enter username and password.'; return; }
+  const match = USERS[u];
+  if (!match || match.password !== p) { err.textContent = 'Incorrect username or password.'; return; }
+
+  if (match.role === 'admin') {
+    // Zaria — set BOTH auth keys so she can access both dashes, then go to casting
+    sessionStorage.setItem('bleuskm_auth', 'true');
+    sessionStorage.setItem('bleuskm_user', u);
+    sessionStorage.setItem('bleuskm_crew_auth', 'true');
+    sessionStorage.setItem('bleuskm_crew_user', u);
+    window.location.replace('/castingdash/');
+  } else {
+    // Producers — casting dash only
+    sessionStorage.setItem('bleuskm_auth', 'true');
+    sessionStorage.setItem('bleuskm_user', u);
+    window.location.replace('/castingdash/');
+  }
+}
+
+document.getElementById('btn').addEventListener('click', login);
+document.getElementById('p').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+document.getElementById('u').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('p').focus(); });
+</script>
+</body>
+</html>
