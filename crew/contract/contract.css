@@ -19,105 +19,73 @@
 
 html { font-size: 16px; scroll-behavior: smooth; }
 body { background: var(--bg); color: var(--text); font-family: var(--font); -webkit-font-smoothing: antialiased; }
-
-/* Header */
 .contract-header { background: var(--bg); position: sticky; top: 0; z-index: 50; }
 .header-inner { display: flex; align-items: center; gap: 14px; padding: 16px 40px; }
 .wordmark { font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); }
 .hdivider { display: block; width: 1px; height: 13px; background: var(--border); }
 .doc-label { font-size: 10px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--dim); }
 .header-rule { height: 1px; background: linear-gradient(to right, var(--gold), rgba(218,175,55,0.06)); }
-
-/* Main */
 .contract-main { max-width: 780px; margin: 0 auto; padding: 40px 24px 80px; }
-
-/* Crew bar */
 .crew-bar { display: flex; gap: 0; border: 1px solid var(--border); margin-bottom: 32px; background: var(--surface); flex-wrap: wrap; }
 .crew-detail { flex: 1; min-width: 140px; padding: 14px 18px; border-right: 1px solid var(--border); }
 .crew-detail:last-child { border-right: none; }
 .crew-label { display: block; font-size: 8px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--golddim); margin-bottom: 4px; }
 .crew-value { display: block; font-size: 13px; font-weight: 600; color: var(--text); }
-
-/* Sections */
+.crew-edit { width: 100%; background: rgba(255,255,255,0.025); border: 1px solid var(--borderdim); color: var(--text); font-family: var(--font); font-size: 13px; font-weight: 600; padding: 8px 10px; outline: none; border-radius: 2px; }
+.crew-edit:focus { border-color: var(--golddim); }
 .contract-section, .sig-section { background: var(--surface); border: 1px solid var(--border); margin-bottom: 24px; }
 .section-header { padding: 24px 32px 20px; border-bottom: 1px solid var(--borderdim); }
 .section-eyebrow { display: block; font-size: 8px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--golddim); margin-bottom: 5px; }
 .section-title { font-size: 20px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; color: var(--text); margin-bottom: 4px; }
 .section-sub { font-size: 10px; letter-spacing: 0.1em; color: var(--muted); }
-
-/* Contract body */
 .contract-body { padding: 28px 32px; }
-
 .contract-clause { display: flex; gap: 20px; margin-bottom: 28px; padding-bottom: 28px; border-bottom: 1px solid var(--borderdim); }
 .contract-clause:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
-
 .clause-num { font-size: 10px; font-weight: 700; color: var(--golddim); min-width: 20px; padding-top: 2px; flex-shrink: 0; }
 .clause-content { flex: 1; }
 .clause-title { font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--golddim); margin-bottom: 10px; }
 .clause-text { font-family: Georgia, serif; font-size: 13px; line-height: 1.85; color: var(--muted); }
 .clause-text strong { color: rgba(234,223,207,0.65); font-weight: 600; }
 .clause-text em { color: rgba(234,223,207,0.65); font-style: italic; }
-
-/* Signature section */
 .sig-body { padding: 28px 32px; }
-
 .sig-tabs { display: flex; gap: 4px; margin-bottom: 20px; }
 .sig-tab { background: none; border: 1px solid var(--borderdim); color: var(--muted); font-family: var(--font); font-size: 9px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; padding: 7px 18px; cursor: pointer; border-radius: 2px; transition: all 130ms ease; }
 .sig-tab:hover { color: var(--text); border-color: var(--border); }
 .sig-tab.active { background: var(--goldfaint); border-color: var(--golddim); color: var(--gold); }
-
 .sig-panel { margin-bottom: 24px; }
 .sig-panel.hidden { display: none; }
-
-/* Canvas */
 .canvas-wrap { position: relative; border: 1px solid var(--border); background: #ffffff; border-radius: 2px; overflow: hidden; }
 #sigCanvas { display: block; width: 100%; height: 160px; cursor: crosshair; touch-action: none; }
 .canvas-hint { position: absolute; bottom: 10px; right: 14px; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(0,0,0,0.25); pointer-events: none; }
 .clear-btn { margin-top: 8px; background: none; border: 1px solid var(--borderdim); color: var(--muted); font-family: var(--font); font-size: 9px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; padding: 6px 14px; cursor: pointer; border-radius: 2px; transition: color 130ms, border-color 130ms; }
 .clear-btn:hover { color: var(--err); border-color: rgba(200,80,80,0.3); }
-
-/* Type sig */
 .type-sig-input { width: 100%; background: rgba(255,255,255,0.025); border: 1px solid var(--borderdim); color: var(--text); font-family: var(--font); font-size: 14px; padding: 12px 14px; outline: none; border-radius: 2px; transition: border-color 130ms; margin-bottom: 14px; }
 .type-sig-input:focus { border-color: var(--golddim); }
 .type-sig-input::placeholder { color: rgba(234,223,207,0.12); }
 .type-preview-label { font-size: 8px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--golddim); margin-bottom: 8px; }
 .type-preview { min-height: 80px; background: #ffffff; border: 1px solid var(--border); border-radius: 2px; display: flex; align-items: center; padding: 10px 20px; font-family: 'Brush Script MT', 'Segoe Script', cursive; font-size: 42px; color: #1a1a1a; overflow: hidden; }
-
-/* Checkbox */
 .agree-wrap { margin-bottom: 20px; }
 .agree-label { display: flex; gap: 12px; align-items: flex-start; cursor: pointer; }
 .agree-label input[type=checkbox] { width: 14px; height: 14px; accent-color: var(--gold); margin-top: 2px; flex-shrink: 0; cursor: pointer; }
 .agree-label span { font-family: Georgia, serif; font-size: 13px; line-height: 1.75; color: var(--muted); }
 .agree-label em { color: rgba(234,223,207,0.6); font-style: italic; }
-
-/* Date row */
 .date-row { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding: 12px 16px; background: var(--surface2); border: 1px solid var(--borderdim); }
 .date-label { font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--golddim); }
 .date-value { font-size: 12px; color: var(--muted); }
-
-/* Error */
 .error-msg { font-size: 11px; color: var(--err); padding: 10px 14px; border: 1px solid rgba(200,80,80,0.2); background: rgba(200,80,80,0.05); margin-bottom: 16px; border-radius: 2px; }
-
-/* Submit */
 .submit-btn { width: 100%; background: var(--gold); border: none; color: #080808; font-family: var(--font); font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; padding: 15px; cursor: pointer; transition: opacity 130ms; border-radius: 2px; }
 .submit-btn:hover { opacity: 0.88; }
 .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-/* Success */
 .success-block { padding: 32px 0 8px; text-align: center; }
 .success-icon { font-size: 24px; color: var(--gold); margin-bottom: 16px; }
 .success-label { font-size: 8px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--golddim); margin-bottom: 10px; }
 .success-title { font-size: 20px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; color: var(--text); margin-bottom: 16px; line-height: 1.2; }
 .success-text { font-family: Georgia, serif; font-size: 13px; line-height: 1.8; color: var(--muted); }
-
-/* Footer */
 .contract-footer { padding: 18px 40px; border-top: 1px solid var(--borderdim); text-align: center; }
 .contract-footer p { font-size: 9px; letter-spacing: 0.1em; color: var(--dim); }
 .contract-footer a { color: var(--dim); text-decoration: none; }
 .contract-footer a:hover { color: var(--golddim); }
-
 .hidden { display: none !important; }
-
 @media (max-width: 600px) {
   .header-inner { padding: 14px 18px; }
   .contract-main { padding: 24px 14px 60px; }
