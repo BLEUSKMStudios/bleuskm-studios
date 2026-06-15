@@ -98,16 +98,6 @@ const el = {
   calClose:        document.getElementById('calClose'),
   crewDashBtn:     document.getElementById('crewDashBtn'),
   // redirect modal (legacy)
-  redirectModal:   document.getElementById('redirectModal'),
-  filmSelect:      document.getElementById('filmSelect'),
-  roleSelect:      document.getElementById('roleSelect'),
-  customFilmGroup: document.getElementById('customFilmGroup'),
-  customFilmInput: document.getElementById('customFilmInput'),
-  customRoleGroup: document.getElementById('customRoleGroup'),
-  customRoleInput: document.getElementById('customRoleInput'),
-  modalActorName:  document.getElementById('modalActorName'),
-  modalCancel:     document.getElementById('modalCancel'),
-  modalSend:       document.getElementById('modalSend'),
   // timeline modal
   tlModal:         document.getElementById('timelineModal'),
   tlModalPhase:    document.getElementById('tlModalPhase'),
@@ -119,18 +109,11 @@ const el = {
   tlDescInput:     document.getElementById('tlDescInput'),
   tlModalCancel:   document.getElementById('tlModalCancel'),
   tlModalSave:     document.getElementById('tlModalSave'),
-  // contacts
-  contactsPanelToggle: document.getElementById('contactsPanelToggle'),
-  contactsBody:    document.getElementById('contactsBody'),
-  contactsArrow:   document.getElementById('contactsArrow'),
+  // contacts (hub)
   contactsCounts:  document.getElementById('contactsCounts'),
   contactsGrid:    document.getElementById('contactsGrid'),
   contactsSearch:  document.getElementById('contactsSearch'),
-  // contracts
-  contractsPanelToggle: document.getElementById('contractsPanelToggle'),
-  contractsBody:   document.getElementById('contractsBody'),
-  contractsArrow:  document.getElementById('contractsArrow'),
-  contractCounts:  document.getElementById('contractCounts'),
+  // contracts (hub)
   contractsList:   document.getElementById('contractsList'),
   newContractBtn:  document.getElementById('newContractBtn'),
   contractModal:   document.getElementById('contractModal'),
@@ -142,20 +125,9 @@ const el = {
   contractName:    document.getElementById('contractName'),
   contractEmail:   document.getElementById('contractEmail'),
   contractRole:    document.getElementById('contractRole'),
-  contractTerms:   document.getElementById('contractTerms'),
   contractSaveBtn: document.getElementById('contractSaveBtn'),
   contractPrintBtn:document.getElementById('contractPrintBtn'),
-  sigTypeTab:      document.getElementById('sigTypeTab'),
-  sigDrawTab:      document.getElementById('sigDrawTab'),
-  sigTypeArea:     document.getElementById('sigTypeArea'),
-  sigDrawArea:     document.getElementById('sigDrawArea'),
-  sigTypeInput:    document.getElementById('sigTypeInput'),
-  sigCanvas:       document.getElementById('sigCanvas'),
-  sigClearBtn:     document.getElementById('sigClearBtn'),
-  // location
-  locationPanelToggle: document.getElementById('locationPanelToggle'),
-  locationBody:    document.getElementById('locationBody'),
-  locationArrow:   document.getElementById('locationArrow'),
+  // location (hub)
   locationCounts:  document.getElementById('locationCounts'),
   locationGrid:    document.getElementById('locationGrid'),
   locationSearch:  document.getElementById('locationSearch'),
@@ -289,17 +261,12 @@ async function patchRecord(id, fields) {
    CONTACTS PANEL
 ═══════════════════════════════════════════════════════════════ */
 function bindContactsPanel() {
-  // Open by default
-  el.contactsBody.classList.remove('hidden');
-  el.contactsArrow.style.transform = 'rotate(90deg)';
-
-  el.contactsPanelToggle.addEventListener('click', () => {
-    const hidden = el.contactsBody.classList.toggle('hidden');
-    el.contactsArrow.style.transform = hidden ? '' : 'rotate(90deg)';
-  });
-  el.contactsSearch.addEventListener('input', () =>
-    renderContacts(el.contactsSearch.value.trim().toLowerCase())
-  );
+  // Contacts now live in hub panel — just bind search
+  if (el.contactsSearch) {
+    el.contactsSearch.addEventListener('input', () =>
+      renderContacts(el.contactsSearch.value.trim().toLowerCase())
+    );
+  }
 }
 
 function renderContacts(query = '') {
@@ -429,12 +396,18 @@ function saveLocalContracts() {
 }
 
 function bindContractsPanel() {
-  el.contractsPanelToggle.addEventListener('click', e => {
-    if (e.target.closest('button') && e.target.closest('button').id === 'newContractBtn') return;
-    const hidden = el.contractsBody.classList.toggle('hidden');
-    el.contractsArrow.style.transform = hidden ? '' : 'rotate(90deg)';
+  if (el.newContractBtn) {
+    el.newContractBtn.addEventListener('click', e => { e.stopPropagation(); openContractModal(); });
+  }
+  // Tab switching in the contracts hub
+  document.querySelectorAll('.contracts-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.contracts-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      activeContractTab = tab.dataset.tab;
+      renderContracts();
+    });
   });
-  el.newContractBtn.addEventListener('click', e => { e.stopPropagation(); openContractModal(); });
 
   document.querySelectorAll('.contracts-tab').forEach(tab => {
     tab.addEventListener('click', () => {
@@ -468,21 +441,19 @@ function openContractModal(existingId = null) {
       el.contractEmail.value = c.email;
       el.contractRole.value  = c.role;
       el.contractTerms.value = c.terms;
-      el.sigTypeInput.value  = c.signature || '';
+      document.getElementById('sigTypeInput')?.value  = c.signature || '';
     }
   } else {
     el.contractType.value = 'cast';
     el.contractFilm.value = 'The Final Hand';
     el.contractName.value = el.contractEmail.value = el.contractRole.value = el.contractTerms.value = '';
-    el.sigTypeInput.value = '';
-    if (sigCtx) sigCtx.clearRect(0, 0, el.sigCanvas.width, el.sigCanvas.height);
+    document.getElementById('sigTypeInput')?.value = '';
+    if (sigCtx) sigCtx.clearRect(0, 0, document.getElementById('sigCanvas').width, document.getElementById('sigCanvas').height);
   }
   el.contractModal.classList.remove('hidden');
 }
 
 function openContractForContact(name, email, role, type) {
-  el.contractsBody.classList.remove('hidden');
-  el.contractsArrow.style.transform = 'rotate(90deg)';
   editingContractId = null;
   el.contractModalTitle.textContent = 'New Contract';
   el.contractType.value  = type === 'cast' ? 'cast' : 'crew';
@@ -491,8 +462,8 @@ function openContractForContact(name, email, role, type) {
   el.contractEmail.value = email;
   el.contractRole.value  = role;
   el.contractTerms.value = '';
-  el.sigTypeInput.value  = '';
-  if (sigCtx) sigCtx.clearRect(0, 0, el.sigCanvas.width, el.sigCanvas.height);
+  document.getElementById('sigTypeInput')?.value  = '';
+  if (sigCtx) sigCtx.clearRect(0, 0, document.getElementById('sigCanvas').width, document.getElementById('sigCanvas').height);
   el.contractModal.classList.remove('hidden');
 }
 
@@ -550,14 +521,14 @@ async function saveContract() {
 }
 
 function getSigValue() {
-  if (!el.sigTypeTab.classList.contains('active')) {
+  if (!document.getElementById('sigTypeTab')?.classList.contains('active')) {
     // Draw mode — get canvas data
     if (!sigCtx) return '';
     const blank = document.createElement('canvas');
-    blank.width = el.sigCanvas.width; blank.height = el.sigCanvas.height;
-    return el.sigCanvas.toDataURL() === blank.toDataURL() ? '' : el.sigCanvas.toDataURL();
+    blank.width = document.getElementById('sigCanvas').width; blank.height = document.getElementById('sigCanvas').height;
+    return document.getElementById('sigCanvas').toDataURL() === blank.toDataURL() ? '' : document.getElementById('sigCanvas').toDataURL();
   }
-  return el.sigTypeInput.value.trim();
+  return document.getElementById('sigTypeInput')?.value.trim();
 }
 
 function buildContractHtml(c) {
@@ -657,42 +628,32 @@ function deleteContract(id) {
    SIGNATURE CANVAS
 ═══════════════════════════════════════════════════════════════ */
 function bindSignatureCanvas() {
-  el.sigTypeTab.addEventListener('click', () => {
-    el.sigTypeTab.classList.add('active'); el.sigDrawTab.classList.remove('active');
-    el.sigTypeArea.classList.remove('hidden'); el.sigDrawArea.classList.add('hidden');
-  });
-  el.sigDrawTab.addEventListener('click', () => {
-    el.sigDrawTab.classList.add('active'); el.sigTypeTab.classList.remove('active');
-    el.sigDrawArea.classList.remove('hidden'); el.sigTypeArea.classList.add('hidden');
-    initSigCanvas();
-  });
-  el.sigClearBtn.addEventListener('click', () => {
-    if (sigCtx) sigCtx.clearRect(0, 0, el.sigCanvas.width, el.sigCanvas.height);
-  });
+  // Sig canvas is rendered dynamically by renderContractBody() and re-bound there
+  // No static binding needed here
 }
 
 function initSigCanvas() {
   if (sigCtx) return;
-  sigCtx = el.sigCanvas.getContext('2d');
+  sigCtx = document.getElementById('sigCanvas').getContext('2d');
   sigCtx.strokeStyle = '#DAAF37';
   sigCtx.lineWidth   = 2;
   sigCtx.lineCap     = 'round';
   sigCtx.lineJoin    = 'round';
 
   function getPos(e) {
-    const rect = el.sigCanvas.getBoundingClientRect();
-    const scaleX = el.sigCanvas.width / rect.width;
-    const scaleY = el.sigCanvas.height / rect.height;
+    const rect = document.getElementById('sigCanvas').getBoundingClientRect();
+    const scaleX = document.getElementById('sigCanvas').width / rect.width;
+    const scaleY = document.getElementById('sigCanvas').height / rect.height;
     const src = e.touches ? e.touches[0] : e;
     return { x: (src.clientX - rect.left) * scaleX, y: (src.clientY - rect.top) * scaleY };
   }
-  el.sigCanvas.addEventListener('mousedown', e => { sigDrawing = true; const p = getPos(e); sigCtx.beginPath(); sigCtx.moveTo(p.x, p.y); });
-  el.sigCanvas.addEventListener('mousemove', e => { if (!sigDrawing) return; const p = getPos(e); sigCtx.lineTo(p.x, p.y); sigCtx.stroke(); });
-  el.sigCanvas.addEventListener('mouseup',   () => sigDrawing = false);
-  el.sigCanvas.addEventListener('mouseleave',() => sigDrawing = false);
-  el.sigCanvas.addEventListener('touchstart', e => { e.preventDefault(); sigDrawing = true; const p = getPos(e); sigCtx.beginPath(); sigCtx.moveTo(p.x, p.y); }, { passive: false });
-  el.sigCanvas.addEventListener('touchmove',  e => { e.preventDefault(); if (!sigDrawing) return; const p = getPos(e); sigCtx.lineTo(p.x, p.y); sigCtx.stroke(); }, { passive: false });
-  el.sigCanvas.addEventListener('touchend',   () => sigDrawing = false);
+  document.getElementById('sigCanvas').addEventListener('mousedown', e => { sigDrawing = true; const p = getPos(e); sigCtx.beginPath(); sigCtx.moveTo(p.x, p.y); });
+  document.getElementById('sigCanvas').addEventListener('mousemove', e => { if (!sigDrawing) return; const p = getPos(e); sigCtx.lineTo(p.x, p.y); sigCtx.stroke(); });
+  document.getElementById('sigCanvas').addEventListener('mouseup',   () => sigDrawing = false);
+  document.getElementById('sigCanvas').addEventListener('mouseleave',() => sigDrawing = false);
+  document.getElementById('sigCanvas').addEventListener('touchstart', e => { e.preventDefault(); sigDrawing = true; const p = getPos(e); sigCtx.beginPath(); sigCtx.moveTo(p.x, p.y); }, { passive: false });
+  document.getElementById('sigCanvas').addEventListener('touchmove',  e => { e.preventDefault(); if (!sigDrawing) return; const p = getPos(e); sigCtx.lineTo(p.x, p.y); sigCtx.stroke(); }, { passive: false });
+  document.getElementById('sigCanvas').addEventListener('touchend',   () => sigDrawing = false);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -708,13 +669,12 @@ function saveLocalLocations() {
 }
 
 function bindLocationPanel() {
-  el.locationPanelToggle.addEventListener('click', e => {
-    if (e.target.closest('button') && e.target.closest('button').id === 'addLocationBtn') return;
-    const hidden = el.locationBody.classList.toggle('hidden');
-    el.locationArrow.style.transform = hidden ? '' : 'rotate(90deg)';
-  });
-  el.addLocationBtn.addEventListener('click', e => { e.stopPropagation(); openLocationModal(); });
-  el.locationSearch.addEventListener('input', () => renderLocations(el.locationSearch.value.trim().toLowerCase()));
+  if (el.addLocationBtn) {
+    el.addLocationBtn.addEventListener('click', e => { e.stopPropagation(); openLocationModal(); });
+  }
+  if (el.locationSearch) {
+    el.locationSearch.addEventListener('input', () => renderLocations(el.locationSearch.value.trim().toLowerCase()));
+  }
   el.locationModalClose.addEventListener('click', () => el.locationModal.classList.add('hidden'));
   el.locationModalCancel.addEventListener('click', () => el.locationModal.classList.add('hidden'));
   el.locationModal.addEventListener('click', e => { if (e.target === el.locationModal) el.locationModal.classList.add('hidden'); });
@@ -810,12 +770,9 @@ function updateLocationStatus(id, newStatus) {
   // If accepted, offer to create location contract
   if (newStatus === 'Accepted') {
     if (confirm(`${loc.name} accepted! Create a location agreement contract?`)) {
-      el.contractsBody.classList.remove('hidden');
-      el.contractsArrow.style.transform = 'rotate(90deg)';
-      document.querySelectorAll('.contracts-tab').forEach(t => { t.classList.toggle('active', t.dataset.tab === 'location'); });
-      activeContractTab = 'location';
+      switchHub('contracts');
       openContractForContact(loc.contact || loc.name, '', loc.name, 'location');
-      el.contractType.value = 'location';
+      if (el.contractType) el.contractType.value = 'location';
     }
   }
 }
@@ -1151,7 +1108,7 @@ function renderCalendar() {
 /* ── Timeline Edit Modal ─────────────────────────────────────── */
 function openTimelineModal(record) {
   const f = record.fields;
-  el.tlModalPhase.textContent = f['Phase'] || 'Phase';
+  if (el.tlModalPhase) el.tlModalPhase.textContent = f['Phase'] || 'Phase';
   el.tlModalId.value    = record.id;
   el.tlPhaseInput.value = f['Phase']       || '';
   el.tlStartInput.value = f['Start Date']  || '';
@@ -1248,17 +1205,7 @@ function populateRoles(filmName) {
 }
 
 function bindRedirectModal() {
-  el.filmSelect.addEventListener('change', () => {
-    el.customFilmGroup.classList.toggle('hidden', el.filmSelect.value !== '__custom');
-    populateRoles(el.filmSelect.value === '__custom' ? '' : el.filmSelect.value);
-    el.customRoleGroup.classList.add('hidden');
-  });
-  el.roleSelect.addEventListener('change', () => {
-    el.customRoleGroup.classList.toggle('hidden', el.roleSelect.value !== '__custom');
-  });
-  el.modalCancel.addEventListener('click', () => el.redirectModal.classList.add('hidden'));
-  el.redirectModal.addEventListener('click', e => { if (e.target === el.redirectModal) el.redirectModal.classList.add('hidden'); });
-  el.modalSend.addEventListener('click', () => el.redirectModal.classList.add('hidden'));
+  // Redirect modal removed - email modal handles all template sends now
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1644,10 +1591,20 @@ function switchHub(hub) {
   document.querySelectorAll('.hub-panel').forEach(p => p.classList.toggle('active', p.id === `hub-${hub}`));
   const lbl = document.getElementById('activeHubLabel');
   if (lbl) lbl.textContent = HUB_LABELS[hub] || 'CASTING PORTAL';
-  // Lazy-load contacts when switching to that hub
-  if (hub === 'contacts') renderContacts();
+  // Load content on hub switch
+  if (hub === 'contacts')  renderContacts();
   if (hub === 'locations') renderLocations();
+  if (hub === 'contracts') renderContracts();
   if (hub === 'timeline' && !tlRecords.length) loadTimeline();
+  if (hub === 'timeline') {
+    if (el.timelineRefresh) el.timelineRefresh.onclick = loadTimeline;
+    if (el.calToggleBtn) el.calToggleBtn.onclick = () => {
+      const hidden = el.calendarWrap.classList.toggle('hidden');
+      el.calToggleBtn.style.color = hidden ? '' : 'var(--gold)';
+      if (!hidden) renderCalendar();
+    };
+  }
+  if (hub === 'admin' && isAdmin) { renderAdminUsers(); initProductionLocks(); }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1995,7 +1952,7 @@ function renderContractBody(type) {
   const newClearBtn = document.getElementById('sigClearBtn');
   if (newTypeTab) newTypeTab.addEventListener('click', () => { newTypeTab.classList.add('active'); newDrawTab.classList.remove('active'); newTypeArea.classList.remove('hidden'); newDrawArea.classList.add('hidden'); });
   if (newDrawTab) newDrawTab.addEventListener('click', () => { newDrawTab.classList.add('active'); newTypeTab.classList.remove('active'); newDrawArea.classList.remove('hidden'); newTypeArea.classList.add('hidden'); initSigCanvas(); });
-  if (newClearBtn) newClearBtn.addEventListener('click', () => { if (sigCtx) sigCtx.clearRect(0, 0, el.sigCanvas?.width || 560, el.sigCanvas?.height || 120); });
+  if (newClearBtn) newClearBtn.addEventListener('click', () => { if (sigCtx) sigCtx.clearRect(0, 0, document.getElementById('sigCanvas')?.width || 560, document.getElementById('sigCanvas')?.height || 120); });
 }
 
 // Re-wire contractType select to re-render clauses dynamically
