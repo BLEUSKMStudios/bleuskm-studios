@@ -3,66 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Response Received — BLEUSKM Studios</title>
+  <title>Response Received - BLEUSKM Studios</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg:      #080808;
-      --surface: #0d0d0d;
-      --border:  rgba(218,175,55,0.14);
-      --gold:    #DAAF37;
-      --golddim: rgba(218,175,55,0.45);
-      --text:    rgba(234,223,207,0.85);
-      --muted:   rgba(234,223,207,0.45);
-      --dim:     rgba(234,223,207,0.2);
-      --error:   rgba(200,80,80,0.9);
-      --success: rgba(120,180,130,0.9);
-      --font:    'League Spartan', Arial, sans-serif;
-    }
-    html, body { height: 100%; background: var(--bg); font-family: var(--font); -webkit-font-smoothing: antialiased; }
-    body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 32px 20px; }
-
-    .card { width: 100%; max-width: 500px; background: var(--surface); border: 1px solid var(--border); }
-    .card-rule { height: 2px; background: linear-gradient(to right, var(--gold), rgba(218,175,55,0.06)); }
-    .card-body { padding: 48px 44px 44px; text-align: center; }
-
-    .wordmark { font-size: 9px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--golddim); display: block; margin-bottom: 32px; }
-
-    .state { display: none; }
-    .state.active { display: block; }
-
-    /* Loading */
-    .loader { width: 22px; height: 22px; border: 2px solid rgba(218,175,55,0.15); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 20px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-text { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
-
-    /* Content */
-    .response-icon { font-size: 26px; color: var(--gold); margin-bottom: 20px; }
-    .response-icon.declined { color: var(--muted); }
-    .response-label { font-size: 9px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 10px; }
-    .response-label.accepted { color: var(--golddim); }
-    .response-label.declined { color: var(--muted); }
-    .response-title { font-size: 22px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; color: rgba(234,223,207,0.9); line-height: 1.15; margin-bottom: 20px; }
-    .divider { height: 1px; background: rgba(218,175,55,0.08); margin: 0 0 22px; }
-    .response-text { font-family: Georgia, serif; font-size: 14px; line-height: 1.85; color: var(--muted); margin-bottom: 14px; }
-    .response-text:last-of-type { margin-bottom: 0; }
-    .response-text span { color: var(--gold); }
-
-    /* Error */
-    .error-icon { font-size: 18px; color: var(--error); margin-bottom: 16px; }
-    .error-label { font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(200,80,80,0.6); margin-bottom: 14px; }
-
-    /* CTA */
-    .cta-wrap { margin-top: 28px; }
-    .cta-link { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); text-decoration: none; padding: 11px 22px; border: 1px solid rgba(218,175,55,0.35); transition: background 130ms ease; }
-    .cta-link:hover { background: rgba(218,175,55,0.07); }
-
-    .card-foot { padding: 14px 44px 18px; border-top: 1px solid rgba(255,255,255,0.04); text-align: center; }
-    .card-foot p { font-size: 9px; letter-spacing: 0.1em; color: rgba(234,223,207,0.12); }
-    .card-foot a { color: rgba(234,223,207,0.15); text-decoration: none; }
+    :root { --bg:#080808; --surface:#0d0d0d; --border:rgba(218,175,55,0.14); --gold:#DAAF37; --golddim:rgba(218,175,55,0.45); --text:rgba(234,223,207,0.85); --muted:rgba(234,223,207,0.45); --error:rgba(200,80,80,0.9); --font:'League Spartan',Arial,sans-serif; }
+    html, body { height:100%; background:var(--bg); font-family:var(--font); -webkit-font-smoothing:antialiased; }
+    body { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:32px 20px; }
+    .card { width:100%; max-width:500px; background:var(--surface); border:1px solid var(--border); }
+    .card-rule { height:2px; background:linear-gradient(to right,var(--gold),rgba(218,175,55,0.06)); }
+    .card-body { padding:48px 44px 44px; text-align:center; }
+    .wordmark { font-size:9px; font-weight:700; letter-spacing:0.24em; text-transform:uppercase; color:var(--golddim); display:block; margin-bottom:32px; }
+    .state { display:none; } .state.active { display:block; }
+    .loader { width:22px; height:22px; border:2px solid rgba(218,175,55,0.15); border-top-color:var(--gold); border-radius:50%; animation:spin .7s linear infinite; margin:0 auto 20px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .loading-text,.response-label,.error-label { font-size:9px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); }
+    .response-icon { font-size:26px; color:var(--gold); margin-bottom:20px; }
+    .response-title { font-size:22px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color:rgba(234,223,207,.9); line-height:1.15; margin:10px 0 20px; }
+    .divider { height:1px; background:rgba(218,175,55,.08); margin:0 0 22px; }
+    .response-text { font-family:Georgia,serif; font-size:14px; line-height:1.85; color:var(--muted); margin-bottom:14px; }
+    .response-text span { color:var(--gold); }
+    .error-icon { font-size:18px; color:var(--error); margin-bottom:16px; }
+    .cta-wrap { margin-top:28px; }
+    .cta-link { display:inline-block; font-size:9px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); text-decoration:none; padding:11px 22px; border:1px solid rgba(218,175,55,.35); }
+    .card-foot { padding:14px 44px 18px; border-top:1px solid rgba(255,255,255,.04); text-align:center; }
+    .card-foot p,.card-foot a { font-size:9px; letter-spacing:.1em; color:rgba(234,223,207,.15); text-decoration:none; }
   </style>
 </head>
 <body>
@@ -70,54 +37,31 @@
   <div class="card-rule"></div>
   <div class="card-body">
     <span class="wordmark">BLEUSKM STUDIOS</span>
-
-    <!-- Loading -->
-    <div class="state" id="stateLoading">
-      <div class="loader"></div>
-      <p class="loading-text">Recording your response...</p>
-    </div>
-
-    <!-- Accepted -->
+    <div class="state" id="stateLoading"><div class="loader"></div><p class="loading-text">Recording your response...</p></div>
     <div class="state" id="stateAccepted">
-      <div class="response-icon">✦</div>
-      <p class="response-label accepted">Response Received</p>
-      <h1 class="response-title">You Are In<br/>Consideration.</h1>
-      <div class="divider"></div>
-      <p class="response-text">Thank you for your interest in <span id="filmNameAccepted"></span>. We have noted your response and you will receive your next steps by email shortly.</p>
+      <div class="response-icon">*</div><p class="response-label">Response Received</p><h1 class="response-title">You Are In<br/>Consideration.</h1><div class="divider"></div>
+      <p class="response-text">Thank you for your interest in <span id="filmNameAccepted"></span>. We have noted your response.</p>
       <p class="response-text">Keep an eye on your inbox and follow <span>@bleuskm.studios</span> for updates.</p>
-      <div class="cta-wrap">
-        <a href="https://bleuskm.com/my-productions/" class="cta-link">View Our Productions</a>
-      </div>
+      <div class="cta-wrap"><a href="https://bleuskm.com/my-productions/" class="cta-link">View Our Productions</a></div>
     </div>
-
-    <!-- Declined -->
     <div class="state" id="stateDeclined">
-      <div class="response-icon declined">&#8212;</div>
-      <p class="response-label declined">Response Received</p>
-      <h1 class="response-title">Thank You<br/>For Letting Us Know.</h1>
-      <div class="divider"></div>
+      <div class="response-icon">-</div><p class="response-label">Response Received</p><h1 class="response-title">Thank You<br/>For Letting Us Know.</h1><div class="divider"></div>
       <p class="response-text">We respect your decision. Thank you for your time and for submitting to BLEUSKM Studios. We wish you well on your journey.</p>
-      <div class="cta-wrap">
-        <a href="https://bleuskm.com/my-productions/" class="cta-link">View Our Productions</a>
-      </div>
+      <div class="cta-wrap"><a href="https://bleuskm.com/my-productions/" class="cta-link">View Our Productions</a></div>
     </div>
-
-    <!-- Error -->
-    <div class="state" id="stateError">
-      <div class="error-icon">&#10005;</div>
-      <p class="error-label">Something Went Wrong</p>
-      <p class="response-text" id="errorText">We could not record your response. Please try clicking the link from your email again, or contact us at <a href="mailto:casting@bleuskm.com" style="color:var(--golddim);">casting@bleuskm.com</a>.</p>
-    </div>
-
+    <div class="state" id="stateError"><div class="error-icon">x</div><p class="error-label">Something Went Wrong</p><p class="response-text" id="errorText">We could not record your response. Please use the original link from your email.</p></div>
   </div>
-  <div class="card-foot"><p>BLEUSKM Studios &nbsp;&middot;&nbsp; <a href="https://bleuskm.com">bleuskm.com</a></p></div>
+  <div class="card-foot"><p>BLEUSKM Studios &middot; <a href="https://bleuskm.com">bleuskm.com</a></p></div>
 </div>
-
 <script>
-  const params   = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(window.location.search);
   const recordId = params.get('id');
-  const consent  = params.get('consent');
-  const film     = decodeURIComponent(params.get('film') || '');
+  const consent = (params.get('response') || params.get('consent') || '').toLowerCase();
+  const film = params.get('film') || '';
+  const flow = (params.get('flow') || 'consideration').toLowerCase();
+  const person = params.get('name') || '';
+  const email = params.get('email') || '';
+  const role = params.get('role') || '';
 
   function showState(id) {
     document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
@@ -130,33 +74,38 @@
       document.getElementById('errorText').textContent = 'Invalid response link. Please use the original link from your email.';
       return;
     }
-
     showState('stateLoading');
-
     try {
       const res = await fetch('/.netlify/functions/redirect-consent', {
-        method:  'POST',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({
-          recordId,
-          consent: consent === 'yes' ? 'Accepted' : 'Declined'
-        }),
+        body: JSON.stringify({ recordId, consent: consent === 'yes' ? 'Accepted' : 'Declined' })
       });
-
       if (!res.ok) throw new Error(`Server error ${res.status}`);
-
       if (consent === 'yes') {
+        if (flow === 'selftape') {
+          const next = new URL('/selftape/', window.location.origin);
+          next.searchParams.set('id', recordId);
+          next.searchParams.set('film', film || 'The Final Hand');
+          if (person) next.searchParams.set('name', person);
+          if (email) next.searchParams.set('email', email);
+          if (role) next.searchParams.set('role', role);
+          window.location.replace(next.toString());
+          return;
+        }
         document.getElementById('filmNameAccepted').textContent = film || 'this project';
+        const title = document.querySelector('#stateAccepted .response-title');
+        const text = document.querySelector('#stateAccepted .response-text');
+        if (title) title.innerHTML = 'You Are Among<br/>The First In Consideration.';
+        if (text) text.innerHTML = `You will be among the first in consideration for a role in <span>${film || 'this project'}</span>. Thank you for letting us know.`;
         showState('stateAccepted');
       } else {
         showState('stateDeclined');
       }
-
     } catch (err) {
       showState('stateError');
     }
   }
-
   recordResponse();
 </script>
 </body>
