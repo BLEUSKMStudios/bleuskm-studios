@@ -198,10 +198,15 @@ function updateStats() {
   const total     = crewRecords.length;
   const signed    = crewRecords.filter(r => findContract(r.fields['Email'] || '')).length;
   const pending   = crewRecords.filter(r => !findContract(r.fields['Email'] || '') && sessionSent[r.id] === CFG.T.Contract).length;
-  const confirmed = crewRecords.filter(r => isForFinalHand(r.fields)).length;
+  // Active Crew = crew members with Status field = 'Core' in Airtable
+  const confirmed = crewRecords.filter(r => (r.fields['Status'] || '').trim() === 'Core').length;
+  // Awaiting signature = contract email sent this session but no signed contract record yet
+  const awaitingSig = crewRecords.filter(r =>
+    (sessionSent[r.id] === CFG.T.Contract || sessionSent[r.id] === 27) && !findContract(r.fields['Email'] || '')
+  ).length;
   el.statTotal.textContent     = total;
   el.statSigned.textContent    = signed;
-  el.statPending.textContent   = pending;
+  el.statPending.textContent   = awaitingSig;
   el.statConfirmed.textContent = confirmed;
 }
 
@@ -425,10 +430,16 @@ function renderContacts(query = '') {
 function makeContactCard(name, emailOrPhone, detail, type) {
   const card = document.createElement('div');
   card.className = `contact-card contact-${type}`;
+  const alias = type === 'crew' ? 'crew@bleuskm.com' : 'studio@bleuskm.com';
   card.innerHTML = `
     <div class="contact-name">${esc(name)}</div>
     <div class="contact-email"><a href="mailto:${esc(emailOrPhone)}">${esc(emailOrPhone)}</a></div>
-    <div class="contact-detail">${esc(detail)}</div>`;
+    <div class="contact-detail">${esc(detail)}</div>
+    <div style="margin-top:8px;">
+      <button class="contact-action-btn" style="background:none;border:1px solid rgba(255,255,255,0.08);color:rgba(234,223,207,0.45);font-family:inherit;font-size:8px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:4px 10px;cursor:pointer;" data-email="${esc(emailOrPhone)}" data-name="${esc(name)}" data-alias="${alias}">&#9993; Email</button>
+    </div>`;
+  const btn = card.querySelector('[data-email]');
+  if (btn) btn.addEventListener('click', () => openCrewComposeModal(btn.dataset.email, btn.dataset.name, btn.dataset.alias));
   return card;
 }
 
@@ -454,6 +465,34 @@ function renderContractsPanel() {
   }
 
   el.contractsGrid.innerHTML = '';
+  // Also show awaiting-signature rows (contract sent, not yet signed)
+  const awaitingRows = crewRecords.filter(r =>
+    (sessionSent[r.id] === CFG.T.Contract || sessionSent[r.id] === 27) && !findContract(r.fields['Email'] || '')
+  );
+
+  if (awaitingRows.length) {
+    const awHdr = document.createElement('div');
+    awHdr.style.cssText = 'grid-column:1/-1;font-size:8px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(218,175,55,0.5);padding:4px 0 8px;border-top:1px solid var(--borderdim);margin-top:4px;';
+    awHdr.textContent = 'AWAITING SIGNATURE';
+    el.contractsGrid.appendChild(awHdr);
+    awaitingRows.forEach(r => {
+      const f = r.fields;
+      const card = document.createElement('div');
+      card.className = 'contract-record-card awaiting';
+      card.innerHTML = `
+        <div class="cr-name">${esc(f['Name']||'—')}</div>
+        <div class="cr-role">${esc((f['Preferred_role_by_Director']||'').trim() || f['Role']||'—')}</div>
+        <div class="cr-date" style="color:rgba(218,175,55,0.5);">Contract sent — pending signature</div>`;
+      el.contractsGrid.appendChild(card);
+    });
+    if (signed.length) {
+      const sigHdr = document.createElement('div');
+      sigHdr.style.cssText = 'grid-column:1/-1;font-size:8px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(120,180,130,0.6);padding:12px 0 8px;border-top:1px solid var(--borderdim);margin-top:4px;';
+      sigHdr.textContent = 'SIGNED';
+      el.contractsGrid.appendChild(sigHdr);
+    }
+  }
+
   signed.forEach(r => {
     const f       = r.fields;
     const name    = (f['Name']        || '').trim();
@@ -467,8 +506,11 @@ function renderContractsPanel() {
       <div class="cr-name">${esc(name) || '—'}</div>
       <div class="cr-role">${esc(role) || '—'}</div>
       <div class="cr-date">${esc(date) || '—'}</div>
-      ${sigUrl ? `<img class="cr-sig" src="${esc(sigUrl)}" alt="Signature" />` : '<span class="cr-nosig">No image</span>'}
-      ${sigUrl ? `<a class="cr-view" href="${esc(sigUrl)}" target="_blank" rel="noopener">View Full &#8599;</a>` : ''}`;
+      ${sigUrl ? `<img class="cr-sig" src="${esc(sigUrl)}" alt="Signature" />` : '<span class="cr-nosig">No signature image</span>'}
+      <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+        <button class="contact-action-btn" onclick="viewFullContract('${esc(name)}','${esc(role)}','${esc(date)}','${esc(sigUrl)}')">&#128196; View Contract</button>
+        ${sigUrl ? `<a class="contact-action-btn" href="${esc(sigUrl)}" target="_blank" rel="noopener" style="text-decoration:none;">View Sig &#8599;</a>` : ''}
+      </div>`;
     el.contractsGrid.appendChild(card);
   });
 }
@@ -621,12 +663,15 @@ async function fireEmail(record, tid, guideLink = '') {
 
   if (!email) throw new Error('No email address');
 
+  // PREFERRED_ROLE_BY_DIRECTOR = the Airtable "Preferred_role_by_Director" field value.
+  // If blank (no director preference set), fall back to the role they applied for.
+  // This ensures T20 always shows the correct role — never a blank.
   const params = {
     NAME:                       name,
-    ROLE:                       onSetRole,
+    ROLE:                       role,          // original applied-for role
     LT_ROLES:                   ltRoles,
     FILM:                       'The Final Hand',
-    PREFERRED_ROLE_BY_DIRECTOR: prefRole,
+    PREFERRED_ROLE_BY_DIRECTOR: prefRole || role,  // director's preferred role; falls back to applied role if unset
   };
 
   if (tid === CFG.T.Contract) {
@@ -887,11 +932,25 @@ function buildRow(record) {
   panel.appendChild(detailField('STATUS', esc(status)||'—'));
   if (fh)       panel.appendChild(detailField('FINAL HAND', 'Confirmed'));
   if (ltRoles)  panel.appendChild(detailField('EXPERIENCE', esc(ltRoles)));
-  if (prefRole) panel.appendChild(detailField('REDIRECT ROLE', esc(prefRole)));
+  if (prefRole) panel.appendChild(detailField('DIRECTOR ROLE', `<span style="color:var(--gold);">${esc(prefRole)}</span> <span style="color:var(--dim);font-size:9px;">(overrides applied role)</span>`));
   if (dateSigned) panel.appendChild(detailField('DATE SIGNED', esc(dateSigned)));
   if (sessionSent[id]) {
-    const tname={[CFG.T.RoleRedirect]:'Role Redirect',[CFG.T.Contract]:'Contract',[CFG.T.NotProject]:'Not This Project',[CFG.T.Support]:'Support',[CFG.T.Core]:'Core',[CFG.T.Guide]:'Guide'};
-    panel.appendChild(detailField('EMAIL SENT THIS SESSION', esc(tname[sessionSent[id]]||'Yes')));
+    const tname={[CFG.T.RoleRedirect]:'Role Redirect (T20)',[CFG.T.Contract]:'Contract Email (T21)',[CFG.T.NotProject]:'Not This Project (T22)',[CFG.T.Support]:'Support (T23)',[CFG.T.Core]:'Core Email (T25)',[CFG.T.Guide]:'Guide (T26)',27:'Contract Only (T27)'};
+    panel.appendChild(detailField('EMAILS SENT THIS SESSION', esc(tname[sessionSent[id]]||'Yes')));
+  }
+  // Airtable contract status field
+  const atContractStatus = (f['Contract Status'] || '').trim();
+  if (atContractStatus) panel.appendChild(detailField('CONTRACT STATUS', `<span style="color:${atContractStatus==='Signed'?'var(--signed)':'var(--golddim)'};">${esc(atContractStatus)}</span>`));
+
+  // Compose email button
+  if (email) {
+    const cdf = document.createElement('div'); cdf.className = 'detail-field';
+    const clbl = document.createElement('span'); clbl.className = 'detail-label'; clbl.textContent = 'DIRECT EMAIL';
+    const cbtn = document.createElement('button');
+    cbtn.style.cssText = 'background:none;border:1px solid rgba(255,255,255,0.08);color:rgba(234,223,207,0.45);font-family:inherit;font-size:8px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:5px 10px;cursor:pointer;margin-top:4px;';
+    cbtn.textContent = '✉ Compose Email';
+    cbtn.addEventListener('click', () => openCrewComposeModal(email, name, 'crew@bleuskm.com'));
+    cdf.appendChild(clbl); cdf.appendChild(cbtn); panel.appendChild(cdf);
   }
   if (sigUrl) {
     const sd=document.createElement('div'); sd.className='detail-field'; sd.innerHTML=`<span class="detail-label">SIGNATURE</span>`;
@@ -978,3 +1037,175 @@ function toast(msg,type='success'){
   el.toastStack.appendChild(d);
   setTimeout(()=>{ d.classList.add('tout'); d.addEventListener('animationend',()=>d.remove(),{once:true}); },4200);
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   VIEW FULL CONTRACT (modal with full agreement + signature)
+═══════════════════════════════════════════════════════════════ */
+function viewFullContract(name, role, date, sigUrl) {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9000;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 20px;';
+
+  const modal = document.createElement('div');
+  modal.style.cssText = 'background:#0d0d0d;border:1px solid rgba(218,175,55,0.2);max-width:780px;width:100%;padding:0;position:relative;';
+
+  const sigHtml = sigUrl
+    ? `<img src="${sigUrl}" alt="Signature" style="max-width:240px;display:block;margin:8px 0;border:1px solid rgba(255,255,255,0.06);padding:8px;background:#fff;">`
+    : '<em style="color:rgba(234,223,207,0.3);">No signature image</em>';
+
+  modal.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 32px 14px;border-bottom:2px solid #DAAF37;background:#080808;position:sticky;top:0;z-index:10;">
+      <div>
+        <div style="font-size:8px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:rgba(218,175,55,0.5);margin-bottom:3px;">BLEUSKM STUDIOS</div>
+        <div style="font-size:14px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(234,223,207,0.85);">PRODUCTION AGREEMENT</div>
+      </div>
+      <button onclick="this.closest('.full-contract-overlay').remove()" style="background:none;border:none;color:rgba(234,223,207,0.4);font-size:18px;cursor:pointer;padding:4px 10px;">&times;</button>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;border-bottom:1px solid rgba(218,175,55,0.12);background:#111;">
+      <div style="flex:1;min-width:120px;padding:12px 18px;border-right:1px solid rgba(255,255,255,0.04);">
+        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(218,175,55,0.45);margin-bottom:4px;">NAME</div>
+        <div style="font-size:13px;font-weight:600;color:rgba(234,223,207,0.85);">${escHtml(name)}</div>
+      </div>
+      <div style="flex:1;min-width:120px;padding:12px 18px;border-right:1px solid rgba(255,255,255,0.04);">
+        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(218,175,55,0.45);margin-bottom:4px;">ROLE</div>
+        <div style="font-size:13px;font-weight:600;color:rgba(234,223,207,0.85);">${escHtml(role)}</div>
+      </div>
+      <div style="flex:1;min-width:120px;padding:12px 18px;border-right:1px solid rgba(255,255,255,0.04);">
+        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(218,175,55,0.45);margin-bottom:4px;">PROJECT</div>
+        <div style="font-size:13px;font-weight:600;color:rgba(234,223,207,0.85);">The Final Hand</div>
+      </div>
+      <div style="flex:1;min-width:120px;padding:12px 18px;">
+        <div style="font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(218,175,55,0.45);margin-bottom:4px;">DATE SIGNED</div>
+        <div style="font-size:13px;font-weight:600;color:rgba(234,223,207,0.85);">${escHtml(date)}</div>
+      </div>
+    </div>
+
+    <div style="padding:28px 32px;">
+      ${contractClause('1','PARTIES','This Production Agreement ("Agreement") is entered into between <strong>BLEUSKM Studios</strong>, an independent film production company based in Denton, Texas ("Production"), and the individual identified above ("Crew Member"), in connection with the short film production identified as the project above.')}
+      ${contractClause('2','VOLUNTARY, NON-PAID PARTICIPATION','Crew Member acknowledges and agrees that participation in this production is entirely voluntary and unpaid. No compensation, monetary or otherwise, is promised, implied, or expected — now or in the future — in exchange for services rendered on this production. Crew Member agrees to this arrangement knowingly and without coercion.')}
+      ${contractClause('3','IMDb CREDIT','In recognition of their contribution, Crew Member will receive an official IMDb credit for their designated role in this production. Production will make reasonable efforts to submit accurate credits following completion of post-production. IMDb credit is the sole form of recognition provided under this Agreement.')}
+      ${contractClause('4','MEDIA USAGE RIGHTS','Crew Member grants BLEUSKM Studios a perpetual, royalty-free, worldwide license to use any footage, photography, or materials produced during this production for purposes including, but not limited to: film distribution, film festival submissions, promotional materials, marketing campaigns, social media content, press materials, and archival use. Crew Member retains the right to use materials from this production for their personal portfolio, demo reel, and professional self-promotion, provided that BLEUSKM Studios receives appropriate credit.')}
+      ${contractClause('5','LIABILITY WAIVER','Crew Member voluntarily assumes all risks associated with participation in this production, including but not limited to: physical activity on set, travel, equipment handling, and environmental conditions. Crew Member hereby releases, discharges, and holds harmless BLEUSKM Studios, its directors, producers, and representatives from any and all claims, liabilities, damages, injuries, or losses arising from or in connection with participation in this production, to the fullest extent permitted by applicable law.')}
+      ${contractClause('6','COMMITMENT &amp; AVAILABILITY','Crew Member agrees to communicate their availability promptly and accurately throughout pre-production and production. If confirmed for a scheduled shoot day, Crew Member commits to attending unless an emergency arises, in which case advance notice must be provided as early as possible.')}
+      ${contractClause('7','CONFIDENTIALITY','Crew Member agrees to keep the details of the script, production materials, and any unreleased content confidential until BLEUSKM Studios makes an official public announcement or release.')}
+      ${contractClause('8','ELECTRONIC SIGNATURE','Crew Member acknowledges that a typed or drawn electronic signature on this Agreement constitutes a legal and binding signature, equivalent in legal effect to a handwritten signature, pursuant to the E-SIGN Act and UETA. By signing, Crew Member confirms they have read, understood, and voluntarily agreed to all terms.')}
+      ${contractClause('9','GOVERNING LAW','This Agreement shall be governed by and construed in accordance with the laws of the State of Texas. Any disputes arising from this Agreement shall be resolved in Denton County, Texas.')}
+
+      <div style="margin-top:24px;padding:20px 24px;background:#111;border:1px solid rgba(255,255,255,0.05);">
+        <div style="font-size:8px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(218,175,55,0.45);margin-bottom:10px;">SIGNATURE</div>
+        ${sigHtml}
+        <div style="font-size:11px;color:rgba(234,223,207,0.3);margin-top:10px;">Date signed: ${escHtml(date)}</div>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;gap:8px;padding:14px 32px;border-top:1px solid rgba(255,255,255,0.05);background:#111;">
+      <button onclick="window.print()" style="background:none;border:1px solid rgba(255,255,255,0.1);color:rgba(234,223,207,0.5);font-family:inherit;font-size:9px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;padding:8px 16px;cursor:pointer;">&#128438; Print</button>
+      <button onclick="this.closest('.full-contract-overlay').remove()" style="background:#DAAF37;border:none;color:#080808;font-family:inherit;font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;padding:8px 18px;cursor:pointer;">Close</button>
+    </div>`;
+
+  overlay.className = 'full-contract-overlay';
+  overlay.appendChild(modal);
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+}
+
+function contractClause(num, title, text) {
+  return `<div style="display:flex;gap:20px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,0.04);">
+    <span style="font-size:10px;font-weight:700;color:rgba(218,175,55,0.5);min-width:18px;padding-top:2px;flex-shrink:0;">${num}</span>
+    <div style="flex:1;">
+      <p style="margin:0 0 8px;font-size:8px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(218,175,55,0.45);">${title}</p>
+      <p style="margin:0;font-family:Georgia,serif;font-size:12.5px;line-height:1.85;color:rgba(234,223,207,0.55);">${text}</p>
+    </div>
+  </div>`;
+}
+function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+window.viewFullContract = viewFullContract;
+
+/* ═══════════════════════════════════════════════════════════════
+   COMPOSE EMAIL — Zoho aliases (studio@ and crew@)
+═══════════════════════════════════════════════════════════════ */
+function openCrewComposeModal(toEmail = '', toName = '', fromAlias = 'crew@bleuskm.com') {
+  // Remove any existing compose modal
+  document.querySelector('.crew-compose-overlay')?.remove();
+
+  const overlay = document.createElement('div');
+  overlay.className = 'crew-compose-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:8000;display:flex;align-items:center;justify-content:center;padding:20px;';
+
+  overlay.innerHTML = `
+    <div style="background:#0d0d0d;border:1px solid rgba(218,175,55,0.15);width:100%;max-width:520px;border-radius:2px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px 12px;border-bottom:1px solid rgba(255,255,255,0.05);">
+        <span style="font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#DAAF37;">COMPOSE EMAIL</span>
+        <button class="cc-close" style="background:none;border:none;color:rgba(234,223,207,0.4);font-size:16px;cursor:pointer;">&times;</button>
+      </div>
+      <div style="padding:20px 24px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+          <div>
+            <label style="display:block;font-size:8px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(234,223,207,0.4);margin-bottom:6px;">FROM</label>
+            <select class="cc-from" style="width:100%;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);color:rgba(234,223,207,0.85);font-family:inherit;font-size:11px;padding:8px 10px;outline:none;">
+              <option value="crew@bleuskm.com" ${fromAlias==='crew@bleuskm.com'?'selected':''}>crew@bleuskm.com</option>
+              <option value="studio@bleuskm.com" ${fromAlias==='studio@bleuskm.com'?'selected':''}>studio@bleuskm.com</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block;font-size:8px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(234,223,207,0.4);margin-bottom:6px;">TO</label>
+            <input class="cc-to" type="email" value="${escHtml(toEmail)}" placeholder="recipient@email.com" style="width:100%;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);color:rgba(234,223,207,0.85);font-family:inherit;font-size:11px;padding:8px 10px;outline:none;box-sizing:border-box;">
+          </div>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:8px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(234,223,207,0.4);margin-bottom:6px;">SUBJECT</label>
+          <input class="cc-subject" type="text" placeholder="Subject" style="width:100%;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);color:rgba(234,223,207,0.85);font-family:inherit;font-size:12px;padding:8px 10px;outline:none;box-sizing:border-box;">
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:8px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(234,223,207,0.4);margin-bottom:6px;">MESSAGE</label>
+          <textarea class="cc-body" rows="7" style="width:100%;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);color:rgba(234,223,207,0.85);font-family:inherit;font-size:12px;padding:8px 10px;outline:none;resize:vertical;box-sizing:border-box;">${toName ? `Hi ${escHtml(toName)},\n\n` : ''}</textarea>
+        </div>
+        <div class="cc-status" style="font-size:10px;color:rgba(234,223,207,0.4);min-height:16px;margin-bottom:8px;"></div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;padding:12px 24px;border-top:1px solid rgba(255,255,255,0.05);">
+        <button class="cc-cancel" style="background:none;border:1px solid rgba(255,255,255,0.08);color:rgba(234,223,207,0.45);font-family:inherit;font-size:9px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;padding:8px 14px;cursor:pointer;">Cancel</button>
+        <button class="cc-send" style="background:#DAAF37;border:none;color:#080808;font-family:inherit;font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;padding:8px 18px;cursor:pointer;">Send Email</button>
+      </div>
+    </div>`;
+
+  overlay.querySelector('.cc-close').addEventListener('click', () => overlay.remove());
+  overlay.querySelector('.cc-cancel').addEventListener('click', () => overlay.remove());
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+
+  overlay.querySelector('.cc-send').addEventListener('click', async () => {
+    const from    = overlay.querySelector('.cc-from').value;
+    const to      = overlay.querySelector('.cc-to').value.trim();
+    const subject = overlay.querySelector('.cc-subject').value.trim();
+    const body    = overlay.querySelector('.cc-body').value.trim();
+    const status  = overlay.querySelector('.cc-status');
+    const sendBtn = overlay.querySelector('.cc-send');
+    if (!to || !subject || !body) { status.textContent = 'Fill in all fields.'; status.style.color = 'rgba(200,80,80,0.8)'; return; }
+    sendBtn.disabled = true; sendBtn.textContent = 'Sending...';
+    try {
+      const res = await fetch(CFG.BREVO, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          endpoint: CFG.BREVO_EMAIL,
+          payload: {
+            sender: { name: 'BLEUSKM Studios', email: from },
+            to: [{ email: to }],
+            subject,
+            textContent: body,
+          },
+        }),
+      });
+      if (!res.ok) throw new Error(`Brevo ${res.status}`);
+      status.textContent = `Sent from ${from}`;
+      status.style.color = 'rgba(120,180,130,0.8)';
+      setTimeout(() => overlay.remove(), 1800);
+      toast(`Email sent to ${to}`, 'success');
+    } catch (err) {
+      status.textContent = `Failed: ${err.message}`;
+      status.style.color = 'rgba(200,80,80,0.8)';
+      sendBtn.disabled = false; sendBtn.textContent = 'Send Email';
+    }
+  });
+
+  document.body.appendChild(overlay);
+}
+window.openCrewComposeModal = openCrewComposeModal;
