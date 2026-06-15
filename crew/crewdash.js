@@ -611,7 +611,7 @@ function bindEmailModal() {
     el.emailModalSend.disabled = true; el.emailModalSend.textContent = '...';
     try {
       if (tid === CFG.T.ContractOnly) {
-    params.CONTRACT_LINK = buildContractLink(name, email, role, 'The Final Hand');
+    params.CONTRACT_LINK = buildContractLink(name, email, onSetRole, 'The Final Hand');
   }
   if (tid === CFG.T.Guide) {
         const guideLink = el.guideLinkInput.value.trim();
@@ -675,7 +675,7 @@ async function fireEmail(record, tid, guideLink = '') {
   };
 
   if (tid === CFG.T.Contract) {
-    params.CONTRACT_LINK = buildContractLink(name, email, role, 'The Final Hand');
+    params.CONTRACT_LINK = buildContractLink(name, email, onSetRole, 'The Final Hand');
   }
   if (tid === CFG.T.Guide) {
     const gl = guideLink || (f['Guide Link'] || '').trim();
@@ -1209,3 +1209,185 @@ function openCrewComposeModal(toEmail = '', toName = '', fromAlias = 'crew@bleus
   document.body.appendChild(overlay);
 }
 window.openCrewComposeModal = openCrewComposeModal;
+
+/* ═══════════════════════════════════════════════════════════════
+   CREW HUB NAVIGATION
+═══════════════════════════════════════════════════════════════ */
+const CREW_HUB_LABELS = {
+  crew: 'CREW PORTAL', email: 'EMAIL HUB', contracts: 'CONTRACTS HUB',
+  contacts: 'CONTACTS DATABASE', timeline: 'PRODUCTION TIMELINE', admin: 'ADMIN PANEL',
+};
+
+function initCrewHubs() {
+  document.querySelectorAll('.hub-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchCrewHub(btn.dataset.hub));
+  });
+  if (isAdmin) {
+    document.querySelectorAll('.admin-only').forEach(e => e.classList.remove('hidden'));
+    initCrewAdminPanel();
+  }
+
+  // Email hub compose
+  const cqSend = document.getElementById('cqSendBtn');
+  if (cqSend) cqSend.addEventListener('click', sendCrewQuickEmail);
+
+  // Contacts search
+  const cs = document.getElementById('contactsSearch');
+  if (cs) cs.addEventListener('input', () => renderContacts(cs.value.trim().toLowerCase()));
+}
+
+function switchCrewHub(hub) {
+  document.querySelectorAll('.hub-btn').forEach(b => b.classList.toggle('active', b.dataset.hub === hub));
+  document.querySelectorAll('.hub-panel').forEach(p => p.classList.toggle('active', p.id === `hub-${hub}`));
+  const lbl = document.getElementById('activeHubLabel');
+  if (lbl) lbl.textContent = CREW_HUB_LABELS[hub] || 'CREW PORTAL';
+  if (hub === 'contacts') renderContacts();
+  if (hub === 'timeline' && !tlRecords.length) loadTimeline();
+  if (hub === 'contracts') renderContractHubs();
+}
+
+function batchFromHub(tid) {
+  switchCrewHub('crew');
+  const sel = document.getElementById('batchTemplateSelect');
+  if (sel) sel.value = String(tid);
+  toast(`Switched to Crew. Check boxes then send T${tid}.`, 'success');
+}
+window.batchFromHub = batchFromHub;
+
+async function sendCrewQuickEmail() {
+  const from    = (document.getElementById('cqFrom')?.value || '').trim();
+  const to      = (document.getElementById('cqTo')?.value  || '').trim();
+  const subject = (document.getElementById('cqSubject')?.value || '').trim();
+  const body    = (document.getElementById('cqBody')?.value || '').trim();
+  const btn     = document.getElementById('cqSendBtn');
+  if (!to || !subject || !body) { toast('Fill in all fields.', 'error'); return; }
+  btn.disabled = true; btn.textContent = 'Sending...';
+  try {
+    const res = await fetch(CFG.BREVO, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ endpoint: CFG.BREVO_EMAIL, payload: { sender: { name: 'BLEUSKM Studios', email: from }, to: [{ email: to }], subject, textContent: body } }),
+    });
+    if (!res.ok) throw new Error(`Brevo ${res.status}`);
+    toast(`Sent from ${from} to ${to}`, 'success');
+    ['cqTo','cqSubject','cqBody'].forEach(id => { const el2 = document.getElementById(id); if (el2) el2.value = ''; });
+  } catch (err) { toast(`Failed: ${err.message}`, 'error'); }
+  finally { btn.disabled = false; btn.textContent = 'Send Email'; }
+}
+
+/* Contracts hub — show awaiting + signed in their own hub panel */
+function renderContractHubs() {
+  const awaiting = document.getElementById('awaitingGrid');
+  const signed   = document.getElementById('contractsGrid');
+  if (!awaiting || !signed) return;
+
+  // Awaiting = contract email sent this session but no signed record
+  const awRows = crewRecords.filter(r =>
+    (sessionSent[r.id] === CFG.T.Contract || sessionSent[r.id] === 27) && !findContract(r.fields['Email'] || '')
+  );
+  if (!awRows.length) {
+    awaiting.innerHTML = `<p style="font-size:10px;color:var(--muted);">None awaiting.</p>`;
+  } else {
+    awaiting.innerHTML = '';
+    awRows.forEach(r => {
+      const f = r.fields;
+      const card = document.createElement('div');
+      card.className = 'contract-record-card awaiting';
+      card.innerHTML = `<div class="cr-name">${esc(f['Name']||'—')}</div><div class="cr-role">${esc((f['Preferred_role_by_Director']||'').trim()||f['Role']||'—')}</div><div class="cr-date" style="color:rgba(218,175,55,0.5);">Contract sent — awaiting signature</div>`;
+      awaiting.appendChild(card);
+    });
+  }
+
+  renderContractsPanel(); // reuse existing renderer into #contractsGrid
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CREW ADMIN PANEL
+═══════════════════════════════════════════════════════════════ */
+const CREW_LOCKED = { zaria: { password: 'bleuskmcrew2026', role: 'Admin' } };
+
+function loadCrewAdminUsers() {
+  try {
+    const s = JSON.parse(localStorage.getItem('bleuskm_crew_admin') || '{}');
+    if (!s.__seeded) {
+      s.ceion  = s.ceion  || { password: 'bleuskmcrew', role: 'Producer' };
+      s.carmen = s.carmen || { password: 'bleuskmcrew', role: 'Producer' };
+      s.__seeded = true;
+      localStorage.setItem('bleuskm_crew_admin', JSON.stringify(s));
+    }
+    return s;
+  } catch { return {}; }
+}
+function saveCrewAdminUsers(u) { localStorage.setItem('bleuskm_crew_admin', JSON.stringify(u)); }
+
+function initCrewAdminPanel() {
+  renderCrewAdminUsers();
+  const addBtn = document.getElementById('adminAddUserBtn');
+  if (addBtn) addBtn.addEventListener('click', addCrewAdminUser);
+}
+
+function renderCrewAdminUsers() {
+  const list = document.getElementById('adminUserList');
+  if (!list) return;
+  list.innerHTML = '';
+  const stored = loadCrewAdminUsers();
+
+  const zariaRow = document.createElement('div');
+  zariaRow.className = 'admin-user-row';
+  zariaRow.innerHTML = `<div class="admin-user-info"><span style="font-size:13px;font-weight:600;color:rgba(234,223,207,0.85);">zaria</span><span style="font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-left:10px;">Admin</span></div><span style="font-size:9px;color:var(--dim);">locked</span>`;
+  list.appendChild(zariaRow);
+
+  Object.entries(stored).forEach(([username, data]) => {
+    if (username === '__seeded') return;
+    const wrapper = document.createElement('div');
+    const row = document.createElement('div');
+    row.className = 'admin-user-row';
+    row.innerHTML = `<div class="admin-user-info"><span style="font-size:13px;font-weight:600;color:rgba(234,223,207,0.85);">${esc(username)}</span><span style="font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-left:10px;">${esc(data.role||'Crew')}</span></div><div style="display:flex;gap:6px;"><button class="er-toggle" style="background:none;border:1px solid rgba(255,255,255,0.08);color:var(--muted);font-family:inherit;font-size:8px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:4px 9px;cursor:pointer;">&#9998; Edit</button><button class="er-del" style="background:none;border:1px solid rgba(200,80,80,0.25);color:rgba(200,80,80,0.6);font-family:inherit;font-size:8px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:4px 9px;cursor:pointer;">&#10005;</button></div>`;
+    const editRow = document.createElement('div');
+    editRow.className = 'admin-edit-row';
+    editRow.innerHTML = `<input type="text" class="modal-input er-un" value="${esc(username)}" style="max-width:140px;font-size:11px;padding:6px 9px;"><input type="password" class="modal-input er-pw" value="" placeholder="New password" style="max-width:170px;font-size:11px;padding:6px 9px;"><select class="modal-input er-rl" style="max-width:120px;font-size:11px;padding:6px 9px;">${['Producer','Director','Crew','PA'].map(r=>`<option value="${r}" ${data.role===r?'selected':''}>${r}</option>`).join('')}</select><button class="modal-save er-save" style="padding:6px 14px;font-size:8px;">Save</button>`;
+    row.querySelector('.er-toggle').addEventListener('click', () => editRow.classList.toggle('open'));
+    row.querySelector('.er-del').addEventListener('click', () => {
+      if (!confirm(`Remove ${username}?`)) return;
+      const u = loadCrewAdminUsers(); delete u[username]; saveCrewAdminUsers(u);
+      showCrewAdminMsg(`${username} removed.`); renderCrewAdminUsers();
+    });
+    editRow.querySelector('.er-save').addEventListener('click', () => {
+      const nu = editRow.querySelector('.er-un').value.trim().toLowerCase();
+      const np = editRow.querySelector('.er-pw').value.trim();
+      const nr = editRow.querySelector('.er-rl').value;
+      if (!nu) { showCrewAdminMsg('Username required.', true); return; }
+      const u = loadCrewAdminUsers();
+      if (nu !== username) { if (u[nu]) { showCrewAdminMsg('Username taken.', true); return; } delete u[username]; }
+      u[nu] = { password: np || data.password, role: nr };
+      saveCrewAdminUsers(u); showCrewAdminMsg(`${nu} updated.`); renderCrewAdminUsers();
+    });
+    wrapper.appendChild(row); wrapper.appendChild(editRow); list.appendChild(wrapper);
+  });
+}
+
+function addCrewAdminUser() {
+  const u = (document.getElementById('adminNewUser')?.value||'').trim().toLowerCase();
+  const p = (document.getElementById('adminNewPass')?.value||'').trim();
+  const r = document.getElementById('adminNewRole')?.value;
+  if (!u || !p) { showCrewAdminMsg('Fill in username and password.', true); return; }
+  const users = loadCrewAdminUsers();
+  if (users[u]) { showCrewAdminMsg('Username exists.', true); return; }
+  users[u] = { password: p, role: r };
+  saveCrewAdminUsers(users);
+  document.getElementById('adminNewUser').value = '';
+  document.getElementById('adminNewPass').value = '';
+  showCrewAdminMsg(`${u} added as ${r}.`); renderCrewAdminUsers();
+}
+
+function showCrewAdminMsg(msg, isErr = false) {
+  const el2 = document.getElementById('adminMsg');
+  if (!el2) return;
+  el2.textContent = msg;
+  el2.style.color = isErr ? 'rgba(200,80,80,0.8)' : 'rgba(120,180,130,0.8)';
+  setTimeout(() => { el2.textContent = ''; }, 3000);
+}
+
+/* Wire hub init into DOMContentLoaded — append after existing init */
+document.addEventListener('DOMContentLoaded', () => {
+  initCrewHubs();
+});
