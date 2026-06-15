@@ -522,7 +522,7 @@ textarea.modal-input { resize: vertical; }
 .hub-icon { font-size: 11px; }
 
 .hub-panel { display: none; }
-.hub-panel.active { display: block; }
+.hub-panel.active { display: block !important; }
 
 .hub-inner {
   max-width: 1200px;
