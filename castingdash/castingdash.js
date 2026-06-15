@@ -71,6 +71,9 @@ let sigCtx     = null;
 // Pending email modal
 let pendingEmailRecord = null;
 
+// Email archive (sent emails log)
+let emailArchive = [];
+
 /* ── DOM ────────────────────────────────────────────────────── */
 const el = {
   loading:         document.getElementById('stateLoading'),
@@ -209,11 +212,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
   loadLocalContracts();
   loadLocalLocations();
+
+  // Re-wire contractType select to re-render clauses dynamically
+  const typeSelect = document.getElementById('contractType');
+  if (typeSelect) {
+    typeSelect.addEventListener('change', () => {
+      renderContractBody(typeSelect.value);
+      const tmpl = CONTRACT_TEMPLATES[typeSelect.value] || CONTRACT_TEMPLATES.crew;
+      const titleEl = document.getElementById('contractModalTitle');
+      if (titleEl) titleEl.textContent = tmpl.title;
+    });
+  }
+  initHubs();
 });
 
 /* ═══════════════════════════════════════════════════════════════
    AIRTABLE
 ═══════════════════════════════════════════════════════════════ */
+function addEmailArchive(from, to, subject, type) {
+  emailArchive.unshift({ from, to, subject, type, time: new Date().toLocaleString() });
+  if (emailArchive.length > 100) emailArchive.pop();
+  // Re-render archive if email hub is visible
+  const hub = document.getElementById('hub-email');
+  if (hub && hub.classList.contains('active')) renderEmailArchive();
+}
+
+function renderEmailArchive() {
+  const container = document.getElementById('emailArchiveList');
+  if (!container) return;
+  if (!emailArchive.length) {
+    container.innerHTML = '<p style="font-size:10px;color:var(--muted);">No emails sent this session.</p>';
+    return;
+  }
+  container.innerHTML = '';
+  emailArchive.forEach(e => {
+    const item = document.createElement('div');
+    item.className = 'email-archive-item';
+    item.innerHTML = `
+      <div class="ea-meta">
+        <span class="ea-type">${esc(e.type)}</span>
+        <span class="ea-time">${esc(e.time)}</span>
+      </div>
+      <div class="ea-row"><span class="ea-label">FROM</span><span class="ea-val">${esc(e.from)}</span></div>
+      <div class="ea-row"><span class="ea-label">TO</span><span class="ea-val">${esc(e.to)}</span></div>
+      ${e.subject ? `<div class="ea-row"><span class="ea-label">SUBJECT</span><span class="ea-val">${esc(e.subject)}</span></div>` : ''}`;
+    container.appendChild(item);
+  });
+}
+
 async function loadSubmissions() {
   showState('loading');
   try {
@@ -375,6 +421,7 @@ async function sendComposeEmail() {
     });
     if (!res.ok) throw new Error(`Brevo ${res.status}`);
     el.composeModal.classList.add('hidden');
+    addEmailArchive(from, to, subject, 'Direct Email');
     toast(`Email sent from ${from} to ${to}`, 'success');
   } catch (err) {
     toast(`Failed: ${err.message}`, 'error');
@@ -441,13 +488,13 @@ function openContractModal(existingId = null) {
       el.contractEmail.value = c.email;
       el.contractRole.value  = c.role;
       el.contractTerms.value = c.terms;
-      document.getElementById('sigTypeInput')?.value  = c.signature || '';
+      const sigInput = document.getElementById('sigTypeInput'); if (sigInput) sigInput.value = c.signature || '';
     }
   } else {
     el.contractType.value = 'cast';
     el.contractFilm.value = 'The Final Hand';
     el.contractName.value = el.contractEmail.value = el.contractRole.value = el.contractTerms.value = '';
-    document.getElementById('sigTypeInput')?.value = '';
+    const sigInputNew = document.getElementById('sigTypeInput'); if (sigInputNew) sigInputNew.value = '';
     if (sigCtx) sigCtx.clearRect(0, 0, document.getElementById('sigCanvas').width, document.getElementById('sigCanvas').height);
   }
   el.contractModal.classList.remove('hidden');
@@ -462,7 +509,7 @@ function openContractForContact(name, email, role, type) {
   el.contractEmail.value = email;
   el.contractRole.value  = role;
   el.contractTerms.value = '';
-  document.getElementById('sigTypeInput')?.value  = '';
+  (function(){var _el_sigTypeInput=document.getElementById('sigTypeInput');if(_el_sigTypeInput)_el_sigTypeInput.value='';})()
   if (sigCtx) sigCtx.clearRect(0, 0, document.getElementById('sigCanvas').width, document.getElementById('sigCanvas').height);
   el.contractModal.classList.remove('hidden');
 }
@@ -556,7 +603,7 @@ function setContractDate() {
 
 function renderContracts() {
   const filtered = contracts.filter(c => c.type === activeContractTab);
-  el.contractCounts.textContent = `${contracts.length} total · ${filtered.length} shown`;
+  const ccEl = document.getElementById('contractCounts'); if (ccEl) ccEl.textContent = `${contracts.length} total · ${filtered.length} shown`;
 
   if (!filtered.length) {
     el.contractsList.innerHTML = `<p style="font-size:10px;color:var(--muted);padding:16px 0;">No ${activeContractTab} contracts yet.</p>`;
@@ -930,6 +977,7 @@ async function sendFromEmailModal() {
     sentMap[id] = true;
     updateEmailBadge(id, tid === 19 ? 'scheduled' : 'sent');
     el.emailModal.classList.add('hidden');
+    addEmailArchive('casting@bleuskm.com', email, `Template ${tid}`, `T${tid} — Template`);
     toast(`Template ${tid} sent to ${email}`, 'success');
     renderTable();
   } catch (err) {
@@ -989,6 +1037,7 @@ function bindBatchBar() {
         const rec = allRecords.find(r => r.id === id);
         if (rec) rec.fields['Email Sent'] = sl;
         sentMap[id] = true;
+        addEmailArchive('casting@bleuskm.com', email, `T${tid} — ${sl}`, `T${tid} Batch`);
         ok++;
       } catch { fail++; }
       await sleep(280);
@@ -1119,7 +1168,10 @@ function openTimelineModal(record) {
 }
 
 function bindTimelineModal() {
-  el.tlModalCancel.addEventListener('click', () => el.tlModal.classList.add('hidden'));
+  const closeTlModal = () => el.tlModal.classList.add('hidden');
+  const tlClose = document.getElementById('tlModalClose');
+  if (tlClose) tlClose.addEventListener('click', closeTlModal);
+  el.tlModalCancel.addEventListener('click', closeTlModal);
   el.tlModal.addEventListener('click', e => { if (e.target === el.tlModal) el.tlModal.classList.add('hidden'); });
   el.tlModalSave.addEventListener('click', async () => {
     const id = el.tlModalId.value;
@@ -1592,6 +1644,7 @@ function switchHub(hub) {
   const lbl = document.getElementById('activeHubLabel');
   if (lbl) lbl.textContent = HUB_LABELS[hub] || 'CASTING PORTAL';
   // Load content on hub switch
+  if (hub === 'email')     renderEmailArchive();
   if (hub === 'contacts')  renderContacts();
   if (hub === 'locations') renderLocations();
   if (hub === 'contracts') renderContracts();
@@ -1954,17 +2007,3 @@ function renderContractBody(type) {
   if (newDrawTab) newDrawTab.addEventListener('click', () => { newDrawTab.classList.add('active'); newTypeTab.classList.remove('active'); newDrawArea.classList.remove('hidden'); newTypeArea.classList.add('hidden'); initSigCanvas(); });
   if (newClearBtn) newClearBtn.addEventListener('click', () => { if (sigCtx) sigCtx.clearRect(0, 0, document.getElementById('sigCanvas')?.width || 560, document.getElementById('sigCanvas')?.height || 120); });
 }
-
-// Re-wire contractType select to re-render clauses dynamically
-document.addEventListener('DOMContentLoaded', () => {
-  const typeSelect = document.getElementById('contractType');
-  if (typeSelect) {
-    typeSelect.addEventListener('change', () => {
-      renderContractBody(typeSelect.value);
-      const tmpl = CONTRACT_TEMPLATES[typeSelect.value] || CONTRACT_TEMPLATES.crew;
-      const titleEl = document.getElementById('contractModalTitle');
-      if (titleEl) titleEl.textContent = tmpl.title;
-    });
-  }
-  initHubs();
-});
