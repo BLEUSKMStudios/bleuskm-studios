@@ -3,337 +3,103 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login — BLEUSKM Studios Casting Portal</title>
+  <title>Login - BLEUSKM Studios Casting Portal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg:       #080808;
-      --surface:  #0d0d0d;
-      --surface2: #111111;
-      --border:   rgba(218,175,55,0.14);
-      --borderdim:rgba(255,255,255,0.05);
-      --gold:     #DAAF37;
-      --golddim:  rgba(218,175,55,0.45);
-      --goldfaint:rgba(218,175,55,0.07);
-      --text:     rgba(234,223,207,0.85);
-      --muted:    rgba(234,223,207,0.4);
-      --dim:      rgba(234,223,207,0.2);
-      --error:    rgba(200,80,80,0.9);
-      --success:  rgba(120,180,130,0.9);
-      --font:     'League Spartan', Arial, sans-serif;
-    }
+    :root { --bg:#080808; --surface:#0d0d0d; --border:rgba(218,175,55,.14); --borderdim:rgba(255,255,255,.05); --gold:#DAAF37; --golddim:rgba(218,175,55,.45); --text:rgba(234,223,207,.85); --muted:rgba(234,223,207,.4); --error:rgba(200,80,80,.9); --font:'League Spartan',Arial,sans-serif; }
     html, body { height: 100%; background: var(--bg); font-family: var(--font); -webkit-font-smoothing: antialiased; }
-    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; }
-
+    body { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
     .wrap { width: 100%; max-width: 420px; }
-
-    /* Login card */
     .card { background: var(--surface); border: 1px solid var(--border); }
-    .card-rule { height: 2px; background: linear-gradient(to right, var(--gold), rgba(218,175,55,0.06)); }
+    .card-rule { height: 2px; background: linear-gradient(to right,var(--gold),rgba(218,175,55,.06)); }
     .card-body { padding: 48px 40px 40px; }
-    .wordmark { font-size: 9px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--golddim); display: block; margin-bottom: 28px; }
-    .title { font-size: 24px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: rgba(234,223,207,0.92); line-height: 1.1; margin-bottom: 4px; }
-    .subtitle { font-size: 10px; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 36px; }
+    .wordmark { display: block; margin-bottom: 28px; color: var(--golddim); font-size: 9px; font-weight: 700; letter-spacing: .24em; text-transform: uppercase; }
+    .title { margin-bottom: 4px; color: rgba(234,223,207,.92); font-size: 24px; font-weight: 700; letter-spacing: .04em; line-height: 1.1; text-transform: uppercase; }
+    .subtitle { margin-bottom: 36px; color: var(--muted); font-size: 10px; letter-spacing: .1em; }
     .form-group { margin-bottom: 16px; }
-    label { display: block; font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 7px; }
-    input[type=text], input[type=password] {
-      width: 100%; background: rgba(255,255,255,0.025); border: 1px solid var(--borderdim);
-      color: var(--text); font-family: var(--font); font-size: 14px; padding: 11px 13px;
-      outline: none; transition: border-color 130ms ease; -webkit-appearance: none;
-    }
+    label { display: block; margin-bottom: 7px; color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
+    input { width: 100%; padding: 11px 13px; border: 1px solid var(--borderdim); background: rgba(255,255,255,.025); color: var(--text); font: 14px var(--font); outline: none; }
     input:focus { border-color: var(--golddim); }
-    input::placeholder { color: rgba(234,223,207,0.12); }
-    .error-msg { display: none; font-size: 11px; color: var(--error); padding: 9px 13px; border: 1px solid rgba(200,80,80,0.2); background: rgba(200,80,80,0.05); margin-bottom: 16px; letter-spacing: 0.04em; }
+    input::placeholder { color: rgba(234,223,207,.12); }
+    .error-msg { display: none; margin-bottom: 16px; padding: 9px 13px; border: 1px solid rgba(200,80,80,.2); background: rgba(200,80,80,.05); color: var(--error); font-size: 11px; letter-spacing: .04em; }
     .error-msg.show { display: block; }
-    .submit-btn { width: 100%; background: var(--gold); border: none; color: #080808; font-family: var(--font); font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; padding: 14px; cursor: pointer; margin-top: 6px; transition: opacity 130ms; }
-    .submit-btn:hover { opacity: 0.87; }
+    .submit-btn { width: 100%; margin-top: 6px; padding: 14px; border: 0; background: var(--gold); color: #080808; cursor: pointer; font: 700 10px var(--font); letter-spacing: .22em; text-transform: uppercase; }
+    .submit-btn:hover { opacity: .87; }
     .card-foot { padding: 14px 40px 18px; border-top: 1px solid var(--borderdim); text-align: center; }
-    .card-foot p { font-size: 9px; letter-spacing: 0.1em; color: rgba(234,223,207,0.12); }
-
-    /* Admin panel */
-    .admin-toggle { display: none; margin-top: 28px; text-align: center; }
-    .admin-toggle a { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--golddim); text-decoration: none; cursor: pointer; }
-    .admin-toggle a:hover { color: var(--gold); }
-
-    .admin-panel { display: none; margin-top: 24px; background: var(--surface); border: 1px solid var(--border); }
-    .admin-panel .card-rule { height: 1px; background: linear-gradient(to right, var(--gold), transparent); }
-    .admin-body { padding: 28px 32px 32px; }
-    .admin-title { font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--golddim); margin-bottom: 20px; }
-    .user-list { margin-bottom: 20px; }
-    .user-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--borderdim); }
-    .user-row:last-child { border-bottom: none; }
-    .user-name { font-size: 12px; color: var(--text); }
-    .user-role { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
-    .user-del { background: none; border: none; color: rgba(200,80,80,0.5); font-size: 11px; cursor: pointer; padding: 2px 6px; transition: color 130ms; }
-    .user-del:hover { color: var(--error); }
-    .add-user-form { display: flex; gap: 6px; flex-wrap: wrap; }
-    .add-user-form input { flex: 1; min-width: 100px; background: rgba(255,255,255,0.02); border: 1px solid var(--borderdim); color: var(--text); font-family: var(--font); font-size: 12px; padding: 8px 10px; outline: none; transition: border-color 130ms; }
-    .add-user-form input:focus { border-color: var(--golddim); }
-    .add-user-form input::placeholder { color: rgba(234,223,207,0.12); }
-    .add-btn { background: var(--goldfaint); border: 1px solid var(--golddim); color: var(--gold); font-family: var(--font); font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; padding: 8px 14px; cursor: pointer; white-space: nowrap; transition: background 130ms; }
-    .add-btn:hover { background: rgba(218,175,55,0.12); }
-    .admin-msg { font-size: 10px; color: var(--success); margin-top: 10px; display: none; }
-    .admin-msg.show { display: block; }
-    .user-actions { display: flex; gap: 6px; align-items: center; }
-    .user-edit { background: none; border: none; color: var(--golddim); font-size: 11px; cursor: pointer; padding: 2px 6px; transition: color 130ms; }
-    .user-edit:hover { color: var(--gold); }
-    .edit-row { display: none; padding: 10px 0 6px; border-bottom: 1px solid var(--borderdim); flex-wrap: wrap; gap: 6px; }
-    .edit-row.open { display: flex; }
-    .edit-row input, .edit-row select { background: rgba(255,255,255,0.02); border: 1px solid var(--borderdim); color: var(--text); font-family: var(--font); font-size: 12px; padding: 6px 9px; outline: none; transition: border-color 130ms; flex: 1; min-width: 80px; }
-    .edit-row input:focus, .edit-row select:focus { border-color: var(--golddim); }
-    .edit-row select option { background: #1a1a1a; }
-    .save-btn { background: var(--goldfaint); border: 1px solid var(--golddim); color: var(--gold); font-family: var(--font); font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; padding: 6px 12px; cursor: pointer; white-space: nowrap; transition: background 130ms; }
-    .save-btn:hover { background: rgba(218,175,55,0.12); }
+    .card-foot p { color: rgba(234,223,207,.12); font-size: 9px; letter-spacing: .1em; }
   </style>
 </head>
 <body>
-<div class="wrap">
-
-  <!-- Login card -->
-  <div class="card">
-    <div class="card-rule"></div>
-    <div class="card-body">
-      <span class="wordmark">BLEUSKM Studios</span>
-      <h1 class="title">Casting<br/>Portal</h1>
-      <p class="subtitle">Internal access only</p>
-      <div class="form-group">
-        <label for="uname">Username</label>
-        <input type="text" id="uname" autocomplete="username" placeholder="Enter username" />
+  <div class="wrap">
+    <div class="card">
+      <div class="card-rule"></div>
+      <div class="card-body">
+        <span class="wordmark">BLEUSKM Studios</span>
+        <h1 class="title">Casting<br />Portal</h1>
+        <p class="subtitle">Internal access only</p>
+        <div class="form-group"><label for="uname">Username</label><input type="text" id="uname" autocomplete="username" placeholder="Enter username" /></div>
+        <div class="form-group"><label for="pword">Password</label><input type="password" id="pword" autocomplete="current-password" placeholder="Enter password" /></div>
+        <div class="error-msg" id="errMsg">Incorrect username or password.</div>
+        <button class="submit-btn" id="loginBtn">Enter Portal</button>
       </div>
-      <div class="form-group">
-        <label for="pword">Password</label>
-        <input type="password" id="pword" autocomplete="current-password" placeholder="Enter password" />
-      </div>
-      <div class="error-msg" id="errMsg">Incorrect username or password.</div>
-      <button class="submit-btn" id="loginBtn">Enter Portal</button>
-    </div>
-    <div class="card-foot"><p>BLEUSKM Studios &nbsp;·&nbsp; Internal Use Only</p></div>
-  </div>
-
-  <!-- Admin toggle (only shown after failed attempt reveals it's zaria) -->
-  <div class="admin-toggle" id="adminToggle">
-    <a id="adminLink">⚙ Manage Crew Access</a>
-  </div>
-
-  <!-- Admin panel -->
-  <div class="admin-panel" id="adminPanel">
-    <div class="card-rule"></div>
-    <div class="admin-body">
-      <p class="admin-title">Crew Access — Admin Only</p>
-      <div class="user-list" id="userList"></div>
-      <div class="add-user-form">
-        <input type="text" id="newUser" placeholder="Username" autocomplete="off" />
-        <input type="password" id="newPass" placeholder="Password" autocomplete="off" />
-        <select id="newRole" style="background:rgba(255,255,255,0.02);border:1px solid var(--borderdim);color:var(--text);font-family:var(--font);font-size:12px;padding:8px 10px;outline:none;">
-          <option value="Producer">Producer</option>
-          <option value="Crew">Crew</option>
-          <option value="Director">Director</option>
-          <option value="PA">PA</option>
-        </select>
-        <button class="add-btn" id="addUserBtn">Add</button>
-      </div>
-      <p class="admin-msg" id="adminMsg"></p>
+      <div class="card-foot"><p>BLEUSKM Studios &nbsp;-&nbsp; Internal Use Only</p></div>
     </div>
   </div>
-
-</div>
-
-<script>
-  // ── Only zaria is permanently locked ────────────────────────
-  const LOCKED_USERS = {
-    zaria: { password: 'bleuskm2026', role: 'Admin' },
-  };
-
-  // ── All other users live in localStorage ────────────────────
-  function loadUsers() {
-    try {
-      const stored = JSON.parse(localStorage.getItem('bleuskm_crew') || '{}');
-      // Seed ceion + carmen if never been set up
-      if (!stored.__seeded) {
-        stored.ceion  = stored.ceion  || { password: 'bleuskmcrew', role: 'Producer' };
-        stored.carmen = stored.carmen || { password: 'bleuskmcrew', role: 'Producer' };
-        stored.__seeded = true;
-        localStorage.setItem('bleuskm_crew', JSON.stringify(stored));
+  <script>
+    const LOCKED_USERS = {
+      zaria: { password: 'bleuskm2026', role: 'Admin' },
+    };
+    const DEFAULT_PRODUCERS = {
+      ceion:   { password: 'bleuskmcrew', role: 'Producer' },
+      carmen:  { password: 'bleuskmcrew', role: 'Producer' },
+      ftorres: { password: 'bleuskmcrew', role: 'Producer' },
+      creeves: { password: 'bleuskmcrew', role: 'Producer' },
+      cscott:  { password: 'bleuskmcrew', role: 'Producer' },
+    };
+    function loadStoredUsers() {
+      try { return JSON.parse(localStorage.getItem('bleuskm_crew') || '{}'); }
+      catch { return {}; }
+    }
+    function getAllUsers() {
+      return Object.assign({}, loadStoredUsers(), DEFAULT_PRODUCERS, LOCKED_USERS);
+    }
+    function seedDefaultUsers() {
+      const stored = loadStoredUsers();
+      let changed = false;
+      Object.entries(DEFAULT_PRODUCERS).forEach(([username, data]) => {
+        if (!stored[username]) { stored[username] = data; changed = true; }
+      });
+      if (!stored.__seeded) { stored.__seeded = true; changed = true; }
+      if (changed) localStorage.setItem('bleuskm_crew', JSON.stringify(stored));
+    }
+    if (sessionStorage.getItem('bleuskm_auth') === 'true') window.location.replace('./index.html');
+    seedDefaultUsers();
+    const unameEl = document.getElementById('uname');
+    const pwordEl = document.getElementById('pword');
+    const errMsg = document.getElementById('errMsg');
+    function attemptLogin() {
+      const username = unameEl.value.trim().toLowerCase();
+      const password = pwordEl.value;
+      const user = getAllUsers()[username];
+      if (user && user.password === password) {
+        sessionStorage.setItem('bleuskm_auth', 'true');
+        sessionStorage.setItem('bleuskm_user', username);
+        sessionStorage.setItem('bleuskm_role', user.role || 'Producer');
+        window.location.replace('./index.html');
+        return;
       }
-      return stored;
-    } catch { return {}; }
-  }
-
-  function saveUsers(users) {
-    localStorage.setItem('bleuskm_crew', JSON.stringify(users));
-  }
-
-  function getAllUsers() {
-    return Object.assign({}, LOCKED_USERS, loadUsers());
-  }
-
-  // ── Redirect if already logged in ────────────────────────────
-  if (sessionStorage.getItem('bleuskm_auth') === 'true') {
-    window.location.replace('./index.html');
-  }
-
-  const unameEl     = document.getElementById('uname');
-  const pwordEl     = document.getElementById('pword');
-  const loginBtn    = document.getElementById('loginBtn');
-  const errMsg      = document.getElementById('errMsg');
-  const adminToggle = document.getElementById('adminToggle');
-  const adminLink   = document.getElementById('adminLink');
-  const adminPanel  = document.getElementById('adminPanel');
-
-  function attemptLogin() {
-    const u = unameEl.value.trim().toLowerCase();
-    const p = pwordEl.value;
-    const users = getAllUsers();
-
-    if (users[u] && users[u].password === p) {
-      sessionStorage.setItem('bleuskm_auth', 'true');
-      sessionStorage.setItem('bleuskm_user', u);
-      sessionStorage.setItem('bleuskm_role', users[u].role);
-      window.location.replace('./index.html');
-    } else {
       errMsg.classList.add('show');
       pwordEl.value = '';
       pwordEl.focus();
-      if (u === 'zaria') adminToggle.style.display = 'block';
     }
-  }
-
-  loginBtn.addEventListener('click', attemptLogin);
-  [unameEl, pwordEl].forEach(inp => {
-    inp.addEventListener('keydown', e => {
-      if (e.key === 'Enter') attemptLogin();
+    document.getElementById('loginBtn').addEventListener('click', attemptLogin);
+    [unameEl, pwordEl].forEach(input => input.addEventListener('keydown', event => {
+      if (event.key === 'Enter') attemptLogin();
       errMsg.classList.remove('show');
-    });
-  });
-
-  // ── Admin panel toggle ────────────────────────────────────────
-  adminLink.addEventListener('click', () => {
-    const open = adminPanel.style.display === 'block';
-    adminPanel.style.display = open ? 'none' : 'block';
-    if (!open) renderUserList();
-  });
-
-  const ROLE_OPTIONS = ['Producer', 'Director', 'Crew', 'PA'];
-
-  function renderUserList() {
-    const stored = loadUsers();
-    const list   = document.getElementById('userList');
-    list.innerHTML = '';
-
-    // Locked row — zaria
-    const zariaRow = document.createElement('div');
-    zariaRow.className = 'user-row';
-    zariaRow.innerHTML = `
-      <div><span class="user-name">zaria</span><span class="user-role" style="margin-left:10px;">Admin</span></div>
-      <span style="font-size:9px;color:var(--dim);">locked</span>`;
-    list.appendChild(zariaRow);
-
-    // All stored users (editable/deletable)
-    Object.entries(stored).forEach(([username, data]) => {
-      if (username === '__seeded') return;
-
-      const wrapper = document.createElement('div');
-
-      const row = document.createElement('div');
-      row.className = 'user-row';
-      row.dataset.user = username;
-      row.innerHTML = `
-        <div>
-          <span class="user-name">${username}</span>
-          <span class="user-role" style="margin-left:10px;">${data.role || 'Crew'}</span>
-        </div>
-        <div class="user-actions">
-          <button class="user-edit" data-user="${username}" title="Edit">&#9998; Edit</button>
-          <button class="user-del" data-user="${username}" title="Remove">&#10005; Remove</button>
-        </div>`;
-
-      const editRow = document.createElement('div');
-      editRow.className = 'edit-row';
-      editRow.innerHTML = `
-        <input type="text"     class="edit-uname" value="${username}" placeholder="Username" autocomplete="off" />
-        <input type="password" class="edit-pass"  value=""            placeholder="New password (leave blank to keep)" autocomplete="off" />
-        <select class="edit-role">
-          ${ROLE_OPTIONS.map(r => `<option value="${r}" ${data.role === r ? 'selected' : ''}>${r}</option>`).join('')}
-        </select>
-        <button class="save-btn">Save</button>`;
-
-      // Edit toggle
-      row.querySelector('.user-edit').addEventListener('click', () => {
-        editRow.classList.toggle('open');
-      });
-
-      // Delete
-      row.querySelector('.user-del').addEventListener('click', () => {
-        if (!confirm(`Remove ${username}?`)) return;
-        const users = loadUsers();
-        delete users[username];
-        saveUsers(users);
-        showAdminMsg(`${username} removed.`);
-        renderUserList();
-      });
-
-      // Save edit
-      editRow.querySelector('.save-btn').addEventListener('click', () => {
-        const newUser = editRow.querySelector('.edit-uname').value.trim().toLowerCase();
-        const newPass = editRow.querySelector('.edit-pass').value.trim();
-        const newRole = editRow.querySelector('.edit-role').value;
-
-        if (!newUser) { showAdminMsg('Username cannot be empty.', true); return; }
-
-        const users = loadUsers();
-        const existing = users[username];
-
-        // If username changed, delete old key
-        if (newUser !== username) {
-          if (users[newUser] || LOCKED_USERS[newUser]) {
-            showAdminMsg('That username is already taken.', true); return;
-          }
-          delete users[username];
-        }
-
-        users[newUser] = {
-          password: newPass || existing.password,
-          role: newRole,
-        };
-        saveUsers(users);
-        showAdminMsg(`${newUser} updated.`);
-        renderUserList();
-      });
-
-      wrapper.appendChild(row);
-      wrapper.appendChild(editRow);
-      list.appendChild(wrapper);
-    });
-  }
-
-  // ── Add user ─────────────────────────────────────────────────
-  document.getElementById('addUserBtn').addEventListener('click', () => {
-    const u = document.getElementById('newUser').value.trim().toLowerCase();
-    const p = document.getElementById('newPass').value.trim();
-    const r = document.getElementById('newRole').value;
-    if (!u || !p) { showAdminMsg('Enter both username and password.', true); return; }
-
-    const users = loadUsers();
-    if (users[u] || LOCKED_USERS[u]) { showAdminMsg('Username already exists.', true); return; }
-
-    users[u] = { password: p, role: r };
-    saveUsers(users);
-    document.getElementById('newUser').value = '';
-    document.getElementById('newPass').value = '';
-    showAdminMsg(`${u} added as ${r}.`);
-    renderUserList();
-  });
-
-  function showAdminMsg(msg, isError = false) {
-    const el = document.getElementById('adminMsg');
-    el.textContent = msg;
-    el.style.color = isError ? 'var(--error)' : 'var(--success)';
-    el.classList.add('show');
-    setTimeout(() => el.classList.remove('show'), 3000);
-  }
-</script>
+    }));
+  </script>
 </body>
 </html>
