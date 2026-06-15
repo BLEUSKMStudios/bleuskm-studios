@@ -11,79 +11,214 @@
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- ── HEADER ── -->
   <header class="dash-header">
     <div class="header-inner">
       <div class="header-left">
         <span class="studio-label">BLEUSKM STUDIOS</span>
         <span class="hdivider"></span>
-        <span class="page-label">CASTING PORTAL</span>
+        <span class="page-label" id="activeHubLabel">CASTING PORTAL</span>
       </div>
       <div class="header-right">
-        <span class="record-count" id="recordCount">— submissions</span>
-        <button class="icon-btn hidden" id="crewDashBtn">&#8652; Crew Dash</button>
-        <button class="icon-btn" id="refreshBtn">
-          <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
-            <path d="M12.5 7A5.5 5.5 0 1 1 7 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            <path d="M7 1.5L9.5 4M7 1.5L9.5 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          Refresh
-        </button>
+        <span class="record-count" id="recordCount">—</span>
+        <button class="icon-btn hidden" id="crewDashBtn">&#8652; Crew</button>
+        <button class="icon-btn" id="refreshBtn">&#8635; Refresh</button>
         <span class="user-chip" id="userChip"></span>
         <button class="icon-btn logout-btn" id="logoutBtn">Log out</button>
       </div>
     </div>
     <div class="header-rule"></div>
+
+    <!-- ── HUB NAV ── -->
+    <nav class="hub-nav">
+      <button class="hub-btn active" data-hub="applications">
+        <span class="hub-icon">&#9776;</span> Applications
+      </button>
+      <button class="hub-btn" data-hub="email">
+        <span class="hub-icon">&#9993;</span> Email Hub
+      </button>
+      <button class="hub-btn" data-hub="contracts">
+        <span class="hub-icon">&#128196;</span> Contracts
+      </button>
+      <button class="hub-btn" data-hub="contacts">
+        <span class="hub-icon">&#128101;</span> Contacts
+      </button>
+      <button class="hub-btn" data-hub="locations">
+        <span class="hub-icon">&#9679;</span> Locations
+      </button>
+      <button class="hub-btn" data-hub="timeline">
+        <span class="hub-icon">&#9201;</span> Timeline
+      </button>
+      <button class="hub-btn admin-only hidden" data-hub="admin">
+        <span class="hub-icon">&#9881;</span> Admin
+      </button>
+    </nav>
   </header>
 
-  <!-- Timeline -->
-  <div class="timeline-panel" id="timelinePanel">
-    <div class="timeline-panel-header">
-      <div class="timeline-panel-left">
-        <span class="panel-eyebrow">PRODUCTION TIMELINE</span>
-        <span class="panel-film">The Final Hand</span>
+  <!-- ════════════════════════════════════════════
+       HUB: APPLICATIONS
+  ════════════════════════════════════════════ -->
+  <div class="hub-panel active" id="hub-applications">
+
+    <!-- Batch bar -->
+    <div class="batch-bar hidden" id="batchBar">
+      <span class="batch-count" id="batchCount">0 selected</span>
+      <select class="batch-template-select" id="batchTemplateSelect">
+        <option value="">— Choose template —</option>
+        <option value="16">T16 — Casting Rejection</option>
+        <option value="17">T17 — Direct Offer (Film)</option>
+        <option value="18">T18 — Cross Casting (Role)</option>
+        <option value="19">T19 — Final Callback + Calendly</option>
+      </select>
+      <button class="batch-send-btn" id="batchSendBtn">Send to Selected</button>
+      <button class="batch-clear-btn" id="batchClearBtn">Clear</button>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls-bar">
+      <div class="filter-group">
+        <button class="filter-btn active" data-filter="All">All</button>
+        <button class="filter-btn" data-filter="Callback">Callback</button>
+        <button class="filter-btn" data-filter="Redirect">Redirect</button>
+        <button class="filter-btn" data-filter="Pass">Pass</button>
       </div>
-      <div class="timeline-panel-right">
-        <button class="icon-btn" id="timelineRefreshBtn">Sync</button>
-        <button class="icon-btn" id="calendarToggleBtn">
-          <svg width="11" height="11" viewBox="0 0 14 14" fill="none">
-            <rect x="1" y="2" width="12" height="11" rx="1" stroke="currentColor" stroke-width="1.3"/>
-            <path d="M1 6h12M4 1v2M10 1v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-          </svg>
-          Calendar
-        </button>
+      <div class="search-wrap">
+        <svg class="search-icon" width="12" height="12" viewBox="0 0 16 16" fill="none">
+          <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <input class="search-input" id="searchInput" type="text" placeholder="Search name, email, role..." />
+        <button class="search-clear hidden" id="searchClear">&#10005;</button>
       </div>
     </div>
-    <div class="timeline-track" id="timelineTrack">
-      <div class="timeline-loading"><div class="loader-ring-sm"></div><span>Loading...</span></div>
-    </div>
-    <div class="calendar-wrap hidden" id="calendarWrap">
-      <div class="calendar-header">
-        <span class="cal-month-label" id="calMonthLabel"></span>
-        <div class="cal-header-actions">
-          <button class="cal-nav" id="calPrev">&#8592;</button>
-          <button class="cal-nav" id="calNext">&#8594;</button>
-          <button class="cal-close" id="calClose">Close</button>
+
+    <main class="dash-main">
+      <div class="state-panel" id="stateLoading"><div class="loader-ring"></div><p class="state-text">Loading...</p></div>
+      <div class="state-panel hidden" id="stateError"><p class="state-icon">&#10005;</p><p class="state-text" id="stateErrorMsg">Could not load data.</p><button class="ghost-btn" id="retryBtn">Try again</button></div>
+      <div class="state-panel hidden" id="stateEmpty"><p class="state-text">No submissions match.</p></div>
+      <div class="table-wrap hidden" id="tableWrap">
+        <table class="casting-table" id="castingTable">
+          <thead id="castingTableHead"></thead>
+          <tbody id="castingTableBody"></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       HUB: EMAIL
+  ════════════════════════════════════════════ -->
+  <div class="hub-panel hidden" id="hub-email">
+    <div class="hub-inner">
+      <div class="hub-header-row">
+        <div>
+          <p class="hub-eyebrow">EMAIL HUB</p>
+          <h2 class="hub-title">Communications</h2>
+          <p class="hub-sub">Send Brevo templates or compose direct emails from your aliases.</p>
+        </div>
+        <button class="modal-save" onclick="openComposeModal()">&#9993; New Email</button>
+      </div>
+
+      <div class="hub-section-label">BREVO TEMPLATES — CASTING</div>
+      <div class="template-grid">
+        <div class="template-card">
+          <div class="tc-num">T16</div>
+          <div class="tc-name">Casting Rejection</div>
+          <div class="tc-desc">Sent to applicants with "Pass" in Casting Status.</div>
+          <button class="tc-send-btn" onclick="openBatchFromEmailHub(16)">Send to Selected</button>
+        </div>
+        <div class="template-card">
+          <div class="tc-num">T17</div>
+          <div class="tc-name">Direct Offer — Film Redirect</div>
+          <div class="tc-desc">Sent to "Redirect" applicants with no specific role assigned.</div>
+          <button class="tc-send-btn" onclick="openBatchFromEmailHub(17)">Send to Selected</button>
+        </div>
+        <div class="template-card">
+          <div class="tc-num">T18</div>
+          <div class="tc-name">Cross Casting — Specific Role</div>
+          <div class="tc-desc">Sent to "Redirect" applicants who have a role in the "To Role" field.</div>
+          <button class="tc-send-btn" onclick="openBatchFromEmailHub(18)">Send to Selected</button>
+        </div>
+        <div class="template-card">
+          <div class="tc-num">T19</div>
+          <div class="tc-name">Final Callback + Calendly</div>
+          <div class="tc-desc">Sent after self-tape review to invite selected candidates to callback.</div>
+          <button class="tc-send-btn" onclick="openBatchFromEmailHub(19)">Send to Selected</button>
         </div>
       </div>
-      <div class="calendar-grid" id="calendarGrid"></div>
+
+      <div class="hub-section-label" style="margin-top:32px;">COMPOSE DIRECT EMAIL</div>
+      <div class="compose-quickform">
+        <div class="modal-row">
+          <div class="modal-field">
+            <label class="modal-label">FROM</label>
+            <select class="modal-input" id="qFrom">
+              <option value="casting@bleuskm.com">casting@bleuskm.com</option>
+              <option value="crew@bleuskm.com">crew@bleuskm.com</option>
+            </select>
+          </div>
+          <div class="modal-field">
+            <label class="modal-label">TO</label>
+            <input class="modal-input" id="qTo" type="email" placeholder="recipient@email.com" />
+          </div>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">SUBJECT</label>
+          <input class="modal-input" id="qSubject" type="text" placeholder="Subject line" />
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">MESSAGE</label>
+          <textarea class="modal-input" id="qBody" rows="7" placeholder="Write your message..."></textarea>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px;">
+          <button class="modal-save" id="qSendBtn">Send Email</button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Contacts Panel -->
-  <div class="contacts-panel" id="contactsPanel">
-    <div class="contacts-panel-header" id="contactsPanelToggle">
-      <div class="contacts-panel-left">
-        <span class="panel-eyebrow">CONTACTS DATABASE</span>
-        <span class="contacts-counts" id="contactsCounts">—</span>
+  <!-- ════════════════════════════════════════════
+       HUB: CONTRACTS
+  ════════════════════════════════════════════ -->
+  <div class="hub-panel hidden" id="hub-contracts">
+    <div class="hub-inner">
+      <div class="hub-header-row">
+        <div>
+          <p class="hub-eyebrow">CONTRACTS HUB</p>
+          <h2 class="hub-title">Agreements &amp; Documents</h2>
+          <p class="hub-sub">Create, sign, store, and send production agreements.</p>
+        </div>
+        <button class="modal-save" id="newContractBtn">+ New Contract</button>
       </div>
-      <div class="contacts-panel-right">
-        <span class="contacts-toggle-arrow" id="contactsArrow">&#9654;</span>
+
+      <div class="contracts-tabs" style="margin-bottom:20px;">
+        <button class="contracts-tab active" data-tab="cast">Cast</button>
+        <button class="contracts-tab" data-tab="crew">Crew</button>
+        <button class="contracts-tab" data-tab="location">Location</button>
+        <button class="contracts-tab" data-tab="talent_release">Talent Release</button>
+        <button class="contracts-tab" data-tab="background">Background</button>
+        <button class="contracts-tab" data-tab="composer">Composer Release</button>
+        <button class="contracts-tab" data-tab="custom">Custom</button>
+      </div>
+
+      <div class="contracts-list" id="contractsList">
+        <p style="font-size:10px;color:var(--muted);padding:16px 0;">No contracts yet. Click &ldquo;+ New Contract&rdquo; to create one.</p>
       </div>
     </div>
-    <div class="contacts-body hidden" id="contactsBody">
-      <div class="contacts-search-wrap">
-        <input class="contacts-search" id="contactsSearch" type="text" placeholder="Search contacts..." />
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       HUB: CONTACTS
+  ════════════════════════════════════════════ -->
+  <div class="hub-panel hidden" id="hub-contacts">
+    <div class="hub-inner">
+      <div class="hub-header-row">
+        <div>
+          <p class="hub-eyebrow">CONTACTS DATABASE</p>
+          <h2 class="hub-title">Cast &amp; Core Crew</h2>
+          <span class="contacts-counts" id="contactsCounts">—</span>
+        </div>
+        <input class="contacts-search" id="contactsSearch" type="text" placeholder="Search contacts..." style="width:220px;" />
       </div>
       <div class="contacts-grid" id="contactsGrid">
         <div class="contacts-loading"><div class="loader-ring-sm"></div><span>Loading...</span></div>
@@ -91,109 +226,101 @@
     </div>
   </div>
 
-  <!-- Contracts Section -->
-  <div class="contracts-panel" id="contractsPanel">
-    <div class="contracts-panel-header" id="contractsPanelToggle">
-      <div class="contacts-panel-left">
-        <span class="panel-eyebrow">CONTRACTS</span>
-        <span class="contacts-counts" id="contractCounts">—</span>
-      </div>
-      <div class="contacts-panel-right">
-        <button class="icon-btn" id="newContractBtn" style="margin-right:8px;">+ New Contract</button>
-        <span class="contacts-toggle-arrow" id="contractsArrow">&#9654;</span>
-      </div>
-    </div>
-    <div class="contracts-body hidden" id="contractsBody">
-      <div class="contracts-tabs">
-        <button class="contracts-tab active" data-tab="cast">Cast</button>
-        <button class="contracts-tab" data-tab="crew">Crew</button>
-        <button class="contracts-tab" data-tab="location">Location</button>
-      </div>
-      <div class="contracts-list" id="contractsList">
-        <p style="font-size:10px;color:var(--muted);padding:16px 0;">No contracts yet. Click &ldquo;+ New Contract&rdquo; to create one.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Location Tracker -->
-  <div class="location-panel" id="locationPanel">
-    <div class="location-panel-header" id="locationPanelToggle">
-      <div class="contacts-panel-left">
-        <span class="panel-eyebrow">LOCATION TRACKER</span>
-        <span class="contacts-counts" id="locationCounts">—</span>
-      </div>
-      <div class="contacts-panel-right">
-        <button class="icon-btn" id="addLocationBtn" style="margin-right:8px;">+ Add Location</button>
-        <span class="contacts-toggle-arrow" id="locationArrow">&#9654;</span>
-      </div>
-    </div>
-    <div class="location-body hidden" id="locationBody">
-      <div class="location-search-wrap">
-        <input class="contacts-search" id="locationSearch" type="text" placeholder="Search saved locations..." />
+  <!-- ════════════════════════════════════════════
+       HUB: LOCATIONS
+  ════════════════════════════════════════════ -->
+  <div class="hub-panel hidden" id="hub-locations">
+    <div class="hub-inner">
+      <div class="hub-header-row">
+        <div>
+          <p class="hub-eyebrow">LOCATION TRACKER</p>
+          <h2 class="hub-title">Filming Locations</h2>
+          <span class="contacts-counts" id="locationCounts">—</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input class="contacts-search" id="locationSearch" type="text" placeholder="Search locations..." style="width:200px;" />
+          <button class="modal-save" id="addLocationBtn">+ Add Location</button>
+        </div>
       </div>
       <div class="location-grid" id="locationGrid">
-        <p style="font-size:10px;color:var(--muted);padding:16px 0;">No locations saved yet.</p>
+        <p style="font-size:10px;color:var(--muted);">No locations saved yet.</p>
       </div>
     </div>
   </div>
 
-  <!-- Batch bar (appears when checkboxes selected) -->
-  <div class="batch-bar hidden" id="batchBar">
-    <span class="batch-count" id="batchCount">0 selected</span>
-    <select class="batch-template-select" id="batchTemplateSelect">
-      <option value="">— Choose email template —</option>
-      <option value="16">T16 — Casting Rejection</option>
-      <option value="17">T17 — Direct Offer (Film)</option>
-      <option value="18">T18 — Cross Casting (Role)</option>
-      <option value="19">T19 — Final Callback + Calendly</option>
-    </select>
-    <button class="batch-send-btn" id="batchSendBtn">Send to Selected</button>
-    <button class="batch-clear-btn" id="batchClearBtn">Clear</button>
+  <!-- ════════════════════════════════════════════
+       HUB: TIMELINE
+  ════════════════════════════════════════════ -->
+  <div class="hub-panel hidden" id="hub-timeline">
+    <div class="hub-inner">
+      <div class="hub-header-row">
+        <div>
+          <p class="hub-eyebrow">PRODUCTION TIMELINE</p>
+          <h2 class="hub-title">The Final Hand</h2>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="icon-btn" id="timelineRefreshBtn">Sync</button>
+          <button class="icon-btn" id="calendarToggleBtn">&#128197; Calendar</button>
+        </div>
+      </div>
+      <div class="timeline-track" id="timelineTrack">
+        <div class="timeline-loading"><div class="loader-ring-sm"></div><span>Loading...</span></div>
+      </div>
+      <div class="calendar-wrap hidden" id="calendarWrap">
+        <div class="calendar-header">
+          <span class="cal-month-label" id="calMonthLabel"></span>
+          <div class="cal-header-actions">
+            <button class="cal-nav" id="calPrev">&#8592;</button>
+            <button class="cal-nav" id="calNext">&#8594;</button>
+            <button class="cal-close" id="calClose">Close</button>
+          </div>
+        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+      </div>
+    </div>
   </div>
 
-  <!-- Controls -->
-  <div class="controls-bar">
-    <div class="filter-group">
-      <button class="filter-btn active" data-filter="All">All</button>
-      <button class="filter-btn" data-filter="Callback">Callback</button>
-      <button class="filter-btn" data-filter="Redirect">Redirect</button>
-      <button class="filter-btn" data-filter="Pass">Pass</button>
-    </div>
-    <div class="search-wrap">
-      <svg class="search-icon" width="12" height="12" viewBox="0 0 16 16" fill="none">
-        <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.5"/>
-        <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
-      <input class="search-input" id="searchInput" type="text" placeholder="Search name, email, role, location..." />
-      <button class="search-clear hidden" id="searchClear">&#10005;</button>
+  <!-- ════════════════════════════════════════════
+       HUB: ADMIN (Zaria only)
+  ════════════════════════════════════════════ -->
+  <div class="hub-panel hidden" id="hub-admin">
+    <div class="hub-inner">
+      <div class="hub-header-row">
+        <div>
+          <p class="hub-eyebrow">ADMIN PANEL</p>
+          <h2 class="hub-title">Access &amp; Control</h2>
+          <p class="hub-sub">Manage user access, dashboard permissions, and production locks. Admin only.</p>
+        </div>
+      </div>
+
+      <!-- User management -->
+      <div class="hub-section-label">USER MANAGEMENT</div>
+      <div class="admin-user-list" id="adminUserList"></div>
+      <div class="admin-add-form">
+        <input type="text" id="adminNewUser" placeholder="Username" autocomplete="off" class="modal-input" style="max-width:160px;" />
+        <input type="password" id="adminNewPass" placeholder="Password" autocomplete="off" class="modal-input" style="max-width:160px;" />
+        <select id="adminNewRole" class="modal-input" style="max-width:140px;">
+          <option value="Producer">Producer</option>
+          <option value="Director">Director</option>
+          <option value="Crew">Crew</option>
+          <option value="PA">PA</option>
+        </select>
+        <button class="modal-save" id="adminAddUserBtn">Add User</button>
+        <span class="admin-msg" id="adminMsg"></span>
+      </div>
+
+      <!-- Production locks (Zaria only) -->
+      <div class="hub-section-label" style="margin-top:32px;">PRODUCTION ACCESS LOCKS</div>
+      <p style="font-size:11px;color:var(--muted);margin-bottom:16px;">Lock or unlock productions. Producers cannot access locked productions. Only you can change this.</p>
+      <div class="prod-locks-grid" id="prodLocksGrid"></div>
     </div>
   </div>
 
-  <!-- Main -->
-  <main class="dash-main">
-    <div class="state-panel" id="stateLoading">
-      <div class="loader-ring"></div>
-      <p class="state-text">Loading submissions...</p>
-    </div>
-    <div class="state-panel hidden" id="stateError">
-      <p class="state-icon">&#10005;</p>
-      <p class="state-text" id="stateErrorMsg">Could not load data.</p>
-      <button class="ghost-btn" id="retryBtn">Try again</button>
-    </div>
-    <div class="state-panel hidden" id="stateEmpty">
-      <p class="state-text">No submissions match this filter.</p>
-    </div>
-    <div class="table-wrap hidden" id="tableWrap">
-      <table class="casting-table" id="castingTable">
-        <thead id="castingTableHead"></thead>
-        <tbody id="castingTableBody"></tbody>
-      </table>
-    </div>
-  </main>
+  <!-- ════════════════════════════════════════════
+       MODALS (all hubs share these)
+  ════════════════════════════════════════════ -->
 
-  <!-- ═══ MODALS ═══ -->
-
-  <!-- Send Email Modal (per-row template picker) -->
+  <!-- Send Email Modal -->
   <div class="modal-overlay hidden" id="emailModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -207,8 +334,8 @@
           <select class="modal-input" id="emailModalTemplate">
             <option value="">— Choose template —</option>
             <option value="16">T16 — Casting Rejection</option>
-            <option value="17">T17 — Direct Offer (Film Redirect)</option>
-            <option value="18">T18 — Cross Casting (Specific Role)</option>
+            <option value="17">T17 — Direct Offer (Film)</option>
+            <option value="18">T18 — Cross Casting (Role)</option>
             <option value="19">T19 — Final Callback + Calendly</option>
           </select>
         </div>
@@ -228,276 +355,7 @@
     </div>
   </div>
 
-  <!-- Redirect modal (legacy — kept for redirect flow) -->
-  <div class="modal-overlay hidden" id="redirectModal">
-    <div class="modal">
-      <div class="modal-rule"></div>
-      <div class="modal-body">
-        <span class="modal-label">SEND REDIRECT EMAIL</span>
-        <p class="modal-name" id="modalActorName"></p>
-        <div class="form-group">
-          <label class="field-label">Redirect Film</label>
-          <select class="modal-select" id="filmSelect">
-            <option value="">— Choose film —</option>
-            <option value="The Final Hand">The Final Hand</option>
-            <option value="Overstood">Overstood</option>
-            <option value="Love me like this">Love me like this</option>
-            <option value="Liminal County">Liminal County</option>
-            <option value="Of blood and dominion">Of blood and dominion</option>
-            <option value="As Is">As Is</option>
-            <option value="The 15th Hour">The 15th Hour</option>
-            <option value="Book of Beginnings">Book of Beginnings</option>
-            <option value="__custom">Custom...</option>
-          </select>
-        </div>
-        <div class="form-group hidden" id="customFilmGroup">
-          <label class="field-label">Custom Film Name</label>
-          <input type="text" class="modal-input" id="customFilmInput" placeholder="Enter film name" />
-        </div>
-        <div class="form-group">
-          <label class="field-label">Specific Role (optional)</label>
-          <select class="modal-select" id="roleSelect">
-            <option value="">— General redirect (no role) —</option>
-          </select>
-        </div>
-        <div class="form-group hidden" id="customRoleGroup">
-          <label class="field-label">Custom Role</label>
-          <input type="text" class="modal-input" id="customRoleInput" placeholder="Enter role name" />
-        </div>
-        <p class="form-hint" style="margin-top:10px;">Selecting a role sends template 18. Leaving blank sends template 17.</p>
-        <div class="modal-actions">
-          <button class="modal-cancel" id="modalCancel">Cancel</button>
-          <button class="modal-send" id="modalSend">Send Email</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Timeline edit modal -->
-  <div class="modal-overlay hidden" id="timelineModal">
-    <div class="modal">
-      <div class="modal-rule"></div>
-      <div class="modal-body">
-        <span class="modal-label">EDIT PHASE</span>
-        <p class="modal-name" id="tlModalPhase"></p>
-        <input type="hidden" id="tlModalId" />
-        <div class="form-group">
-          <label class="field-label">Phase Name</label>
-          <input type="text" class="modal-input" id="tlPhaseInput" />
-        </div>
-        <div class="form-group" style="display:flex;gap:10px;">
-          <div style="flex:1;">
-            <label class="field-label">Start Date</label>
-            <input type="date" class="modal-input" id="tlStartInput" />
-          </div>
-          <div style="flex:1;">
-            <label class="field-label">End Date</label>
-            <input type="date" class="modal-input" id="tlEndInput" />
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="field-label">Status</label>
-          <select class="modal-select" id="tlStatusInput">
-            <option value="Upcoming">Upcoming</option>
-            <option value="Active">Active</option>
-            <option value="Complete">Complete</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="field-label">Description</label>
-          <textarea class="modal-input" id="tlDescInput" rows="3"></textarea>
-        </div>
-        <div class="modal-actions">
-          <button class="modal-cancel" id="tlModalCancel">Cancel</button>
-          <button class="modal-send" id="tlModalSave">Save Changes</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Contract Builder Modal — Full BLEUSKM Production Agreement -->
-  <div class="modal-overlay hidden" id="contractModal">
-    <div class="contract-modal-full">
-      <div class="cmodal-header">
-        <div class="cmodal-header-left">
-          <span class="cmodal-eyebrow">BLEUSKM STUDIOS</span>
-          <span class="cmodal-title" id="contractModalTitle">PRODUCTION AGREEMENT</span>
-        </div>
-        <div class="cmodal-header-right">
-          <button class="icon-btn" id="contractPrintBtn">&#128438; Print</button>
-          <button class="modal-close" id="contractModalClose">&#10005;</button>
-        </div>
-      </div>
-
-      <!-- Info bar -->
-      <div class="cmodal-infobar">
-        <div class="cmodal-info-field">
-          <label class="modal-label">NAME</label>
-          <input class="modal-input" id="contractName" type="text" placeholder="Full name" />
-        </div>
-        <div class="cmodal-info-field">
-          <label class="modal-label">ROLE / POSITION</label>
-          <input class="modal-input" id="contractRole" type="text" placeholder="e.g. Director of Photography" />
-        </div>
-        <div class="cmodal-info-field">
-          <label class="modal-label">FILM</label>
-          <select class="modal-input" id="contractFilm">
-            <option value="The Final Hand">The Final Hand</option>
-            <option value="Overstood">Overstood</option>
-            <option value="Love me like this">Love me like this</option>
-            <option value="Liminal County">Liminal County</option>
-            <option value="Of blood and dominion">Of blood and dominion</option>
-            <option value="As Is">As Is</option>
-            <option value="The 15th Hour">The 15th Hour</option>
-            <option value="Book of Beginnings">Book of Beginnings</option>
-          </select>
-        </div>
-        <div class="cmodal-info-field">
-          <label class="modal-label">TYPE</label>
-          <select class="modal-input" id="contractType">
-            <option value="crew">Crew Agreement</option>
-            <option value="cast">Cast Agreement</option>
-            <option value="location">Location Agreement</option>
-          </select>
-        </div>
-        <div class="cmodal-info-field">
-          <label class="modal-label">EMAIL (to send)</label>
-          <input class="modal-input" id="contractEmail" type="email" placeholder="email@example.com" />
-        </div>
-      </div>
-
-      <!-- Contract body — all clauses -->
-      <div class="cmodal-body">
-        <div class="cmodal-section-header">
-          <span class="cmodal-section-eyebrow">SHORT FILM PRODUCTION AGREEMENT</span>
-          <h2 class="cmodal-section-title">BLEUSKM Studios</h2>
-          <p class="cmodal-section-sub">BLEUSKM Studios &nbsp;&middot;&nbsp; Denton, TX &nbsp;&middot;&nbsp; 2026</p>
-        </div>
-
-        <div class="cmodal-clause"><span class="cmodal-clause-num">1</span><div class="cmodal-clause-body"><p class="cmodal-clause-title">PARTIES</p><p class="cmodal-clause-text">This Production Agreement (&ldquo;Agreement&rdquo;) is entered into between <strong>BLEUSKM Studios</strong>, an independent film production company based in Denton, Texas (&ldquo;Production&rdquo;), and the individual identified above (&ldquo;Crew Member&rdquo;), in connection with the short film production identified as the project above.</p></div></div>
-
-        <div class="cmodal-clause"><span class="cmodal-clause-num">2</span><div class="cmodal-clause-body"><p class="cmodal-clause-title">VOLUNTARY, NON-PAID PARTICIPATION</p><p class="cmodal-clause-text">Crew Member acknowledges and agrees that participation in this production is entirely voluntary and unpaid. No compensation, monetary or otherwise, is promised, implied, or expected &mdash; now or in the future &mdash; in exchange for services rendered on this production. Crew Member agrees to this arrangement knowingly and without coercion.</p></div></div>
-
-        <div class="cmodal-clause"><span class="cmodal-clause-num">3</span><div class="cmodal-clause-body"><p class="cmodal-clause-title">IMDb CREDIT</p><p class="cmodal-clause-text">In recognition of their contribution, Crew Member will receive an official IMDb credit for their designated role in this production. Production will make reasonable efforts to submit accurate credits following completion of post-production. IMDb credit is the sole form of recognition provided under this Agreement.</p></div></div>
-
-        <div class="cmodal-clause"><span class="cmodal-clause-num">4</span><div class="cmodal-clause-body"><p class="cmodal-clause-title">MEDIA USAGE RIGHTS</p><p class="cmodal-clause-text">Crew Member grants BLEUSKM Studios a perpetual, royalty-free, worldwide license to use any footage, photography, or materials produced during this production for purposes including, but not limited to: film distribution, film festival submissions, promotional materials, marketing campaigns, social media content, press materials, and archival use. Crew Member retains the right to use materials from this production for their personal portfolio, demo reel, and professional self-promotion, provided that BLEUSKM Studios receives appropriate credit.</p></div></div>
-
-        <div class="cmodal-clause"><span class="cmodal-clause-num">5</span><div class="cmodal-clause-body"><p class="cmodal-clause-title">LIABILITY WAIVER</p><p class="cmodal-clause-text">Crew Member voluntarily assumes all risks associated with participation in this production, including but not limited to: physical activity on set, travel, equipment handling, and environmental conditions. Crew Member hereby releases, discharges, and holds harmless BLEUSKM Studios, its directors, producers, and representatives from any and all claims, liabilities, damages, injuries, or losses arising from or in connection with participation in this production, to the fullest extent permitted by applicable law.</p></div></div>
-
-        <div class="cmodal-clause"><span class="cmodal-clause-num">6</span><div class="cmodal-clause-body"><p class="cmodal-clause-title">COMMITMENT &amp; AVAILABILITY</p><p class="cmodal-clause-text">Crew Member agrees to communicate their availability promptly and accurately throughout pre-production and production. If confirmed for a scheduled shoot day, Crew Member commits to attending unless an emergency arises, in which case advance notice must be provided as early as possible. Consistent, reliable communication is expected from all confirmed crew.</p></div></div>
-
-        <div class="cmodal-clause"><span class="cmodal-clause-num">7</span><div class="cmodal-clause-body"><p class="cmodal-clause-title">PRODUCTION DETAILS</p><p class="cmodal-clause-text"><strong>Production Company:</strong> BLEUSKM Studios<br><strong>Location:</strong> Denton, Texas<br><strong>Format:</strong> Independent short film<br><strong>Genre:</strong> Afro-surrealist / Psychological drama</p></div></div>
-
-        <div class="cmodal-clause"><span class="cmodal-clause-num">8</span><div class="cmodal-clause-body"><p class="cmodal-clause-title">CONFIDENTIALITY</p><p class="cmodal-clause-text">Crew Member agrees to keep the details of the script, production materials, and any unreleased content confidential until BLEUSKM Studios makes an official public announcement or release. This includes, but is not limited to, sharing script content, behind-the-scenes footage, or production information on social media without express written permission from BLEUSKM Studios.</p></div></div>
-
-        <div class="cmodal-clause"><span class="cmodal-clause-num">9</span><div class="cmodal-clause-body"><p class="cmodal-clause-title">ELECTRONIC SIGNATURE</p><p class="cmodal-clause-text">Crew Member acknowledges and agrees that a typed or drawn electronic signature on this Agreement constitutes a legal and binding signature, equivalent in legal effect to a handwritten signature, pursuant to applicable electronic signature laws including the Electronic Signatures in Global and National Commerce Act (E-SIGN Act) and the Uniform Electronic Transactions Act (UETA). By signing below, Crew Member confirms they have read, understood, and voluntarily agreed to all terms in this Agreement.</p></div></div>
-
-        <div class="cmodal-clause" style="border-bottom:none;margin-bottom:0;padding-bottom:0;"><span class="cmodal-clause-num">10</span><div class="cmodal-clause-body"><p class="cmodal-clause-title">GOVERNING LAW</p><p class="cmodal-clause-text">This Agreement shall be governed by and construed in accordance with the laws of the State of Texas. Any disputes arising from this Agreement shall be resolved in Denton County, Texas.</p></div></div>
-
-        <!-- Additional terms (custom/editable) -->
-        <div class="cmodal-addl-section">
-          <p class="modal-label" style="margin-bottom:8px;">ADDITIONAL TERMS (optional)</p>
-          <textarea class="modal-input" id="contractTerms" rows="4" placeholder="Add shoot dates, specific obligations, compensation details, location agreements, or any additional terms..."></textarea>
-        </div>
-
-        <!-- Signature section -->
-        <div class="cmodal-sig-section">
-          <p class="cmodal-clause-title" style="margin-bottom:14px;">SIGNATURE</p>
-          <div class="sig-tabs" style="margin-bottom:14px;">
-            <button class="sig-tab active" id="sigTypeTab">Type</button>
-            <button class="sig-tab" id="sigDrawTab">Draw</button>
-          </div>
-          <div id="sigTypeArea">
-            <input class="modal-input sig-type-input" id="sigTypeInput" type="text" placeholder="Type your full name to sign" autocomplete="off" />
-          </div>
-          <div class="hidden" id="sigDrawArea">
-            <canvas id="sigCanvas" class="sig-canvas" width="560" height="120"></canvas>
-            <button class="icon-btn" id="sigClearBtn" style="margin-top:6px;">Clear</button>
-          </div>
-          <div class="cmodal-date-row">
-            <span class="modal-label">DATE</span>
-            <span id="contractDateSigned" style="font-size:12px;color:var(--muted);"></span>
-          </div>
-        </div>
-      </div>
-
-      <div class="cmodal-footer">
-        <button class="modal-cancel" id="contractModalCancel">Cancel</button>
-        <button class="modal-save" id="contractSaveBtn">Save &amp; Send</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Location Add/Edit Modal -->
-  <div class="modal-overlay hidden" id="locationModal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <span class="modal-title" id="locationModalTitle">Add Location</span>
-        <button class="modal-close" id="locationModalClose">&#10005;</button>
-      </div>
-      <div class="modal-body">
-        <div class="modal-field">
-          <label class="modal-label">LOCATION NAME</label>
-          <input class="modal-input" id="locName" type="text" placeholder="e.g. Main Street Warehouse" />
-        </div>
-        <div class="modal-field">
-          <label class="modal-label">ADDRESS (search to auto-fill)</label>
-          <input class="modal-input" id="locAddress" type="text" placeholder="Search address..." autocomplete="off" />
-          <div class="loc-suggestions hidden" id="locSuggestions"></div>
-        </div>
-        <div class="modal-row">
-          <div class="modal-field">
-            <label class="modal-label">TYPE</label>
-            <select class="modal-input" id="locType">
-              <option value="Primary">Primary</option>
-              <option value="Backup">Backup</option>
-            </select>
-          </div>
-          <div class="modal-field">
-            <label class="modal-label">FILM</label>
-            <select class="modal-input" id="locFilm">
-              <option value="The Final Hand">The Final Hand</option>
-              <option value="Overstood">Overstood</option>
-              <option value="Love me like this">Love me like this</option>
-              <option value="Liminal County">Liminal County</option>
-              <option value="Of blood and dominion">Of blood and dominion</option>
-              <option value="As Is">As Is</option>
-              <option value="The 15th Hour">The 15th Hour</option>
-              <option value="Book of Beginnings">Book of Beginnings</option>
-            </select>
-          </div>
-        </div>
-        <div class="modal-field">
-          <label class="modal-label">CONTACT NAME (owner/manager)</label>
-          <input class="modal-input" id="locContact" type="text" placeholder="Contact person" />
-        </div>
-        <div class="modal-field">
-          <label class="modal-label">CONTACT PHONE</label>
-          <input class="modal-input" id="locPhone" type="tel" placeholder="(555) 000-0000" />
-        </div>
-        <div class="modal-field">
-          <label class="modal-label">STATUS</label>
-          <select class="modal-input" id="locStatus">
-            <option value="Not Contacted">Not Contacted</option>
-            <option value="Called">Called (No Answer)</option>
-            <option value="Maybe">Maybe (Follow Up)</option>
-            <option value="Accepted">Accepted</option>
-            <option value="Declined">Declined</option>
-          </select>
-        </div>
-        <div class="modal-field">
-          <label class="modal-label">NOTES</label>
-          <textarea class="modal-input" id="locNotes" rows="3" placeholder="Parking, hours, restrictions, follow-up dates..."></textarea>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="modal-cancel" id="locationModalCancel">Cancel</button>
-        <button class="modal-save" id="locationModalSave">Save Location</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Compose Email Modal (Zoho aliases) -->
+  <!-- Compose Email Modal -->
   <div class="modal-overlay hidden" id="composeModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -524,12 +382,136 @@
         </div>
         <div class="modal-field">
           <label class="modal-label">MESSAGE</label>
-          <textarea class="modal-input" id="composeBody" rows="8" placeholder="Write your message..."></textarea>
+          <textarea class="modal-input" id="composeBody" rows="7" placeholder="Write your message..."></textarea>
         </div>
       </div>
       <div class="modal-footer">
         <button class="modal-cancel" id="composeModalCancel">Cancel</button>
         <button class="modal-save" id="composeModalSend">Send Email</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline Edit Modal -->
+  <div class="modal-overlay hidden" id="timelineModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Edit Phase</span>
+        <button class="modal-close" id="tlModalClose">&#10005;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="tlModalId" />
+        <div class="modal-field"><label class="modal-label">PHASE NAME</label><input type="text" class="modal-input" id="tlPhaseInput" /></div>
+        <div class="modal-row">
+          <div class="modal-field"><label class="modal-label">START DATE</label><input type="date" class="modal-input" id="tlStartInput" /></div>
+          <div class="modal-field"><label class="modal-label">END DATE</label><input type="date" class="modal-input" id="tlEndInput" /></div>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">STATUS</label>
+          <select class="modal-input" id="tlStatusInput">
+            <option value="Upcoming">Upcoming</option>
+            <option value="Active">Active</option>
+            <option value="Complete">Complete</option>
+          </select>
+        </div>
+        <div class="modal-field"><label class="modal-label">DESCRIPTION</label><textarea class="modal-input" id="tlDescInput" rows="3"></textarea></div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-cancel" id="tlModalCancel">Cancel</button>
+        <button class="modal-save" id="tlModalSave">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contract Builder Modal -->
+  <div class="modal-overlay hidden" id="contractModal">
+    <div class="contract-modal-full">
+      <div class="cmodal-header">
+        <div class="cmodal-header-left">
+          <span class="cmodal-eyebrow">BLEUSKM STUDIOS</span>
+          <span class="cmodal-title" id="contractModalTitle">PRODUCTION AGREEMENT</span>
+        </div>
+        <div class="cmodal-header-right">
+          <button class="icon-btn" id="contractPrintBtn">&#128438; Print</button>
+          <button class="modal-close" id="contractModalClose">&#10005;</button>
+        </div>
+      </div>
+      <div class="cmodal-infobar">
+        <div class="cmodal-info-field"><label class="modal-label">NAME</label><input class="modal-input" id="contractName" type="text" placeholder="Full name" /></div>
+        <div class="cmodal-info-field"><label class="modal-label">ROLE / POSITION</label><input class="modal-input" id="contractRole" type="text" placeholder="e.g. High John" /></div>
+        <div class="cmodal-info-field">
+          <label class="modal-label">FILM</label>
+          <select class="modal-input" id="contractFilm">
+            <option value="The Final Hand">The Final Hand</option>
+            <option value="Overstood">Overstood</option>
+            <option value="Love me like this">Love me like this</option>
+            <option value="Liminal County">Liminal County</option>
+            <option value="Of blood and dominion">Of blood and dominion</option>
+            <option value="As Is">As Is</option>
+            <option value="The 15th Hour">The 15th Hour</option>
+            <option value="Book of Beginnings">Book of Beginnings</option>
+          </select>
+        </div>
+        <div class="cmodal-info-field">
+          <label class="modal-label">AGREEMENT TYPE</label>
+          <select class="modal-input" id="contractType">
+            <option value="crew">Crew Agreement</option>
+            <option value="cast">Cast / Performer Agreement</option>
+            <option value="location">Location Agreement</option>
+            <option value="talent_release">Talent / Actor Release</option>
+            <option value="background">Background Actor Release</option>
+            <option value="composer">Composer / Music Release</option>
+            <option value="custom">Custom Agreement</option>
+          </select>
+        </div>
+        <div class="cmodal-info-field"><label class="modal-label">EMAIL (to send)</label><input class="modal-input" id="contractEmail" type="email" placeholder="email@example.com" /></div>
+      </div>
+      <!-- Contract clauses rendered dynamically based on type -->
+      <div class="cmodal-body" id="contractBody"></div>
+      <div class="cmodal-footer">
+        <button class="modal-cancel" id="contractModalCancel">Cancel</button>
+        <button class="modal-save" id="contractSaveBtn">Save &amp; Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Location Modal -->
+  <div class="modal-overlay hidden" id="locationModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title" id="locationModalTitle">Add Location</span>
+        <button class="modal-close" id="locationModalClose">&#10005;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-field"><label class="modal-label">LOCATION NAME</label><input class="modal-input" id="locName" type="text" placeholder="e.g. Main Street Warehouse" /></div>
+        <div class="modal-field" style="position:relative;">
+          <label class="modal-label">ADDRESS</label>
+          <input class="modal-input" id="locAddress" type="text" placeholder="Search address..." autocomplete="off" />
+          <div class="loc-suggestions hidden" id="locSuggestions"></div>
+        </div>
+        <div class="modal-row">
+          <div class="modal-field"><label class="modal-label">TYPE</label><select class="modal-input" id="locType"><option value="Primary">Primary</option><option value="Backup">Backup</option></select></div>
+          <div class="modal-field"><label class="modal-label">FILM</label><select class="modal-input" id="locFilm"><option value="The Final Hand">The Final Hand</option><option value="Overstood">Overstood</option><option value="Love me like this">Love me like this</option><option value="Liminal County">Liminal County</option><option value="As Is">As Is</option><option value="The 15th Hour">The 15th Hour</option></select></div>
+        </div>
+        <div class="modal-row">
+          <div class="modal-field"><label class="modal-label">CONTACT NAME</label><input class="modal-input" id="locContact" type="text" placeholder="Owner / manager" /></div>
+          <div class="modal-field"><label class="modal-label">CONTACT PHONE</label><input class="modal-input" id="locPhone" type="tel" placeholder="(555) 000-0000" /></div>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">STATUS</label>
+          <select class="modal-input" id="locStatus">
+            <option value="Not Contacted">Not Contacted</option>
+            <option value="Called">Called (No Answer)</option>
+            <option value="Maybe">Maybe (Follow Up)</option>
+            <option value="Accepted">Accepted</option>
+            <option value="Declined">Declined</option>
+          </select>
+        </div>
+        <div class="modal-field"><label class="modal-label">NOTES</label><textarea class="modal-input" id="locNotes" rows="3" placeholder="Parking, hours, restrictions..."></textarea></div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-cancel" id="locationModalCancel">Cancel</button>
+        <button class="modal-save" id="locationModalSave">Save Location</button>
       </div>
     </div>
   </div>
