@@ -9,7 +9,7 @@ exports.handler = async (event) => {
   if (event.httpMethod === "OPTIONS") return { statusCode: 200, headers, body: "" };
   if (event.httpMethod !== "POST") return { statusCode: 405, headers, body: JSON.stringify({ error: "Method not allowed" }) };
 
-  const base     = process.env.AIRTABLE_BASE;
+  const base     = process.env.AIRTABLE_PRODUCTION_BASE || process.env.AIRTABLE_BASE;
   const token    = process.env.AIRTABLE_TOKEN;
   const brevoKey = process.env.BREVO_KEY;
 
@@ -31,11 +31,11 @@ exports.handler = async (event) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         fields: {
-          "Name":            name,
-          "Email":           email,
-          "Role":            role,
-          "Signature":       [{ url: signatureUrl }],
-          "Date Signed":     dateSigned || new Date().toISOString().split("T")[0],
+          "Name": name,
+          "Email": email,
+          "Role": role,
+          "Signature": [{ url: signatureUrl }],
+          "Date Signed": dateSigned || new Date().toISOString().split("T")[0],
           "Contract Status": "Signed"
         }
       })
@@ -57,11 +57,11 @@ exports.handler = async (event) => {
     }
 
     let guideLink = "";
-    let crewFilm  = "The Final Hand";
+    let crewFilm = "The Final Hand";
     let onSetRole = role;
 
     try {
-      const crewRes  = await airtableFetch(
+      const crewRes = await airtableFetch(
         `https://api.airtable.com/v0/${base}/${encodeURIComponent("Crew applications")}?filterByFormula=${encodeURIComponent(`{Email}="${email}"`)}`,
         token
       );
@@ -69,12 +69,11 @@ exports.handler = async (event) => {
 
       if (crewData.records && crewData.records.length > 0) {
         const crewRecord = crewData.records[0];
-        const crewId     = crewRecord.id;
+        const crewId = crewRecord.id;
         const crewFields = crewRecord.fields;
-
-        guideLink  = fieldText(crewFields["Guide Link"]);
-        crewFilm   = fieldText(crewFields["Film"]) || "The Final Hand";
-        onSetRole  = fieldFirst(crewFields, ["Preferred role by Director", "Preferred_role_by_Director"]) || fieldText(crewFields["Role"]) || role;
+        guideLink = fieldText(crewFields["Guide Link"]);
+        crewFilm = fieldText(crewFields["Film"]) || "The Final Hand";
+        onSetRole = fieldFirst(crewFields, ["Preferred role by Director", "Preferred_role_by_Director"]) || fieldText(crewFields["Role"]) || role;
 
         await airtableFetch(`https://api.airtable.com/v0/${base}/${encodeURIComponent("Crew applications")}/${crewId}`, token, {
           method: "PATCH",
@@ -87,13 +86,10 @@ exports.handler = async (event) => {
     let guideSent = false;
     if (guideLink && brevoKey) {
       try {
-        let shootDates    = "July 19-25, 2026";
+        let shootDates = "July 19-25, 2026";
         let shootLocation = "Denton, TX";
         try {
-          const tlRes  = await airtableFetch(
-            `https://api.airtable.com/v0/${base}/${encodeURIComponent("Production Timeline")}`,
-            token
-          );
+          const tlRes = await airtableFetch(`https://api.airtable.com/v0/${base}/${encodeURIComponent("Production Timeline")}`, token);
           const tlData = await tlRes.json();
           const phases = (tlData.records || []).sort((a, b) =>
             (a.fields["Start Date"] || "").localeCompare(b.fields["Start Date"] || "")
@@ -104,7 +100,7 @@ exports.handler = async (event) => {
           });
           if (shootPhase) {
             const start = shootPhase.fields["Start Date"];
-            const end   = shootPhase.fields["End Date"];
+            const end = shootPhase.fields["End Date"];
             if (start) {
               const s = new Date(start + "T00:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric" });
               const e = end ? new Date(end + "T00:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "";
@@ -115,35 +111,26 @@ exports.handler = async (event) => {
 
         const brevoRes = await fetch("https://api.brevo.com/v3/smtp/email", {
           method: "POST",
-          headers: {
-            "api-key":      brevoKey,
-            "Content-Type": "application/json"
-          },
+          headers: { "api-key": brevoKey, "Content-Type": "application/json" },
           body: JSON.stringify({
-            to:         [{ email, name }],
+            to: [{ email, name }],
             templateId: 26,
             params: {
-              NAME:           name,
-              ROLE:           onSetRole,
-              APPLIED_ROLE:   role,
-              ORIGINAL_ROLE:  role,
-              ON_SET_ROLE:    onSetRole,
+              NAME: name,
+              ROLE: onSetRole,
+              APPLIED_ROLE: role,
+              ORIGINAL_ROLE: role,
+              ON_SET_ROLE: onSetRole,
               PREFERRED_ROLE_BY_DIRECTOR: onSetRole,
-              FILM:           crewFilm,
-              GUIDE_LINK:     guideLink,
-              SHOOT_DATES:    shootDates,
-              SHOOT_LOCATION: shootLocation,
+              FILM: crewFilm,
+              GUIDE_LINK: guideLink,
+              SHOOT_DATES: shootDates,
+              SHOOT_LOCATION: shootLocation
             }
           })
         });
 
-        if (brevoRes.ok) {
-          guideSent = true;
-          console.log(`T26 guide sent to ${email}`);
-        } else {
-          const brevoErr = await brevoRes.json().catch(() => ({}));
-          console.log("T26 send failed:", brevoErr?.message || brevoRes.status);
-        }
+        if (brevoRes.ok) guideSent = true;
       } catch (e) { console.log("Guide email skipped:", e.message); }
     }
 
@@ -151,28 +138,15 @@ exports.handler = async (event) => {
       statusCode: 200,
       headers,
       body: JSON.stringify({
-        success:    true,
-        recordId:   contractData.id,
+        success: true,
+        recordId: contractData.id,
         guideSent,
-        message:    guideSent
-          ? "Contract saved and department guide sent automatically."
-          : guideLink
-            ? "Contract saved. Guide link found but email failed - send manually from dashboard."
-            : "Contract saved. No guide link set - send guide manually from dashboard when ready."
+        message: guideSent ? "Contract saved and department guide sent automatically." : "Contract saved."
       })
     };
-
   } catch (err) {
     await sendContractBackupEmail(brevoKey, { name, email, role, signatureUrl, dateSigned, airtableError: err.message });
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({
-        success: true,
-        queued: true,
-        message: "Contract received. A backup copy was sent to BLEUSKM."
-      })
-    };
+    return { statusCode: 200, headers, body: JSON.stringify({ success: true, queued: true, message: "Contract received. A backup copy was sent to BLEUSKM." }) };
   }
 };
 
@@ -187,10 +161,7 @@ async function airtableFetch(url, token, options = {}) {
     if (delay) await sleep(delay);
     lastRes = await fetch(url, {
       ...options,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        ...(options.headers || {})
-      }
+      headers: { Authorization: `Bearer ${token}`, ...(options.headers || {}) }
     });
     if (lastRes.status !== 429 && lastRes.status < 500) return lastRes;
   }
@@ -200,7 +171,6 @@ async function airtableFetch(url, token, options = {}) {
 async function sendContractBackupEmail(brevoKey, contract) {
   if (!brevoKey) return false;
   try {
-    const subject = `BACKUP CONTRACT SIGNATURE - ${contract.name}`;
     const textContent = [
       "A crew contract was submitted, but Airtable was temporarily unavailable.",
       "",
@@ -220,7 +190,7 @@ async function sendContractBackupEmail(brevoKey, contract) {
       body: JSON.stringify({
         sender: { email: "studio@bleuskm.com", name: "BLEUSKM Studios" },
         to: [{ email: "studio@bleuskm.com", name: "Zaria" }],
-        subject,
+        subject: `BACKUP CONTRACT SIGNATURE - ${contract.name}`,
         textContent
       })
     });
