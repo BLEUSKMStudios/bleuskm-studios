@@ -186,7 +186,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   loadSubmissions();
-  loadTimeline();
   loadCrewContacts();
 
   el.refreshBtn.addEventListener('click', () => { loadSubmissions(); loadCrewContacts(); });
