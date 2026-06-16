@@ -1,6 +1,10 @@
 const tableCache = new Map();
 const inFlight = new Map();
-const CACHE_MS = 60000;
+let airtableQueue = Promise.resolve();
+let lastAirtableRequestAt = 0;
+
+const CACHE_MS = 5 * 60 * 1000;
+const MIN_AIRTABLE_GAP_MS = 260;
 
 function cacheKey(table) {
   return String(table || '').toLowerCase();
@@ -10,25 +14,34 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function airtableJson(url, token, options = {}) {
-  const delays = [0, 700, 1300, 2200, 3300];
-  let lastStatus = 500;
-  let lastData = { error: 'Airtable request failed' };
-
-  for (const delay of delays) {
-    if (delay) await sleep(delay);
-    const res = await fetch(url, {
+async function queuedAirtableFetch(url, token, options = {}) {
+  const run = airtableQueue.then(async () => {
+    const sinceLast = Date.now() - lastAirtableRequestAt;
+    if (sinceLast < MIN_AIRTABLE_GAP_MS) await sleep(MIN_AIRTABLE_GAP_MS - sinceLast);
+    lastAirtableRequestAt = Date.now();
+    return fetch(url, {
       ...options,
       headers: {
         Authorization: `Bearer ${token}`,
         ...(options.headers || {})
       }
     });
+  });
+  airtableQueue = run.catch(() => {});
+  return run;
+}
+
+async function airtableJson(url, token, options = {}) {
+  const delays = [0, 1200, 2500, 4200];
+  let lastStatus = 500;
+  let lastData = { error: 'Airtable request failed' };
+
+  for (const delay of delays) {
+    if (delay) await sleep(delay);
+    const res = await queuedAirtableFetch(url, token, options);
     lastStatus = res.status;
     lastData = await res.json().catch(() => ({ error: res.statusText || 'Airtable request failed' }));
-    if (res.status !== 429 && res.status < 500) {
-      return { status: res.status, data: lastData };
-    }
+    if (res.status !== 429 && res.status < 500) return { status: res.status, data: lastData };
   }
 
   return { status: lastStatus, data: lastData };
@@ -37,8 +50,9 @@ async function airtableJson(url, token, options = {}) {
 async function getTable(base, token, table) {
   const key = cacheKey(table);
   const cached = tableCache.get(key);
+
   if (cached && Date.now() - cached.savedAt < CACHE_MS) {
-    return { status: 200, data: cached.data };
+    return { status: 200, data: { ...cached.data, cached: true } };
   }
 
   if (inFlight.has(key)) return inFlight.get(key);
