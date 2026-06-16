@@ -1,3 +1,7 @@
+https://raw.githubusercontent.com/BLEUSKMStudios/bleuskm-studios/main/castingdash/castingdash.js
+→ https://raw.githubusercontent.com/BLEUSKMStudios/bleuskm-studios/main/castingdash/castingdash.js
+Content-Type: text/plain; charset=utf-8
+
 /* ═══════════════════════════════════════════════════════════════
    BLEUSKM Studios — Casting Portal v7
    castingdash.js
@@ -186,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   loadSubmissions();
+  loadTimeline();
   loadCrewContacts();
 
   el.refreshBtn.addEventListener('click', () => { loadSubmissions(); loadCrewContacts(); });
@@ -1950,20 +1955,4 @@ function renderContractBody(type) {
     </div>
     <div class="cmodal-date-row">
       <span class="modal-label">DATE</span>
-      <span id="contractDateSigned" style="font-size:12px;color:var(--muted);"></span>
-    </div>
-  </div>`;
-
-  body.innerHTML = html;
-  setContractDate();
-  // Re-bind sig canvas after re-render
-  sigCtx = null;
-  const newTypeTab = document.getElementById('sigTypeTab');
-  const newDrawTab = document.getElementById('sigDrawTab');
-  const newTypeArea = document.getElementById('sigTypeArea');
-  const newDrawArea = document.getElementById('sigDrawArea');
-  const newClearBtn = document.getElementById('sigClearBtn');
-  if (newTypeTab) newTypeTab.addEventListener('click', () => { newTypeTab.classList.add('active'); newDrawTab.classList.remove('active'); newTypeArea.classList.remove('hidden'); newDrawArea.classList.add('hidden'); });
-  if (newDrawTab) newDrawTab.addEventListener('click', () => { newDrawTab.classList.add('active'); newTypeTab.classList.remove('active'); newDrawArea.classList.remove('hidden'); newTypeArea.classList.add('hidden'); initSigCanvas(); });
-  if (newClearBtn) newClearBtn.addEventListener('click', () => { if (sigCtx) sigCtx.clearRect(0, 0, document.getElementById('sigCanvas')?.width || 560, document.getElementById('sigCanvas')?.height || 120); });
-}
+      <span id="contract
