@@ -68,6 +68,12 @@ async function enrichPayload(payload) {
     const redirectFilm = selectedRedirectFilm(f);
     const templateFilm = templateId === 17 ? redirectFilm : (text(payload.params?.FILM_NAME) || text(f.Film) || 'The Final Hand');
     const role = text(f['To Role']) || text(f.Role);
+    const tapeUrl = text(payload.params?.SELFTAPE_URL)
+      || text(payload.params?.SELF_TAPE_URL)
+      || text(payload.params?.SELF_TAPE_LINK)
+      || text(payload.params?.SUBMIT_SELF_TAPE_URL)
+      || text(payload.params?.SUBMIT_URL)
+      || selfTapeLink(record, f, role);
     payload.params = {
       ...(payload.params || {}),
       NAME: text(f.Name),
@@ -80,7 +86,11 @@ async function enrichPayload(payload) {
       FILM: templateFilm,
       FILM_NAME: templateFilm,
       DEADLINE: text(payload.params?.DEADLINE) || SELF_TAPE_DEADLINE,
-      SELFTAPE_URL: text(payload.params?.SELFTAPE_URL) || selfTapeLink(record, f, role)
+      SELFTAPE_URL: tapeUrl,
+      SELF_TAPE_URL: tapeUrl,
+      SELF_TAPE_LINK: tapeUrl,
+      SUBMIT_SELF_TAPE_URL: tapeUrl,
+      SUBMIT_URL: tapeUrl
     };
     if (templateId === 17) {
       payload.params.FILM = redirectFilm;
