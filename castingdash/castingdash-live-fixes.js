@@ -1,6 +1,7 @@
 (function () {
   const ARCHIVE_KEY = 'bleuskm_casting_email_archive';
   const rawFetch = window.fetch.bind(window);
+  const AIRTABLE = '/.netlify/functions/airtable-proxy';
 
   function text(value) {
     if (Array.isArray(value)) return value.map(text).filter(Boolean).join(', ');
@@ -28,6 +29,42 @@
     if (typeof input === 'string') return input;
     if (input && typeof input.url === 'string') return input.url;
     return '';
+  }
+
+  function tableCacheKey(table) {
+    return `bleuskm_airtable_cache:${table}`;
+  }
+
+  function readCachedTable(table) {
+    try {
+      const cached = JSON.parse(localStorage.getItem(tableCacheKey(table)) || 'null');
+      return Array.isArray(cached?.records) ? cached.records : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function writeCachedTable(table, records) {
+    if (!Array.isArray(records) || !records.length) return;
+    try {
+      localStorage.setItem(tableCacheKey(table), JSON.stringify({ savedAt: new Date().toISOString(), records }));
+    } catch {}
+  }
+
+  function tableResponse(table, records, status = 200) {
+    return new Response(JSON.stringify({ records, cached: true }), {
+      status,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  async function getAirtableRecords(table) {
+    const res = await rawFetch(`${AIRTABLE}?table=${encodeURIComponent(table)}`);
+    if (!res.ok) return readCachedTable(table);
+    const data = await res.json().catch(() => ({}));
+    const records = data.records || [];
+    if (records.length) writeCachedTable(table, records);
+    return records;
   }
 
   function archive(entry) {
@@ -80,10 +117,8 @@
 
   async function findCastingByEmail(email) {
     if (!email) return null;
-    const res = await rawFetch(`/.netlify/functions/airtable-proxy?table=${encodeURIComponent('Casting Submissions')}`);
-    if (!res.ok) return null;
-    const data = await res.json();
-    return (data.records || []).find(r => text(r.fields?.Email).toLowerCase() === email.toLowerCase()) || null;
+    const rows = await getAirtableRecords('Casting Submissions');
+    return rows.find(r => text(r.fields?.Email).toLowerCase() === email.toLowerCase()) || null;
   }
 
   function consentUrl(id, answer, film) {
@@ -91,12 +126,7 @@
   }
 
   function selfTapeUrl(f, id) {
-    const qs = new URLSearchParams({
-      name: text(f.Name),
-      role: text(f.Role),
-      email: text(f.Email),
-      id,
-    });
+    const qs = new URLSearchParams({ name: text(f.Name), role: text(f.Role), email: text(f.Email), id });
     return `https://bleuskm.com/selftape?${qs.toString()}`;
   }
 
@@ -140,6 +170,23 @@
 
   window.fetch = async function patchedFetch(input, init = {}) {
     const url = endpointUrl(input);
+
+    if (url.includes('/.netlify/functions/airtable-proxy') && (!init.method || init.method === 'GET')) {
+      const parsed = new URL(url, window.location.href);
+      const table = parsed.searchParams.get('table');
+      const cached = table ? readCachedTable(table) : [];
+      const res = await rawFetch(input, init);
+      if (!res.ok && cached.length) return tableResponse(table, cached);
+      if (res.ok && table) {
+        const data = await res.clone().json().catch(() => ({}));
+        let records = data.records || [];
+        if (table === 'Crew applications') records = records.map(normalizeCrewRecord);
+        if (records.length) writeCachedTable(table, records);
+        if (table === 'Crew applications') return tableResponse(table, records, res.status);
+      }
+      return res;
+    }
+
     if (url.includes('/.netlify/functions/brevo-proxy') && init && init.body) {
       let body;
       try { body = JSON.parse(init.body); } catch {}
@@ -159,16 +206,8 @@
       }
       return res;
     }
-    const res = await rawFetch(input, init);
-    if (url.includes('/.netlify/functions/airtable-proxy')) {
-      const parsed = new URL(url, window.location.href);
-      if (parsed.searchParams.get('table') === 'Crew applications' && res.ok) {
-        const data = await res.clone().json();
-        data.records = (data.records || []).map(normalizeCrewRecord);
-        return new Response(JSON.stringify(data), { status: res.status, statusText: res.statusText, headers: { 'Content-Type': 'application/json' } });
-      }
-    }
-    return res;
+
+    return rawFetch(input, init);
   };
 
   function repairTabs(hub) {
