@@ -25,11 +25,10 @@ exports.handler = async (event) => {
   }
 
   try {
-    // ── 1. Save contract record to Airtable ──────────────────
     const contractUrl = `https://api.airtable.com/v0/${base}/${encodeURIComponent("Contracts")}`;
-    const contractRes = await fetch(contractUrl, {
+    const contractRes = await airtableFetch(contractUrl, token, {
       method: "POST",
-      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         fields: {
           "Name":            name,
@@ -44,18 +43,27 @@ exports.handler = async (event) => {
 
     const contractData = await contractRes.json();
     if (!contractRes.ok) {
-      return { statusCode: contractRes.status, headers, body: JSON.stringify({ error: contractData?.error?.message || "Airtable error" }) };
+      await sendContractBackupEmail(brevoKey, { name, email, role, signatureUrl, dateSigned, airtableError: contractData?.error?.message || `Airtable ${contractRes.status}` });
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({
+          success: true,
+          queued: true,
+          airtableStatus: contractRes.status,
+          message: "Contract received. Airtable is temporarily busy, so a backup copy was sent to BLEUSKM."
+        })
+      };
     }
 
-    // ── 2. Look up crew member in Crew Applications ───────────
     let guideLink = "";
     let crewFilm  = "The Final Hand";
     let onSetRole = role;
 
     try {
-      const crewRes  = await fetch(
+      const crewRes  = await airtableFetch(
         `https://api.airtable.com/v0/${base}/${encodeURIComponent("Crew applications")}?filterByFormula=${encodeURIComponent(`{Email}="${email}"`)}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        token
       );
       const crewData = await crewRes.json();
 
@@ -64,32 +72,27 @@ exports.handler = async (event) => {
         const crewId     = crewRecord.id;
         const crewFields = crewRecord.fields;
 
-        // Get guide link, film, and on-set role
-        guideLink  = (crewFields["Guide Link"]                   || "").trim();
-        crewFilm   = (crewFields["Film"]                         || "The Final Hand").trim();
-        // Use Preferred_role_by_Director if set, otherwise fall back to Role
-        onSetRole  = (crewFields["Preferred_role_by_Director"]   || "").trim() || role;
+        guideLink  = fieldText(crewFields["Guide Link"]);
+        crewFilm   = fieldText(crewFields["Film"]) || "The Final Hand";
+        onSetRole  = fieldFirst(crewFields, ["Preferred role by Director", "Preferred_role_by_Director"]) || fieldText(crewFields["Role"]) || role;
 
-        // Update Contract Status on crew record
-        await fetch(`https://api.airtable.com/v0/${base}/${encodeURIComponent("Crew applications")}/${crewId}`, {
+        await airtableFetch(`https://api.airtable.com/v0/${base}/${encodeURIComponent("Crew applications")}/${crewId}`, token, {
           method: "PATCH",
-          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ fields: { "Contract Status": "Signed" } })
         });
       }
     } catch (e) { console.log("Crew lookup skipped:", e.message); }
 
-    // ── 3. Auto-send T26 guide email if guide link exists ─────
     let guideSent = false;
     if (guideLink && brevoKey) {
       try {
-        // Get shoot dates from Production Timeline
-        let shootDates    = "July 19–25, 2026";
+        let shootDates    = "July 19-25, 2026";
         let shootLocation = "Denton, TX";
         try {
-          const tlRes  = await fetch(
+          const tlRes  = await airtableFetch(
             `https://api.airtable.com/v0/${base}/${encodeURIComponent("Production Timeline")}`,
-            { headers: { Authorization: `Bearer ${token}` } }
+            token
           );
           const tlData = await tlRes.json();
           const phases = (tlData.records || []).sort((a, b) =>
@@ -105,7 +108,7 @@ exports.handler = async (event) => {
             if (start) {
               const s = new Date(start + "T00:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric" });
               const e = end ? new Date(end + "T00:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "";
-              shootDates = e ? `${s}–${e}` : s;
+              shootDates = e ? `${s}-${e}` : s;
             }
           }
         } catch (e) { console.log("Timeline fetch skipped:", e.message); }
@@ -122,6 +125,10 @@ exports.handler = async (event) => {
             params: {
               NAME:           name,
               ROLE:           onSetRole,
+              APPLIED_ROLE:   role,
+              ORIGINAL_ROLE:  role,
+              ON_SET_ROLE:    onSetRole,
+              PREFERRED_ROLE_BY_DIRECTOR: onSetRole,
               FILM:           crewFilm,
               GUIDE_LINK:     guideLink,
               SHOOT_DATES:    shootDates,
@@ -150,12 +157,90 @@ exports.handler = async (event) => {
         message:    guideSent
           ? "Contract saved and department guide sent automatically."
           : guideLink
-            ? "Contract saved. Guide link found but email failed — send manually from dashboard."
-            : "Contract saved. No guide link set — send guide manually from dashboard when ready."
+            ? "Contract saved. Guide link found but email failed - send manually from dashboard."
+            : "Contract saved. No guide link set - send guide manually from dashboard when ready."
       })
     };
 
   } catch (err) {
-    return { statusCode: 500, headers, body: JSON.stringify({ error: err.message }) };
+    await sendContractBackupEmail(brevoKey, { name, email, role, signatureUrl, dateSigned, airtableError: err.message });
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({
+        success: true,
+        queued: true,
+        message: "Contract received. A backup copy was sent to BLEUSKM."
+      })
+    };
   }
 };
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function airtableFetch(url, token, options = {}) {
+  const delays = [0, 1200, 2600, 5200];
+  let lastRes;
+  for (const delay of delays) {
+    if (delay) await sleep(delay);
+    lastRes = await fetch(url, {
+      ...options,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        ...(options.headers || {})
+      }
+    });
+    if (lastRes.status !== 429 && lastRes.status < 500) return lastRes;
+  }
+  return lastRes;
+}
+
+async function sendContractBackupEmail(brevoKey, contract) {
+  if (!brevoKey) return false;
+  try {
+    const subject = `BACKUP CONTRACT SIGNATURE - ${contract.name}`;
+    const textContent = [
+      "A crew contract was submitted, but Airtable was temporarily unavailable.",
+      "",
+      `Name: ${contract.name}`,
+      `Email: ${contract.email}`,
+      `Role: ${contract.role}`,
+      `Date Signed: ${contract.dateSigned || new Date().toISOString().split("T")[0]}`,
+      `Signature URL: ${contract.signatureUrl}`,
+      `Airtable Error: ${contract.airtableError}`,
+      "",
+      "Manually enter this into Airtable Contracts when Airtable is available."
+    ].join("\n");
+
+    await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: { "api-key": brevoKey, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sender: { email: "studio@bleuskm.com", name: "BLEUSKM Studios" },
+        to: [{ email: "studio@bleuskm.com", name: "Zaria" }],
+        subject,
+        textContent
+      })
+    });
+    return true;
+  } catch (e) {
+    console.log("Backup contract email failed:", e.message);
+    return false;
+  }
+}
+
+function fieldText(value) {
+  if (Array.isArray(value)) return value.map(fieldText).filter(Boolean).join(", ");
+  if (value && typeof value === "object") return value.name || value.url || value.filename || "";
+  return String(value ?? "").trim();
+}
+
+function fieldFirst(fields, names) {
+  for (const name of names) {
+    const value = fieldText(fields[name]);
+    if (value) return value;
+  }
+  return "";
+}
