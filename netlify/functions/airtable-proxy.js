@@ -1,3 +1,80 @@
+const tableCache = new Map();
+const inFlight = new Map();
+const CACHE_MS = 60000;
+
+function cacheKey(table) {
+  return String(table || '').toLowerCase();
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function airtableJson(url, token, options = {}) {
+  const delays = [0, 700, 1300, 2200, 3300];
+  let lastStatus = 500;
+  let lastData = { error: 'Airtable request failed' };
+
+  for (const delay of delays) {
+    if (delay) await sleep(delay);
+    const res = await fetch(url, {
+      ...options,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        ...(options.headers || {})
+      }
+    });
+    lastStatus = res.status;
+    lastData = await res.json().catch(() => ({ error: res.statusText || 'Airtable request failed' }));
+    if (res.status !== 429 && res.status < 500) {
+      return { status: res.status, data: lastData };
+    }
+  }
+
+  return { status: lastStatus, data: lastData };
+}
+
+async function getTable(base, token, table) {
+  const key = cacheKey(table);
+  const cached = tableCache.get(key);
+  if (cached && Date.now() - cached.savedAt < CACHE_MS) {
+    return { status: 200, data: cached.data };
+  }
+
+  if (inFlight.has(key)) return inFlight.get(key);
+
+  const job = (async () => {
+    const url = `https://api.airtable.com/v0/${base}/${encodeURIComponent(table)}?maxRecords=100`;
+    const result = await airtableJson(url, token);
+
+    if (result.status === 200) {
+      tableCache.set(key, { savedAt: Date.now(), data: result.data });
+      return result;
+    }
+
+    if (cached?.data?.records) {
+      return {
+        status: 200,
+        data: {
+          ...cached.data,
+          cached: true,
+          airtableStatus: result.status,
+          airtableError: result.data?.error || result.data
+        }
+      };
+    }
+
+    return result;
+  })().finally(() => inFlight.delete(key));
+
+  inFlight.set(key, job);
+  return job;
+}
+
+function clearTableCache(table) {
+  tableCache.delete(cacheKey(table));
+}
+
 exports.handler = async (event) => {
   const headers = {
     "Access-Control-Allow-Origin": "*",
@@ -19,45 +96,43 @@ exports.handler = async (event) => {
     if (event.httpMethod === "GET") {
       const table = event.queryStringParameters?.table;
       if (!table) return { statusCode: 400, headers, body: JSON.stringify({ error: "Missing table parameter" }) };
-      const url = `https://api.airtable.com/v0/${base}/${encodeURIComponent(table)}?maxRecords=100`;
-      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-      const data = await res.json();
-      return { statusCode: res.status, headers, body: JSON.stringify(data) };
+      const result = await getTable(base, token, table);
+      return { statusCode: result.status, headers, body: JSON.stringify(result.data) };
     }
 
     if (event.httpMethod === "POST") {
       const { table, fields } = JSON.parse(event.body || "{}");
       if (!table || !fields) return { statusCode: 400, headers, body: JSON.stringify({ error: "Missing table or fields" }) };
       const url = `https://api.airtable.com/v0/${base}/${encodeURIComponent(table)}`;
-      const res = await fetch(url, {
+      const result = await airtableJson(url, token, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fields, typecast: true })
       });
-      const data = await res.json();
-      return { statusCode: res.status, headers, body: JSON.stringify(data) };
+      if (result.status >= 200 && result.status < 300) clearTableCache(table);
+      return { statusCode: result.status, headers, body: JSON.stringify(result.data) };
     }
 
     if (event.httpMethod === "PATCH") {
       const { table, id, fields } = JSON.parse(event.body || "{}");
       if (!table || !id || !fields) return { statusCode: 400, headers, body: JSON.stringify({ error: "Missing table, id, or fields" }) };
       const url = `https://api.airtable.com/v0/${base}/${encodeURIComponent(table)}/${id}`;
-      const res = await fetch(url, {
+      const result = await airtableJson(url, token, {
         method: "PATCH",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fields })
       });
-      const data = await res.json();
-      return { statusCode: res.status, headers, body: JSON.stringify(data) };
+      if (result.status >= 200 && result.status < 300) clearTableCache(table);
+      return { statusCode: result.status, headers, body: JSON.stringify(result.data) };
     }
 
     if (event.httpMethod === "DELETE") {
       const { table, id } = JSON.parse(event.body || "{}");
       if (!table || !id) return { statusCode: 400, headers, body: JSON.stringify({ error: "Missing table or id" }) };
       const url = `https://api.airtable.com/v0/${base}/${encodeURIComponent(table)}/${id}`;
-      const res = await fetch(url, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
-      const data = await res.json();
-      return { statusCode: res.status, headers, body: JSON.stringify(data) };
+      const result = await airtableJson(url, token, { method: "DELETE" });
+      if (result.status >= 200 && result.status < 300) clearTableCache(table);
+      return { statusCode: result.status, headers, body: JSON.stringify(result.data) };
     }
 
     return { statusCode: 405, headers, body: JSON.stringify({ error: "Method not allowed" }) };
