@@ -54,13 +54,15 @@ async function findByEmail(base, token, table, email) {
 }
 
 async function enrichPayload(payload) {
-  const base = process.env.AIRTABLE_BASE;
+  const defaultBase = process.env.AIRTABLE_BASE;
+  const castingBase = process.env.AIRTABLE_CASTING_BASE || defaultBase;
+  const productionBase = process.env.AIRTABLE_PRODUCTION_BASE || defaultBase;
   const token = process.env.AIRTABLE_TOKEN;
   const templateId = Number(payload.templateId);
   const email = text(payload.to?.[0]?.email);
 
   if ([15, 17, 18, 19].includes(templateId)) {
-    const record = await findByEmail(base, token, 'Casting Submissions', email);
+    const record = await findByEmail(castingBase, token, 'Casting Submissions', email);
     if (!record) return payload;
     const f = record.fields || {};
     const redirectFilm = selectedRedirectFilm(f);
@@ -93,7 +95,7 @@ async function enrichPayload(payload) {
   }
 
   if ([20, 21, 25, 27].includes(templateId)) {
-    const record = await findByEmail(base, token, 'Crew applications', email);
+    const record = await findByEmail(productionBase, token, 'Crew applications', email);
     if (!record) return payload;
     const f = record.fields || {};
     const appliedRole = text(f.Role);
