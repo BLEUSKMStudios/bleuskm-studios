@@ -1,52 +1,72 @@
 (function () {
   const AIRTABLE = '/.netlify/functions/airtable-proxy';
   const BREVO = '/.netlify/functions/brevo-proxy';
+  const ZOHO = '/.netlify/functions/zoho-mail';
   const PROJECT = 'The Final Hand';
   const DEADLINE = 'June 20th, 2026';
   const $ = (id) => document.getElementById(id);
   const qs = (sel) => document.querySelector(sel);
-  const qsa = (sel) => [...document.querySelectorAll(sel)];
-  const txt = (value) => {
-    if (Array.isArray(value)) return value.map(txt).filter(Boolean).join(', ');
+  const qsa = (sel) => Array.from(document.querySelectorAll(sel));
+  const text = (value) => {
+    if (Array.isArray(value)) return value.map(text).filter(Boolean).join(', ');
     if (value && typeof value === 'object') return value.name || value.url || value.filename || '';
-    return String(value ?? '').trim();
+    return String(value || '').trim();
   };
-  const esc = (value) => txt(value).replace(/[&<>"']/g, (char) => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
+  const esc = (value) => text(value).replace(/[&<>"']/g, (char) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   }[char]));
+  const cache = new Map();
+  const pending = new Map();
 
-  const AGREEMENTS = {
+  const agreements = {
     cast: [
-      ['cast', 'Cast Agreement', 'Speaking roles, leads, and supporting cast.', 'cast', ''],
-      ['talent_release', 'Talent Release', 'Background actors, extras, and anyone on camera without a full contract.', 'talent_release', ''],
-      ['actor_deal_memo', 'Actor Deal Memo', 'Quick booking confirmation before a full contract.', 'custom', 'Actor Deal Memo: This short-form memo confirms booking basics for the performer, including production, role, expected schedule, communication duties, and that a full agreement may follow.'],
-      ['self_tape', 'Self-Tape Agreement', 'Audition footage permission for callbacks and self tapes.', 'custom', 'Self-Tape Agreement: Performer grants BLEUSKM Studios permission to receive, review, store, and internally share audition or self-tape footage for casting decisions related to this production.']
+      ['cast', 'Cast Agreement', 'Speaking roles, leads, and supporting cast.', 'cast'],
+      ['talent_release', 'Talent Release', 'Background actors, extras, and anyone on camera.', 'talent_release'],
+      ['actor_deal_memo', 'Actor Deal Memo', 'Quick booking confirmation before a full contract.', 'custom'],
+      ['self_tape', 'Self-Tape Agreement', 'Callbacks and audition footage permission.', 'custom']
     ],
     crew: [
-      ['crew', 'Crew Agreement', 'Confirmed on-set crew.', 'crew', ''],
-      ['contractor', 'Contractor Agreement', 'Remote roles, freelancers, and non-set collaborators.', 'custom', 'Independent Contractor Agreement: Contractor provides agreed services as an independent contractor and grants BLEUSKM Studios rights to use delivered work for the project.']
+      ['crew', 'Crew Agreement', 'Confirmed on-set crew.', 'crew'],
+      ['contractor', 'Contractor Agreement', 'Remote roles, freelancers, and non-set collaborators.', 'custom']
     ],
     production: [
-      ['location', 'Location Release', 'Any filming location.', 'location', ''],
-      ['media', 'Media Release (BTS)', 'Behind-the-scenes photography, video, and promo capture.', 'custom', 'Media Release: Contributor grants BLEUSKM Studios permission to use behind-the-scenes photography, video, audio, and related media for promotion, press, social media, festival materials, archival use, and distribution connected to the project.']
+      ['location', 'Location Release', 'Any filming location.', 'location'],
+      ['media', 'Media Release (BTS)', 'Behind-the-scenes photography, video, and promo capture.', 'custom']
     ],
     post: [
-      ['editor', 'Editor Agreement', 'Picture editor or post-production editor.', 'custom', 'Editor Agreement: Editor agrees to provide editing services and grants BLEUSKM Studios rights to use edited work, project files, exports, and deliverables.'],
-      ['composer', 'Composer Agreement', 'Original music and music-rights clearance.', 'composer', '']
+      ['editor', 'Editor Agreement', 'Picture editor or post-production editor.', 'custom'],
+      ['composer', 'Composer Agreement', 'Original music and music-rights clearance.', 'composer']
     ]
   };
 
+  const customTerms = {
+    actor_deal_memo: 'Actor Deal Memo: This short-form memo confirms booking basics for the performer, including production, role, expected schedule, communication duties, and that a full agreement may follow.',
+    self_tape: 'Self-Tape Agreement: Performer grants BLEUSKM Studios permission to receive, review, store, and internally share audition or self-tape footage for casting decisions related to this production.',
+    contractor: 'Independent Contractor Agreement: Contractor provides agreed services as an independent contractor and grants BLEUSKM Studios rights to use delivered work for the project.',
+    media: 'Media Release: Contributor grants BLEUSKM Studios permission to use behind-the-scenes photography, video, audio, and related media for promotion, press, social media, festival materials, archival use, and distribution connected to the project.',
+    editor: 'Editor Agreement: Editor agrees to provide editing services and grants BLEUSKM Studios rights to use edited work, project files, exports, and deliverables.'
+  };
+
   async function records(table) {
-    try {
-      const res = await fetch(`${AIRTABLE}?table=${encodeURIComponent(table)}`);
-      return res.ok ? ((await res.json()).records || []) : [];
-    } catch {
-      return [];
-    }
+    const old = cache.get(table);
+    if (old && Date.now() - old.time < 60000) return old.rows;
+    if (pending.has(table)) return pending.get(table);
+    const key = `bleuskm_cache_${table}`;
+    const saved = (() => { try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch { return []; } })();
+    const job = fetch(`${AIRTABLE}?table=${encodeURIComponent(table)}`)
+      .then((res) => res.ok ? res.json() : { records: old?.rows || saved })
+      .then((data) => {
+        const rows = data.records || [];
+        if (rows.length) {
+          cache.set(table, { time: Date.now(), rows });
+          try { localStorage.setItem(key, JSON.stringify(rows)); } catch {}
+        }
+        return rows;
+      })
+      .catch(() => old?.rows || saved)
+      .finally(() => pending.delete(table));
+    pending.set(table, job);
+    return job;
   }
 
   async function saveRecord(table, fields, id = '') {
@@ -55,7 +75,8 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(id ? { table, id, fields } : { table, fields })
     });
-    if (!res.ok) throw new Error('Save failed');
+    if (!res.ok) throw new Error('Airtable save failed');
+    cache.delete(table);
     return res.json();
   }
 
@@ -65,76 +86,58 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ table, id })
     });
-    if (!res.ok) throw new Error('Delete failed');
+    if (!res.ok) throw new Error('Airtable delete failed');
+    cache.delete(table);
   }
 
   function installStyles() {
-    if ($('castingLiveRepairStyles')) return;
-    document.head.insertAdjacentHTML('beforeend', `<style id="castingLiveRepairStyles">
-      #tableWrap,#contractsList,.old-contract-tabs,#agreementGrid,.agreement-tabs,#hub-email .hub-sub,#hub-email .compose-quickform,.hub-btn[data-hub="admin"],#hub-admin{display:none!important}
-      #castingCardsGrid,.contact-section-grid,.repair-contract-grid,.repair-signed-grid{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))!important;gap:10px!important}
-      .repair-card,.contact-card,.repair-contract-card,.portal-note{position:relative!important;min-height:122px!important;background:var(--surface2,#111)!important;border:1px solid var(--borderdim,rgba(255,255,255,.08))!important;border-radius:6px!important;padding:14px!important;color:var(--text)!important}
-      .repair-card:hover,.contact-card:hover,.repair-contract-card:hover{border-color:rgba(218,175,55,.45)!important}
-      .repair-card-main,.repair-contract-card{display:block!important;width:100%!important;background:transparent!important;border:0!important;color:inherit!important;padding:0!important;text-align:left!important;cursor:pointer!important;text-transform:none!important;letter-spacing:0!important}
-      .repair-card strong,.contact-card-name,.repair-contract-card strong,.portal-note strong{display:block!important;color:var(--text)!important;font-size:13px!important;line-height:1.25!important;letter-spacing:0!important;text-transform:none!important}
-      .repair-card span,.contact-card-detail,.repair-contract-card span,.portal-note p{display:block!important;color:var(--muted)!important;font-size:11px!important;line-height:1.38!important;margin-top:6px!important;letter-spacing:0!important;text-transform:none!important}
-      .repair-status{display:inline-block!important;width:max-content!important;max-width:100%!important;color:var(--gold)!important;border:1px solid rgba(218,175,55,.28)!important;padding:4px 6px!important;margin-top:8px!important;font-size:8px!important;line-height:1!important;letter-spacing:.12em!important;text-transform:uppercase!important}
-      .repair-actions,.contact-card-actions,.portal-row-actions{display:flex!important;gap:8px!important;align-items:center!important;flex-wrap:wrap!important;margin-top:10px!important}
-      .repair-actions button,.repair-actions select,.contact-card-actions button,.portal-row-actions button,.tc-send-btn,.repair-tab,.tiny-text-btn{appearance:none!important;min-height:0!important;background:transparent!important;border:0!important;border-bottom:1px solid rgba(218,175,55,.45)!important;border-radius:0!important;color:var(--gold)!important;font-family:var(--font,inherit)!important;font-size:9px!important;font-weight:700!important;line-height:1.1!important;letter-spacing:.12em!important;text-transform:uppercase!important;padding:3px 1px!important;cursor:pointer!important}
-      .repair-actions select,.repair-batch select{border:1px solid rgba(218,175,55,.35)!important;background:#0b0b0b!important;color:var(--text)!important;padding:6px 8px!important}
-      .danger{color:#ff8b8b!important;border-color:rgba(255,139,139,.45)!important}
+    if ($('castingRescueStyles')) return;
+    document.head.insertAdjacentHTML('beforeend', `<style id="castingRescueStyles">
+      #tableWrap,#contractsList,.contracts-tabs,#hub-email .hub-sub,#hub-email .compose-quickform,.hub-btn[data-hub="admin"],#hub-admin{display:none!important}
+      #castingCardsGrid,.repair-contract-grid,.repair-signed-grid,.contact-section-grid{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))!important;gap:10px!important}
+      .repair-card,.repair-contract-card,.contact-card,.portal-note{position:relative!important;background:var(--surface2,#111)!important;border:1px solid var(--borderdim,rgba(255,255,255,.08))!important;border-radius:6px!important;padding:14px!important;color:var(--text)!important;min-height:112px!important}
+      .repair-card:hover,.repair-contract-card:hover,.contact-card:hover{border-color:rgba(218,175,55,.45)!important}
+      .repair-card-main,.repair-contract-card{display:block!important;width:100%!important;background:transparent!important;border:0!important;padding:0!important;text-align:left!important;color:inherit!important;cursor:pointer!important;letter-spacing:0!important;text-transform:none!important}
+      .repair-card strong,.repair-contract-card strong,.contact-card-name,.portal-note strong{display:block!important;color:var(--text)!important;font-size:13px!important;line-height:1.25!important;letter-spacing:0!important;text-transform:none!important}
+      .repair-card span,.repair-contract-card span,.contact-card-detail,.portal-note p{display:block!important;color:var(--muted)!important;font-size:11px!important;line-height:1.35!important;margin-top:6px!important;letter-spacing:0!important;text-transform:none!important}
+      .repair-status{display:inline-block!important;width:max-content!important;color:var(--gold)!important;border:1px solid rgba(218,175,55,.28)!important;padding:4px 6px!important;margin-top:8px!important;font-size:8px!important;line-height:1!important;letter-spacing:.12em!important;text-transform:uppercase!important}
+      .repair-actions,.contact-card-actions,.portal-row-actions,.repair-batch{display:flex!important;gap:8px!important;align-items:center!important;flex-wrap:wrap!important;margin-top:10px!important}
+      .repair-actions button,.contact-card-actions button,.portal-row-actions button,.tc-send-btn,.tiny-text-btn,.repair-tab{appearance:none!important;min-height:0!important;background:transparent!important;border:0!important;border-bottom:1px solid rgba(218,175,55,.45)!important;border-radius:0!important;color:var(--gold)!important;font-family:var(--font,inherit)!important;font-size:9px!important;font-weight:700!important;line-height:1.1!important;letter-spacing:.12em!important;text-transform:uppercase!important;padding:3px 1px!important;cursor:pointer!important}
+      .repair-batch{margin:10px 28px 18px!important}.repair-batch select{background:#0b0b0b!important;color:var(--text)!important;border:1px solid rgba(218,175,55,.35)!important;padding:6px 8px!important}
       .app-check{position:absolute!important;top:9px!important;right:9px!important;width:13px!important;height:13px!important;accent-color:#d9ad31!important}
-      .repair-batch{display:flex!important;gap:10px!important;align-items:center!important;flex-wrap:wrap!important;margin:10px 28px 18px!important}
-      .repair-batch span,.contacts-section-label{font-size:10px!important;color:var(--muted)!important;text-transform:uppercase!important;letter-spacing:.14em!important}
-      .contacts-section-label{grid-column:1/-1!important;margin:10px 0 0!important;color:var(--gold)!important}
-      #hub-email .hub-section-label:first-of-type{font-size:0!important;height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;border:0!important}
-      .repair-contract-tabs{display:flex!important;gap:14px!important;flex-wrap:wrap!important;margin:20px 0!important}
-      .repair-tab.active{color:var(--gold)!important;border-color:var(--gold)!important}
-      .casting-modal{position:fixed!important;inset:0!important;z-index:9999!important;background:rgba(0,0,0,.86)!important;display:flex!important;align-items:flex-start!important;justify-content:center!important;padding:34px 14px!important;overflow:auto!important}
-      .casting-modal-card{position:relative!important;width:min(760px,96vw)!important;background:#0d0d0d!important;border:1px solid rgba(218,175,55,.28)!important;padding:22px!important;color:var(--text)!important}
-      .casting-modal-close{position:absolute!important;top:8px!important;right:12px!important;background:transparent!important;border:0!important;color:var(--muted)!important;font-size:22px!important;cursor:pointer!important}
+      .danger{color:#ff8b8b!important;border-color:rgba(255,139,139,.45)!important}.contacts-section-label{grid-column:1/-1!important;margin:12px 0 0!important;color:var(--gold)!important;font-size:10px!important;text-transform:uppercase!important;letter-spacing:.14em!important}
+      .repair-contract-tabs{display:flex!important;gap:14px!important;flex-wrap:wrap!important;margin:20px 0!important}.repair-tab.active{color:var(--gold)!important;border-color:var(--gold)!important}
+      .casting-modal{position:fixed!important;inset:0!important;z-index:99999!important;background:rgba(0,0,0,.86)!important;display:flex!important;align-items:flex-start!important;justify-content:center!important;padding:34px 14px!important;overflow:auto!important}
+      .casting-modal-card{position:relative!important;width:min(760px,96vw)!important;background:#0d0d0d!important;border:1px solid rgba(218,175,55,.28)!important;padding:22px!important;color:var(--text)!important}.casting-modal-close{position:absolute!important;top:8px!important;right:12px!important;background:transparent!important;border:0!important;color:var(--muted)!important;font-size:22px!important;cursor:pointer!important}
       .detail-grid{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))!important;gap:8px!important;margin:14px 0!important}.detail-grid div{border:1px solid var(--borderdim)!important;padding:9px!important;color:var(--muted)!important;font-size:11px!important}.detail-grid small{display:block!important;color:var(--gold)!important;font-size:8px!important;letter-spacing:.12em!important;text-transform:uppercase!important;margin-bottom:4px!important}
       .calendar-day{position:relative!important;min-height:110px!important}.calendar-add{position:absolute!important;right:6px!important;top:6px!important;opacity:0!important}.calendar-day:hover .calendar-add{opacity:1!important}.calendar-pill span{display:block!important;color:var(--muted)!important;font-size:8px!important;margin-top:3px!important}
-      .portal-notes-panel{margin-top:28px!important;border-top:1px solid var(--borderdim)!important;padding-top:18px!important}.portal-notes-list{display:grid!important;gap:8px!important;margin-bottom:12px!important}.portal-note-head{display:flex!important;justify-content:space-between!important;gap:12px!important}.portal-note-compose{display:grid!important;gap:8px!important}
     </style>`);
   }
 
-  function castRole(fields) {
-    return txt(fields['To Role']) || txt(fields.Role) || txt(fields['Role Interested In']);
-  }
-
-  function crewRole(fields) {
-    return txt(fields['Preferred role by Director'] || fields['Preferred Role by Director'] || fields.Preferred_role_by_Director) || txt(fields.Role);
-  }
-
-  function castStatus(fields) {
-    return txt(fields['Casting Status']) || 'Pending';
-  }
-
-  function templateFor(fields) {
-    const status = castStatus(fields).toLowerCase();
-    const selfTape = txt(fields['Self Tape Status']).toLowerCase();
+  function castRole(f) { return text(f['To Role']) || text(f.Role) || text(f['Role Interested In']); }
+  function crewRole(f) { return text(f['Preferred role by Director'] || f['Preferred Role by Director'] || f.Preferred_role_by_Director) || text(f.Role); }
+  function castStatus(f) { return text(f['Casting Status']) || 'Pending'; }
+  function templateFor(f) {
+    const status = castStatus(f).toLowerCase();
+    const selfTape = text(f['Self Tape Status']).toLowerCase();
     if (selfTape.includes('selected for final')) return '19';
     if (status === 'callback') return '15';
     if (status === 'pass') return '16';
-    if (status === 'redirect') return txt(fields['To Role']) ? '18' : '17';
+    if (status === 'redirect') return text(f['To Role']) ? '18' : '17';
     return '';
   }
+  function templateLabel(id) {
+    return ({ 15: 'Send Self Tape Invite', 16: 'Send Rejection', 17: 'Send Direct Offer', 18: 'Send Cross Casting', 19: 'Send Callback' })[String(id)] || 'Send Email';
+  }
 
-  function contractLink(name, email, role) {
-    return `https://bleuskm.com/crew/contract?${new URLSearchParams({
-      name: name || '',
-      email: email || '',
-      role: role || '',
-      film: PROJECT
-    })}`;
+  function showModal(html) {
+    qsa('.casting-modal').forEach((m) => m.remove());
+    document.body.insertAdjacentHTML('beforeend', `<div class="casting-modal"><div class="casting-modal-card"><button class="casting-modal-close" data-close-repair>&times;</button>${html}</div></div>`);
   }
 
   function installBatchBar() {
     if ($('repairBatchBar')) return;
-    const controls = qs('#hub-applications .controls-bar');
-    if (!controls) return;
-    controls.insertAdjacentHTML('afterend', `<div class="repair-batch" id="repairBatchBar">
+    qs('#hub-applications .controls-bar')?.insertAdjacentHTML('afterend', `<div class="repair-batch" id="repairBatchBar">
       <span id="repairSelectedCount">0 selected</span>
       <select id="repairBatchTemplate">
         <option value="">Choose template</option>
@@ -147,11 +150,11 @@
       <button class="tiny-text-btn" id="repairBatchSend">Send Template</button>
       <button class="tiny-text-btn danger" id="repairBatchClear">Clear</button>
     </div>`);
-    $('repairBatchSend').onclick = sendBatch;
-    $('repairBatchClear').onclick = () => {
+    $('repairBatchSend')?.addEventListener('click', sendBatch);
+    $('repairBatchClear')?.addEventListener('click', () => {
       qsa('.app-check:checked').forEach((box) => { box.checked = false; });
       updateSelectedCount();
-    };
+    });
   }
 
   function updateSelectedCount() {
@@ -160,10 +163,12 @@
   }
 
   async function renderApplications() {
-    const wrap = $('tableWrap');
     const main = qs('#hub-applications .dash-main');
-    if (!wrap || !main) return;
-    wrap.classList.add('hidden');
+    if (!main) return;
+    $('tableWrap')?.classList.add('hidden');
+    $('stateLoading')?.classList.add('hidden');
+    $('stateError')?.classList.add('hidden');
+    $('stateEmpty')?.classList.add('hidden');
     installBatchBar();
     let grid = $('castingCardsGrid');
     if (!grid) {
@@ -171,55 +176,45 @@
       grid.id = 'castingCardsGrid';
       main.appendChild(grid);
     }
-    const query = txt($('searchInput')?.value).toLowerCase();
-    const filter = qs('.filter-btn.active')?.dataset.filter || 'All';
+    const filter = text(qs('.filter-btn.active')?.dataset.filter || 'All').toLowerCase();
+    const query = text($('searchInput')?.value).toLowerCase();
     let rows = await records('Casting Submissions');
-    rows = rows.filter((record) => {
-      const fields = record.fields || {};
-      const status = castStatus(fields);
-      const haystack = [fields.Name, fields.Email, castRole(fields), fields.Location, status].map(txt).join(' ').toLowerCase();
-      return (filter === 'All' || status === filter) && (!query || haystack.includes(query));
+    rows = rows.filter((r) => {
+      const f = r.fields || {};
+      const status = castStatus(f);
+      const hay = [f.Name, f.Email, castRole(f), f.Location, status].map(text).join(' ').toLowerCase();
+      return (filter === 'all' || status.toLowerCase() === filter) && (!query || hay.includes(query));
     });
     window.__castRows = rows;
-    sendFinalRoundCallbacks(rows);
-    grid.innerHTML = rows.map((record) => {
-      const fields = record.fields || {};
-      const name = txt(fields.Name) || 'Applicant';
-      const email = txt(fields.Email);
-      const templateId = templateFor(fields);
+    grid.innerHTML = rows.map((r) => {
+      const f = r.fields || {};
+      const name = text(f.Name) || 'Applicant';
+      const email = text(f.Email);
+      const tid = templateFor(f);
       return `<article class="repair-card">
-        <input class="app-check" type="checkbox" data-id="${esc(record.id)}" aria-label="Select ${esc(name)}">
-        <button class="repair-card-main" type="button" data-open-app="${esc(record.id)}">
+        <input class="app-check" type="checkbox" data-id="${esc(r.id)}" aria-label="Select ${esc(name)}">
+        <button class="repair-card-main" type="button" data-open-app="${esc(r.id)}">
           <strong>${esc(name)}</strong>
-          <span>${esc(castRole(fields) || 'Role not set')}</span>
+          <span>${esc(castRole(f) || 'Role not set')}</span>
           <span>${esc(email)}</span>
-          <span class="repair-status">${esc(castStatus(fields))}</span>
+          <span class="repair-status">${esc(castStatus(f))}</span>
         </button>
-        <div class="repair-actions">
-          ${email ? `<button type="button" data-direct-email="${esc(email)}" data-direct-name="${esc(name)}">Email</button>` : ''}
-          ${email && templateId ? `<button type="button" data-template-person="${esc(email)}" data-template-id="${esc(templateId)}">Send Email</button>` : ''}
-        </div>
+        <div class="repair-actions">${email && tid ? `<button type="button" data-template-person="${esc(email)}" data-template-id="${esc(tid)}">${esc(templateLabel(tid))}</button>` : ''}</div>
       </article>`;
     }).join('') || '<p style="font-size:10px;color:var(--muted);padding:16px 0;">No submissions match.</p>';
     updateSelectedCount();
   }
 
-  function showModal(html) {
-    qsa('.casting-modal').forEach((modal) => modal.remove());
-    document.body.insertAdjacentHTML('beforeend', `<div class="casting-modal"><div class="casting-modal-card"><button class="casting-modal-close" data-close-repair>&times;</button>${html}</div></div>`);
-  }
-
   function openApplication(id) {
-    const record = (window.__castRows || []).find((row) => row.id === id);
-    if (!record) return;
-    const fields = record.fields || {};
+    const r = (window.__castRows || []).find((row) => row.id === id);
+    if (!r) return;
+    const f = r.fields || {};
     const keys = ['Name', 'Email', 'Location', 'Role', 'To Role', 'Casting Status', 'Cast Status', 'Self Tape Status', 'Self Tape URL', 'Callback/Redirect', 'Email Sent', 'Notes'];
-    const details = keys.map((key) => txt(fields[key]) ? `<div><small>${esc(key)}</small>${key.includes('URL') ? `<a href="${esc(txt(fields[key]))}" target="_blank" rel="noopener">${esc(txt(fields[key]))}</a>` : esc(txt(fields[key]))}</div>` : '').join('');
-    const email = txt(fields.Email);
-    const name = txt(fields.Name) || 'Applicant';
-    const buttons = [['15', 'Self Tape'], ['16', 'Rejection'], ['17', 'Redirect'], ['18', 'Role Offer'], ['19', 'Callback']]
-      .map(([id, label]) => `<button type="button" data-template-person="${esc(email)}" data-template-id="${id}">Send ${label}</button>`).join('');
-    showModal(`<h2>${esc(name)}</h2><div class="detail-grid">${details}</div><div class="repair-actions">${email ? `<button type="button" data-direct-email="${esc(email)}" data-direct-name="${esc(name)}">Email</button>${buttons}` : ''}</div>`);
+    const details = keys.map((k) => text(f[k]) ? `<div><small>${esc(k)}</small>${k.includes('URL') ? `<a href="${esc(text(f[k]))}" target="_blank" rel="noopener">${esc(text(f[k]))}</a>` : esc(text(f[k]))}</div>` : '').join('');
+    const email = text(f.Email);
+    const buttons = [['15', 'Self Tape Invite'], ['16', 'Rejection'], ['17', 'Direct Offer'], ['18', 'Cross Casting'], ['19', 'Callback']]
+      .map(([tid, label]) => `<button type="button" data-template-person="${esc(email)}" data-template-id="${tid}">Send ${label}</button>`).join('');
+    showModal(`<h2>${esc(text(f.Name) || 'Applicant')}</h2><div class="detail-grid">${details}</div><div class="repair-actions">${email ? `<button type="button" data-direct-email="${esc(email)}" data-direct-name="${esc(text(f.Name))}">Email</button>${buttons}` : ''}</div>`);
   }
 
   async function sendBrevo(email, templateId, silent = false) {
@@ -239,21 +234,6 @@
     return res.ok;
   }
 
-  async function sendFinalRoundCallbacks(rows) {
-    for (const record of rows) {
-      const fields = record.fields || {};
-      const selected = txt(fields['Self Tape Status']).toLowerCase() === 'selected for final round';
-      const scheduled = fields['Callback Scheduled'] === true || txt(fields['Callback Scheduled']).toLowerCase() === 'true';
-      const already = txt(fields['Email Sent']).toLowerCase().includes('t19') || txt(fields['Email Sent']).toLowerCase().includes('callback');
-      const email = txt(fields.Email);
-      if (!selected || scheduled || already || !email) continue;
-      if (await sendBrevo(email, '19', true)) {
-        await saveRecord('Casting Submissions', { 'Email Sent': 'T19 Final Callback Sent' }, record.id).catch(() => {});
-        fields['Email Sent'] = 'T19 Final Callback Sent';
-      }
-    }
-  }
-
   async function sendBatch() {
     const templateId = $('repairBatchTemplate')?.value;
     const ids = qsa('.app-check:checked').map((box) => box.dataset.id);
@@ -261,101 +241,83 @@
     if (!ids.length) return alert('Select at least one application.');
     let sent = 0;
     for (const id of ids) {
-      const record = (window.__castRows || []).find((row) => row.id === id);
-      const email = txt(record?.fields?.Email);
+      const rec = (window.__castRows || []).find((row) => row.id === id);
+      const email = text(rec?.fields?.Email);
       if (email && await sendBrevo(email, templateId, true)) sent += 1;
     }
     alert(`${sent} template email${sent === 1 ? '' : 's'} processed.`);
   }
 
   function openEmail(email = '', name = '') {
-    if (typeof window.openComposeModal === 'function') {
-      window.openComposeModal(email, name, 'casting@bleuskm.com');
+    if (typeof window.openComposeModal === 'function') window.openComposeModal(email, name, 'casting@bleuskm.com');
+  }
+
+  async function sendZohoCompose() {
+    const from = text($('composeFrom')?.value) || 'casting@bleuskm.com';
+    const to = text($('composeTo')?.value);
+    const subject = text($('composeSubject')?.value);
+    const body = text($('composeBody')?.value);
+    if (!to || !subject || !body) return alert('Please fill in all fields.');
+    const btn = $('composeModalSend');
+    if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+    try {
+      const res = await fetch(ZOHO, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'send', from, fromName: 'BLEUSKM Studios', to, subject, textContent: body, htmlContent: `<p>${esc(body).replace(/\n/g, '<br>')}</p>` })
+      });
+      if (!res.ok) return alert((await res.json().catch(() => ({}))).error || 'Email failed.');
+      $('composeModal')?.classList.add('hidden');
+      alert('Email sent.');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Send Email'; }
     }
   }
 
   function cleanEmailHub() {
-    const hub = $('hub-email');
-    if (!hub) return;
-    const label = qsa('#hub-email .hub-section-label').find((node) => node.textContent.toLowerCase().includes('brevo'));
-    if (label) label.textContent = '';
-    const grid = hub.querySelector('.template-grid');
-    if (grid && !grid.querySelector('[data-template-card="15"]')) {
-      grid.insertAdjacentHTML('afterbegin', `<div class="template-card" data-template-card="15">
-        <div class="tc-num">T15</div>
-        <div class="tc-name">Self Tape Invitation</div>
-        <div class="tc-desc">Sent to callback applicants selected for self tape.</div>
-        <button class="tc-send-btn" data-email-template="15">Compose Direct Email</button>
-      </div>`);
+    const grid = qs('#hub-email .template-grid');
+    if (!grid) return;
+    const has15 = qsa('#hub-email .tc-num').some((n) => text(n.textContent).replace(/\D/g, '') === '15');
+    if (!has15) {
+      grid.insertAdjacentHTML('afterbegin', `<div class="template-card"><div class="tc-num">T15</div><div class="tc-name">Self Tape Invitation</div><div class="tc-desc">Sent to callback applicants selected for self tape.</div><button class="tc-send-btn" data-email-template="15">Compose Direct Email</button></div>`);
     }
     qsa('#hub-email .tc-send-btn').forEach((button) => {
-      const templateId = (button.getAttribute('onclick') || '').match(/(\d+)/)?.[1] || button.closest('.template-card')?.querySelector('.tc-num')?.textContent.replace(/\D/g, '') || button.dataset.emailTemplate;
+      const id = (button.getAttribute('onclick') || '').match(/(\d+)/)?.[1] || button.closest('.template-card')?.querySelector('.tc-num')?.textContent.replace(/\D/g, '') || button.dataset.emailTemplate;
       button.removeAttribute('onclick');
+      button.dataset.emailTemplate = id || '';
       button.textContent = 'Compose Direct Email';
-      button.dataset.emailTemplate = templateId || '';
     });
   }
 
-  async function openTemplateComposer(templateId) {
-    const options = (await records('Casting Submissions'))
-      .filter((record) => txt(record.fields?.Email))
-      .map((record) => `<option value="${esc(txt(record.fields.Email))}">${esc(txt(record.fields.Name) || txt(record.fields.Email))} - ${esc(txt(record.fields.Email))}</option>`)
-      .join('');
-    showModal(`<h2>Compose Direct Email</h2>
-      <p style="font-size:11px;color:var(--muted)">From casting@bleuskm.com using Brevo template T${esc(templateId)}.</p>
-      <div class="modal-field"><label class="modal-label">Recipient</label><select class="modal-input" id="templateRecipient"><option value="">Choose one person</option>${options}</select></div>
-      <div class="repair-actions"><button type="button" data-send-template-compose="${esc(templateId)}">Send Template</button></div>`);
+  function openTemplateComposer(templateId) {
+    openEmail('', '');
+    const subject = $('composeSubject');
+    if (subject && !subject.value) subject.value = templateLabel(templateId).replace(/^Send\s+/i, '');
   }
 
-  function activeContractGroup() {
-    return qs('[data-contract-group].active')?.dataset.contractGroup || 'cast';
-  }
-
-  function findAgreement(key) {
-    return Object.values(AGREEMENTS).flat().find((item) => item[0] === key) || AGREEMENTS.cast[0];
-  }
+  function activeContractGroup() { return qs('[data-contract-group].active')?.dataset.contractGroup || 'cast'; }
+  function findAgreement(key) { return Object.values(agreements).flat().find((a) => a[0] === key) || agreements.cast[0]; }
 
   function installContracts() {
     const panel = $('hub-contracts');
-    const oldTabs = panel?.querySelector('.contracts-tabs');
-    if (!panel || !oldTabs) return;
-    oldTabs.classList.add('old-contract-tabs');
+    if (!panel) return;
     if (!$('repairContractTabs')) {
-      oldTabs.insertAdjacentHTML('afterend', `<div class="repair-contract-tabs" id="repairContractTabs">
+      panel.querySelector('.hub-header-row')?.insertAdjacentHTML('afterend', `<div class="repair-contract-tabs" id="repairContractTabs">
         <button class="repair-tab active" type="button" data-contract-group="cast">Cast</button>
         <button class="repair-tab" type="button" data-contract-group="crew">Crew</button>
         <button class="repair-tab" type="button" data-contract-group="production">Production</button>
         <button class="repair-tab" type="button" data-contract-group="post">Post</button>
         <button class="repair-tab" type="button" data-contract-group="signed">Signed</button>
-      </div>
-      <div class="repair-contract-grid" id="repairContractGrid"></div>
-      <div class="repair-signed-grid" id="repairSignedGrid" style="display:none"></div>`);
-    }
-    qsa('[data-contract-group]').forEach((button) => {
-      button.onclick = () => {
-        qsa('[data-contract-group]').forEach((item) => item.classList.remove('active'));
-        button.classList.add('active');
-        renderContractGroup(button.dataset.contractGroup);
-      };
-    });
-    const newButton = $('newContractBtn');
-    if (newButton && !newButton.dataset.repairBound) {
-      const clone = newButton.cloneNode(true);
-      clone.dataset.repairBound = '1';
-      clone.onclick = (event) => {
-        event.preventDefault();
-        openAgreement((AGREEMENTS[activeContractGroup()] || AGREEMENTS.cast)[0][0]);
-      };
-      newButton.replaceWith(clone);
+      </div><div class="repair-contract-grid" id="repairContractGrid"></div><div class="repair-signed-grid" id="repairSignedGrid" style="display:none"></div>`);
     }
     renderContractGroup(activeContractGroup());
-    patchContractModal();
   }
 
   function renderContractGroup(group) {
     const grid = $('repairContractGrid');
     const signed = $('repairSignedGrid');
     if (!grid || !signed) return;
+    qsa('[data-contract-group]').forEach((b) => b.classList.toggle('active', b.dataset.contractGroup === group));
     if (group === 'signed') {
       grid.style.display = 'none';
       signed.style.display = 'grid';
@@ -364,415 +326,194 @@
     }
     signed.style.display = 'none';
     grid.style.display = 'grid';
-    grid.innerHTML = (AGREEMENTS[group] || AGREEMENTS.cast).map((item) => `<button type="button" class="repair-contract-card" data-open-agreement="${esc(item[0])}">
-      <strong>${esc(item[1])}</strong>
-      <span>${esc(item[2])}</span>
-    </button>`).join('');
+    grid.innerHTML = (agreements[group] || agreements.cast).map((a) => `<button type="button" class="repair-contract-card" data-open-agreement="${esc(a[0])}"><strong>${esc(a[1])}</strong><span>${esc(a[2])}</span></button>`).join('');
   }
 
   function openAgreement(key) {
-    const agreement = findAgreement(key);
+    const a = findAgreement(key);
     if (typeof window.openContractModal === 'function') window.openContractModal();
     else $('contractModal')?.classList.remove('hidden');
     setTimeout(() => {
-      const typeSelect = $('contractType');
-      if (typeSelect) {
-        typeSelect.value = [...typeSelect.options].some((option) => option.value === agreement[3]) ? agreement[3] : 'custom';
-        typeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+      const type = $('contractType');
+      if (type) {
+        type.value = Array.from(type.options).some((o) => o.value === a[3]) ? a[3] : 'custom';
+        type.dispatchEvent(new Event('change', { bubbles: true }));
       }
       setTimeout(() => {
-        if ($('contractModalTitle')) $('contractModalTitle').textContent = agreement[1].toUpperCase();
-        if ($('contractTerms') && agreement[4]) $('contractTerms').value = agreement[4];
-      }, 80);
-    }, 80);
-  }
-
-  function patchContractModal() {
-    const save = $('contractSaveBtn');
-    if (!save || save.dataset.repairBound) return;
-    save.dataset.repairBound = '1';
-    save.insertAdjacentHTML('beforebegin', '<button class="modal-cancel" id="copyDirectContract" type="button">Copy Link</button><button class="modal-cancel" id="sendDirectContract" type="button">Send Link</button>');
-    $('copyDirectContract').onclick = async () => {
-      const name = txt($('contractName')?.value);
-      const email = txt($('contractEmail')?.value);
-      const role = txt($('contractRole')?.value);
-      if (!name || !email) return alert('Enter a name and email first.');
-      await navigator.clipboard?.writeText(contractLink(name, email, role));
-      alert('Contract link copied.');
-    };
-    $('sendDirectContract').onclick = sendContractLink;
-  }
-
-  async function sendContractLink() {
-    const name = txt($('contractName')?.value);
-    const email = txt($('contractEmail')?.value);
-    const role = txt($('contractRole')?.value);
-    if (!name || !email) return alert('Enter a name and email first.');
-    const link = contractLink(name, email, role);
-    const payload = {
-      sender: { email: 'casting@bleuskm.com', name: 'BLEUSKM Studios' },
-      to: [{ email }],
-      subject: 'The Final Hand | Agreement Link',
-      textContent: `Hi ${name},\n\nYour agreement link is ready:\n${link}\n\nBLEUSKM Studios`,
-      htmlContent: `<p>Hi ${esc(name)},</p><p>Your agreement link is ready:</p><p><a href="${esc(link)}">${esc(link)}</a></p><p>BLEUSKM Studios</p>`
-    };
-    const res = await fetch(BREVO, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ endpoint: 'https://api.brevo.com/v3/smtp/email', payload })
-    });
-    alert(res.ok ? 'Contract link sent.' : 'Could not send contract link.');
+        if ($('contractModalTitle')) $('contractModalTitle').textContent = a[1].toUpperCase();
+        if ($('contractTerms') && customTerms[a[0]]) $('contractTerms').value = customTerms[a[0]];
+      }, 60);
+    }, 60);
   }
 
   async function renderSignedContracts() {
     const list = $('repairSignedGrid');
     if (!list) return;
-    const local = JSON.parse(localStorage.getItem('bleuskm_contracts') || '[]').filter((item) => txt(item.status).toLowerCase() === 'signed' || txt(item.signature));
-    const airtable = (await records('Contracts')).map((record) => {
-      const fields = record.fields || {};
-      return {
-        name: txt(fields.Name || fields['Full Name'] || fields.Signer),
-        email: txt(fields.Email),
-        role: txt(fields.Role || fields.Position),
-        type: txt(fields.Type || fields['Agreement Type'] || fields.Contract),
-        date: txt(fields['Signed Date'] || fields.Date || fields.Created),
-        source: 'Managed by Director'
-      };
+    const local = (() => { try { return JSON.parse(localStorage.getItem('bleuskm_contracts') || '[]'); } catch { return []; } })()
+      .filter((c) => text(c.status).toLowerCase() === 'signed' || text(c.signature));
+    const air = (await records('Contracts')).map((r) => {
+      const f = r.fields || {};
+      return { name: text(f.Name || f['Full Name'] || f.Signer), email: text(f.Email), role: text(f.Role || f.Position), type: text(f.Type || f['Agreement Type'] || f.Contract), date: text(f['Signed Date'] || f.Date || f.Created) };
     });
-    const rows = [
-      ...local.map((item) => ({ name: item.name, email: item.email, role: item.role, type: item.type, date: item.signedAt || item.created, source: 'Managed by Director' })),
-      ...airtable
-    ].filter((item) => item.name || item.email || item.type);
-    list.innerHTML = rows.length ? rows.map((item) => `<div class="repair-card">
-      <strong>${esc(item.name || 'Signed Contract')}</strong>
-      <span>${esc(item.type || 'Agreement')}</span>
-      <span>${esc(item.role)}</span>
-      <span>${esc(item.email)}</span>
-      <span class="repair-status">${esc(item.source)}${item.date ? ' - ' + esc(item.date) : ''}</span>
-    </div>`).join('') : '<p style="font-size:10px;color:var(--muted);padding:16px 0;">No signed contracts found yet.</p>';
+    const rows = [...local, ...air].filter((r) => r.name || r.email || r.type);
+    list.innerHTML = rows.map((r) => `<div class="repair-card"><strong>${esc(r.name || 'Signed Contract')}</strong><span>${esc(r.type || 'Agreement')}</span><span>${esc(r.role)}</span><span>${esc(r.email)}</span><span class="repair-status">Managed by Director${r.date ? ' - ' + esc(r.date) : ''}</span></div>`).join('') || '<p style="font-size:10px;color:var(--muted);padding:16px 0;">No signed contracts found yet.</p>';
+  }
+
+  function contractLink(name, email, role) {
+    return `https://bleuskm.com/crew/contract?${new URLSearchParams({ name: name || '', email: email || '', role: role || '', film: PROJECT })}`;
+  }
+
+  function patchContractModal() {
+    const save = $('contractSaveBtn');
+    if (!save || $('copyDirectContract')) return;
+    save.insertAdjacentHTML('beforebegin', '<button class="modal-cancel" id="copyDirectContract" type="button">Copy Link</button><button class="modal-cancel" id="sendDirectContract" type="button">Send Link</button>');
+    $('copyDirectContract').onclick = async () => {
+      const name = text($('contractName')?.value);
+      const email = text($('contractEmail')?.value);
+      const role = text($('contractRole')?.value);
+      if (!name || !email) return alert('Enter a name and email first.');
+      await navigator.clipboard?.writeText(contractLink(name, email, role));
+      alert('Contract link copied.');
+    };
   }
 
   async function renderContacts() {
     const grid = $('contactsGrid');
     if (!grid) return;
-    const title = qs('#hub-contacts .hub-title');
-    if (title) title.textContent = 'Contact Directory';
-    const query = txt($('contactsSearch')?.value).toLowerCase();
     const [crewRows, castRows] = await Promise.all([records('Crew applications'), records('Casting Submissions')]);
-    const coreCrew = crewRows.filter((record) => txt(record.fields?.Status).toLowerCase() === 'core');
-    const cast = castRows.filter((record) => {
-      const fields = record.fields || {};
-      return txt(fields['Cast Status'] || fields['Casting Status']).toLowerCase() === 'confirmed';
-    });
-    const matches = (record, type) => {
-      const fields = record.fields || {};
-      const role = type === 'cast' ? castRole(fields) : crewRole(fields);
-      return !query || [fields.Name, fields.Email, role].map(txt).join(' ').toLowerCase().includes(query);
+    const query = text($('contactsSearch')?.value).toLowerCase();
+    const crew = crewRows.filter((r) => text(r.fields?.Status).toLowerCase() === 'core');
+    const cast = castRows.filter((r) => text(r.fields?.['Cast Status'] || r.fields?.['Casting Status']).toLowerCase() === 'confirmed');
+    const card = (r, type) => {
+      const f = r.fields || {};
+      const name = text(f.Name) || 'Contact';
+      const email = text(f.Email);
+      const role = type === 'cast' ? castRole(f) : crewRole(f);
+      return `<div class="contact-card"><div class="contact-card-name">${esc(name)}</div><div class="contact-card-detail">${esc(email)}${role ? `<br><span style="color:var(--golddim);font-size:9px">${esc(role)}</span>` : ''}</div><div class="contact-card-actions">${email ? `<button type="button" data-direct-email="${esc(email)}" data-direct-name="${esc(name)}">Email</button>` : ''}</div></div>`;
     };
-    const card = (record, type) => {
-      const fields = record.fields || {};
-      const name = txt(fields.Name) || 'Contact';
-      const email = txt(fields.Email);
-      const role = type === 'cast' ? castRole(fields) : crewRole(fields);
-      return `<div class="contact-card">
-        <div class="contact-card-name">${esc(name)}</div>
-        <div class="contact-card-detail">${esc(email)}${role ? `<br><span style="color:var(--golddim);font-size:9px">${esc(role)}</span>` : ''}</div>
-        <div class="contact-card-actions">${email ? `<button type="button" data-direct-email="${esc(email)}" data-direct-name="${esc(name)}">Email</button>` : ''}</div>
-      </div>`;
-    };
-    if ($('contactsCounts')) $('contactsCounts').textContent = `${coreCrew.length} crew · ${cast.length} cast`;
-    grid.innerHTML = `<div class="contacts-section-label">Cast Members</div>
-      <div class="contact-section-grid">${cast.filter((record) => matches(record, 'cast')).map((record) => card(record, 'cast')).join('') || '<p style="font-size:10px;color:var(--muted)">No confirmed cast contacts yet.</p>'}</div>
-      <div class="contacts-section-label">Core Crew</div>
-      <div class="contact-section-grid">${coreCrew.filter((record) => matches(record, 'crew')).map((record) => card(record, 'crew')).join('') || '<p style="font-size:10px;color:var(--muted)">No core crew contacts found.</p>'}</div>`;
+    const keep = (r, type) => !query || [r.fields?.Name, r.fields?.Email, type === 'cast' ? castRole(r.fields || {}) : crewRole(r.fields || {})].map(text).join(' ').toLowerCase().includes(query);
+    if ($('contactsCounts')) $('contactsCounts').textContent = `${crew.length} crew · ${cast.length} cast`;
+    grid.innerHTML = `<div class="contacts-section-label">Cast Members</div><div class="contact-section-grid">${cast.filter((r) => keep(r, 'cast')).map((r) => card(r, 'cast')).join('') || '<p style="font-size:10px;color:var(--muted)">No confirmed cast contacts yet.</p>'}</div><div class="contacts-section-label">Core Crew</div><div class="contact-section-grid">${crew.filter((r) => keep(r, 'crew')).map((r) => card(r, 'crew')).join('') || '<p style="font-size:10px;color:var(--muted)">No core crew contacts found.</p>'}</div>`;
   }
 
-  async function renderNotes() {
-    const list = $('portalNotesList');
-    if (!list) return;
-    const rows = (await records('Portal Notes')).filter((record) => txt(record.fields?.Status || 'Open').toLowerCase() !== 'archived');
-    list.innerHTML = rows.map((record) => `<div class="portal-note">
-      <div class="portal-note-head">
-        <div><strong>${esc(txt(record.fields?.Title) || 'Note')}</strong><small style="font-size:8px;color:var(--gold)">${esc(txt(record.fields?.Author) || 'BLEUSKM')}</small></div>
-        <div class="portal-row-actions"><button type="button" data-edit-note="${esc(record.id)}">Edit</button><button type="button" class="danger" data-delete-note="${esc(record.id)}">Delete</button></div>
-      </div>
-      <p>${esc(txt(record.fields?.Note))}</p>
-    </div>`).join('') || '<p style="font-size:10px;color:var(--muted)">No notes yet.</p>';
+  async function repairTimeline() {
+    const track = $('timelineTrack');
+    if (!track) return;
+    const bad = text(track.textContent).toLowerCase().includes('could not load') || track.querySelector('.timeline-loading');
+    if (!bad && text(track.textContent)) return;
+    const rows = (await records('Production Timeline')).sort((a, b) => text(a.fields?.['Start Date']).localeCompare(text(b.fields?.['Start Date'])));
+    if (!rows.length) return;
+    track.innerHTML = rows.map((r) => {
+      const f = r.fields || {};
+      return `<div class="timeline-phase ${text(f.Status).toLowerCase() === 'active' ? 'active' : ''}"><div class="phase-dot"></div><div class="phase-title">${esc(text(f.Phase || f.Title) || 'Event')}</div><div class="phase-dates">${esc(text(f['Start Date']))}${text(f['End Date']) ? ' - ' + esc(text(f['End Date'])) : ''}</div><div class="phase-status">${esc(text(f.Status) || 'Upcoming')}</div></div>`;
+    }).join('');
   }
 
-  function installNotes() {
-    const hub = $('hub-timeline');
-    if (!hub) return;
-    if (!$('portalNotesList')) {
-      hub.querySelector('.hub-inner')?.insertAdjacentHTML('beforeend', `<div class="portal-notes-panel">
-        <div class="hub-section-label">Production Notes</div>
-        <div id="portalNotesList" class="portal-notes-list"></div>
-        <div class="portal-note-compose">
-          <input class="modal-input" id="portalNoteTitle" placeholder="Note title">
-          <textarea class="modal-input" id="portalNoteBody" rows="3" placeholder="Leave a note for the team..."></textarea>
-          <button class="modal-save" id="portalNoteSave" type="button">Post Note</button>
-        </div>
-      </div>`);
-    }
-    if ($('portalNoteSave') && !$('portalNoteSave').dataset.bound) {
-      $('portalNoteSave').dataset.bound = '1';
-      $('portalNoteSave').onclick = saveNote;
-    }
-    renderNotes();
-  }
-
-  async function saveNote() {
-    const button = $('portalNoteSave');
-    const note = txt($('portalNoteBody')?.value);
-    if (!note) return alert('Write a note first.');
-    await saveRecord('Portal Notes', {
-      Title: txt($('portalNoteTitle')?.value) || 'Production Note',
-      Production: PROJECT,
-      Author: sessionStorage.getItem('bleuskm_user') || localStorage.getItem('bleuskm_user') || 'Zaria',
-      Audience: 'All',
-      Note: note,
-      Status: 'Open'
-    }, button?.dataset.editing || '');
-    $('portalNoteTitle').value = '';
-    $('portalNoteBody').value = '';
-    delete button.dataset.editing;
-    button.textContent = 'Post Note';
-    renderNotes();
-  }
-
-  async function editNote(id) {
-    const record = (await records('Portal Notes')).find((row) => row.id === id);
-    if (!record) return;
-    $('portalNoteTitle').value = txt(record.fields?.Title);
-    $('portalNoteBody').value = txt(record.fields?.Note);
-    $('portalNoteSave').dataset.editing = id;
-    $('portalNoteSave').textContent = 'Save Note';
-  }
-
-  async function deleteNote(id) {
-    if (!confirm('Delete this note for everyone?')) return;
-    await deleteRecord('Portal Notes', id);
-    renderNotes();
-  }
-
-  function iso(date) {
-    return date.toISOString().slice(0, 10);
-  }
+  function iso(d) { return d.toISOString().slice(0, 10); }
 
   async function renderCalendar() {
     const wrap = $('calendarWrap');
     const grid = $('calendarGrid');
     if (!wrap || !grid) return;
     wrap.classList.remove('hidden');
-    const timelineRows = await records('Production Timeline');
-    const callbackRows = (await records('Casting Submissions')).filter((record) => record.fields?.['Callback Scheduled'] === true || txt(record.fields?.['Callback Scheduled']).toLowerCase() === 'true');
-    const callbackEvents = callbackRows.map((record) => {
-      const fields = record.fields || {};
-      const date = txt(fields['Callback Date'] || fields['Callback Meeting Date'] || fields['Meeting Date'] || fields['Meeting Date/Time']);
-      return {
-        id: record.id,
-        callback: true,
-        fields: {
-          Phase: `Callback: ${txt(fields.Name)}`,
-          'Start Date': date,
-          Status: 'Callback',
-          Description: txt(fields.Email),
-          Role: castRole(fields),
-          Email: txt(fields.Email),
-          Link: txt(fields['Google Meet Link'] || fields['Meeting Link'] || fields['Callback Link'])
-        }
-      };
-    }).filter((record) => txt(record.fields['Start Date']));
-    const all = [...timelineRows, ...callbackEvents];
-    const first = all.map((record) => txt(record.fields?.['Start Date'])).find(Boolean);
+    const rows = await records('Production Timeline');
+    const callbacks = (await records('Casting Submissions')).filter((r) => r.fields?.['Callback Scheduled'] === true || text(r.fields?.['Callback Scheduled']).toLowerCase() === 'true').map((r) => {
+      const f = r.fields || {};
+      return { id: r.id, callback: true, fields: { Phase: `Callback: ${text(f.Name)}`, 'Start Date': text(f['Callback Date'] || f['Callback Meeting Date'] || f['Meeting Date'] || f['Meeting Date/Time']), Status: 'Callback', Description: text(f.Email), Role: castRole(f), Email: text(f.Email), Link: text(f['Google Meet Link'] || f['Meeting Link'] || f['Callback Link']) } };
+    }).filter((r) => text(r.fields['Start Date']));
+    const all = [...rows, ...callbacks];
+    const first = all.map((r) => text(r.fields?.['Start Date'])).find(Boolean);
     const base = first ? new Date(`${first}T12:00:00`) : new Date();
     const start = new Date(base.getFullYear(), base.getMonth(), 1);
     start.setDate(start.getDate() - start.getDay());
     if ($('calMonthLabel')) $('calMonthLabel').textContent = base.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
-    let html = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => `<div class="calendar-head">${day}</div>`).join('');
+    let html = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => `<div class="calendar-head">${d}</div>`).join('');
     for (let i = 0; i < 42; i += 1) {
       const day = new Date(start);
       day.setDate(start.getDate() + i);
       const key = iso(day);
-      const events = all.filter((record) => txt(record.fields?.['Start Date']).slice(0, 10) === key);
-      html += `<div class="calendar-day ${day.getMonth() === base.getMonth() ? '' : 'muted'}" data-cal-date="${key}">
-        <button class="calendar-add tiny-text-btn" type="button" data-new-event="${key}">+</button>
-        <div class="calendar-date">${day.getDate()}</div>
-        ${events.map((record) => `<button class="calendar-pill" type="button" data-edit-event="${esc(record.id)}" data-callback="${record.callback ? '1' : ''}">${esc(txt(record.fields?.Phase) || 'Event')}<span>${esc(txt(record.fields?.Status) || 'Upcoming')}</span></button>`).join('')}
-      </div>`;
+      const events = all.filter((r) => text(r.fields?.['Start Date']).slice(0, 10) === key);
+      html += `<div class="calendar-day ${day.getMonth() === base.getMonth() ? '' : 'muted'}"><button class="calendar-add tiny-text-btn" type="button" data-new-event="${key}">+</button><div class="calendar-date">${day.getDate()}</div>${events.map((r) => `<button class="calendar-pill" type="button" data-edit-event="${esc(r.id)}">${esc(text(r.fields?.Phase) || 'Event')}<span>${esc(text(r.fields?.Status) || 'Upcoming')}</span></button>`).join('')}</div>`;
     }
     grid.innerHTML = html;
-    window.__timelineRows = timelineRows;
-    window.__callbackRows = callbackEvents;
+    window.__timelineRows = rows;
+    window.__callbackRows = callbacks;
   }
 
   function openEventModal(record, date = '') {
-    const fields = record?.fields || {};
-    const isCallback = !!record?.callback;
-    const id = isCallback ? '' : record?.id || '';
-    showModal(`<h2>${record ? 'Event Details' : 'Add Event'}</h2>
-      <div class="modal-field"><label class="modal-label">Title</label><input class="modal-input" id="evTitle" value="${esc(txt(fields.Phase || fields.Title))}" ${isCallback ? 'readonly' : ''}></div>
-      <div class="modal-row"><div class="modal-field"><label class="modal-label">Date</label><input type="date" class="modal-input" id="evStart" value="${esc(txt(fields['Start Date']).slice(0, 10) || date)}" ${isCallback ? 'readonly' : ''}></div><div class="modal-field"><label class="modal-label">Status</label><input class="modal-input" id="evStatus" value="${esc(txt(fields.Status) || 'Upcoming')}" ${isCallback ? 'readonly' : ''}></div></div>
-      ${txt(fields.Email) ? `<p style="font-size:11px;color:var(--muted)">Email: ${esc(txt(fields.Email))}</p>` : ''}
-      ${txt(fields.Role) ? `<p style="font-size:11px;color:var(--muted)">Role: ${esc(txt(fields.Role))}</p>` : ''}
-      ${txt(fields.Link) ? `<p><a href="${esc(txt(fields.Link))}" target="_blank" rel="noopener">Open meeting link</a></p>` : ''}
-      <div class="modal-field"><label class="modal-label">Description</label><textarea class="modal-input" id="evDesc" rows="3" ${isCallback ? 'readonly' : ''}>${esc(txt(fields.Description))}</textarea></div>
-      <div class="repair-actions">${!isCallback && id ? `<button class="danger" type="button" data-delete-event="${esc(id)}">Delete</button>` : ''}${!isCallback ? `<button type="button" data-save-event="${esc(id)}">Save</button>` : ''}</div>`);
+    const f = record?.fields || {};
+    const callback = !!record?.callback;
+    const id = callback ? '' : record?.id || '';
+    showModal(`<h2>${record ? 'Event Details' : 'Add Event'}</h2><div class="modal-field"><label class="modal-label">Title</label><input class="modal-input" id="evTitle" value="${esc(text(f.Phase || f.Title))}" ${callback ? 'readonly' : ''}></div><div class="modal-row"><div class="modal-field"><label class="modal-label">Date</label><input type="date" class="modal-input" id="evStart" value="${esc(text(f['Start Date']).slice(0, 10) || date)}" ${callback ? 'readonly' : ''}></div><div class="modal-field"><label class="modal-label">Status</label><input class="modal-input" id="evStatus" value="${esc(text(f.Status) || 'Upcoming')}" ${callback ? 'readonly' : ''}></div></div>${text(f.Email) ? `<p style="font-size:11px;color:var(--muted)">Email: ${esc(text(f.Email))}</p>` : ''}${text(f.Role) ? `<p style="font-size:11px;color:var(--muted)">Role: ${esc(text(f.Role))}</p>` : ''}${text(f.Link) ? `<p><a href="${esc(text(f.Link))}" target="_blank" rel="noopener">Open meeting link</a></p>` : ''}<div class="modal-field"><label class="modal-label">Description</label><textarea class="modal-input" id="evDesc" rows="3" ${callback ? 'readonly' : ''}>${esc(text(f.Description))}</textarea></div><div class="repair-actions">${!callback && id ? `<button class="danger" type="button" data-delete-event="${esc(id)}">Delete</button>` : ''}${!callback ? `<button type="button" data-save-event="${esc(id)}">Save</button>` : ''}</div>`);
   }
 
   async function saveEvent(id) {
-    await saveRecord('Production Timeline', {
-      Phase: txt($('evTitle')?.value) || 'Untitled Event',
-      'Start Date': $('evStart')?.value || null,
-      Status: txt($('evStatus')?.value) || 'Upcoming',
-      Description: txt($('evDesc')?.value)
-    }, id);
-    qsa('.casting-modal').forEach((modal) => modal.remove());
+    await saveRecord('Production Timeline', { Phase: text($('evTitle')?.value) || 'Untitled Event', 'Start Date': $('evStart')?.value || null, Status: text($('evStatus')?.value) || 'Upcoming', Description: text($('evDesc')?.value) }, id);
+    qsa('.casting-modal').forEach((m) => m.remove());
     renderCalendar();
+    repairTimeline();
   }
 
   async function deleteEvent(id) {
     if (!confirm('Delete this event?')) return;
     await deleteRecord('Production Timeline', id);
-    qsa('.casting-modal').forEach((modal) => modal.remove());
+    qsa('.casting-modal').forEach((m) => m.remove());
     renderCalendar();
-  }
-
-  function installTimeline() {
-    installNotes();
-    const button = $('calendarToggleBtn');
-    if (button && !button.dataset.bound) {
-      button.dataset.bound = '1';
-      button.addEventListener('click', (event) => {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        renderCalendar();
-      }, true);
-    }
+    repairTimeline();
   }
 
   function boot() {
     installStyles();
-    qsa('.hub-btn[data-hub="admin"]').forEach((button) => button.remove());
+    qsa('.hub-btn[data-hub="admin"]').forEach((b) => b.remove());
     cleanEmailHub();
     installContracts();
+    patchContractModal();
     if (qs('#hub-applications.active')) renderApplications();
     if (qs('#hub-contacts.active')) renderContacts();
-    if (qs('#hub-timeline.active')) installTimeline();
+    if (qs('#hub-timeline.active')) repairTimeline();
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    qsa('.casting-modal').forEach((modal) => modal.remove());
-    boot();
-    setTimeout(boot, 300);
-  });
-
-  document.addEventListener('click', async (event) => {
-    const hubButton = event.target.closest('.hub-btn[data-hub]');
-    if (hubButton) setTimeout(boot, 120);
-
-    const open = event.target.closest('[data-open-app]');
-    if (open) {
-      event.preventDefault();
-      event.stopPropagation();
-      return openApplication(open.dataset.openApp);
-    }
-
+  document.addEventListener('DOMContentLoaded', () => { boot(); setTimeout(boot, 300); });
+  document.addEventListener('click', (event) => {
+    const hub = event.target.closest('.hub-btn[data-hub]');
+    if (hub) setTimeout(boot, 120);
+    const filter = event.target.closest('.filter-btn');
+    if (filter) setTimeout(renderApplications, 80);
+    const nc = event.target.closest('#newContractBtn');
+    if (nc) { event.preventDefault(); event.stopPropagation(); return openAgreement((agreements[activeContractGroup()] || agreements.cast)[0][0]); }
+    const group = event.target.closest('[data-contract-group]');
+    if (group) { event.preventDefault(); return renderContractGroup(group.dataset.contractGroup); }
+    const app = event.target.closest('[data-open-app]');
+    if (app) { event.preventDefault(); return openApplication(app.dataset.openApp); }
     const direct = event.target.closest('[data-direct-email]');
-    if (direct) {
-      event.preventDefault();
-      event.stopPropagation();
-      return openEmail(direct.dataset.directEmail, direct.dataset.directName);
-    }
-
-    const templatePerson = event.target.closest('[data-template-person]');
-    if (templatePerson) {
-      event.preventDefault();
-      event.stopPropagation();
-      return sendBrevo(templatePerson.dataset.templatePerson, templatePerson.dataset.templateId);
-    }
-
-    const templateCard = event.target.closest('[data-email-template]');
-    if (templateCard) {
-      event.preventDefault();
-      event.stopPropagation();
-      return openTemplateComposer(templateCard.dataset.emailTemplate);
-    }
-
-    const sendTemplate = event.target.closest('[data-send-template-compose]');
-    if (sendTemplate) {
-      event.preventDefault();
-      event.stopPropagation();
-      return sendBrevo($('templateRecipient')?.value, sendTemplate.dataset.sendTemplateCompose);
-    }
-
+    if (direct) { event.preventDefault(); event.stopPropagation(); return openEmail(direct.dataset.directEmail, direct.dataset.directName); }
+    const person = event.target.closest('[data-template-person]');
+    if (person) { event.preventDefault(); event.stopPropagation(); return sendBrevo(person.dataset.templatePerson, person.dataset.templateId); }
+    const template = event.target.closest('[data-email-template]');
+    if (template) { event.preventDefault(); event.stopPropagation(); return openTemplateComposer(template.dataset.emailTemplate); }
     const agreement = event.target.closest('[data-open-agreement]');
-    if (agreement) {
-      event.preventDefault();
-      event.stopPropagation();
-      return openAgreement(agreement.dataset.openAgreement);
-    }
-
-    const editNoteButton = event.target.closest('[data-edit-note]');
-    if (editNoteButton) {
-      event.preventDefault();
-      event.stopPropagation();
-      return editNote(editNoteButton.dataset.editNote);
-    }
-
-    const deleteNoteButton = event.target.closest('[data-delete-note]');
-    if (deleteNoteButton) {
-      event.preventDefault();
-      event.stopPropagation();
-      return deleteNote(deleteNoteButton.dataset.deleteNote);
-    }
-
+    if (agreement) { event.preventDefault(); event.stopPropagation(); return openAgreement(agreement.dataset.openAgreement); }
+    const calendar = event.target.closest('#calendarToggleBtn');
+    if (calendar) { event.preventDefault(); event.stopPropagation(); return renderCalendar(); }
     const addEvent = event.target.closest('[data-new-event]');
-    if (addEvent) {
+    if (addEvent) { event.preventDefault(); return openEventModal(null, addEvent.dataset.newEvent); }
+    const editEvent = event.target.closest('[data-edit-event]');
+    if (editEvent) {
       event.preventDefault();
-      event.stopPropagation();
-      return openEventModal(null, addEvent.dataset.newEvent);
+      const rec = [...(window.__timelineRows || []), ...(window.__callbackRows || [])].find((r) => r.id === editEvent.dataset.editEvent);
+      return openEventModal(rec);
     }
-
-    const editEventButton = event.target.closest('[data-edit-event]');
-    if (editEventButton) {
-      event.preventDefault();
-      event.stopPropagation();
-      const record = [...(window.__timelineRows || []), ...(window.__callbackRows || [])].find((row) => row.id === editEventButton.dataset.editEvent);
-      return openEventModal(record);
-    }
-
-    const saveEventButton = event.target.closest('[data-save-event]');
-    if (saveEventButton) {
-      event.preventDefault();
-      event.stopPropagation();
-      return saveEvent(saveEventButton.dataset.saveEvent);
-    }
-
-    const deleteEventButton = event.target.closest('[data-delete-event]');
-    if (deleteEventButton) {
-      event.preventDefault();
-      event.stopPropagation();
-      return deleteEvent(deleteEventButton.dataset.deleteEvent);
-    }
-
-    if (event.target.closest('[data-close-repair]') || event.target.classList?.contains('casting-modal')) {
-      event.preventDefault();
-      qsa('.casting-modal').forEach((modal) => modal.remove());
-    }
+    const save = event.target.closest('[data-save-event]');
+    if (save) { event.preventDefault(); return saveEvent(save.dataset.saveEvent); }
+    const del = event.target.closest('[data-delete-event]');
+    if (del) { event.preventDefault(); return deleteEvent(del.dataset.deleteEvent); }
+    if (event.target.closest('#composeModalSend')) { event.preventDefault(); event.stopImmediatePropagation(); return sendZohoCompose(); }
+    if (event.target.closest('[data-close-repair]') || event.target.classList?.contains('casting-modal')) qsa('.casting-modal').forEach((m) => m.remove());
   }, true);
-
-  document.addEventListener('change', (event) => {
-    if (event.target.classList?.contains('app-check')) updateSelectedCount();
-  }, true);
-
+  document.addEventListener('change', (event) => { if (event.target.classList?.contains('app-check')) updateSelectedCount(); }, true);
   document.addEventListener('input', (event) => {
     if (event.target?.id === 'searchInput') setTimeout(renderApplications, 120);
     if (event.target?.id === 'contactsSearch') setTimeout(renderContacts, 120);
   }, true);
-
-  setInterval(() => {
-    installContracts();
-    cleanEmailHub();
-  }, 2500);
+  setInterval(() => { cleanEmailHub(); installContracts(); }, 3000);
 })();
