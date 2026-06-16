@@ -252,7 +252,7 @@ async function loadCrewContacts() {
     const data = res.ok ? await res.json() : { records: [] };
     // Only Core crew — Status field must equal "Core"
     crewRecords = (data.records || []).filter(r =>
-      (r.fields['Status'] || '').trim() === 'Core'
+      (r.fields['Status'] || '').trim().toUpperCase() === 'CORE'
     );
     renderContacts();
   } catch { crewRecords = []; renderContacts(); }
