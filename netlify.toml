@@ -4,6 +4,8 @@
 [build.environment]
   SECRETS_SCAN_ENABLED = "false"
 
+# ── Dashboard redirects ───────────────────────────────────────────────────────
+
 [[redirects]]
   from = "/dashboard"
   to = "/dashboard/index.html"
@@ -13,6 +15,8 @@
   from = "/dashboard/*"
   to = "/dashboard/index.html"
   status = 200
+
+# ── Canonical HTML-extension redirects ───────────────────────────────────────
 
 [[redirects]]
   from = "/my-productions.html"
@@ -152,9 +156,8 @@
   status = 200
   force = true
 
-[[headers]]
-  for = "/.netlify/functions/*"
-  [headers.values]
-    Access-Control-Allow-Origin = "https://bleuskm.com"
-    Access-Control-Allow-Methods = "GET, POST, PATCH, OPTIONS"
-    Access-Control-Allow-Headers = "Content-Type"
+# ── CORS for Netlify Functions ────────────────────────────────────────────────
+# NOTE: CORS headers are set inside each function itself (Access-Control-Allow-Origin: *).
+# Do NOT add Access-Control-Allow-Origin here — a second value on the same header
+# causes browsers to reject the response entirely.
+# The block below was removed to fix that conflict.
