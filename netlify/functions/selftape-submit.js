@@ -9,7 +9,7 @@ exports.handler = async (event) => {
   if (event.httpMethod === "OPTIONS") return { statusCode: 200, headers, body: "" };
   if (event.httpMethod !== "POST") return { statusCode: 405, headers, body: JSON.stringify({ error: "Method not allowed" }) };
 
-  const base     = process.env.AIRTABLE_BASE;
+  const base     = process.env.AIRTABLE_CASTING_BASE || process.env.AIRTABLE_BASE;
   const token    = process.env.AIRTABLE_TOKEN;
   const brevoKey = process.env.BREVO_KEY;
   if (!base || !token) return { statusCode: 500, headers, body: JSON.stringify({ error: "Missing credentials" }) };
