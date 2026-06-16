@@ -115,10 +115,31 @@
     return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
+  /**
+   * Find a casting submission by email.
+   * PRIORITY ORDER:
+   * 1. window.allRecords — already loaded by castingdash.js, zero network cost
+   * 2. localStorage cache — from a prior successful session
+   * 3. Network fetch — only if both above are empty
+   */
   async function findCastingByEmail(email) {
     if (!email) return null;
+    const emailLower = email.toLowerCase();
+
+    // 1. Use in-memory records loaded by castingdash.js (no network call)
+    if (Array.isArray(window.allRecords) && window.allRecords.length) {
+      return window.allRecords.find(r => text(r.fields?.Email).toLowerCase() === emailLower) || null;
+    }
+
+    // 2. Fall back to localStorage cache
+    const cached = readCachedTable('Casting Submissions');
+    if (cached.length) {
+      return cached.find(r => text(r.fields?.Email).toLowerCase() === emailLower) || null;
+    }
+
+    // 3. Last resort: fetch (proxy cache handles deduplication)
     const rows = await getAirtableRecords('Casting Submissions');
-    return rows.find(r => text(r.fields?.Email).toLowerCase() === email.toLowerCase()) || null;
+    return rows.find(r => text(r.fields?.Email).toLowerCase() === emailLower) || null;
   }
 
   function consentUrl(id, answer, film) {
@@ -175,7 +196,22 @@
       const parsed = new URL(url, window.location.href);
       const table = parsed.searchParams.get('table');
       const cached = table ? readCachedTable(table) : [];
-      const res = await rawFetch(input, init);
+
+      let res = await rawFetch(input, init);
+
+      // 429 with no local cache: wait out Airtable's ~30s rate-limit window, then retry.
+      // Proxy already retried for ~8s internally; we add two more tries at 25s and 35s.
+      if (res.status === 429 && !cached.length) {
+        for (const delay of [25000, 35000]) {
+          await new Promise(r => setTimeout(r, delay));
+          // If another parallel request already populated the cache while we waited, use it.
+          const nowCached = table ? readCachedTable(table) : [];
+          if (nowCached.length) return tableResponse(table, nowCached);
+          res = await rawFetch(input, init);
+          if (res.ok || res.status !== 429) break;
+        }
+      }
+
       if (!res.ok && cached.length) return tableResponse(table, cached);
       if (res.ok && table) {
         const data = await res.clone().json().catch(() => ({}));
