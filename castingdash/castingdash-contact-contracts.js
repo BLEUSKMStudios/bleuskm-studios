@@ -2,21 +2,22 @@
    BLEUSKM Studios — Contact Contract Link Fix
    castingdash-contact-contracts.js
 
-   Overrides openContractForContact() so that clicking CONTRACT
-   on any contact card copies that person's direct signing link
-   instead of opening the full contract-builder modal.
+   Two things this file does:
+   1. Overrides openContractForContact() so CONTRACT buttons copy
+      a direct signing link instead of opening the full builder modal.
+   2. Strips the "CASTING SUBMISSIONS" section from the Contacts tab
+      so only Core Crew cards are shown there.
 
    Contract URL format:
      https://bleuskm.com/crew/contract/?name=...&email=...&role=...&film=...
 
    Role resolution (already done in renderContacts before this runs):
-     • Crew  → "Preferred role by Director" if set, else "Role" field
-     • Cast  → "Role" from their casting submission
+     • Crew → "Preferred role by Director" if set, else "Role" field
 
    Load order (index.html):
-     1. castingdash.js          (defines openContractForContact)
+     1. castingdash.js            (defines openContractForContact)
      2. castingdash-live-fixes.js
-     3. castingdash-contact-contracts.js   ← this file (overrides it)
+     3. castingdash-contact-contracts.js  ← this file
 ═══════════════════════════════════════════════════════════════ */
 
 (function () {
@@ -62,7 +63,6 @@
         max-width:560px; width:92%;
         box-shadow:0 20px 60px rgba(0,0,0,.65);
       ">
-        <!-- Header -->
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px;">
           <div>
             <div style="font-size:9px;letter-spacing:.14em;color:var(--muted,#666);text-transform:uppercase;margin-bottom:5px;">
@@ -75,13 +75,11 @@
             aria-label="Close">&times;</button>
         </div>
 
-        <!-- Copied banner -->
         ${alreadyCopied ? `
           <div style="font-size:10px;color:#5cb85c;letter-spacing:.08em;margin-bottom:12px;">
             &#10003; COPIED TO CLIPBOARD
           </div>` : ''}
 
-        <!-- Link field -->
         <input id="_bskm_clink_field" readonly value="${escHtml(url)}"
           style="
             width:100%; background:var(--surface2,#0d0d0d);
@@ -91,12 +89,10 @@
             box-sizing:border-box; cursor:text;
           ">
 
-        <!-- Hint -->
         <div style="font-size:9px;color:var(--muted,#666);margin-top:8px;letter-spacing:.04em;">
           Send this link to ${escHtml(name.split(' ')[0])} — they sign directly at bleuskm.com/crew/contract
         </div>
 
-        <!-- Actions -->
         <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end;">
           <button id="_bskm_clink_copy"
             style="
@@ -114,7 +110,6 @@
         </div>
       </div>`;
 
-    /* Copy button */
     overlay.querySelector('#_bskm_clink_copy').addEventListener('click', function () {
       const field = overlay.querySelector('#_bskm_clink_field');
       (navigator.clipboard
@@ -132,7 +127,6 @@
       }, 2400);
     });
 
-    /* Close */
     function close() { overlay.remove(); }
     overlay.querySelector('#_bskm_clink_x').addEventListener('click', close);
     overlay.querySelector('#_bskm_clink_close').addEventListener('click', close);
@@ -142,19 +136,15 @@
     });
 
     document.body.appendChild(overlay);
-    /* Pre-select so Ctrl+C also works */
     overlay.querySelector('#_bskm_clink_field').select();
   }
 
-  /* ── Core override ───────────────────────────────────────── */
-  function installOverride() {
-    window.openContractForContact = function (name, email, role, type) {
-      /*
-        role is already the effective role:
-          • crew → "Preferred role by Director" if set, else "Role" (resolved in renderContacts)
-          • cast → "Role" from their casting submission
-        film defaults to "The Final Hand" for all contacts in this dash.
-      */
+  /* ── 1. Contract link override ───────────────────────────── */
+  function installContractOverride() {
+    window.openContractForContact = function (name, email, role /*, type */) {
+      // role is already the effective role:
+      //   crew → "Preferred role by Director" if set, else "Role" (resolved by renderContacts)
+      // film is always The Final Hand for this dashboard.
       const url = buildLink(name, email, role, FILM_DEFAULT);
 
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -167,11 +157,73 @@
     };
   }
 
-  /* Run after castingdash.js has defined the original function */
+  /* ── 2. Crew-only contacts tab ───────────────────────────── */
+  //
+  // renderContacts() uses module-scoped `let` variables (crewRecords, el, etc.)
+  // so we can't override it from outside. Instead we watch the DOM:
+  //   • MutationObserver on #contactsGrid → strips the CASTING SUBMISSIONS block
+  //     the moment it appears after each renderContacts() call.
+  //   • MutationObserver on #contactsCounts → rewrites "N crew · M cast" → "N crew".
+  //
+  function installCrewOnlyContacts() {
+    const grid   = document.getElementById('contactsGrid');
+    const counts = document.getElementById('contactsCounts');
+    if (!grid) return;
+
+    /* Strip cast section from the grid */
+    function purgeCastFromGrid() {
+      let removing = false;
+      Array.from(grid.children).forEach(node => {
+        if (!removing && node.classList.contains('contacts-section-label') &&
+            node.textContent.trim() === 'CASTING SUBMISSIONS') {
+          removing = true;
+        }
+        if (removing) node.remove();
+      });
+
+      /* Fix empty-state message when no crew found */
+      if (!grid.querySelector('.contact-card') && !grid.querySelector('.contacts-section-label')) {
+        const existing = grid.querySelector('p');
+        if (existing) existing.textContent = 'No crew contacts found.';
+      }
+    }
+
+    /* Fix the "N crew · M cast" counter → "N crew" */
+    function fixCounts() {
+      if (!counts) return;
+      const m = counts.textContent.match(/^(\d+)\s*crew/i);
+      if (m && /cast/i.test(counts.textContent)) {
+        counts.textContent = `${m[1]} crew`;
+      }
+    }
+
+    /* Watch the grid for any child-list change (fires after each render) */
+    new MutationObserver(() => {
+      purgeCastFromGrid();
+      fixCounts();
+    }).observe(grid, { childList: true });
+
+    /* Watch the counts element for text changes */
+    if (counts) {
+      new MutationObserver(fixCounts)
+        .observe(counts, { childList: true, characterData: true, subtree: true });
+    }
+
+    /* Run immediately in case contacts were already rendered */
+    purgeCastFromGrid();
+    fixCounts();
+  }
+
+  /* ── Boot ────────────────────────────────────────────────── */
+  function boot() {
+    installContractOverride();
+    installCrewOnlyContacts();
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', installOverride);
+    document.addEventListener('DOMContentLoaded', boot);
   } else {
-    installOverride();
+    boot();
   }
 
 })();
