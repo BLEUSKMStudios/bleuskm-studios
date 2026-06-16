@@ -49,47 +49,94 @@
 
       <section class="panel" id="tab-schedule">
         <div class="section-head"><div><p>Timeline</p><h2>Schedule</h2></div><button id="newEventBtn">+ Event</button></div>
-        <div class="calendar-shell"><div class="calendar-headline"><strong id="scheduleMonth">Calendar</strong><span>Click a day to add an event.</span></div><div class="calendar-grid" id="scheduleCalendar"></div></div>
-        <h3>Agenda</h3><div class="list" id="scheduleList"></div>
+        <div class="calendar-shell">
+          <div class="calendar-headline"><strong id="scheduleMonth">Calendar</strong><span>Click a day to add an event.</span></div>
+          <div class="calendar-grid" id="scheduleCalendar"></div>
+        </div>
+        <h3>Agenda</h3>
+        <div class="list" id="scheduleList"></div>
       </section>
 
-      <section class="panel" id="tab-callbacks"><div class="section-head"><div><p>Final Callback Coordination</p><h2>Callbacks</h2></div><button id="newCallbackBtn">+ Callback</button></div><div class="list" id="callbackList"></div></section>
+      <section class="panel" id="tab-callbacks">
+        <div class="section-head"><div><p>Final Callback Coordination</p><h2>Callbacks</h2></div><button id="newCallbackBtn">+ Callback</button></div>
+        <div class="list" id="callbackList"></div>
+      </section>
 
       <section class="panel" id="tab-email">
         <div class="section-head"><div><p>Direct + Batch</p><h2>Email Hub</h2></div></div>
         <div class="email-grid">
           <div class="email-compose">
-            <div class="form-grid compact"><select id="emailFrom"><option value="crew@bleuskm.com">crew@bleuskm.com</option><option value="cast@bleuskm.com">cast@bleuskm.com</option><option value="studio@bleuskm.com">studio@bleuskm.com</option></select><select id="emailGroup"><option value="private">Private / one person</option><option value="all">All portal contacts</option><option value="crew">Core crew only</option><option value="cast">Confirmed cast only</option></select></div>
-            <input id="emailToManual" placeholder="Add one email, or separate multiple with commas" />
+            <div class="form-grid compact">
+              <select id="emailFrom">
+                <option value="crew@bleuskm.com">crew@bleuskm.com</option>
+                <option value="casting@bleuskm.com">casting@bleuskm.com</option>
+                <option value="studio@bleuskm.com">studio@bleuskm.com</option>
+              </select>
+              <select id="emailGroup">
+                <option value="private">Private / one person</option>
+                <option value="all">All portal contacts</option>
+                <option value="crew">Core crew only</option>
+                <option value="cast">Confirmed cast only</option>
+              </select>
+            </div>
+            <input id="emailToManual" placeholder="Add email manually, separate multiple with commas" />
             <input id="emailSubject" placeholder="Subject" />
             <textarea id="emailBody" rows="8" placeholder="Write the email..."></textarea>
             <div class="row-actions"><button id="selectEmailRecipients">Select Visible</button><button id="sendHubEmail">Send Email</button></div>
           </div>
-          <div class="recipient-box email-recipients"><div class="recipient-head"><strong>Recipients</strong><button id="clearEmailRecipients">Clear</button></div><div id="emailRecipients"></div></div>
+          <div class="recipient-box email-recipients">
+            <div class="recipient-head"><strong>Recipients</strong><button id="clearEmailRecipients">Clear</button></div>
+            <div id="emailRecipients"></div>
+          </div>
         </div>
-        <h3>Sent This Session</h3><div class="list compact-list" id="emailArchive"></div>
+        <h3>Sent This Session</h3>
+        <div class="list compact-list" id="emailArchive"></div>
       </section>
 
       <section class="panel" id="tab-callsheets">
         <div class="section-head"><div><p>AD Tool</p><h2>Call Sheets</h2></div></div>
         <div class="builder">
-          <div class="form-grid"><input id="csTitle" placeholder="Call sheet title" value="The Final Hand - General Call" /><input id="csDate" type="date" /><input id="csDay" placeholder="Day 1 of 4" /><input id="csCall" placeholder="General call time" /><input id="csLocation" placeholder="Location / address" /><input id="csParking" placeholder="Parking details" /><input id="csHospital" placeholder="Nearest hospital" /><input id="csWeather" placeholder="Weather notes" /></div>
+          <div class="form-grid">
+            <input id="csTitle" placeholder="Call sheet title" value="The Final Hand - General Call" />
+            <input id="csDate" type="date" />
+            <input id="csDay" placeholder="Day 1 of 4" />
+            <input id="csCall" placeholder="General call time" />
+            <input id="csLocation" placeholder="Location / address" />
+            <input id="csParking" placeholder="Parking details" />
+            <input id="csHospital" placeholder="Nearest hospital" />
+            <input id="csWeather" placeholder="Weather notes" />
+          </div>
           <textarea id="csScenes" rows="3" placeholder="Scenes / set descriptions"></textarea>
           <textarea id="csNotes" rows="4" placeholder="Set notes, special instructions, breakfast/lunch notes, reminders"></textarea>
           <div class="recipient-box"><div class="recipient-head"><strong>Recipients</strong><button id="selectAllRecipients">Select All</button></div><div id="callSheetRecipients"></div></div>
           <div class="row-actions"><button id="previewCallSheet">Preview</button><button id="saveCallSheet">Save Draft</button><button id="sendCallSheet">Send Batch Email</button></div>
         </div>
-        <h3>Saved Call Sheets</h3><div class="list" id="callSheetList"></div>
+        <h3>Saved Call Sheets</h3>
+        <div class="list" id="callSheetList"></div>
       </section>
 
-      <section class="panel" id="tab-contacts"><div class="section-head"><div><p>Email Only</p><h2>Core Crew + Confirmed Cast</h2></div><input id="contactSearch" placeholder="Search contacts" /></div><div class="card-grid" id="contactGrid"></div></section>
-      <section class="panel" id="tab-tasks"><div class="section-head"><div><p>Coordination</p><h2>Tasks</h2></div></div><div class="inline-form"><input id="taskTitle" placeholder="Task title" /><input id="taskOwner" placeholder="Owner" /><button id="addTaskBtn">Add Task</button></div><div class="list" id="taskList"></div></section>
-      <section class="panel" id="tab-messages"><div class="section-head"><div><p>Shared Notes</p><h2>AD + Producers</h2></div></div><div class="message-form"><input id="msgTitle" placeholder="Subject" /><select id="msgTag"><option>General</option><option>Schedule</option><option>Crew</option><option>Cast</option><option>Urgent</option></select><textarea id="msgBody" rows="4" placeholder="Write an update..."></textarea><button id="postMessageBtn">Post Message</button></div><div class="list" id="messageList"></div></section>
+      <section class="panel" id="tab-contacts">
+        <div class="section-head"><div><p>Email Only</p><h2>Core Crew + Confirmed Cast</h2></div><input id="contactSearch" placeholder="Search contacts" /></div>
+        <div class="card-grid" id="contactGrid"></div>
+      </section>
+
+      <section class="panel" id="tab-tasks">
+        <div class="section-head"><div><p>Coordination</p><h2>Tasks</h2></div></div>
+        <div class="inline-form"><input id="taskTitle" placeholder="Task title" /><input id="taskOwner" placeholder="Owner" /><button id="addTaskBtn">Add Task</button></div>
+        <div class="list" id="taskList"></div>
+      </section>
+
+      <section class="panel" id="tab-messages">
+        <div class="section-head"><div><p>Shared Notes</p><h2>AD + Producers</h2></div></div>
+        <div class="message-form"><input id="msgTitle" placeholder="Subject" /><select id="msgTag"><option>General</option><option>Schedule</option><option>Crew</option><option>Cast</option><option>Urgent</option></select><textarea id="msgBody" rows="4" placeholder="Write an update..."></textarea><button id="postMessageBtn">Post Message</button></div>
+        <div class="list" id="messageList"></div>
+      </section>
     </main>
   </section>
 
   <div class="modal hidden" id="modal"><div class="modal-card"><button class="x" id="modalClose">&times;</button><div id="modalBody"></div></div></div>
   <script src="ad.js"></script>
   <script src="ad-polish.js"></script>
+  <script src="ad-zoho-fixes.js"></script>
 </body>
 </html>
