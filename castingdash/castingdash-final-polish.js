@@ -55,8 +55,25 @@
     select.insertBefore(option, firstReal || null);
   }
 
+  function ensureSelfTapeBatchOption() {
+    const selects = [
+      document.getElementById('batchTemplateSelect'),
+      document.getElementById('repairBatchTemplate')
+    ].filter(Boolean);
+
+    selects.forEach((select) => {
+      if (select.querySelector('option[value="15"]')) return;
+      const option = document.createElement('option');
+      option.value = '15';
+      option.textContent = 'T15 - Self Tape Invitation';
+      const firstReal = select.querySelector('option[value="16"]');
+      select.insertBefore(option, firstReal || null);
+    });
+  }
+
   function installCallbackTemplateGuard() {
     ensureSelfTapeTemplateOption();
+    ensureSelfTapeBatchOption();
     if (window.__bleuskmCallbackTemplateGuard) return;
     window.__bleuskmCallbackTemplateGuard = true;
 
@@ -66,6 +83,7 @@
         window.__bleuskmActiveEmailRecord = record;
         originalOpen(record);
         ensureSelfTapeTemplateOption();
+        ensureSelfTapeBatchOption();
         const status = txt(record?.fields?.['Casting Status']);
         const select = document.getElementById('emailModalTemplate');
         const filmField = document.getElementById('emailFilmField');
@@ -111,5 +129,6 @@
     installCallbackTemplateGuard();
     setInterval(removeLegacyControls, 1500);
     setInterval(ensureSelfTapeTemplateOption, 1500);
+    setInterval(ensureSelfTapeBatchOption, 1500);
   });
 })();
