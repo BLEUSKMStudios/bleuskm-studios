@@ -1,7 +1,3 @@
-https://raw.githubusercontent.com/BLEUSKMStudios/bleuskm-studios/main/castingdash/castingdash.js
-→ https://raw.githubusercontent.com/BLEUSKMStudios/bleuskm-studios/main/castingdash/castingdash.js
-Content-Type: text/plain; charset=utf-8
-
 /* ═══════════════════════════════════════════════════════════════
    BLEUSKM Studios — Casting Portal v7
    castingdash.js
@@ -1955,4 +1951,39 @@ function renderContractBody(type) {
     </div>
     <div class="cmodal-date-row">
       <span class="modal-label">DATE</span>
-      <span id="contract
+      <span id="contractDate">—</span>
+    </div>
+  </div>`;
+
+  body.innerHTML = html;
+
+  // Signature tab switching
+  const sigTypeTab = document.getElementById('sigTypeTab');
+  const sigDrawTab  = document.getElementById('sigDrawTab');
+  const sigTypeArea = document.getElementById('sigTypeArea');
+  const sigDrawArea = document.getElementById('sigDrawArea');
+  sigTypeTab?.addEventListener('click', () => {
+    sigTypeTab.classList.add('active');   sigDrawTab.classList.remove('active');
+    sigTypeArea.classList.remove('hidden'); sigDrawArea.classList.add('hidden');
+  });
+  sigDrawTab?.addEventListener('click', () => {
+    sigDrawTab.classList.add('active');   sigTypeTab.classList.remove('active');
+    sigDrawArea.classList.remove('hidden'); sigTypeArea.classList.add('hidden');
+  });
+
+  // Signature canvas
+  const canvas = document.getElementById('sigCanvas');
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+    ctx.strokeStyle = '#e0e0e0'; ctx.lineWidth = 2; ctx.lineCap = 'round';
+    canvas.addEventListener('mousedown',  e => { drawing = true; ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY); });
+    canvas.addEventListener('mousemove',  e => { if (!drawing) return; ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke(); });
+    canvas.addEventListener('mouseup',    () => drawing = false);
+    canvas.addEventListener('mouseleave', () => drawing = false);
+    canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; const t = e.touches[0], r = canvas.getBoundingClientRect(); ctx.beginPath(); ctx.moveTo(t.clientX - r.left, t.clientY - r.top); }, { passive: false });
+    canvas.addEventListener('touchmove',  e => { e.preventDefault(); if (!drawing) return; const t = e.touches[0], r = canvas.getBoundingClientRect(); ctx.lineTo(t.clientX - r.left, t.clientY - r.top); ctx.stroke(); }, { passive: false });
+    canvas.addEventListener('touchend',   () => drawing = false);
+    document.getElementById('sigClearBtn')?.addEventListener('click', () => ctx.clearRect(0, 0, canvas.width, canvas.height));
+  }
+}
