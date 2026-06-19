@@ -1,3 +1,38 @@
+// netlify/functions/contract-submit.js
+// Handles submissions from ALL contract templates (crew, cast, talent, composer,
+// editor, contractor, location, media release, usage rights).
+// Backward compatible with the original signatureUrl-based payload.
+
+const CLOUDINARY_CLOUD  = 'df2x5q7zw';
+const CLOUDINARY_PRESET = 'bleuskm_signatures';
+
+// Maps the CONTRACT_TYPE slug each template hardcodes -> friendly label
+// stored in the Airtable "Contract Type" single-select field.
+const SLUG_TO_LABEL = {
+  'crew-agreement':       'Crew Agreement',
+  'contractor-agreement': 'Contractor Agreement',
+  'actor-agreement':      'Cast Agreement',
+  'actor-deal-memo':      'Actor Deal Memo',
+  'talent-release':       'Talent Release',
+  'composer-agreement':   'Composer Agreement',
+  'editor-agreement':     'Editor Agreement',
+  'location-release':     'Location Release',
+  'media-release-bts':    'Media Release (BTS)',
+  'usage-rights':         'Usage Rights',
+};
+
+// Human-readable labels for the optional type-specific fields each template can send
+const EXTRA_FIELD_LABELS = {
+  character:     'Character',
+  shootdates:    'Shoot Dates',
+  scope:         'Scope of Work',
+  deliverydate:  'Delivery Date',
+  location:      'Location',
+  period:        'Contract Period',
+  effectivedate: 'Effective Date',
+  filmdate:      'Film Date',
+};
+
 exports.handler = async (event) => {
   const headers = {
     "Access-Control-Allow-Origin": "*",
@@ -19,31 +54,61 @@ exports.handler = async (event) => {
   try { body = JSON.parse(event.body || "{}"); }
   catch { return { statusCode: 400, headers, body: JSON.stringify({ error: "Invalid JSON" }) }; }
 
-  const { name, email, role, signatureUrl, dateSigned } = body;
-  if (!name || !email || !role || !signatureUrl) {
+  const {
+    contractType,            // slug, e.g. 'crew-agreement' (new templates)
+    name, email, role, film,
+    dateSigned,
+    signatureUrl,             // legacy path: already-hosted image URL
+    signatureImage,           // new path: base64 data URI straight from canvas
+  } = body;
+
+  if (!name || !email || !signatureUrl && !signatureImage) {
     return { statusCode: 400, headers, body: JSON.stringify({ error: "Missing required fields" }) };
   }
 
+  // ── Resolve signature to a hosted URL (upload to Cloudinary if we only got base64) ──
+  let finalSignatureUrl = signatureUrl || "";
+  if (!finalSignatureUrl && signatureImage) {
+    try {
+      finalSignatureUrl = await uploadSignatureToCloudinary(signatureImage);
+    } catch (e) {
+      console.log("Cloudinary upload failed:", e.message);
+      await sendContractBackupEmail(brevoKey, { name, email, role, contractType, dateSigned, signatureUrl: "(upload failed)", airtableError: `Cloudinary upload failed: ${e.message}` });
+      return { statusCode: 200, headers, body: JSON.stringify({ success: true, queued: true, message: "Contract received. Signature upload failed, so a backup copy was sent to BLEUSKM." }) };
+    }
+  }
+
+  const contractTypeLabel = SLUG_TO_LABEL[contractType] || (contractType || "Crew Agreement");
+
+  // Build a readable "Extra Details" block from any type-specific fields present
+  const extraLines = [];
+  for (const key of Object.keys(EXTRA_FIELD_LABELS)) {
+    if (body[key]) extraLines.push(`${EXTRA_FIELD_LABELS[key]}: ${body[key]}`);
+  }
+  const extraDetails = extraLines.join("\n");
+
   try {
     const contractUrl = `https://api.airtable.com/v0/${base}/${encodeURIComponent("Contracts")}`;
+    const contractFields = {
+      "Name": name,
+      "Email": email,
+      "Role": role || "",
+      "Signature": [{ url: finalSignatureUrl }],
+      "Date Signed": dateSigned || new Date().toISOString().split("T")[0],
+      "Contract Status": "Signed",
+      "Contract Type": contractTypeLabel,
+    };
+    if (extraDetails) contractFields["Extra Details"] = extraDetails;
+
     const contractRes = await airtableFetch(contractUrl, token, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        fields: {
-          "Name": name,
-          "Email": email,
-          "Role": role,
-          "Signature": [{ url: signatureUrl }],
-          "Date Signed": dateSigned || new Date().toISOString().split("T")[0],
-          "Contract Status": "Signed"
-        }
-      })
+      body: JSON.stringify({ fields: contractFields, typecast: true })
     });
 
     const contractData = await contractRes.json();
     if (!contractRes.ok) {
-      await sendContractBackupEmail(brevoKey, { name, email, role, signatureUrl, dateSigned, airtableError: contractData?.error?.message || `Airtable ${contractRes.status}` });
+      await sendContractBackupEmail(brevoKey, { name, email, role, contractType: contractTypeLabel, signatureUrl: finalSignatureUrl, dateSigned, extraDetails, airtableError: contractData?.error?.message || `Airtable ${contractRes.status}` });
       return {
         statusCode: 200,
         headers,
@@ -56,9 +121,12 @@ exports.handler = async (event) => {
       };
     }
 
+    // ── Crew-specific follow-up: mark Contract Status + send department guide ──
+    // (Only fires if this signer matches a Crew applications record by email —
+    //  naturally skipped for location owners, composers, etc.)
     let guideLink = "";
-    let crewFilm = "The Final Hand";
-    let onSetRole = role;
+    let crewFilm = film || "The Final Hand";
+    let onSetRole = role || "";
 
     try {
       const crewRes = await airtableFetch(
@@ -72,8 +140,8 @@ exports.handler = async (event) => {
         const crewId = crewRecord.id;
         const crewFields = crewRecord.fields;
         guideLink = fieldText(crewFields["Guide Link"]);
-        crewFilm = fieldText(crewFields["Film"]) || "The Final Hand";
-        onSetRole = fieldFirst(crewFields, ["Preferred role by Director", "Preferred_role_by_Director"]) || fieldText(crewFields["Role"]) || role;
+        crewFilm = fieldText(crewFields["Film"]) || crewFilm;
+        onSetRole = fieldFirst(crewFields, ["Preferred role by Director", "Preferred_role_by_Director"]) || fieldText(crewFields["Role"]) || onSetRole;
 
         await airtableFetch(`https://api.airtable.com/v0/${base}/${encodeURIComponent("Crew applications")}/${crewId}`, token, {
           method: "PATCH",
@@ -118,8 +186,8 @@ exports.handler = async (event) => {
             params: {
               NAME: name,
               ROLE: onSetRole,
-              APPLIED_ROLE: role,
-              ORIGINAL_ROLE: role,
+              APPLIED_ROLE: role || "",
+              ORIGINAL_ROLE: role || "",
               ON_SET_ROLE: onSetRole,
               PREFERRED_ROLE_BY_DIRECTOR: onSetRole,
               FILM: crewFilm,
@@ -145,10 +213,24 @@ exports.handler = async (event) => {
       })
     };
   } catch (err) {
-    await sendContractBackupEmail(brevoKey, { name, email, role, signatureUrl, dateSigned, airtableError: err.message });
+    await sendContractBackupEmail(brevoKey, { name, email, role, contractType: contractTypeLabel, signatureUrl: finalSignatureUrl, dateSigned, extraDetails, airtableError: err.message });
     return { statusCode: 200, headers, body: JSON.stringify({ success: true, queued: true, message: "Contract received. A backup copy was sent to BLEUSKM." }) };
   }
 };
+
+// ── Upload a base64 data URI signature to Cloudinary, return the secure URL ──
+async function uploadSignatureToCloudinary(dataUri) {
+  const form = new FormData();
+  form.append('file', dataUri);
+  form.append('upload_preset', CLOUDINARY_PRESET);
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {
+    method: 'POST',
+    body: form,
+  });
+  const data = await res.json();
+  if (!data.secure_url) throw new Error(data?.error?.message || 'No secure_url returned');
+  return data.secure_url;
+}
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -172,17 +254,19 @@ async function sendContractBackupEmail(brevoKey, contract) {
   if (!brevoKey) return false;
   try {
     const textContent = [
-      "A crew contract was submitted, but Airtable was temporarily unavailable.",
+      `A ${contract.contractType || "contract"} was submitted, but something failed before it could save normally.`,
       "",
       `Name: ${contract.name}`,
       `Email: ${contract.email}`,
-      `Role: ${contract.role}`,
+      `Role: ${contract.role || ""}`,
+      `Contract Type: ${contract.contractType || ""}`,
       `Date Signed: ${contract.dateSigned || new Date().toISOString().split("T")[0]}`,
-      `Signature URL: ${contract.signatureUrl}`,
-      `Airtable Error: ${contract.airtableError}`,
+      `Signature URL: ${contract.signatureUrl || ""}`,
+      contract.extraDetails ? `Extra Details:\n${contract.extraDetails}` : "",
+      `Error: ${contract.airtableError}`,
       "",
-      "Manually enter this into Airtable Contracts when Airtable is available."
-    ].join("\n");
+      "Manually enter this into Airtable Contracts when the issue is resolved."
+    ].filter(Boolean).join("\n");
 
     await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
