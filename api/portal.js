@@ -21,6 +21,7 @@ const TABLES = {
   polls:        'tblBQ2y1z2KeGSs6S',
   pollresponses:'tbll27h1bqQh02KMJ',
   characternotes:'tbliAd7h6AVuP9ej6',
+  tasks:        'tbl7TxX0xPNI7YxZ9',
 };
 
 const FILES_ATTACHMENT_FIELD = 'fldlZcbMXEFM0AfQH'; // Portal Files → Attachment (multipleAttachments)
@@ -580,6 +581,47 @@ async function netlifyHandler(event) {
       });
       return { statusCode: 200, headers, body: JSON.stringify(data) };
     }
+  }
+
+  // ── PRODUCTION TASKS (task board) ────────────────────────────────────────
+  if (action === 'get-tasks') {
+    const data = await airtable('GET', TABLES.tasks, null, `?sort[0][field]=Created&sort[0][direction]=desc&maxRecords=300`);
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  if (action === 'create-task') {
+    const data = await airtable('POST', TABLES.tasks, {
+      records: [{
+        fields: {
+          'Title':       body.title || 'Untitled Task',
+          'Description': body.description || '',
+          'Assigned To': body.assignedTo || 'Unassigned',
+          'Status':      'To Do',
+          'Due Date':    body.dueDate || undefined,
+          'Created By':  body.createdBy || '',
+          'Created':     new Date().toISOString(),
+        },
+      }],
+    });
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  if (action === 'update-task') {
+    const fields = {};
+    if (body.title !== undefined)       fields['Title'] = body.title;
+    if (body.description !== undefined) fields['Description'] = body.description;
+    if (body.assignedTo !== undefined)  fields['Assigned To'] = body.assignedTo;
+    if (body.status !== undefined)      fields['Status'] = body.status;
+    if (body.dueDate !== undefined)     fields['Due Date'] = body.dueDate || null;
+    const data = await airtable('PATCH', TABLES.tasks, {
+      records: [{ id: body.recordId, fields }],
+    });
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  if (action === 'delete-task') {
+    const data = await airtable('DELETE', TABLES.tasks, null, `?records[]=${body.recordId}`);
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
   return { statusCode: 400, headers, body: JSON.stringify({ error: 'Unknown action' }) };
