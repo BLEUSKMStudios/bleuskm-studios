@@ -219,7 +219,7 @@ async function netlifyHandler(event) {
   if (action === 'get-timeline') {
     const dept = params.dept || '';
     const filter = encodeURIComponent(`{Department}="${dept}"`);
-    const data = await airtable('GET', TABLES.timeline, null, `?filterByFormula=${filter}`);
+    const data = await airtable('GET', TABLES.timeline, null, `?filterByFormula=${filter}&sort[0][field]=Sort Index&sort[0][direction]=asc`);
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
@@ -232,6 +232,7 @@ async function netlifyHandler(event) {
           'Description':  body.description || '',
           'Status':       body.status || 'Upcoming',
           'Department':   body.department || '',
+          'Sort Index':   typeof body.sortIndex === 'number' ? body.sortIndex : 99,
         },
       }],
     });
@@ -240,6 +241,25 @@ async function netlifyHandler(event) {
 
   if (action === 'delete-timeline') {
     const data = await airtable('DELETE', TABLES.timeline, null, `?records[]=${body.recordId}`);
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  if (action === 'update-timeline') {
+    const fields = {};
+    if (body.phase !== undefined)       fields['Phase'] = body.phase;
+    if (body.actionLabel !== undefined) fields['Action Label'] = body.actionLabel;
+    if (body.description !== undefined) fields['Description'] = body.description;
+    if (body.status !== undefined)      fields['Status'] = body.status;
+    const data = await airtable('PATCH', TABLES.timeline, {
+      records: [{ id: body.recordId, fields }],
+    });
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  if (action === 'reorder-timeline') {
+    // body.order = array of {id, sortIndex}
+    const records = (body.order || []).map(o => ({ id: o.id, fields: { 'Sort Index': o.sortIndex } }));
+    const data = await airtable('PATCH', TABLES.timeline, { records });
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
@@ -373,6 +393,13 @@ async function netlifyHandler(event) {
 
   if (action === 'delete-soundmoment') {
     const data = await airtable('DELETE', TABLES.soundmoments, null, `?records[]=${body.recordId}`);
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  // ── CONFIRMED CAST (for Producer's Cast Contracts Hub) ───────────────────
+  if (action === 'get-cast') {
+    const filter = encodeURIComponent(`{Cast Status}="Confirmed"`);
+    const data = await airtable('GET', TABLES.casting, null, `?filterByFormula=${filter}&maxRecords=200`);
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
