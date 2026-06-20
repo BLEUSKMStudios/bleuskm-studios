@@ -1,0 +1,2293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLEUSKM Studios — Production Portal</title>
+<style>
+/* ── RESET + BASE ── */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;--surface:#141414;--surface2:#1c1c1c;--border:#2a2a2a;
+  --gold:#c9a84c;--gold2:#e0be6a;--text:#e0e0e0;--muted:#888;--red:#e05252;
+  --sidebar:220px;--header:56px;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+button{cursor:pointer;font-family:inherit}
+input,textarea,select{font-family:inherit;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:8px 12px;width:100%;outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--gold)}
+a{color:var(--gold);text-decoration:none}
+a:hover{color:var(--gold2)}
+.hidden{display:none!important}
+
+/* ── LOGIN ── */
+#login-screen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 40% 30%,#1a140a 0%,#0a0a0a 70%);
+}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px 40px;width:360px;text-align:center}
+.login-logo{font-size:10px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:8px}
+.login-title{font-size:22px;font-weight:700;margin-bottom:4px}
+.login-sub{font-size:12px;color:var(--muted);margin-bottom:32px}
+.login-box select,.login-box input{margin-bottom:14px;background:#0f0f0f;font-size:14px}
+.login-box select option{background:#0f0f0f}
+.btn-login{width:100%;padding:12px;background:var(--gold);color:#000;border:none;border-radius:6px;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;transition:.2s}
+.btn-login:hover{background:var(--gold2)}
+.login-error{color:var(--red);font-size:12px;margin-top:10px;min-height:18px}
+
+/* ── LAYOUT ── */
+#app{display:flex;height:100vh;overflow:hidden}
+#sidebar{
+  width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;
+}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#topbar{
+  height:var(--header);background:var(--surface);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;
+}
+#content{flex:1;overflow-y:auto;padding:24px}
+
+/* ── SIDEBAR ── */
+.sidebar-brand{padding:20px 16px 12px;border-bottom:1px solid var(--border)}
+.sidebar-brand .studio{font-size:9px;letter-spacing:.25em;color:var(--gold);text-transform:uppercase}
+.sidebar-brand .dept{font-size:13px;font-weight:700;margin-top:2px}
+.sidebar-brand .film{font-size:10px;color:var(--muted);margin-top:1px}
+.nav-section{padding:12px 10px 4px;font-size:9px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase}
+.nav-item{
+  display:flex;align-items:center;gap:8px;padding:9px 16px;font-size:12px;
+  color:var(--muted);cursor:pointer;border-radius:0;transition:.15s;position:relative;
+  border-left:2px solid transparent;
+}
+.nav-item:hover{color:var(--text);background:#ffffff08}
+.nav-item.active{color:var(--gold);background:#c9a84c12;border-left-color:var(--gold)}
+.nav-badge{
+  background:var(--red);color:#fff;font-size:9px;font-weight:700;
+  min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;
+  justify-content:center;padding:0 4px;margin-left:auto;
+}
+.sidebar-footer{margin-top:auto;padding:12px;border-top:1px solid var(--border)}
+.btn-logout{width:100%;padding:8px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:6px;font-size:11px;letter-spacing:.05em}
+.btn-logout:hover{border-color:var(--red);color:var(--red)}
+
+/* ── TOPBAR ── */
+.topbar-title{font-size:14px;font-weight:600;flex:1}
+.topbar-dept{font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.btn-sm{padding:7px 14px;border-radius:6px;font-size:11px;font-weight:600;letter-spacing:.05em;border:none;transition:.15s}
+.btn-gold{background:var(--gold);color:#000}.btn-gold:hover{background:var(--gold2)}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+.btn-red{background:var(--red);color:#fff}.btn-red:hover{background:#f06262}
+
+/* ── CARDS / SECTIONS ── */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-title{font-size:14px;font-weight:700;letter-spacing:.05em}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px}
+.card-title{font-size:12px;font-weight:600;color:var(--gold);margin-bottom:8px;letter-spacing:.05em;text-transform:uppercase}
+.tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:12px;font-weight:600;letter-spacing:.05em}
+.tag-green{background:#1a3a1a;color:#6fcf6f}.tag-gold{background:#2a200a;color:var(--gold)}
+.tag-red{background:#2a0f0f;color:#e07070}.tag-blue{background:#0f1f2a;color:#70b0e0}
+.tag-muted{background:var(--surface2);color:var(--muted)}
+
+/* ── FILE CARDS ── */
+.file-card{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.file-icon{width:32px;height:32px;border-radius:6px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.file-meta{flex:1}
+.file-name{font-size:13px;font-weight:600}
+.file-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.file-actions{display:flex;gap:6px}
+
+/* ── GRID LAYOUTS ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+@media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
+
+/* ── TIMELINE ── */
+.timeline-phase{border-left:2px solid var(--border);padding:0 0 24px 20px;position:relative;margin-left:10px}
+.timeline-phase:last-child{padding-bottom:0}
+.timeline-dot{width:10px;height:10px;border-radius:50%;background:var(--border);position:absolute;left:-6px;top:4px}
+.timeline-dot.active{background:var(--gold)}
+.timeline-dot.done{background:#6fcf6f}
+.phase-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.phase-date{font-size:13px;font-weight:700;margin-bottom:6px}
+.phase-item{font-size:12px;color:var(--muted);padding:2px 0}
+
+/* ── CREW CARDS ── */
+.crew-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.crew-avatar{width:36px;height:36px;border-radius:50%;background:var(--gold);color:#000;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.crew-info{flex:1}
+.crew-name{font-size:13px;font-weight:600}
+.crew-role{font-size:11px;color:var(--gold);margin-top:1px}
+.crew-email{font-size:10px;color:var(--muted)}
+.crew-actions{display:flex;gap:6px}
+
+/* ── CONTRACTS HUB ── */
+.contract-group{margin-bottom:20px}
+.contract-group-title{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.contract-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;margin-bottom:6px}
+.contract-row-name{font-size:13px;font-weight:500}
+.contract-row-sub{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* ── LOCATION CARDS ── */
+.loc-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:8px}
+.loc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.loc-name{font-size:13px;font-weight:600}
+.loc-detail{font-size:11px;color:var(--muted);margin-bottom:2px}
+
+/* ── TAKE LOG ── */
+.take-row{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin-bottom:6px;display:grid;grid-template-columns:60px 60px 1fr 80px;gap:10px;align-items:center}
+.take-cell{font-size:12px}
+.take-label{font-size:9px;color:var(--muted);text-transform:uppercase;margin-bottom:2px}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:#000000cc;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:10px;width:100%;max-width:500px;padding:24px}
+.modal-title{font-size:15px;font-weight:700;margin-bottom:16px}
+.modal-row{margin-bottom:12px}
+.modal-label{font-size:11px;color:var(--muted);margin-bottom:4px}
+.modal-actions{display:flex;gap:8px;margin-top:20px;justify-content:flex-end}
+
+/* ── PUSH SELECTOR ── */
+.dept-checkboxes{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.dept-check{display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer}
+.dept-check input{width:auto}
+
+/* ── NOTES ── */
+.note-card{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px 14px;margin-bottom:8px}
+.note-meta{font-size:10px;color:var(--muted);margin-bottom:6px}
+.note-content{font-size:13px;line-height:1.5}
+
+/* ── SCENE TABLE ── */
+.scene-table{width:100%;border-collapse:collapse}
+.scene-table th{text-align:left;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:8px 12px;border-bottom:1px solid var(--border)}
+.scene-table td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:top}
+.scene-table tr:last-child td{border-bottom:none}
+.scene-table tr:hover td{background:#ffffff05}
+
+/* ── UPLOAD ZONE ── */
+.upload-zone{border:2px dashed var(--border);border-radius:8px;padding:32px;text-align:center;cursor:pointer;transition:.2s}
+.upload-zone:hover{border-color:var(--gold);background:#c9a84c08}
+.upload-zone-icon{font-size:28px;margin-bottom:8px}
+.upload-zone-text{font-size:13px;color:var(--muted)}
+.upload-zone-sub{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* ── BUDGET TABLE ── */
+.budget-table{width:100%;border-collapse:collapse}
+.budget-table th{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:8px 12px;border-bottom:1px solid var(--border);text-align:left}
+.budget-table td{padding:10px 12px;font-size:12px;border-bottom:1px solid var(--border)}
+.budget-table .amount{text-align:right;font-family:monospace}
+.budget-total{font-weight:700;color:var(--gold)}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#444}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 18px;font-size:13px;z-index:200;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px #000a;transition:.3s}
+.toast.hidden{opacity:0;transform:translateY(8px)}
+
+/* ── AVAILABILITY GRID ── */
+.avail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.avail-card{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px}
+.avail-name{font-size:12px;font-weight:600}
+.avail-dates{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* ── OFFER LETTER ── */
+.offer-preview{background:#0f0f0f;border:1px solid var(--border);border-radius:6px;padding:20px;font-size:12px;line-height:1.8;color:var(--text);white-space:pre-wrap;font-family:Georgia,serif}
+
+/* tabs */
+.tabs{display:flex;gap:2px;margin-bottom:20px;border-bottom:1px solid var(--border)}
+.tab{padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:.15s}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tab:hover{color:var(--text)}
+.tab-panel{display:none}.tab-panel.active{display:block}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN SCREEN ══════════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">BLEUSKM Studios</div>
+    <div class="login-title">Production Portal</div>
+    <div class="login-sub">The Final Hand · 2026</div>
+    <input type="text" id="login-user" placeholder="Username" autocomplete="username" autocapitalize="none" />
+    <input type="password" id="login-pass" placeholder="Password" autocomplete="current-password" />
+    <button class="btn-login" onclick="doLogin()">Enter Portal</button>
+    <div class="login-error" id="login-err"></div>
+  </div>
+</div>
+
+<!-- ══ APP SHELL ══════════════════════════════════════════════════ -->
+<div id="app" class="hidden">
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="sidebar-brand">
+      <div class="studio">BLEUSKM Studios</div>
+      <div class="dept" id="sb-dept">Director</div>
+      <div class="film" id="sb-film">The Final Hand</div>
+    </div>
+    <div id="nav-items"></div>
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="doLogout()">← Log Out</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main">
+    <div id="topbar">
+      <div>
+        <div class="topbar-title" id="tb-section">Dashboard</div>
+        <div class="topbar-dept" id="tb-dept"></div>
+      </div>
+      <div id="topbar-actions"></div>
+    </div>
+    <div id="content"></div>
+  </div>
+</div>
+
+<!-- ══ MODAL ══════════════════════════════════════════════════════ -->
+<div id="modal" class="modal-overlay hidden" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-title" id="modal-title"></div>
+    <div id="modal-body"></div>
+    <div class="modal-actions" id="modal-actions"></div>
+  </div>
+</div>
+
+<!-- ══ TOAST ══════════════════════════════════════════════════════ -->
+<div id="toast" class="toast hidden"></div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+// CONFIG
+// ════════════════════════════════════════════════════════════════
+const API = '/.netlify/functions/portal';
+const CLOUDINARY_CLOUD = 'df2x5q7zw';
+const CLOUDINARY_PRESET = 'bleuskm_signatures'; // reuse existing unsigned preset
+
+const CONTRACT_BASE = 'https://bleuskm.com/crew/contract/';
+const FILM = 'The Final Hand';
+
+// Crew contract links (from existing crew)
+const CREW_CONTRACTS = [
+  {name:'Rachel Fornero',role:'Production Assistant (PA)',email:'rafo.email@gmail.com'},
+  {name:'Zee Abracosa',role:'Production Designer / Set Dresser',email:'zeeabracosa.work@gmail.com'},
+  {name:'Joshua Sweet',role:'AC / Camera Support',email:'joshua.snup@gmail.com'},
+  {name:'Nick Montopoli',role:'Composer',email:'nick.montopoli@gmail.com'},
+  {name:'Justice Rivera',role:'BTS',email:'Justice.jr1414@gmail.com'},
+  {name:'Sophia Alba',role:'Graphic Design / Poster Creation',email:'sophiaalba807@gmail.com'},
+  {name:'Hailey Trifiro',role:'Makeup',email:'htrifiro@icloud.com'},
+  {name:'Catherine Kudulis',role:'Production Assistant (PA)',email:'cat.kudulis@gmail.com'},
+  {name:'Danielle Hani',role:'Composer',email:'danielleh3164@gmail.com'},
+  {name:'Arquemond Sierra',role:'Post Production, Sound Mixer',email:'arquemond@gmail.com'},
+  {name:'Fabiola Torres',role:'Producer',email:'cgstudios.co@gmail.com'},
+  {name:'Toby Dull',role:'Editor',email:'tobydull21@gmail.com'},
+  {name:'Obi Okezie',role:'Cinematographer (Director of Photography)',email:'obi@everythingisplural.com'},
+  {name:'Regan Galindo',role:'Assistant Director',email:'2014regan1@gmail.com'},
+  {name:'Nathan Lowenstein',role:'Boom Operator',email:'nathanlowenstein03@gmail.com'},
+  {name:'Carmen Reeves & Ceion Scott',role:'Producer',email:'productionsgirlsnightout@gmail.com'},
+  {name:'Cole Harvey',role:'Boom Operator',email:'tcharvey@icloud.com'},
+];
+
+function todayISO() {
+  const d = new Date();
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  return `${d.getFullYear()}-${mm}-${dd}`;
+}
+
+// Map dashboard contract type labels -> deployed template slug + their extra fields
+const CONTRACT_TEMPLATES = {
+  'Crew Agreement':       { slug: 'crew-agreement',       extra: [] },
+  'Contractor Agreement': { slug: 'contractor-agreement', extra: [{key:'period', label:'Contract Period'}] },
+  'Cast Agreement':       { slug: 'actor-agreement',      extra: [{key:'character', label:'Character'}, {key:'shootdates', label:'Shoot Dates'}] },
+  'Actor Deal Memo':      { slug: 'actor-deal-memo',      extra: [{key:'character', label:'Character'}, {key:'shootdates', label:'Shoot Dates'}] },
+  'Talent Release':       { slug: 'talent-release',       extra: [{key:'filmdate', label:'Film Date'}] },
+  'Composer Agreement':   { slug: 'composer-agreement',   extra: [{key:'scope', label:'Scope of Work'}, {key:'deliverydate', label:'Delivery Date'}] },
+  'Editor Agreement':     { slug: 'editor-agreement',     extra: [{key:'scope', label:'Scope of Work'}, {key:'deliverydate', label:'Delivery Date'}] },
+  'Location Release':     { slug: 'location-release',     extra: [{key:'location', label:'Location'}, {key:'filmdate', label:'Film Date'}] },
+  'Media Release (BTS)':  { slug: 'media-release-bts',    extra: [{key:'filmdate', label:'Film Date'}] },
+  'Usage Rights':         { slug: 'usage-rights',         extra: [{key:'effectivedate', label:'Effective Date'}] },
+};
+
+function contractLink(name, email, role, type, extraValues) {
+  const tpl  = CONTRACT_TEMPLATES[type] || CONTRACT_TEMPLATES['Crew Agreement'];
+  const base = `https://bleuskm.com/contracts/${tpl.slug}/`;
+  const params = {name, email, role, film: STATE.filmName || FILM, senddate: todayISO()};
+  if (type) params.type = type;
+  if (extraValues) Object.assign(params, extraValues);
+  return base + '?' + new URLSearchParams(params).toString();
+}
+
+// ════════════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════════════
+let STATE = { dept: null, realDept: null, section: null, files: [], notes: [], locations: [], crew: [], filmName: 'The Final Hand' };
+
+// ════════════════════════════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════════════════════════════
+// Local user map (fallback when Netlify function unreachable)
+const LOCAL_USERS = {
+  'zaria':     { password: 'bleuskm2026', department: 'director' },
+  'ceion':     { password: 'bleuskmcrew', department: 'producer' },
+  'carmen':    { password: 'bleuskmcrew', department: 'producer' },
+  'fabiola':   { password: 'bleuskmcrew', department: 'producer' },
+  'obi':       { password: 'ookezie',     department: 'dp' },
+  'regan':     { password: 'rgalindo',    department: 'ad' },
+  'catherine': { password: 'ckudulis',   department: 'scriptsupervisor' },
+  'sound':     { password: 'sound2026',  department: 'sound' },
+};
+
+async function doLogin() {
+  const username = (document.getElementById('login-user').value || '').toLowerCase().trim();
+  const pass     = document.getElementById('login-pass').value;
+  const err      = document.getElementById('login-err');
+  err.textContent = '';
+  if (!username) { err.textContent = 'Please enter your username.'; return; }
+  if (!pass)     { err.textContent = 'Please enter your password.'; return; }
+
+  try {
+    const res  = await fetch(API + '?action=auth', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ username, password: pass }),
+    });
+    const json = await res.json();
+    if (json.ok) {
+      STATE.dept     = json.department;
+      STATE.realDept = json.department;
+      STATE.username = username;
+      sessionStorage.setItem('portal_dept', json.department);
+      sessionStorage.setItem('portal_user', username);
+      startApp();
+    } else {
+      err.textContent = 'Incorrect username or password.';
+    }
+  } catch(e) {
+    // Fallback: local check
+    const user = LOCAL_USERS[username];
+    if (user && user.password === pass) {
+      STATE.dept     = user.department;
+      STATE.realDept = user.department;
+      STATE.username = username;
+      sessionStorage.setItem('portal_dept', user.department);
+      sessionStorage.setItem('portal_user', username);
+      startApp();
+    } else {
+      err.textContent = 'Incorrect username or password.';
+    }
+  }
+}
+
+document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+document.getElementById('login-user').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('login-pass').focus(); });
+
+function doLogout() {
+  sessionStorage.removeItem('portal_dept');
+  STATE = {dept:null, section:null, files:[], notes:[], locations:[], crew:[]};
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('login-screen').classList.remove('hidden');
+}
+
+// Auto-restore session
+(function() {
+  const savedDept = sessionStorage.getItem('portal_dept');
+  const savedUser = sessionStorage.getItem('portal_user');
+  if (savedDept) { STATE.dept = savedDept; STATE.realDept = savedDept; STATE.username = savedUser || ''; startApp(); }
+})();
+
+// ════════════════════════════════════════════════════════════════
+// NAVIGATION CONFIG
+// ════════════════════════════════════════════════════════════════
+const NAV = {
+  director: [
+    {id:'overview',   icon:'🎬', label:'Overview'},
+    {id:'script',     icon:'📄', label:'Scripts'},
+    {id:'shotlist',   icon:'🎥', label:'Shot List'},
+    {id:'storyboard', icon:'🖼', label:'Storyboards'},
+    {id:'notes',      icon:'📝', label:'Director Notes'},
+    {id:'scenes',     icon:'🎭', label:'Scene Breakdown'},
+    {id:'continuity', icon:'🔁', label:'Continuity Notes'},
+    {id:'crew',       icon:'👥', label:'Crew'},
+    {id:'castingdb',  icon:'🎟', label:'Casting Database'},
+    {id:'timeline',   icon:'📅', label:'Timeline'},
+    {id:'push',       icon:'📤', label:'Push to Dept'},
+    {id:'managedepts',icon:'🗂', label:'Manage Departments'},
+    {id:'settings',   icon:'⚙️', label:'Production Settings'},
+  ],
+  producer: [
+    {id:'overview',    icon:'🎬', label:'Overview'},
+    {id:'timeline',    icon:'📅', label:'Timeline'},
+    {id:'locations',   icon:'📍', label:'Location Hub'},
+    {id:'crewcast',    icon:'👥', label:'Crew + Cast'},
+    {id:'castingdb',   icon:'🎟', label:'Casting Database'},
+    {id:'contracts',   icon:'📋', label:'Contracts Hub'},
+    {id:'documents',   icon:'📁', label:'Documents'},
+    {id:'budget',      icon:'💰', label:'Budget / Schedule'},
+    {id:'availability',icon:'📆', label:'Availability'},
+    {id:'offers',      icon:'✉️', label:'Offer Letters'},
+  ],
+  dp: [
+    {id:'overview',  icon:'🎬', label:'Overview'},
+    {id:'shotlist',  icon:'🎥', label:'Shot List'},
+    {id:'references',icon:'🖼', label:'References'},
+    {id:'camera',    icon:'📷', label:'Camera Language'},
+    {id:'lighting',  icon:'💡', label:'Lighting Direction'},
+    {id:'mood',      icon:'🎨', label:'Mood Images'},
+    {id:'script',    icon:'📄', label:'Script'},
+    {id:'timeline',  icon:'📅', label:'Timeline'},
+  ],
+  ad: [
+    {id:'overview',  icon:'🎬', label:'Overview'},
+    {id:'schedule',  icon:'📅', label:'Schedule'},
+    {id:'callsheets',icon:'📋', label:'Call Sheets'},
+    {id:'scenes',    icon:'🎭', label:'Scene Order'},
+    {id:'shootdays', icon:'🎬', label:'Shoot Days'},
+    {id:'timing',    icon:'⏱', label:'Timing Notes'},
+    {id:'script',    icon:'📄', label:'Script'},
+    {id:'timeline',  icon:'📅', label:'Timeline'},
+  ],
+  scriptsupervisor: [
+    {id:'overview',   icon:'🎬', label:'Overview'},
+    {id:'script',     icon:'📄', label:'Script'},
+    {id:'scenes',     icon:'🎭', label:'Scene Breakdown'},
+    {id:'continuity', icon:'🔁', label:'Continuity Notes'},
+    {id:'takelog',    icon:'🎞', label:'Take Log'},
+    {id:'timeline',   icon:'📅', label:'Timeline'},
+  ],
+  sound: [
+    {id:'overview',     icon:'🎬', label:'Overview'},
+    {id:'soundnotes',   icon:'🎵', label:'Sound Notes'},
+    {id:'silencecues',  icon:'🔇', label:'Silence Cues'},
+    {id:'environment',  icon:'🌿', label:'Environment Tone'},
+    {id:'moments',      icon:'🔔', label:'Key Sound Moments'},
+    {id:'script',       icon:'📄', label:'Script'},
+    {id:'timeline',     icon:'📅', label:'Timeline'},
+  ],
+};
+
+const DEPT_LABELS = {
+  director:'Director', producer:'Producer', dp:'DP / Camera',
+  ad:'Assistant Director', scriptsupervisor:'Script Supervisor', sound:'Sound',
+};
+
+// ════════════════════════════════════════════════════════════════
+// APP START
+// ════════════════════════════════════════════════════════════════
+async function startApp() {
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+
+  const label = DEPT_LABELS[STATE.dept] || STATE.dept;
+  document.getElementById('sb-dept').textContent = label;
+  document.getElementById('tb-dept').textContent = label;
+
+  try {
+    const res  = await fetch(`${API}?action=get-settings`);
+    const data = await res.json();
+    const recs = data.records || [];
+    const filmSetting = recs.find(r => r.fields['Setting Name'] === 'Current Film');
+    if (filmSetting) STATE.filmName = filmSetting.fields['Value'] || STATE.filmName;
+  } catch(e) {}
+  const filmEl = document.getElementById('sb-film');
+  if (filmEl) filmEl.textContent = STATE.filmName;
+
+  buildNav();
+  await loadData();
+  navigate('overview');
+}
+
+function buildNav() {
+  const items = NAV[STATE.dept] || [];
+  const container = document.getElementById('nav-items');
+  container.innerHTML = '';
+  items.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'nav-item';
+    el.id = `nav-${item.id}`;
+    el.onclick = () => navigate(item.id);
+    el.innerHTML = `<span>${item.icon}</span><span>${item.label}</span>`;
+    if (item.badge) {
+      el.innerHTML += `<span class="nav-badge" id="badge-${item.id}"></span>`;
+    }
+    container.appendChild(el);
+  });
+}
+
+async function loadData() {
+  try {
+    // Load files for this department
+    const fr = await fetch(`${API}?action=get-files&dept=${encodeURIComponent(DEPT_LABELS[STATE.dept])}`);
+    const fd = await fr.json();
+    STATE.files = fd.records || [];
+    updateFileBadges();
+  } catch(e) { STATE.files = []; }
+
+  try {
+    const cr = await fetch(`${API}?action=get-crew`);
+    const cd = await cr.json();
+    STATE.crew = cd.records || [];
+  } catch(e) { STATE.crew = []; }
+}
+
+function updateFileBadges() {
+  const myDept = DEPT_LABELS[STATE.dept];
+  const unread = STATE.files.filter(f => {
+    const readBy = (f.fields['Read By'] || '');
+    return !readBy.includes(myDept);
+  });
+  // Show badge on relevant nav items
+  ['shotlist','script','references','camera','lighting','mood'].forEach(id => {
+    const badge = document.getElementById(`badge-${id}`);
+    if (badge) {
+      const cnt = unread.filter(f => f.fields['Section'] && f.fields['Section'].toLowerCase().includes(id)).length;
+      badge.textContent = cnt || '';
+      badge.style.display = cnt ? '' : 'none';
+    }
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+// NAVIGATE
+// ════════════════════════════════════════════════════════════════
+function navigate(sectionId) {
+  STATE.section = sectionId;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const navEl = document.getElementById(`nav-${sectionId}`);
+  if (navEl) navEl.classList.add('active');
+
+  const navItem = (NAV[STATE.dept] || []).find(n => n.id === sectionId);
+  document.getElementById('tb-section').textContent = navItem ? navItem.label : sectionId;
+  if (STATE.realDept && STATE.dept !== STATE.realDept) {
+    showReturnBanner();
+  } else {
+    document.getElementById('topbar-actions').innerHTML = '';
+  }
+
+  const content = document.getElementById('content');
+  content.innerHTML = '';
+  const renderer = SECTIONS[STATE.dept] && SECTIONS[STATE.dept][sectionId];
+  if (renderer) {
+    renderer(content);
+  } else {
+    genericSection(sectionId, content);
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// SECTION RENDERERS
+// ════════════════════════════════════════════════════════════════
+const SECTIONS = {};
+
+// ─── TIMELINES ───────────────────────────────────────────────────
+const TIMELINES = {
+  director: [
+    {date:'NOW – JULY 3', label:'CASTING', status:'active', items:['Run callbacks','Refine tone + intention','Begin visual ideas (loose)']},
+    {date:'JULY 5 – 10', label:'TABLE READ', status:'upcoming', items:['Lock character direction','Adjust script if needed','Communicate tone clearly']},
+    {date:'JULY 11 – 18', label:'FINAL PREP', status:'upcoming', items:['Approve: shot list, schedule, design','Final creative decisions']},
+    {date:'SHOOT DAY', label:'PRODUCTION', status:'upcoming', items:['Direct']},
+  ],
+  producer: [
+    {date:'NOW – JUNE 22', label:'LOGISTICS', status:'active', items:['Assist with scheduling callbacks','Organize logistics pipeline']},
+    {date:'JUNE 23 – JULY 3', label:'CONTRACTS + BUDGET', status:'active', items:['Track cast + contracts','Begin budget + scheduling docs']},
+    {date:'JULY 5 – 10', label:'LOCK LOGISTICS', status:'upcoming', items:['Lock: location logistics','Coordinate departments']},
+    {date:'JULY 11 – 18', label:'FINAL PREP', status:'upcoming', items:['Finalize: budget, schedule, production needs']},
+    {date:'SHOOT DAY', label:'PRODUCTION', status:'upcoming', items:['Manage operations behind the scenes']},
+  ],
+  dp: [
+    {date:'NOW – JULY 3', label:'RESEARCH', status:'active', items:['Gather references','Understand tone']},
+    {date:'JULY 5 – 10', label:'DEVELOPMENT', status:'upcoming', items:['Begin: shot ideas, camera language']},
+    {date:'JULY 11 – 18', label:'FINAL PREP', status:'upcoming', items:['Finalize: shot list, lighting plan']},
+    {date:'SHOOT DAY', label:'PRODUCTION', status:'upcoming', items:['Execute visuals']},
+  ],
+  ad: [
+    {date:'NOW – JULY 3', label:'OBSERVATION', status:'active', items:['Observe casting flow','Understand script + structure']},
+    {date:'JULY 5 – 10', label:'PLANNING', status:'upcoming', items:['Begin: scene breakdown, schedule planning']},
+    {date:'JULY 11 – 18', label:'BUILD', status:'upcoming', items:['Build: call sheets, shoot schedule','Coordinate with all departments']},
+    {date:'SHOOT DAY', label:'PRODUCTION', status:'upcoming', items:['Run the set','Control time + flow']},
+  ],
+  scriptsupervisor: [
+    {date:'NOW – JULY 3', label:'SCRIPT STUDY', status:'active', items:['Read script deeply','Begin notes']},
+    {date:'JULY 5 – 10', label:'TABLE READ', status:'upcoming', items:['Table read tracking: dialogue, pacing, continuity']},
+    {date:'JULY 11 – 18', label:'PREP', status:'upcoming', items:['Prepare: script notes, tracking system']},
+    {date:'SHOOT DAY', label:'PRODUCTION', status:'upcoming', items:['Track EVERYTHING','Continuity control']},
+  ],
+  sound: [
+    {date:'NOW – JULY 3', label:'PREP', status:'active', items:['Study script for sound moments','Begin environment notes']},
+    {date:'JULY 5 – 10', label:'PLANNING', status:'upcoming', items:['Table read: dialogue flow, silence cues']},
+    {date:'JULY 11 – 18', label:'FINAL PREP', status:'upcoming', items:['Finalize sound notes, equipment list']},
+    {date:'SHOOT DAY', label:'PRODUCTION', status:'upcoming', items:['Record clean audio','Monitor environment']},
+  ],
+};
+
+async function renderTimeline(el, deptKey) {
+  const label = DEPT_LABELS[deptKey];
+  const isDirector = STATE.realDept === 'director';
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">${esc(label)} Timeline</div>
+      ${isDirector ? `<button class="btn-sm btn-gold" onclick="showAddTimelinePhase('${deptKey}')">+ Add Phase</button>` : ''}
+    </div>
+    <div id="timeline-container" style="max-width:600px"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
+  `;
+  let records = null;
+  try {
+    const res  = await fetch(`${API}?action=get-timeline&dept=${encodeURIComponent(label)}`);
+    const data = await res.json();
+    records = data.records || [];
+  } catch(e) { records = null; }
+  renderTimelinePhases(records, deptKey);
+}
+
+function renderTimelinePhases(records, deptKey) {
+  const container = document.getElementById('timeline-container');
+  if (!container) return;
+  const isDirector = STATE.realDept === 'director';
+  let phases;
+  if (records && records.length) {
+    phases = records.map(r => ({
+      id: r.id,
+      label: r.fields['Phase'] || '',
+      date: r.fields['Action Label'] || '',
+      status: (r.fields['Status'] || '').toLowerCase(),
+      items: (r.fields['Description'] || '').split('\n').filter(Boolean),
+    }));
+  } else {
+    phases = (TIMELINES[deptKey] || []).map(p => ({...p, id: null}));
+  }
+  container.innerHTML = phases.map(p => `
+    <div class="timeline-phase">
+      <div class="timeline-dot ${p.status==='active'?'active':(p.status==='done'||p.status==='complete')?'done':''}"></div>
+      <div class="phase-label">${esc(p.label)}</div>
+      <div class="phase-date">${esc(p.date)}</div>
+      ${p.items.map(i=>`<div class="phase-item">→ ${esc(i)}</div>`).join('')}
+      ${p.id && isDirector ? `<button class="btn-sm btn-outline" style="margin-top:6px" onclick="deleteTimelinePhase('${p.id}','${deptKey}')">Delete Phase</button>` : ''}
+    </div>
+  `).join('');
+}
+
+function showAddTimelinePhase(deptKey) {
+  showModal('Add Timeline Phase', `
+    <div class="modal-row"><div class="modal-label">Phase Name</div><input id="tp-phase" placeholder="e.g. TABLE READ"></div>
+    <div class="modal-row"><div class="modal-label">Date Range</div><input id="tp-dates" placeholder="e.g. JULY 5 – 10"></div>
+    <div class="modal-row"><div class="modal-label">Status</div>
+      <select id="tp-status"><option>Upcoming</option><option>Active</option><option>Complete</option></select>
+    </div>
+    <div class="modal-row"><div class="modal-label">Action Items (one per line)</div><textarea id="tp-items" rows="4" placeholder="Lock character direction&#10;Adjust script if needed"></textarea></div>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Add Phase', cls:'btn-gold', action:`saveTimelinePhase('${deptKey}')`},
+  ]);
+}
+
+async function saveTimelinePhase(deptKey) {
+  const phase   = document.getElementById('tp-phase').value.trim();
+  if (!phase) { toast('Phase name required.','⚠️'); return; }
+  try {
+    await fetch(API + '?action=add-timeline', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        phase,
+        actionLabel: document.getElementById('tp-dates').value,
+        description: document.getElementById('tp-items').value,
+        status: document.getElementById('tp-status').value,
+        department: DEPT_LABELS[deptKey],
+      }),
+    });
+    closeModal();
+    toast('Phase added','✅');
+    navigate('timeline');
+  } catch(e) { toast('Failed to add phase.','❌'); }
+}
+
+async function deleteTimelinePhase(recordId, deptKey) {
+  try {
+    await fetch(API + '?action=delete-timeline', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId}),
+    });
+    toast('Phase deleted','🗑');
+    navigate('timeline');
+  } catch(e) { toast('Failed to delete.','❌'); }
+}
+
+// ─── GENERIC FILE SECTION ────────────────────────────────────────
+function renderFileSection(container, sectionId, title, acceptTypes='*', hint='') {
+  const sectionFiles = STATE.files.filter(f => (f.fields['Section']||'').toLowerCase() === sectionId.toLowerCase());
+  container.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">${title}</div>
+      <button class="btn-sm btn-gold" onclick="showUploadModal('${sectionId}','${title}')">+ Upload</button>
+    </div>
+    ${hint ? `<p style="font-size:12px;color:var(--muted);margin-bottom:16px">${hint}</p>` : ''}
+    <div id="files-${sectionId}">
+      ${sectionFiles.length ? sectionFiles.map(f => renderFileCard(f)).join('') : '<p style="color:var(--muted);font-size:13px">No files yet. Upload the first one.</p>'}
+    </div>
+  `;
+}
+
+function renderFileCard(f) {
+  const ext = (f.fields['File Type']||'').split('/').pop().toUpperCase() || 'FILE';
+  const icon = f.fields['File Type']?.startsWith('image') ? '🖼' : f.fields['File Type']?.includes('pdf') ? '📄' : '📁';
+  return `
+    <div class="file-card">
+      <div class="file-icon">${icon}</div>
+      <div class="file-meta">
+        <div class="file-name">${esc(f.fields['Name']||'Untitled')}</div>
+        <div class="file-sub">${esc(f.fields['From Department']||'')} · ${esc(f.fields['Notes']||'')} · ${formatDate(f.fields['Created'])}</div>
+      </div>
+      <div class="file-actions">
+        <a href="${esc(f.fields['File URL']||'#')}" target="_blank" class="btn-sm btn-outline">Open</a>
+        ${STATE.realDept==='director'?`<button class="btn-sm btn-outline" onclick="showPushModal('${f.id}','${esc(f.fields['Name']||'')}')">Push</button>`:''}
+        <button class="btn-sm btn-outline" onclick="deleteFile('${f.id}')">🗑</button>
+      </div>
+    </div>
+  `;
+}
+
+async function deleteFile(recordId) {
+  try {
+    await fetch(API + '?action=delete-file', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId}),
+    });
+    toast('File deleted','🗑');
+    await loadData();
+    navigate(STATE.section);
+  } catch(e) { toast('Failed to delete file.','❌'); }
+}
+
+// ─── UPLOAD MODAL ────────────────────────────────────────────────
+function showUploadModal(sectionId, sectionTitle) {
+  showModal(`Upload to ${sectionTitle}`, `
+    <div class="modal-row"><div class="modal-label">File Name</div><input id="up-name" placeholder="e.g. Shot List v2"></div>
+    <div class="modal-row"><div class="modal-label">File</div>
+      <div class="upload-zone" onclick="document.getElementById('up-file').click()">
+        <div class="upload-zone-icon">📁</div>
+        <div class="upload-zone-text" id="up-file-label">Click to select file</div>
+        <div class="upload-zone-sub">PDF, images, docs accepted</div>
+      </div>
+      <input type="file" id="up-file" style="display:none" onchange="updateFileLabel()">
+    </div>
+    <div class="modal-row"><div class="modal-label">Notes (optional)</div><input id="up-notes" placeholder="Brief description"></div>
+    ${STATE.realDept==='director'?`
+    <div class="modal-row">
+      <div class="modal-label">Also push to departments:</div>
+      <div class="dept-checkboxes">
+        ${['Producer','DP','AD','Script Supervisor','Sound'].map(d=>`
+          <label class="dept-check"><input type="checkbox" value="${d}" class="push-check"> ${d}</label>
+        `).join('')}
+      </div>
+    </div>`:''}
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Upload', cls:'btn-gold', action:`doUpload('${sectionId}')`},
+  ]);
+}
+
+function updateFileLabel() {
+  const f = document.getElementById('up-file').files[0];
+  if (f) document.getElementById('up-file-label').textContent = f.name;
+}
+
+async function doUpload(sectionId) {
+  const name  = document.getElementById('up-name').value.trim();
+  const file  = document.getElementById('up-file').files[0];
+  const notes = document.getElementById('up-notes')?.value.trim() || '';
+  if (!file) { toast('Please select a file.', '⚠️'); return; }
+
+  toast('Uploading...', '⏳');
+  try {
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', CLOUDINARY_PRESET);
+    fd.append('resource_type', 'auto');
+    const cRes = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/auto/upload`, {method:'POST', body:fd});
+    const cData = await cRes.json();
+    if (!cData.secure_url) throw new Error('Upload failed');
+
+    // Determine who to push to
+    const pushDepts = [];
+    document.querySelectorAll('.push-check:checked').forEach(cb => pushDepts.push(cb.value));
+
+    // Default target is whichever dashboard we're currently viewing; attribution is the real actor
+    const targetDept = DEPT_LABELS[STATE.dept];
+    const fromDept   = DEPT_LABELS[STATE.realDept] || targetDept;
+
+    for (const forDept of (pushDepts.length ? pushDepts : [targetDept])) {
+      await fetch(API + '?action=add-file', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          name: name || file.name,
+          url: cData.secure_url,
+          fileType: file.type,
+          forDept,
+          fromDept,
+          section: sectionId,
+          notes,
+        }),
+      });
+    }
+
+    closeModal();
+    toast(`"${name||file.name}" uploaded!`, '✅');
+    await loadData();
+    navigate(sectionId);
+  } catch(e) {
+    toast('Upload failed. Check your connection.', '❌');
+  }
+}
+
+// ─── PUSH MODAL ──────────────────────────────────────────────────
+function showPushModal(fileId, fileName) {
+  showModal('Push File to Departments', `
+    <p style="font-size:13px;margin-bottom:14px">Push <strong>${esc(fileName)}</strong> to:</p>
+    <div class="dept-checkboxes">
+      ${['Producer','DP','AD','Script Supervisor','Sound','All'].map(d=>`
+        <label class="dept-check"><input type="checkbox" value="${d}" class="push-dept"> ${d}</label>
+      `).join('')}
+    </div>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Push', cls:'btn-gold', action:`doPush('${fileId}')`},
+  ]);
+}
+
+async function doPush(fileId) {
+  const depts = [...document.querySelectorAll('.push-dept:checked')].map(c => c.value);
+  if (!depts.length) { toast('Select at least one department.','⚠️'); return; }
+  const rec = STATE.files.find(f => f.id === fileId);
+  if (!rec) return;
+  for (const d of depts) {
+    await fetch(API + '?action=add-file', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        name: rec.fields['Name'],
+        url: rec.fields['File URL'],
+        fileType: rec.fields['File Type'],
+        forDept: d,
+        fromDept: DEPT_LABELS[STATE.dept],
+        section: rec.fields['Section'],
+        notes: rec.fields['Notes'],
+      }),
+    });
+  }
+  closeModal();
+  toast(`Pushed to ${depts.join(', ')}`, '✅');
+}
+
+// ════════════════════════════════════════════════════════════════
+// DIRECTOR SECTIONS
+// ════════════════════════════════════════════════════════════════
+SECTIONS.director = {
+  overview: (el) => {
+    el.innerHTML = `
+      <div class="grid2" style="margin-bottom:20px">
+        <div class="card">
+          <div class="card-title">Current Phase</div>
+          <div style="font-size:20px;font-weight:700;color:var(--gold)">CASTING</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">NOW – JULY 3, 2026</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Crew Signed</div>
+          <div style="font-size:20px;font-weight:700">${STATE.crew.length} <span style="font-size:12px;color:var(--muted)">CORE</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Quick Actions</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn-sm btn-gold" onclick="navigate('script')">Upload Script</button>
+          <button class="btn-sm btn-gold" onclick="navigate('shotlist')">Shot List</button>
+          <button class="btn-sm btn-outline" onclick="navigate('push')">Push to Depts</button>
+          <button class="btn-sm btn-outline" onclick="navigate('crew')">View Crew</button>
+        </div>
+      </div>
+    `;
+  },
+  script: (el) => renderFileSection(el, 'script', 'Scripts', '.pdf,.fdx,.fountain', 'Upload your script here. Use the Push button to share with any department.'),
+  shotlist: (el) => renderFileSection(el, 'shotlist', 'Shot List', '.pdf,.xlsx,.csv', 'Upload shot lists. Push to DP when ready.'),
+  storyboard: (el) => renderFileSection(el, 'storyboard', 'Storyboards', 'image/*,.pdf'),
+  notes: (el) => renderNotesSection(el, 'Director', 'Director Notes'),
+  scenes: (el) => renderScenesSection(el, true),
+  continuity: (el) => renderContinuityNotes(el),
+  crew: (el) => renderCrewSection(el),
+  castingdb: (el) => renderCastingDatabase(el),
+  timeline: (el) => renderTimeline(el, 'director'),
+  managedepts: (el) => renderManageDepartments(el),
+  settings: (el) => renderProductionSettings(el),
+  push: (el) => {
+    el.innerHTML = `
+      <div class="section-title" style="margin-bottom:16px">Push to Departments</div>
+      <div class="card">
+        <div class="card-title">Send a Note to a Department</div>
+        <div class="modal-row"><div class="modal-label">To</div>
+          <select id="push-to">
+            <option value="All">All Departments</option>
+            <option value="Producer">Producer</option>
+            <option value="DP">DP / Camera</option>
+            <option value="AD">Assistant Director</option>
+            <option value="Script Supervisor">Script Supervisor</option>
+            <option value="Sound">Sound</option>
+          </select>
+        </div>
+        <div class="modal-row" style="margin-top:10px"><div class="modal-label">Note / Message</div>
+          <textarea id="push-note" rows="4" placeholder="Type your message or update..."></textarea>
+        </div>
+        <button class="btn-sm btn-gold" style="margin-top:10px" onclick="sendNote()">Send Note</button>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="card-title">Push a File</div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Upload files from any section and use the Push button, or upload directly here.</p>
+        <button class="btn-sm btn-gold" onclick="showUploadModal('push','Push File')">Upload + Push File</button>
+      </div>
+    `;
+  },
+};
+
+async function sendNote() {
+  const to      = document.getElementById('push-to').value;
+  const content = document.getElementById('push-note').value.trim();
+  if (!content) { toast('Please write a note first.','⚠️'); return; }
+  try {
+    await fetch(API + '?action=add-note', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({title:'Note from Director', content, author:'Director', audience: to}),
+    });
+    document.getElementById('push-note').value = '';
+    toast(`Note sent to ${to}`, '✅');
+  } catch(e) { toast('Failed to send. Try again.','❌'); }
+}
+
+// ════════════════════════════════════════════════════════════════
+// PRODUCER SECTIONS
+// ════════════════════════════════════════════════════════════════
+SECTIONS.producer = {
+  overview: (el) => {
+    el.innerHTML = `
+      <div class="grid3" style="margin-bottom:20px">
+        <div class="card"><div class="card-title">Current Phase</div><div style="font-size:18px;font-weight:700;color:var(--gold)">CONTRACTS + BUDGET</div><div style="font-size:11px;color:var(--muted)">JUNE 23 – JULY 3</div></div>
+        <div class="card"><div class="card-title">Core Crew</div><div style="font-size:24px;font-weight:700">${STATE.crew.length}</div></div>
+        <div class="card"><div class="card-title">Contracts</div><div style="font-size:24px;font-weight:700">${CREW_CONTRACTS.length} <span style="font-size:11px;color:var(--muted)">links ready</span></div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Quick Actions</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn-sm btn-gold" onclick="navigate('contracts')">Contracts Hub</button>
+          <button class="btn-sm btn-gold" onclick="navigate('locations')">Location Hub</button>
+          <button class="btn-sm btn-outline" onclick="navigate('crewcast')">Crew + Cast</button>
+          <button class="btn-sm btn-outline" onclick="navigate('budget')">Budget</button>
+        </div>
+      </div>
+    `;
+  },
+  timeline: (el) => renderTimeline(el, 'producer'),
+  locations: (el) => renderLocationsSection(el),
+  crewcast: (el) => renderCrewSection(el),
+  castingdb: (el) => renderCastingDatabase(el),
+  contracts: (el) => renderContractsHub(el),
+  documents: (el) => renderFileSection(el, 'documents', 'Documents', '*', 'Signed contracts, releases, and other documents.'),
+  budget: (el) => renderBudgetSection(el),
+  availability: (el) => renderAvailabilitySection(el),
+  offers: (el) => renderOfferLetters(el),
+};
+
+// ─── CONTRACTS HUB ───────────────────────────────────────────────
+function renderContractsHub(el) {
+  const groups = [
+    {title:'CAST', items:[
+      {name:'Cast Agreement', key:'cast-agreement'},
+      {name:'Talent Release', key:'talent-release'},
+      {name:'Actor Deal Memo', key:'actor-deal-memo'},
+    ]},
+    {title:'CREW', items:[
+      {name:'Crew Agreement', key:'crew-agreement'},
+      {name:'Contractor Agreement', key:'contractor-agreement'},
+    ]},
+    {title:'PRODUCTION', items:[
+      {name:'Location Release', key:'location-release'},
+      {name:'Media Release (BTS)', key:'media-release'},
+    ]},
+    {title:'POST', items:[
+      {name:'Editor Agreement', key:'editor-agreement'},
+      {name:'Composer Agreement', key:'composer-agreement'},
+    ]},
+  ];
+
+  el.innerHTML = `
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab(this,'tab-send')">Send Contracts</div>
+      <div class="tab" onclick="switchTab(this,'tab-signed')">Signed Contracts</div>
+      <div class="tab" onclick="switchTab(this,'tab-templates')">Templates</div>
+    </div>
+    <div class="tab-panel active" id="tab-send">
+      <div class="section-header">
+        <div class="section-title">Crew Agreement Links</div>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Edit name/role below, then copy the link to send. The crew member fills in the form and signs — it saves back here automatically.</p>
+      <div id="contract-edit-form" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px">
+        <div class="grid2" style="gap:10px;margin-bottom:10px">
+          <div><div class="modal-label">Name (override)</div><input id="ce-name" placeholder="Full name"></div>
+          <div><div class="modal-label">Role (override)</div><input id="ce-role" placeholder="Role title"></div>
+        </div>
+        <div class="modal-row"><div class="modal-label">Contract Type</div>
+          <select id="ce-type" onchange="renderExtraFields()">
+            <option value="Crew Agreement">Crew Agreement</option>
+            <option value="Contractor Agreement">Contractor Agreement</option>
+            <option value="Cast Agreement">Cast Agreement</option>
+            <option value="Talent Release">Talent Release</option>
+            <option value="Actor Deal Memo">Actor Deal Memo</option>
+            <option value="Location Release">Location Release</option>
+            <option value="Media Release (BTS)">Media Release (BTS)</option>
+            <option value="Editor Agreement">Editor Agreement</option>
+            <option value="Composer Agreement">Composer Agreement</option>
+            <option value="Usage Rights">Usage Rights</option>
+          </select>
+        </div>
+        <div><div class="modal-label">Email</div><input id="ce-email" placeholder="email@example.com" style="margin-bottom:10px"></div>
+        <div id="ce-extra-fields"></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn-sm btn-gold" onclick="buildContractLink()">Generate Link</button>
+          <button class="btn-sm btn-outline" onclick="copyContractLink()">Copy Link</button>
+        </div>
+        <div id="ce-link-out" style="margin-top:10px;font-size:11px;color:var(--muted);word-break:break-all"></div>
+      </div>
+      <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">— Or send directly to CORE crew —</div>
+      ${(STATE.crew.length ? STATE.crew.map(r=>({name:r.fields['Name']||'',role:(r.fields['Preferred role by Director']||'').toString().replace(/,/g,', ')||r.fields['Role']||'',email:r.fields['Email']||''})) : CREW_CONTRACTS).map(c => `
+        <div class="contract-row">
+          <div>
+            <div class="contract-row-name">${esc(c.name)}</div>
+            <div class="contract-row-sub">${esc(c.role)} · ${esc(c.email)}</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn-sm btn-outline" onclick="prefillContract('${esc(c.name)}','${esc(c.email)}','${esc(c.role)}')">Edit &amp; Send</button>
+            <a href="${contractLink(c.name,c.email,c.role)}" target="_blank" class="btn-sm btn-gold" style="display:inline-flex;align-items:center">Open</a>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="tab-panel" id="tab-signed">
+      <div class="section-title" style="margin-bottom:16px">Signed Contracts</div>
+      <div id="signed-list"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
+    </div>
+    <div class="tab-panel" id="tab-templates">
+      <div class="section-title" style="margin-bottom:16px">Contract Templates</div>
+      ${groups.map(g => `
+        <div class="contract-group">
+          <div class="contract-group-title">${g.title}</div>
+          ${g.items.map(item => `
+            <div class="contract-row">
+              <div><div class="contract-row-name">${item.name}</div></div>
+              <div style="display:flex;gap:6px">
+                <button class="btn-sm btn-gold" onclick="useTemplate('${esc(item.name)}')">Use This Template</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `).join('')}
+    </div>
+  `;
+  loadSignedContracts();
+  renderExtraFields();
+}
+
+function prefillContract(name, email, role, type) {
+  document.getElementById('ce-name').value  = name;
+  document.getElementById('ce-email').value = email;
+  document.getElementById('ce-role').value  = role;
+  if (type) document.getElementById('ce-type').value = type;
+  renderExtraFields();
+  buildContractLink();
+}
+
+function renderExtraFields() {
+  const type = document.getElementById('ce-type')?.value || 'Crew Agreement';
+  const tpl  = CONTRACT_TEMPLATES[type] || { extra: [] };
+  const el   = document.getElementById('ce-extra-fields');
+  if (!el) return;
+  el.innerHTML = tpl.extra.map(f => `
+    <div class="modal-row"><div class="modal-label">${esc(f.label)}</div><input id="ce-extra-${f.key}" placeholder="${esc(f.label)}"></div>
+  `).join('');
+}
+
+function buildContractLink() {
+  const name  = document.getElementById('ce-name').value.trim();
+  const email = document.getElementById('ce-email').value.trim();
+  const role  = document.getElementById('ce-role').value.trim();
+  const type  = document.getElementById('ce-type')?.value || '';
+  if (!name || !email) { toast('Name and email required.','⚠️'); return; }
+  const tpl = CONTRACT_TEMPLATES[type] || { extra: [] };
+  const extraValues = {};
+  tpl.extra.forEach(f => {
+    const v = document.getElementById(`ce-extra-${f.key}`)?.value.trim();
+    if (v) extraValues[f.key] = v;
+  });
+  const link = contractLink(name, email, role, type, extraValues);
+  document.getElementById('ce-link-out').innerHTML = `<a href="${link}" target="_blank">${link}</a>`;
+}
+
+function copyContractLink() {
+  const out = document.getElementById('ce-link-out').textContent.trim();
+  if (!out) { buildContractLink(); }
+  const link = document.getElementById('ce-link-out').textContent.trim();
+  if (link) { navigator.clipboard.writeText(link).then(() => toast('Link copied!','📋')); }
+}
+
+async function loadSignedContracts() {
+  try {
+    const res  = await fetch(`${API}?action=get-contracts`);
+    const data = await res.json();
+    const recs = data.records || [];
+    const el   = document.getElementById('signed-list');
+    if (!el) return;
+    if (!recs.length) { el.innerHTML = '<p style="color:var(--muted);font-size:13px">No signed contracts yet.</p>'; return; }
+    STATE.contracts = recs;
+    el.innerHTML = recs.map(r => `
+      <div class="contract-row">
+        <div>
+          <div class="contract-row-name">${esc(r.fields['Name']||'Unknown')}</div>
+          <div class="contract-row-sub">${esc(r.fields['Role']||'')} ${r.fields['Contract Type']?'· '+esc(r.fields['Contract Type']):''} · Signed ${r.fields['Date Signed']||'—'}</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span class="tag tag-green">Signed</span>
+          <button class="btn-sm btn-outline" onclick="viewContract('${r.id}')">View / Print</button>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {}
+}
+
+function viewContract(recordId) {
+  const r = (STATE.contracts||[]).find(c => c.id === recordId);
+  if (!r) { toast('Contract not found.','⚠️'); return; }
+  const f = r.fields;
+  const sigAttachment = (f['Signature']||[])[0];
+  const sigUrl = sigAttachment ? sigAttachment.url : '';
+  const win = window.open('', '_blank');
+  win.document.write(`
+    <html><head><title>Contract — ${esc(f['Name']||'')}</title>
+    <style>body{font-family:Georgia,serif;max-width:700px;margin:60px auto;color:#111;line-height:1.7}
+    h1{font-size:18px;border-bottom:2px solid #c9a84c;padding-bottom:10px}
+    .row{margin:10px 0;font-size:14px} .label{font-weight:700;display:inline-block;width:160px}
+    img{max-width:300px;border:1px solid #ccc;margin-top:10px}
+    @media print{button{display:none}}
+    </style></head><body>
+    <h1>${esc(STATE.filmName||'Production')} — ${esc(f['Contract Type']||'Crew Agreement')}</h1>
+    <div class="row"><span class="label">Name:</span> ${esc(f['Name']||'')}</div>
+    <div class="row"><span class="label">Role:</span> ${esc(f['Role']||'')}</div>
+    <div class="row"><span class="label">Email:</span> ${esc(f['Email']||'')}</div>
+    <div class="row"><span class="label">Date Signed:</span> ${esc(f['Date Signed']||'')}</div>
+    <div class="row"><span class="label">Status:</span> ${esc(f['Contract Status']||'')}</div>
+    ${f['Extra Details'] ? `<div class="row"><span class="label">Details:</span> ${esc(f['Extra Details']).replace(/\n/g,'<br>')}</div>` : ''}
+    <div class="row"><span class="label">Signature:</span><br>${sigUrl ? `<img src="${esc(sigUrl)}">` : '(no signature image on file)'}</div>
+    <button onclick="window.print()" style="margin-top:30px;padding:10px 18px;background:#c9a84c;border:none;border-radius:6px;cursor:pointer">Print / Save as PDF</button>
+    </body></html>
+  `);
+  win.document.close();
+}
+
+// ─── LOCATIONS ───────────────────────────────────────────────────
+async function renderLocationsSection(el) {
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Location Hub</div>
+      <button class="btn-sm btn-gold" onclick="showAddLocation()">+ Add Location</button>
+    </div>
+    <div id="locations-list"><p style="color:var(--muted);font-size:13px">Loading locations...</p></div>
+  `;
+  try {
+    const res  = await fetch(`${API}?action=get-locations`);
+    const data = await res.json();
+    STATE.locations = data.records || [];
+    renderLocationCards();
+  } catch(e) {
+    document.getElementById('locations-list').innerHTML = '<p style="color:var(--muted)">Could not load locations.</p>';
+  }
+}
+
+function renderLocationCards() {
+  const el = document.getElementById('locations-list');
+  if (!el) return;
+  if (!STATE.locations.length) { el.innerHTML = '<p style="color:var(--muted);font-size:13px">No locations added yet.</p>'; return; }
+  const statusColors = {'Approved':'tag-green','Declined':'tag-red','Called - No Answer':'tag-muted','Called - Maybe Follow Up':'tag-gold','Not Yet Contacted':'tag-muted'};
+  el.innerHTML = STATE.locations.map(loc => {
+    const f = loc.fields;
+    const sc = statusColors[f['Status']] || 'tag-muted';
+    return `
+      <div class="loc-card">
+        <div class="loc-header">
+          <div class="loc-name">${esc(f['Location Name']||'Unnamed')}</div>
+          <span class="tag ${sc}">${esc(f['Status']||'Unknown')}</span>
+        </div>
+        <div class="loc-detail">${esc(f['Address']||'')}</div>
+        <div class="loc-detail">Contact: ${esc(f['Contact Person']||'—')} · ${esc(f['Phone']||'')} · ${esc(f['Email']||'')}</div>
+        ${f['Notes'] ? `<div style="font-size:11px;color:var(--muted);margin-top:4px">${esc(f['Notes'])}</div>` : ''}
+        <div style="margin-top:10px;display:flex;gap:6px">
+          <select style="flex:1;font-size:11px" onchange="updateLocStatus('${loc.id}',this.value)">
+            ${['Not Yet Contacted','Called - No Answer','Called - Maybe Follow Up','Approved','Declined'].map(s=>`<option ${f['Status']===s?'selected':''}>${s}</option>`).join('')}
+          </select>
+          ${f['Email']?`<a href="mailto:${esc(f['Email'])}" class="btn-sm btn-outline">Email</a>`:''}
+          <button class="btn-sm btn-outline" onclick="deleteLocation('${loc.id}')">🗑</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function deleteLocation(recordId) {
+  try {
+    await fetch(API + '?action=delete-location', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId}),
+    });
+    toast('Location deleted','🗑');
+    STATE.locations = STATE.locations.filter(l => l.id !== recordId);
+    renderLocationCards();
+  } catch(e) { toast('Failed to delete location.','❌'); }
+}
+
+function showAddLocation() {
+  showModal('Add Location', `
+    <div class="modal-row"><div class="modal-label">Location Name *</div><input id="loc-name" placeholder="e.g. Downtown Warehouse"></div>
+    <div class="modal-row"><div class="modal-label">Address</div><textarea id="loc-addr" rows="2" placeholder="Full address"></textarea></div>
+    <div class="modal-row"><div class="modal-label">Contact Person</div><input id="loc-contact" placeholder="Name"></div>
+    <div class="modal-row"><div class="modal-label">Phone</div><input id="loc-phone" placeholder="(xxx) xxx-xxxx"></div>
+    <div class="modal-row"><div class="modal-label">Email</div><input id="loc-email" type="email" placeholder="contact@example.com"></div>
+    <div class="modal-row"><div class="modal-label">Initial Status</div>
+      <select id="loc-status">
+        <option>Not Yet Contacted</option><option>Called - No Answer</option>
+        <option>Called - Maybe Follow Up</option><option>Approved</option><option>Declined</option>
+      </select>
+    </div>
+    <div class="modal-row"><div class="modal-label">Notes</div><textarea id="loc-notes" rows="2"></textarea></div>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Add Location', cls:'btn-gold', action:'doAddLocation()'},
+  ]);
+}
+
+async function doAddLocation() {
+  const name = document.getElementById('loc-name').value.trim();
+  if (!name) { toast('Location name required.','⚠️'); return; }
+  try {
+    await fetch(API + '?action=add-location', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        name,
+        address: document.getElementById('loc-addr').value,
+        contact: document.getElementById('loc-contact').value,
+        phone:   document.getElementById('loc-phone').value,
+        email:   document.getElementById('loc-email').value,
+        status:  document.getElementById('loc-status').value,
+        notes:   document.getElementById('loc-notes').value,
+      }),
+    });
+    closeModal();
+    toast('Location added!','✅');
+    const res  = await fetch(`${API}?action=get-locations`);
+    const data = await res.json();
+    STATE.locations = data.records || [];
+    renderLocationCards();
+  } catch(e) { toast('Failed to add location.','❌'); }
+}
+
+async function updateLocStatus(recordId, status) {
+  try {
+    await fetch(API + '?action=update-location', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId, status, notes:''}),
+    });
+    toast('Status updated','✅');
+  } catch(e) {}
+}
+
+// ─── BUDGET ──────────────────────────────────────────────────────
+async function renderBudgetSection(el) {
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Budget Tracker</div>
+      <button class="btn-sm btn-gold" onclick="addBudgetRow()">+ Add Category</button>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="budget-table" id="budget-tbl">
+        <thead><tr><th>Category</th><th>Allocated ($)</th><th>Spent ($)</th><th>Remaining</th><th></th></tr></thead>
+        <tbody id="budget-body"><tr><td colspan="5" style="color:var(--muted)">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  `;
+  await loadBudget();
+}
+
+async function loadBudget() {
+  try {
+    const res  = await fetch(`${API}?action=get-budget`);
+    const data = await res.json();
+    STATE.budget = data.records || [];
+  } catch(e) { STATE.budget = []; }
+  const tbody = document.getElementById('budget-body');
+  if (!tbody) return;
+  if (!STATE.budget.length) { tbody.innerHTML = '<tr><td colspan="5" style="color:var(--muted)">No budget categories yet.</td></tr>'; return; }
+  tbody.innerHTML = STATE.budget.map(r => {
+    const f = r.fields;
+    const alloc = f['Allocated'] || 0;
+    const spent = f['Spent'] || 0;
+    const rem   = alloc - spent;
+    return `<tr>
+      <td>${esc(f['Category']||'')}</td>
+      <td><input type="number" value="${alloc}" onblur="saveBudgetRow('${r.id}',this.value,null)" style="width:100px;background:transparent;border:none;color:var(--text);font-family:monospace"></td>
+      <td><input type="number" value="${spent}" onblur="saveBudgetRow('${r.id}',null,this.value)" style="width:100px;background:transparent;border:none;color:var(--text);font-family:monospace"></td>
+      <td style="font-family:monospace;color:${rem<0?'var(--red)':'var(--gold)'}">$${rem.toFixed(2)}</td>
+      <td><button class="btn-sm btn-outline" onclick="deleteBudgetRow('${r.id}')">🗑</button></td>
+    </tr>`;
+  }).join('');
+}
+
+async function saveBudgetRow(recordId, allocated, spent) {
+  const row = STATE.budget.find(r => r.id === recordId);
+  if (!row) return;
+  const finalAlloc = allocated !== null ? allocated : (row.fields['Allocated']||0);
+  const finalSpent = spent !== null ? spent : (row.fields['Spent']||0);
+  try {
+    await fetch(API + '?action=update-budget-row', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId, allocated: finalAlloc, spent: finalSpent}),
+    });
+    toast('Budget updated','✅');
+    loadBudget();
+  } catch(e) { toast('Failed to update.','❌'); }
+}
+
+function addBudgetRow() {
+  showModal('Add Budget Category', `
+    <div class="modal-row"><div class="modal-label">Category Name</div><input id="bg-cat" placeholder="e.g. Insurance"></div>
+    <div class="grid2" style="gap:10px">
+      <div><div class="modal-label">Allocated ($)</div><input id="bg-alloc" type="number" placeholder="0"></div>
+      <div><div class="modal-label">Spent ($)</div><input id="bg-spent" type="number" placeholder="0"></div>
+    </div>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Add', cls:'btn-gold', action:'saveBudgetCategory()'},
+  ]);
+}
+
+async function saveBudgetCategory() {
+  const category = document.getElementById('bg-cat').value.trim();
+  if (!category) { toast('Category name required.','⚠️'); return; }
+  try {
+    await fetch(API + '?action=add-budget-row', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        category,
+        allocated: document.getElementById('bg-alloc').value || 0,
+        spent: document.getElementById('bg-spent').value || 0,
+      }),
+    });
+    closeModal();
+    toast('Category added','✅');
+    loadBudget();
+  } catch(e) { toast('Failed to add category.','❌'); }
+}
+
+async function deleteBudgetRow(recordId) {
+  try {
+    await fetch(API + '?action=delete-budget-row', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId}),
+    });
+    toast('Category deleted','🗑');
+    loadBudget();
+  } catch(e) { toast('Failed to delete.','❌'); }
+}
+
+// ─── AVAILABILITY ────────────────────────────────────────────────
+function renderAvailabilitySection(el) {
+  el.innerHTML = `
+    <div class="section-title" style="margin-bottom:16px">Availability Tracker</div>
+    <div class="card">
+      <div class="card-title">Send Availability Request</div>
+      <div class="modal-row"><div class="modal-label">To (email, comma-separated)</div><input id="avail-to" placeholder="email1@x.com, email2@x.com"></div>
+      <div class="modal-row"><div class="modal-label">Date Range to Check</div><input id="avail-dates" placeholder="e.g. July 5–18, 2026"></div>
+      <div class="modal-row"><div class="modal-label">Message</div><textarea id="avail-msg" rows="3" placeholder="Hi! We're scheduling and need your availability for..."></textarea></div>
+      <button class="btn-sm btn-gold" style="margin-top:8px" onclick="sendAvailRequest()">Send via Email Client</button>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <div class="card-title">Availability Responses</div>
+      <p style="font-size:12px;color:var(--muted)">Responses from crew/cast will appear here as they reply. Track who's available for key dates.</p>
+      <div class="avail-grid" style="margin-top:12px" id="avail-responses">
+        ${CREW_CONTRACTS.slice(0,6).map(c=>`
+          <div class="avail-card">
+            <div class="avail-name">${esc(c.name)}</div>
+            <div class="avail-dates">${esc(c.role)}</div>
+            <div style="margin-top:6px"><span class="tag tag-muted">Pending</span></div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function sendAvailRequest() {
+  const to  = document.getElementById('avail-to').value.trim();
+  const msg = document.getElementById('avail-msg').value.trim();
+  if (!to) { toast('Enter at least one email address.','⚠️'); return; }
+  const subject = encodeURIComponent('Availability Check — The Final Hand');
+  const body    = encodeURIComponent(msg || 'Hi, please reply with your availability for our upcoming shoot dates. Thank you!');
+  window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+}
+
+// ─── OFFER LETTERS ───────────────────────────────────────────────
+function renderOfferLetters(el) {
+  el.innerHTML = `
+    <div class="section-title" style="margin-bottom:16px">Offer Letters</div>
+    <div class="card">
+      <div class="card-title">Generate Offer Letter</div>
+      <div class="grid2" style="gap:10px;margin-bottom:10px">
+        <div><div class="modal-label">To (Full Name)</div><input id="ol-name" placeholder="Actor / Crew name" oninput="previewOffer()"></div>
+        <div><div class="modal-label">Role</div><input id="ol-role" placeholder="e.g. Lead Actor" oninput="previewOffer()"></div>
+      </div>
+      <div><div class="modal-label">Email (to send to)</div><input id="ol-email" placeholder="email@example.com" style="margin-bottom:10px"></div>
+      <div><div class="modal-label">Custom Message (optional)</div><textarea id="ol-custom" rows="2" placeholder="Add any extra details..." oninput="previewOffer()"></textarea></div>
+      <div style="margin-top:14px;margin-bottom:8px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">Preview</div>
+      <div class="offer-preview" id="offer-preview"></div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn-sm btn-gold" onclick="sendOfferEmail()">Send via Email</button>
+        <button class="btn-sm btn-outline" onclick="copyOffer()">Copy Letter</button>
+      </div>
+    </div>
+  `;
+  previewOffer();
+}
+
+function previewOffer() {
+  const name   = document.getElementById('ol-name')?.value || '[Name]';
+  const role   = document.getElementById('ol-role')?.value || '[Role]';
+  const custom = document.getElementById('ol-custom')?.value || '';
+  const text   = `Dear ${name},
+
+We are thrilled to officially offer you the role of ${role} on our production of "${STATE.filmName}" by BLEUSKM Studios.
+
+Your talent and dedication have made you the right fit for this project, and we look forward to creating something powerful together.
+
+${custom ? custom + '\n\n' : ''}Please find your crew agreement attached. Once signed and returned, your position will be confirmed.
+
+Shoot dates and call sheets will follow. If you have any questions, do not hesitate to reach out.
+
+Welcome to the team.
+
+With gratitude,
+Zaria
+Director / Writer
+BLEUSKM Studios`;
+  const el = document.getElementById('offer-preview');
+  if (el) el.textContent = text;
+}
+
+function copyOffer() {
+  const text = document.getElementById('offer-preview')?.textContent;
+  if (text) navigator.clipboard.writeText(text).then(() => toast('Letter copied!','📋'));
+}
+
+function sendOfferEmail() {
+  const email = document.getElementById('ol-email')?.value.trim();
+  const name  = document.getElementById('ol-name')?.value || '';
+  const text  = document.getElementById('offer-preview')?.textContent || '';
+  if (!email) { toast('Enter recipient email.','⚠️'); return; }
+  const subj = encodeURIComponent(`Official Offer — ${STATE.filmName} | BLEUSKM Studios`);
+  const body = encodeURIComponent(text);
+  window.location.href = `mailto:${email}?subject=${subj}&body=${body}`;
+}
+
+// ════════════════════════════════════════════════════════════════
+// DP SECTIONS
+// ════════════════════════════════════════════════════════════════
+SECTIONS.dp = {
+  overview: (el) => { el.innerHTML = deptOverview('DP / Camera', 'NOW – JULY 3: Gather references + understand tone', 'Finalize shot list + lighting plan by July 18.'); },
+  shotlist:  (el) => renderFileSection(el, 'shotlist',   'Shot List',          '.pdf,.xlsx', 'Shot lists pushed here from Director will appear below.'),
+  references:(el) => renderFileSection(el, 'references', 'References',         'image/*,.pdf'),
+  camera:    (el) => renderNotesSection(el, 'DP',        'Camera Language'),
+  lighting:  (el) => renderNotesSection(el, 'DP',        'Lighting Direction'),
+  mood:      (el) => renderFileSection(el, 'mood',       'Mood Images',        'image/*'),
+  script:    (el) => renderFileSection(el, 'script',     'Script',             '.pdf', 'Scripts pushed here from Director.'),
+  timeline:  (el) => renderTimeline(el, 'dp'),
+};
+
+// ════════════════════════════════════════════════════════════════
+// AD SECTIONS
+// ════════════════════════════════════════════════════════════════
+SECTIONS.ad = {
+  overview:   (el) => { el.innerHTML = deptOverview('Assistant Director', 'NOW – JULY 3: Observe casting, understand script + structure', 'Build call sheets + shoot schedule by July 11.'); },
+  schedule:   (el) => renderFileSection(el, 'schedule',   'Schedule',    '.pdf,.xlsx'),
+  callsheets: (el) => renderFileSection(el, 'callsheets', 'Call Sheets', '.pdf'),
+  scenes:     (el) => renderFileSection(el, 'scenes',     'Scene Order', '.pdf'),
+  shootdays:  (el) => renderNotesSection(el, 'AD', 'Shoot Days'),
+  timing:     (el) => renderNotesSection(el, 'AD', 'Timing Notes'),
+  script:     (el) => renderFileSection(el, 'script',     'Script',      '.pdf', 'Scripts pushed from Director appear here.'),
+  timeline:   (el) => renderTimeline(el, 'ad'),
+};
+
+// ════════════════════════════════════════════════════════════════
+// SCRIPT SUPERVISOR SECTIONS
+// ════════════════════════════════════════════════════════════════
+SECTIONS.scriptsupervisor = {
+  overview:   (el) => { el.innerHTML = deptOverview('Script Supervisor', 'NOW – JULY 3: Read script deeply, begin notes', 'Track everything on shoot day — continuity is the mission.'); },
+  script:     (el) => renderFileSection(el, 'script',    'Script',            '.pdf', 'Scripts pushed from Director appear here.'),
+  scenes:     (el) => renderSceneBreakdown(el),
+  continuity: (el) => renderContinuityNotes(el),
+  takelog:    (el) => renderTakeLog(el),
+  timeline:   (el) => renderTimeline(el, 'scriptsupervisor'),
+};
+
+async function renderContinuityNotes(el) {
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Continuity Notes</div>
+      <button class="btn-sm btn-gold" onclick="addContinuityNote()">+ Add Note</button>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Track actor movements, hand placement, props, wardrobe consistency, and timing. Visible to Director and Script Supervisor.</p>
+    <div id="continuity-list"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
+  `;
+  await loadContinuity();
+}
+
+async function loadContinuity() {
+  try {
+    const res  = await fetch(`${API}?action=get-continuity`);
+    const data = await res.json();
+    STATE.continuity = data.records || [];
+  } catch(e) { STATE.continuity = []; }
+  const el = document.getElementById('continuity-list');
+  if (!el) return;
+  el.innerHTML = STATE.continuity.length ? STATE.continuity.map(r => {
+    const f = r.fields;
+    return `
+      <div class="note-card">
+        <div class="note-meta">Scene ${esc(f['Scene']||'')} · Take ${esc(f['Take']||'')} · ${esc(f['Category']||'')} ${f['Created By']?'· '+esc(f['Created By']):''}</div>
+        <div class="note-content">${esc(f['Note']||'')}</div>
+        <button class="btn-sm btn-outline" style="margin-top:8px" onclick="deleteContinuity('${r.id}')">🗑 Delete</button>
+      </div>
+    `;
+  }).join('') : '<p style="color:var(--muted);font-size:13px">No continuity notes yet.</p>';
+}
+
+async function deleteContinuity(recordId) {
+  try {
+    await fetch(API + '?action=delete-continuity', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId}),
+    });
+    toast('Note deleted','🗑');
+    loadContinuity();
+  } catch(e) { toast('Failed to delete.','❌'); }
+}
+
+function addContinuityNote() {
+  showModal('Add Continuity Note', `
+    <div class="grid2" style="gap:10px">
+      <div><div class="modal-label">Scene #</div><input id="cn-scene" placeholder="e.g. 3"></div>
+      <div><div class="modal-label">Take #</div><input id="cn-take" placeholder="e.g. 2"></div>
+    </div>
+    <div class="modal-row" style="margin-top:10px"><div class="modal-label">Category</div>
+      <select id="cn-cat">
+        <option>Dialogue</option><option>Actor Movement</option><option>Hand Placement</option>
+        <option>Props</option><option>Wardrobe</option><option>Timing</option><option>General</option>
+      </select>
+    </div>
+    <div class="modal-row"><div class="modal-label">Note</div><textarea id="cn-note" rows="4" placeholder="Describe what to track..."></textarea></div>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Save Note', cls:'btn-gold', action:'saveContinuityNote()'},
+  ]);
+}
+
+async function saveContinuityNote() {
+  try {
+    await fetch(API + '?action=add-continuity', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        scene:     document.getElementById('cn-scene').value,
+        take:      document.getElementById('cn-take').value,
+        category:  document.getElementById('cn-cat').value,
+        note:      document.getElementById('cn-note').value,
+        createdBy: DEPT_LABELS[STATE.realDept] || DEPT_LABELS[STATE.dept],
+      }),
+    });
+    closeModal();
+    navigate(STATE.section);
+    toast('Note saved','✅');
+  } catch(e) { toast('Failed to save note.','❌'); }
+}
+
+async function renderTakeLog(el) {
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Take Log</div>
+      <button class="btn-sm btn-gold" onclick="addTake()">+ Log Take</button>
+    </div>
+    <div style="overflow-x:auto">
+      <div style="display:grid;grid-template-columns:60px 60px 1fr 80px 40px;gap:10px;padding:8px 14px;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);border-bottom:1px solid var(--border)">
+        <div>Scene</div><div>Take</div><div>Notes</div><div>Best?</div><div></div>
+      </div>
+      <div id="take-rows"><p style="padding:16px;color:var(--muted);font-size:13px">Loading...</p></div>
+    </div>
+  `;
+  await loadTakes();
+}
+
+async function loadTakes() {
+  try {
+    const res  = await fetch(`${API}?action=get-takelog`);
+    const data = await res.json();
+    STATE.takes = data.records || [];
+  } catch(e) { STATE.takes = []; }
+  const el = document.getElementById('take-rows');
+  if (!el) return;
+  el.innerHTML = STATE.takes.length ? STATE.takes.map(r => {
+    const f = r.fields;
+    return `
+      <div class="take-row" style="grid-template-columns:60px 60px 1fr 80px 40px">
+        <div class="take-cell">${esc(f['Scene']||'')}</div>
+        <div class="take-cell">${esc(f['Take Number']||'')}</div>
+        <div class="take-cell">${esc(f['Notes']||'')}</div>
+        <div class="take-cell">${f['Best Take'] ? '<span class="tag tag-gold">✓ Best</span>' : ''}</div>
+        <div class="take-cell"><button class="btn-sm btn-outline" onclick="deleteTake('${r.id}')">🗑</button></div>
+      </div>
+    `;
+  }).join('') : '<p style="padding:16px;color:var(--muted);font-size:13px">No takes logged yet.</p>';
+}
+
+async function deleteTake(recordId) {
+  try {
+    await fetch(API + '?action=delete-take', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId}),
+    });
+    toast('Take deleted','🗑');
+    loadTakes();
+  } catch(e) { toast('Failed to delete.','❌'); }
+}
+
+function addTake() {
+  showModal('Log Take', `
+    <div class="grid2" style="gap:10px">
+      <div><div class="modal-label">Scene #</div><input id="tk-scene" placeholder="3"></div>
+      <div><div class="modal-label">Take #</div><input id="tk-take" placeholder="1"></div>
+    </div>
+    <div class="modal-row" style="margin-top:10px"><div class="modal-label">Notes</div><textarea id="tk-notes" rows="3" placeholder="Dialogue changes, blocking, props..."></textarea></div>
+    <div style="margin-top:10px"><label class="dept-check"><input type="checkbox" id="tk-best"> Mark as Best Take</label></div>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Log Take', cls:'btn-gold', action:'saveTake()'},
+  ]);
+}
+
+async function saveTake() {
+  try {
+    await fetch(API + '?action=add-take', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        scene: document.getElementById('tk-scene').value,
+        take:  document.getElementById('tk-take').value,
+        notes: document.getElementById('tk-notes').value,
+        best:  document.getElementById('tk-best').checked,
+      }),
+    });
+    closeModal();
+    navigate('takelog');
+    toast('Take logged','✅');
+  } catch(e) { toast('Failed to log take.','❌'); }
+}
+
+function renderSceneBreakdown(el) {
+  renderScenesSection(el, true);
+}
+
+async function renderScenesSection(el, allowEdit) {
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Scene Breakdown</div>
+      ${allowEdit ? '<button class="btn-sm btn-gold" onclick="addSceneRow()">+ Add Scene</button>' : ''}
+    </div>
+    <div style="overflow-x:auto">
+      <table class="scene-table">
+        <thead><tr><th>#</th><th>Location</th><th>Characters</th><th>Day/Night</th><th>Key Action</th>${allowEdit?'<th></th>':''}</tr></thead>
+        <tbody id="scene-body"><tr><td colspan="6" style="color:var(--muted)">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  `;
+  await loadScenes(allowEdit);
+}
+
+async function loadScenes(allowEdit) {
+  try {
+    const res  = await fetch(`${API}?action=get-scenes`);
+    const data = await res.json();
+    STATE.scenes = data.records || [];
+  } catch(e) { STATE.scenes = []; }
+  const tbody = document.getElementById('scene-body');
+  if (!tbody) return;
+  if (!STATE.scenes.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted)">No scenes added yet.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = STATE.scenes.map(r => {
+    const f = r.fields;
+    return `<tr>
+      <td>${esc(f['Scene Number']||'')}</td>
+      <td>${esc(f['Location']||'')}</td>
+      <td>${esc(f['Characters']||'')}</td>
+      <td><span class="tag ${f['Day or Night']==='Day'?'tag-gold':'tag-blue'}">${esc(f['Day or Night']||'')}</span></td>
+      <td>${esc(f['Key Action']||'')}</td>
+      ${allowEdit ? `<td><button class="btn-sm btn-outline" onclick="deleteScene('${r.id}',${allowEdit})">🗑</button></td>` : ''}
+    </tr>`;
+  }).join('');
+}
+
+async function deleteScene(recordId, allowEdit) {
+  try {
+    await fetch(API + '?action=delete-scene', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId}),
+    });
+    toast('Scene deleted','🗑');
+    loadScenes(allowEdit);
+  } catch(e) { toast('Failed to delete scene.','❌'); }
+}
+
+// ════════════════════════════════════════════════════════════════
+// SOUND SECTIONS
+// ════════════════════════════════════════════════════════════════
+SECTIONS.sound = {
+  overview:    (el) => { el.innerHTML = deptOverview('Sound', 'NOW – JULY 3: Study script for key sound moments', 'Track environment tone and silence cues on shoot day.'); },
+  soundnotes:  (el) => renderNotesSection(el, 'Sound', 'Sound Notes'),
+  silencecues: (el) => renderNotesSection(el, 'Sound', 'Silence Cues', 'Mark scenes that require silence — no background music, no extra noise.'),
+  environment: (el) => renderNotesSection(el, 'Sound', 'Environment Tone', 'Describe the ambient sound texture for each location.'),
+  moments:     (el) => renderKeyMoments(el),
+  script:      (el) => renderFileSection(el, 'script', 'Script', '.pdf', 'Scripts pushed from Director appear here.'),
+  timeline:    (el) => renderTimeline(el, 'sound'),
+};
+
+async function renderKeyMoments(el) {
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Key Sound Moments</div>
+      <button class="btn-sm btn-gold" onclick="addSoundMoment()">+ Add Moment</button>
+    </div>
+    <div id="moments-list"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
+  `;
+  await loadSoundMoments();
+}
+
+async function loadSoundMoments() {
+  try {
+    const res  = await fetch(`${API}?action=get-soundmoments`);
+    const data = await res.json();
+    STATE.moments = data.records || [];
+  } catch(e) { STATE.moments = []; }
+  const el = document.getElementById('moments-list');
+  if (!el) return;
+  el.innerHTML = STATE.moments.length ? STATE.moments.map(r => `
+    <div class="card">
+      <div class="card-title">${esc(r.fields['Label']||'')}</div>
+      <div style="font-size:12px;color:var(--muted)">${esc(r.fields['Note']||'')}</div>
+      <button class="btn-sm btn-outline" style="margin-top:8px" onclick="deleteSoundMoment('${r.id}')">🗑 Delete</button>
+    </div>
+  `).join('') : '<p style="color:var(--muted);font-size:13px">No moments added yet.</p>';
+}
+
+function addSoundMoment() {
+  showModal('Add Key Sound Moment', `
+    <div class="modal-row"><div class="modal-label">Sound Moment</div><input id="sm-label" placeholder="e.g. Door slam"></div>
+    <div class="modal-row"><div class="modal-label">Notes</div><textarea id="sm-note" rows="3" placeholder="What to capture, continuity notes..."></textarea></div>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Add', cls:'btn-gold', action:'saveSoundMoment()'},
+  ]);
+}
+
+async function saveSoundMoment() {
+  try {
+    await fetch(API + '?action=add-soundmoment', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({label: document.getElementById('sm-label').value, note: document.getElementById('sm-note').value}),
+    });
+    closeModal();
+    toast('Moment added','✅');
+    loadSoundMoments();
+  } catch(e) { toast('Failed to add moment.','❌'); }
+}
+
+async function deleteSoundMoment(recordId) {
+  try {
+    await fetch(API + '?action=delete-soundmoment', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId}),
+    });
+    toast('Moment deleted','🗑');
+    loadSoundMoments();
+  } catch(e) { toast('Failed to delete.','❌'); }
+}
+
+// ════════════════════════════════════════════════════════════════
+// SHARED HELPERS
+// ════════════════════════════════════════════════════════════════
+function deptOverview(dept, phase, focus) {
+  return `
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-title">Current Phase</div>
+      <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:4px">${esc(phase)}</div>
+      <div style="font-size:12px;color:var(--muted)">${esc(focus)}</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Notes from Director</div>
+      <div id="director-notes-preview"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
+    </div>
+  `;
+}
+
+// Load director notes preview for dept overviews
+async function loadDirectorNotesPreview() {
+  const el = document.getElementById('director-notes-preview');
+  if (!el) return;
+  try {
+    const res  = await fetch(`${API}?action=get-notes&dept=${encodeURIComponent(DEPT_LABELS[STATE.dept])}`);
+    const data = await res.json();
+    const recs = data.records || [];
+    el.innerHTML = recs.length
+      ? recs.slice(0,3).map(r=>`
+          <div class="note-card">
+            <div class="note-meta">${esc(r.fields['Author']||'Director')} · ${esc(r.fields['Title']||'')}</div>
+            <div class="note-content">${esc(r.fields['Note']||'')}</div>
+          </div>`).join('')
+      : '<p style="color:var(--muted);font-size:13px">No messages yet.</p>';
+  } catch(e) { if(el) el.innerHTML = '<p style="color:var(--muted);font-size:13px">Could not load notes.</p>'; }
+}
+
+// Auto-load director notes after overview renders
+const _origNav = navigate;
+// patch overview to load notes
+const _overrideNavigate = navigate;
+
+function renderCrewSection(el) {
+  const canEdit = STATE.realDept === 'director' || STATE.realDept === 'producer';
+  const liveCrew = STATE.crew.map(r => {
+    const f = r.fields;
+    return {
+      id: r.id,
+      name:  f['Name'] || '',
+      role:  (f['Preferred role by Director']||'').toString().replace(/,/g,', ') || f['Role'] || '',
+      email: f['Email'] || '',
+    };
+  });
+  const list = liveCrew.length ? liveCrew : CREW_CONTRACTS;
+
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Crew + Cast</div>
+      ${canEdit ? '<button class="btn-sm btn-gold" onclick="showAddCrew()">+ Add Crew</button>' : ''}
+    </div>
+    ${list.map(c => {
+      const initials = c.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+      return `
+        <div class="crew-card">
+          <div class="crew-avatar">${initials}</div>
+          <div class="crew-info">
+            <div class="crew-name">${esc(c.name)}</div>
+            <div class="crew-role">${esc(c.role)}</div>
+            <div class="crew-email">${esc(c.email)}</div>
+          </div>
+          <div class="crew-actions">
+            ${c.email ? `<a href="mailto:${esc(c.email)}" class="btn-sm btn-outline">Email</a>` : ''}
+            <a href="${contractLink(c.name,c.email,c.role)}" target="_blank" class="btn-sm btn-gold">Contract</a>
+            ${canEdit && c.id ? `<button class="btn-sm btn-outline" onclick="deleteCrew('${c.id}')">🗑</button>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('')}
+  `;
+}
+
+function showAddCrew() {
+  showModal('Add Crew Member', `
+    <div class="modal-row"><div class="modal-label">Name *</div><input id="cr-name" placeholder="Full name"></div>
+    <div class="modal-row"><div class="modal-label">Email *</div><input id="cr-email" type="email" placeholder="email@example.com"></div>
+    <div class="modal-row"><div class="modal-label">Role</div><input id="cr-role" placeholder="e.g. Boom Operator"></div>
+    <div class="modal-row"><div class="modal-label">Phone</div><input id="cr-phone" placeholder="(xxx) xxx-xxxx"></div>
+    <p style="font-size:11px;color:var(--muted)">This adds them as CORE crew — they'll appear across all dashboards.</p>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Add Crew', cls:'btn-gold', action:'saveCrew()'},
+  ]);
+}
+
+async function saveCrew() {
+  const name  = document.getElementById('cr-name').value.trim();
+  const email = document.getElementById('cr-email').value.trim();
+  if (!name || !email) { toast('Name and email required.','⚠️'); return; }
+  try {
+    await fetch(API + '?action=add-crew', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        name, email,
+        role:  document.getElementById('cr-role').value,
+        phone: document.getElementById('cr-phone').value,
+      }),
+    });
+    closeModal();
+    toast('Crew member added','✅');
+    await loadData();
+    navigate(STATE.section);
+  } catch(e) { toast('Failed to add crew.','❌'); }
+}
+
+async function deleteCrew(recordId) {
+  try {
+    await fetch(API + '?action=delete-crew', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId}),
+    });
+    toast('Crew member removed','🗑');
+    await loadData();
+    navigate(STATE.section);
+  } catch(e) { toast('Failed to remove crew.','❌'); }
+}
+
+// ─── CASTING DATABASE ────────────────────────────────────────────
+async function renderCastingDatabase(el) {
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Casting Database — Callbacks</div>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Everyone marked "Callback" in Casting Submissions. Review self-tapes, leave notes for each other, and mark final status.</p>
+    <div id="casting-list"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
+  `;
+  await loadCastingDb();
+}
+
+async function loadCastingDb() {
+  try {
+    const res  = await fetch(`${API}?action=get-casting`);
+    const data = await res.json();
+    STATE.casting = data.records || [];
+  } catch(e) { STATE.casting = []; }
+  const el = document.getElementById('casting-list');
+  if (!el) return;
+  if (!STATE.casting.length) { el.innerHTML = '<p style="color:var(--muted);font-size:13px">No callback candidates right now.</p>'; return; }
+
+  const castColors = {'Confirmed':'tag-green','Not Cast':'tag-red','Pending':'tag-muted'};
+  el.innerHTML = STATE.casting.map(r => {
+    const f = r.fields;
+    const castStatus = f['Cast Status'] || 'Pending';
+    const notesLines = (f['Notes']||'').split('\n').filter(Boolean);
+    return `
+      <div class="card" style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+          <div>
+            <div class="card-title" style="margin-bottom:2px">${esc(f['Name']||'Unknown')}</div>
+            <div style="font-size:11px;color:var(--gold)">${esc(f['Role']||f['To Role']||'')}</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px">${esc(f['Email']||'')} ${f['Phone']?'· '+esc(f['Phone']):''}</div>
+          </div>
+          <span class="tag ${castColors[castStatus]||'tag-muted'}">${esc(castStatus)}</span>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+          ${f['Self Tape URL'] ? `<a href="${esc(f['Self Tape URL'])}" target="_blank" class="btn-sm btn-outline">View Self-Tape</a>` : ''}
+          ${f['Email'] ? `<a href="mailto:${esc(f['Email'])}" class="btn-sm btn-outline">Email</a>` : ''}
+          <button class="btn-sm btn-gold" onclick="updateCastStatus('${r.id}','Confirmed')">Confirm Cast</button>
+          <button class="btn-sm btn-outline" onclick="updateCastStatus('${r.id}','Not Cast')">Not Cast</button>
+          <button class="btn-sm btn-outline" onclick="updateCastStatus('${r.id}','Pending')">Reset to Pending</button>
+        </div>
+        <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:10px">
+          <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Notes</div>
+          ${notesLines.length ? notesLines.map(l=>`<div style="font-size:12px;color:var(--text);margin-bottom:4px">${esc(l)}</div>`).join('') : '<div style="font-size:12px;color:var(--muted)">No notes yet.</div>'}
+          <div style="display:flex;gap:6px;margin-top:8px">
+            <input id="cn-input-${r.id}" placeholder="Add a note for the team..." style="flex:1">
+            <button class="btn-sm btn-gold" onclick="addCastingNote('${r.id}')">Add</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function updateCastStatus(recordId, castStatus) {
+  try {
+    await fetch(API + '?action=update-casting-status', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId, castStatus}),
+    });
+    toast(`Marked ${castStatus}`,'✅');
+    loadCastingDb();
+  } catch(e) { toast('Failed to update status.','❌'); }
+}
+
+async function addCastingNote(recordId) {
+  const input = document.getElementById(`cn-input-${recordId}`);
+  const note = input?.value.trim();
+  if (!note) { toast('Write a note first.','⚠️'); return; }
+  try {
+    await fetch(API + '?action=add-casting-note', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId, note, author: DEPT_LABELS[STATE.realDept] || DEPT_LABELS[STATE.dept]}),
+    });
+    toast('Note added','✅');
+    loadCastingDb();
+  } catch(e) { toast('Failed to add note.','❌'); }
+}
+
+// ─── MANAGE DEPARTMENTS (Director view-as) ────────────────────────
+function renderManageDepartments(el) {
+  const depts = [
+    {key:'producer', label:'Producer', icon:'🎬'},
+    {key:'dp', label:'DP / Camera', icon:'📷'},
+    {key:'ad', label:'Assistant Director', icon:'🎭'},
+    {key:'scriptsupervisor', label:'Script Supervisor', icon:'📝'},
+    {key:'sound', label:'Sound', icon:'🎵'},
+  ];
+  el.innerHTML = `
+    <div class="section-title" style="margin-bottom:16px">Manage Departments</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Open any department's dashboard directly to upload files, add notes, or push something into their workspace. You'll see exactly what they see.</p>
+    <div class="grid2">
+      ${depts.map(d => `
+        <div class="card">
+          <div class="card-title">${d.icon} ${d.label}</div>
+          <button class="btn-sm btn-gold" style="margin-top:8px" onclick="switchToDept('${d.key}')">Open ${d.label} Dashboard</button>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+async function switchToDept(deptKey) {
+  STATE.dept = deptKey;
+  document.getElementById('sb-dept').textContent = DEPT_LABELS[deptKey];
+  document.getElementById('tb-dept').textContent = DEPT_LABELS[deptKey];
+  buildNav();
+  showReturnBanner();
+  await loadData();
+  navigate('overview');
+}
+
+async function returnToDirector() {
+  STATE.dept = STATE.realDept;
+  document.getElementById('sb-dept').textContent = DEPT_LABELS[STATE.dept];
+  document.getElementById('tb-dept').textContent = DEPT_LABELS[STATE.dept];
+  buildNav();
+  document.getElementById('topbar-actions').innerHTML = '';
+  await loadData();
+  navigate('overview');
+}
+
+function showReturnBanner() {
+  document.getElementById('topbar-actions').innerHTML = `
+    <span style="font-size:11px;color:var(--muted);margin-right:8px">Viewing as Director</span>
+    <button class="btn-sm btn-red" onclick="returnToDirector()">← Return to My Dashboard</button>
+  `;
+}
+
+// ─── PRODUCTION SETTINGS ──────────────────────────────────────────
+function renderProductionSettings(el) {
+  el.innerHTML = `
+    <div class="section-title" style="margin-bottom:16px">Production Settings</div>
+    <div class="card">
+      <div class="card-title">Film Name</div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:10px">This dashboard can be reused for every film you produce. Changing this updates contract links and offer letters for everyone.</p>
+      <div style="display:flex;gap:8px">
+        <input id="set-film-name" value="${esc(STATE.filmName)}" placeholder="e.g. The Final Hand">
+        <button class="btn-sm btn-gold" onclick="saveFilmName()">Save</button>
+      </div>
+    </div>
+  `;
+}
+
+async function saveFilmName() {
+  const name = document.getElementById('set-film-name').value.trim();
+  if (!name) { toast('Film name required.','⚠️'); return; }
+  try {
+    await fetch(API + '?action=update-setting', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({name:'Current Film', value:name}),
+    });
+    STATE.filmName = name;
+    document.getElementById('sb-film').textContent = name;
+    toast('Film name updated for everyone','✅');
+  } catch(e) { toast('Failed to save.','❌'); }
+}
+
+function renderNotesSection(el, audience, title, hint='') {
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">${title}</div>
+      <button class="btn-sm btn-gold" onclick="showAddNote('${audience}','${title}')">+ Add Note</button>
+    </div>
+    ${hint ? `<p style="font-size:12px;color:var(--muted);margin-bottom:14px">${hint}</p>` : ''}
+    <div id="notes-list-${audience.replace(/\s/g,'')}"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
+  `;
+  loadNotes(audience);
+}
+
+async function loadNotes(audience) {
+  const safeKey = audience.replace(/\s/g,'');
+  const el = document.getElementById(`notes-list-${safeKey}`);
+  if (!el) return;
+  try {
+    const res  = await fetch(`${API}?action=get-notes&dept=${encodeURIComponent(audience)}`);
+    const data = await res.json();
+    const recs = data.records || [];
+    el.innerHTML = recs.length
+      ? recs.map(r=>`
+          <div class="note-card">
+            <div class="note-meta">${esc(r.fields['Author']||'')} · ${esc(r.fields['Title']||'')}</div>
+            <div class="note-content">${esc(r.fields['Note']||'')}</div>
+            <button class="btn-sm btn-outline" style="margin-top:8px" onclick="deleteNote('${r.id}','${audience}')">🗑 Delete</button>
+          </div>`).join('')
+      : '<p style="color:var(--muted);font-size:13px">No notes yet.</p>';
+  } catch(e) { if(el) el.innerHTML = '<p style="color:var(--muted);font-size:13px">Could not load notes.</p>'; }
+}
+
+async function deleteNote(recordId, audience) {
+  try {
+    await fetch(API + '?action=delete-note', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId}),
+    });
+    toast('Note deleted','🗑');
+    loadNotes(audience);
+  } catch(e) { toast('Failed to delete note.','❌'); }
+}
+
+function showAddNote(audience, title) {
+  showModal(`Add ${title} Note`, `
+    <div class="modal-row"><div class="modal-label">Title</div><input id="note-title" placeholder="Note title"></div>
+    <div class="modal-row"><div class="modal-label">Note</div><textarea id="note-content" rows="5" placeholder="Write your note here..."></textarea></div>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Save Note', cls:'btn-gold', action:`doAddNote('${audience}')`},
+  ]);
+}
+
+async function doAddNote(audience) {
+  const title   = document.getElementById('note-title').value.trim();
+  const content = document.getElementById('note-content').value.trim();
+  if (!content) { toast('Please write a note.','⚠️'); return; }
+  try {
+    await fetch(API + '?action=add-note', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({title: title||'Note', content, author: DEPT_LABELS[STATE.realDept] || DEPT_LABELS[STATE.dept], audience}),
+    });
+    closeModal();
+    toast('Note saved','✅');
+    loadNotes(audience);
+  } catch(e) { toast('Failed to save note.','❌'); }
+}
+
+// Generic fallback section
+function genericSection(sectionId, el) {
+  el.innerHTML = `<div class="card"><div class="card-title" style="text-transform:capitalize">${sectionId}</div><p style="color:var(--muted);font-size:13px">This section is being set up.</p></div>`;
+}
+
+function addSceneRow() {
+  showModal('Add Scene', `
+    <div class="modal-row"><div class="modal-label">Scene #</div><input id="sc-num" placeholder="5"></div>
+    <div class="modal-row"><div class="modal-label">Location</div><input id="sc-loc" placeholder="e.g. Casino Bar"></div>
+    <div class="modal-row"><div class="modal-label">Characters</div><input id="sc-chars" placeholder="e.g. Marcus, Delia"></div>
+    <div class="modal-row"><div class="modal-label">Day / Night</div>
+      <select id="sc-dn"><option>Day</option><option selected>Night</option></select>
+    </div>
+    <div class="modal-row"><div class="modal-label">Key Action</div><textarea id="sc-action" rows="2"></textarea></div>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Add Scene', cls:'btn-gold', action:'saveScene()'},
+  ]);
+}
+
+async function saveScene() {
+  try {
+    await fetch(API + '?action=add-scene', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        num:    document.getElementById('sc-num').value,
+        loc:    document.getElementById('sc-loc').value,
+        chars:  document.getElementById('sc-chars').value,
+        dn:     document.getElementById('sc-dn').value,
+        action: document.getElementById('sc-action').value,
+      }),
+    });
+    closeModal();
+    navigate(STATE.section);
+    toast('Scene added','✅');
+  } catch(e) { toast('Failed to add scene.','❌'); }
+}
+
+function useTemplate(typeName) {
+  // Switch to Send Contracts tab and preselect this contract type
+  const sendTab = document.querySelector('.tabs .tab');
+  if (sendTab) switchTab(sendTab, 'tab-send');
+  const typeSelect = document.getElementById('ce-type');
+  if (typeSelect) typeSelect.value = typeName;
+  renderExtraFields();
+  toast(`Ready to send a ${typeName} — fill in name/email above`, '📋');
+  document.getElementById('ce-name')?.focus();
+}
+
+// ════════════════════════════════════════════════════════════════
+// MODAL + TOAST HELPERS
+// ════════════════════════════════════════════════════════════════
+function showModal(title, body, actions=[]) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML = body;
+  document.getElementById('modal-actions').innerHTML = actions.map(a =>
+    `<button class="btn-sm ${a.cls}" onclick="${a.action}">${a.label}</button>`
+  ).join('');
+  document.getElementById('modal').classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.add('hidden');
+}
+
+let _toastTimer;
+function toast(msg, icon='ℹ️') {
+  const el = document.getElementById('toast');
+  el.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+  el.classList.remove('hidden');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.add('hidden'), 3000);
+}
+
+function switchTab(tabEl, panelId) {
+  tabEl.closest('.tabs').querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  tabEl.classList.add('active');
+  const container = tabEl.closest('.tabs').nextElementSibling;
+  let panel = container;
+  // Find all tab panels as siblings
+  let el = tabEl.closest('.tabs').nextElementSibling;
+  while(el) { el.classList.remove('active'); el = el.nextElementSibling; }
+  document.getElementById(panelId)?.classList.add('active');
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function formatDate(d) {
+  if (!d) return '';
+  try { return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric'}); } catch(e) { return d; }
+}
+
+// After overview renders, load director notes
+const _navOrig = navigate;
+window.navigate = function(sectionId) {
+  _navOrig(sectionId);
+  if (sectionId === 'overview') {
+    setTimeout(loadDirectorNotesPreview, 100);
+  }
+};
+// Re-bind
+(function reBindNav(){
+  const nav = NAV[STATE.dept]||[];
+  // nav items already reference window.navigate indirectly via onclick — fine
+})();
+</script>
+</body>
+</html>
