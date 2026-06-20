@@ -111,6 +111,17 @@ module.exports = async (req, res) => {
   body = body || {};
 
   try {
+    if (action === 'verify') {
+      if (!ZOHO_PASS) return res.status(200).json({ ok: false, error: 'Zoho not configured (missing ZOHO_APP_PASSWORD).' });
+      try {
+        const transporter = getTransporter();
+        await transporter.verify();
+        return res.status(200).json({ ok: true, message: 'SMTP auth OK', user: ZOHO_USER });
+      } catch (e) {
+        return res.status(200).json({ ok: false, error: e.message, code: e.code, response: e.response, responseCode: e.responseCode });
+      }
+    }
+
     if (action === 'send') {
       if (!ZOHO_PASS) return res.status(500).json({ ok: false, error: 'Zoho not configured (missing ZOHO_APP_PASSWORD).' });
       const { fromAlias = 'studio', to, bcc, subject, html, text, sentBy } = body;
@@ -149,6 +160,13 @@ module.exports = async (req, res) => {
 
     return res.status(400).json({ ok: false, error: 'Unknown action' });
   } catch (err) {
-    return res.status(500).json({ ok: false, error: (err && err.message) || 'Server error' });
+    return res.status(200).json({
+      ok: false,
+      error: (err && err.message) || 'Server error',
+      code: err && err.code,
+      response: err && err.response,
+      responseCode: err && err.responseCode,
+      authenticationFailed: err && err.authenticationFailed,
+    });
   }
 };
