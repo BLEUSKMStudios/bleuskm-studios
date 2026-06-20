@@ -22,6 +22,7 @@ const TABLES = {
   pollresponses:'tbll27h1bqQh02KMJ',
   characternotes:'tbliAd7h6AVuP9ej6',
   tasks:        'tbl7TxX0xPNI7YxZ9',
+  pushednotes:  'tblkr4cvu7qCbCD0e',
 };
 
 const FILES_ATTACHMENT_FIELD = 'fldlZcbMXEFM0AfQH'; // Portal Files → Attachment (multipleAttachments)
@@ -621,6 +622,36 @@ async function netlifyHandler(event) {
 
   if (action === 'delete-task') {
     const data = await airtable('DELETE', TABLES.tasks, null, `?records[]=${body.recordId}`);
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  // ── PUSHED NOTES (cross-department / cross-person push) ─────────────────
+  if (action === 'push-note') {
+    const data = await airtable('POST', TABLES.pushednotes, {
+      records: [{
+        fields: {
+          'Title':           body.title || 'Note',
+          'Content':         body.content || '',
+          'From Department': body.fromDept || '',
+          'From Person':     body.fromPerson || '',
+          'To Department':   body.toDept || 'all',
+          'To Person':       body.toPerson || '',
+          'Created':         new Date().toISOString(),
+        },
+      }],
+    });
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  if (action === 'get-pushed-notes') {
+    const dept = params.dept || '';
+    const filter = encodeURIComponent(`OR({To Department}="${dept}",{To Department}="all")`);
+    const data = await airtable('GET', TABLES.pushednotes, null, `?filterByFormula=${filter}&sort[0][field]=Created&sort[0][direction]=desc&maxRecords=200`);
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  if (action === 'delete-pushed-note') {
+    const data = await airtable('DELETE', TABLES.pushednotes, null, `?records[]=${body.recordId}`);
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
