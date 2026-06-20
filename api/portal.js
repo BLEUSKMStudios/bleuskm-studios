@@ -20,6 +20,8 @@ const TABLES = {
   settings:   'tbl8Z3kwQmrnga4sU',
 };
 
+const FILES_ATTACHMENT_FIELD = 'fldlZcbMXEFM0AfQH'; // Portal Files → Attachment (multipleAttachments)
+
 const USER_MAP = {
   // Director
   'zaria':     { password: 'bleuskm2026', department: 'director',        name: 'Zaria' },
@@ -112,11 +114,12 @@ async function netlifyHandler(event) {
   }
 
   if (action === 'add-file') {
-    const data = await airtable('POST', TABLES.files, {
+    // Create the record first so we have a recordId for the attachment upload.
+    const created = await airtable('POST', TABLES.files, {
       records: [{
         fields: {
           'Name':            body.name || 'Untitled',
-          'File URL':        body.url || '',
+          'File URL':        body.fileBase64 ? '' : (body.url || ''),
           'File Type':       body.fileType || '',
           'For Department':  body.forDept || 'All',
           'From Department': body.fromDept || '',
@@ -126,7 +129,38 @@ async function netlifyHandler(event) {
         },
       }],
     });
-    return { statusCode: 200, headers, body: JSON.stringify(data) };
+    const rec = created.records && created.records[0];
+    const recId = rec && rec.id;
+
+    // If raw file bytes were sent, host them directly on Airtable (avoids
+    // third-party delivery restrictions that caused 401s on "Open" links).
+    if (recId && body.fileBase64) {
+      try {
+        const attRes = await fetch(`https://content.airtable.com/v0/${BASE_ID}/${recId}/${FILES_ATTACHMENT_FIELD}/uploadAttachment`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contentType: body.fileType || 'application/octet-stream',
+            file: body.fileBase64,
+            filename: body.filename || body.name || 'file',
+          }),
+        });
+        const attData = await attRes.json();
+        const attField = attData.fields && attData.fields[FILES_ATTACHMENT_FIELD];
+        const hostedUrl = attField && attField[0] && attField[0].url;
+        if (hostedUrl) {
+          await airtable('PATCH', TABLES.files, { records: [{ id: recId, fields: { 'File URL': hostedUrl } }] });
+          rec.fields['File URL'] = hostedUrl;
+        } else {
+          const errMsg = (attData && attData.error && (attData.error.message || attData.error.type)) || 'Attachment upload failed';
+          return { statusCode: 200, headers, body: JSON.stringify({ ...created, uploadError: errMsg }) };
+        }
+      } catch (e) {
+        return { statusCode: 200, headers, body: JSON.stringify({ ...created, uploadError: e.message || 'Attachment upload failed' }) };
+      }
+    }
+
+    return { statusCode: 200, headers, body: JSON.stringify(created) };
   }
 
   if (action === 'delete-file') {
