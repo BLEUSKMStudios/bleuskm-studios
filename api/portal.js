@@ -20,6 +20,7 @@ const TABLES = {
   settings:   'tbl8Z3kwQmrnga4sU',
   polls:        'tblBQ2y1z2KeGSs6S',
   pollresponses:'tbll27h1bqQh02KMJ',
+  characternotes:'tbliAd7h6AVuP9ej6',
 };
 
 const FILES_ATTACHMENT_FIELD = 'fldlZcbMXEFM0AfQH'; // Portal Files → Attachment (multipleAttachments)
@@ -554,6 +555,31 @@ async function netlifyHandler(event) {
     const filter = encodeURIComponent(`{Poll Id}="${params.pollId || body.pollId || ''}"`);
     const data = await airtable('GET', TABLES.pollresponses, null, `?filterByFormula=${filter}`);
     return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  // ── CHARACTER CASTING NOTES (per-role brief for self-tape review) ───────────
+  if (action === 'get-character-notes') {
+    const data = await airtable('GET', TABLES.characternotes, null, '?maxRecords=200');
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  if (action === 'save-character-note') {
+    const character = (body.character || '').trim();
+    if (!character) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'Missing character name' }) };
+    const filter = encodeURIComponent(`{Character}="${character.replace(/"/g, '\\"')}"`);
+    const existing = await airtable('GET', TABLES.characternotes, null, `?filterByFormula=${filter}`);
+    const recs = existing.records || [];
+    if (recs.length) {
+      const data = await airtable('PATCH', TABLES.characternotes, {
+        records: [{ id: recs[0].id, fields: { 'Casting Notes': body.note || '', 'Updated By': body.updatedBy || '', 'Updated': new Date().toISOString() } }],
+      });
+      return { statusCode: 200, headers, body: JSON.stringify(data) };
+    } else {
+      const data = await airtable('POST', TABLES.characternotes, {
+        records: [{ fields: { 'Character': character, 'Casting Notes': body.note || '', 'Updated By': body.updatedBy || '', 'Updated': new Date().toISOString() } }],
+      });
+      return { statusCode: 200, headers, body: JSON.stringify(data) };
+    }
   }
 
   return { statusCode: 400, headers, body: JSON.stringify({ error: 'Unknown action' }) };
