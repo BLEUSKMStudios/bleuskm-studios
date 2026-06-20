@@ -471,6 +471,17 @@ async function netlifyHandler(event) {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
+  if (action === 'delete-casting-note-line') {
+    const curr = await airtable('GET', TABLES.casting, null, `/${body.recordId}`);
+    const existing = (curr.fields || {})['Notes'] || '';
+    const lines = existing.split('\n').filter(Boolean);
+    lines.splice(body.lineIndex, 1);
+    const data = await airtable('PATCH', TABLES.casting, {
+      records: [{ id: body.recordId, fields: { 'Notes': lines.join('\n') } }],
+    });
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
   // ── SETTINGS (e.g. current film name) ────────────────────────────────────
   if (action === 'get-settings') {
     const data = await airtable('GET', TABLES.settings, null, '?maxRecords=50');
