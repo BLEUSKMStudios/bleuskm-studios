@@ -8,6 +8,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="contract.css" />
+  <style>
+    .sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px 40px}
+    .zaria-sig-block{padding-right:8px}
+    .sig-party-lbl{font-size:8.5px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--golddim);margin-bottom:14px}
+    .zaria-sig-display{padding:0 0 6px;border-bottom:1px solid rgba(218,175,55,0.3);margin-bottom:7px;min-height:60px;display:flex;align-items:flex-end}
+    .zaria-sig-display img{height:58px;max-width:100%;object-fit:contain;object-position:left bottom}
+    .sig-name-print{font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted, rgba(234,223,207,0.4));margin-bottom:18px}
+    .zaria-date-line{border-bottom:1px solid rgba(218,175,55,0.28);height:36px;margin-bottom:7px}
+    .sig-line-lbl{font-size:8px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(234,223,207,0.22)}
+    @media (max-width:600px){.sig-grid{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
 
@@ -131,46 +142,60 @@
     <!-- Signature section -->
     <section class="sig-section">
       <div class="section-header">
-        <span class="section-eyebrow">YOUR SIGNATURE</span>
+        <span class="section-eyebrow">SIGNATURES</span>
         <h2 class="section-title">Sign Below</h2>
       </div>
 
       <div class="sig-body">
+        <div class="sig-grid">
 
-        <div class="sig-tabs">
-          <button class="sig-tab active" id="tabDraw" data-mode="draw">Draw</button>
-          <button class="sig-tab" id="tabType" data-mode="type">Type</button>
-        </div>
-
-        <div class="sig-panel" id="panelDraw">
-          <div class="canvas-wrap">
-            <canvas id="sigCanvas" width="560" height="160"></canvas>
-            <span class="canvas-hint">Draw your signature here</span>
+          <div class="zaria-sig-block">
+            <p class="sig-party-lbl">BLEUSKM Studios &mdash; Production</p>
+            <div class="zaria-sig-display"><img src="/contracts/zaria-signature.png" alt="Zaria Lashae signature" /></div>
+            <p class="sig-name-print">Zaria Lashae &mdash; Founder &amp; Director</p>
+            <div class="zaria-date-line"></div>
+            <p class="sig-line-lbl">Date: <span id="zariaDate"></span></p>
           </div>
-          <button class="clear-btn" id="clearBtn">Clear</button>
+
+          <div>
+            <p class="sig-party-lbl">Crew Member</p>
+            <div class="sig-tabs">
+              <button class="sig-tab active" id="tabDraw" data-mode="draw">Draw</button>
+              <button class="sig-tab" id="tabType" data-mode="type">Type</button>
+            </div>
+
+            <div class="sig-panel" id="panelDraw">
+              <div class="canvas-wrap">
+                <canvas id="sigCanvas" width="560" height="160"></canvas>
+                <span class="canvas-hint">Draw your signature here</span>
+              </div>
+              <button class="clear-btn" id="clearBtn">Clear</button>
+            </div>
+
+            <div class="sig-panel hidden" id="panelType">
+              <input type="text" class="type-sig-input" id="typedSig" placeholder="Type your full name" autocomplete="off" />
+              <p class="type-preview-label">Preview</p>
+              <div class="type-preview" id="typePreview"></div>
+            </div>
+
+            <div class="agree-wrap">
+              <label class="agree-label">
+                <input type="checkbox" id="agreeCheck" />
+                <span>I agree that my signature serves as my legal electronic signature and I agree to all terms of this production agreement with BLEUSKM Studios for <em id="contractFilmName">The Final Hand</em>.</span>
+              </label>
+            </div>
+
+            <div class="date-row">
+              <span class="date-label">DATE SIGNED</span>
+              <span class="date-value" id="dateSigned"></span>
+            </div>
+
+            <div class="error-msg hidden" id="errorMsg"></div>
+
+            <button class="submit-btn" id="submitBtn">Submit Agreement</button>
+          </div>
+
         </div>
-
-        <div class="sig-panel hidden" id="panelType">
-          <input type="text" class="type-sig-input" id="typedSig" placeholder="Type your full name" autocomplete="off" />
-          <p class="type-preview-label">Preview</p>
-          <div class="type-preview" id="typePreview"></div>
-        </div>
-
-        <div class="agree-wrap">
-          <label class="agree-label">
-            <input type="checkbox" id="agreeCheck" />
-            <span>I agree that my signature serves as my legal electronic signature and I agree to all terms of this production agreement with BLEUSKM Studios for <em id="contractFilmName">The Final Hand</em>.</span>
-          </label>
-        </div>
-
-        <div class="date-row">
-          <span class="date-label">DATE SIGNED</span>
-          <span class="date-value" id="dateSigned"></span>
-        </div>
-
-        <div class="error-msg hidden" id="errorMsg"></div>
-
-        <button class="submit-btn" id="submitBtn">Submit Agreement</button>
 
         <div class="success-block hidden" id="successBlock">
           <div class="success-icon">✦</div>
@@ -179,7 +204,6 @@
           <p class="success-text">Your signed production agreement has been received by BLEUSKM Studios. We'll be in touch with your department guide and next steps. Welcome to the crew.</p>
           <p class="success-text" style="margin-top:8px;">Follow <strong>@bleuskm.studios</strong> for production updates.</p>
         </div>
-
       </div>
     </section>
 
