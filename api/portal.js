@@ -22,19 +22,19 @@ const TABLES = {
 
 const USER_MAP = {
   // Director
-  'zaria':     { password: 'bleuskm2026', department: 'director' },
+  'zaria':     { password: 'bleuskm2026', department: 'director',        name: 'Zaria' },
   // Producers
-  'ceion':     { password: 'bleuskmcrew', department: 'producer' },
-  'carmen':    { password: 'bleuskmcrew', department: 'producer' },
-  'fabiola':   { password: 'bleuskmcrew', department: 'producer' },
+  'cscott':    { password: 'bleuskmcrew', department: 'producer',        name: 'Ceion' },
+  'creeves':   { password: 'bleuskmcrew', department: 'producer',        name: 'Carmen' },
+  'ftorres':   { password: 'bleuskmcrew', department: 'producer',        name: 'Fabiola' },
   // DP
-  'obi':       { password: 'ookezie',     department: 'dp' },
+  'ookezie':   { password: 'bleuskmcam',  department: 'dp',              name: 'Obi' },
   // AD
-  'regan':     { password: 'rgalindo',    department: 'ad' },
+  'rgalindo':  { password: 'bleuskm2026', department: 'ad',              name: 'Regan' },
   // Script Supervisor
-  'catherine': { password: 'ckudulis',   department: 'scriptsupervisor' },
+  'ckudulis':  { password: 'bleuscript',  department: 'scriptsupervisor', name: 'Catherine' },
   // Sound
-  'sound':     { password: 'sound2026',  department: 'sound' },
+  'sound':     { password: 'sound2026',   department: 'sound',           name: 'Sound' },
 };
 
 async function airtable(method, tableId, body = null, params = '') {
@@ -70,7 +70,7 @@ async function netlifyHandler(event) {
     const pass     = body.password || '';
     const user     = USER_MAP[username];
     if (user && user.password === pass) {
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, department: user.department, username }) };
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, department: user.department, username, name: user.name }) };
     }
     return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'Invalid username or password' }) };
   }
