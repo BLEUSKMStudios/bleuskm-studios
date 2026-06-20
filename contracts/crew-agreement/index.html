@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;500;600;700&family=Dancing+Script:wght@600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #080808; --surface: #0d0d0d; --card: #111111;
+      --border: rgba(218,175,55,0.18); --borderdim: rgba(218,175,55,0.07);
+      --gold: #DAAF37; --golddim: rgba(218,175,55,0.55);
+      --text: #EADFCF; --muted: rgba(234,223,207,0.42); --sub: rgba(234,223,207,0.22);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'League Spartan', sans-serif; min-height: 100vh; }
+
+    /* ── DOC WRAPPER ── */
+    .contract-doc { max-width: 780px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    /* ── HEADER ── */
+    .doc-header { display:flex; align-items:center; justify-content:space-between; padding:16px 26px; border:1px solid var(--border); background:var(--surface); margin-bottom:3px; }
+    .doc-header-left { display:flex; align-items:center; gap:12px; }
+    .doc-wordmark { font-size:13px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--text); }
+    .doc-hdivider { width:1px; height:14px; background:var(--border); }
+    .doc-label { font-size:8px; font-weight:700; letter-spacing:0.22em; text-transform:uppercase; color:var(--golddim); }
+    .header-rule { height:2px; background:linear-gradient(to right, var(--gold), rgba(218,175,55,0.04)); margin-bottom:26px; }
+
+    /* ── PARTY BAR ── */
+    .party-bar { display:flex; flex-wrap:wrap; border:1px solid var(--border); background:var(--surface); margin-bottom:24px; }
+    .party-cell { flex:1; min-width:130px; padding:13px 16px; border-right:1px solid var(--borderdim); }
+    .party-cell:last-child { border-right:none; }
+    .party-lbl { display:block; font-size:7.5px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--golddim); margin-bottom:4px; }
+    .party-val { display:block; font-size:13px; font-weight:600; color:var(--text); word-break:break-word; }
+
+    /* ── CONTRACT SECTION ── */
+    .contract-section { background:var(--surface); border:1px solid var(--border); margin-bottom:22px; }
+    .section-hd { padding:20px 28px 16px; border-bottom:1px solid var(--borderdim); }
+    .section-eyebrow { display:block; font-size:7.5px; font-weight:700; letter-spacing:0.22em; text-transform:uppercase; color:var(--golddim); margin-bottom:5px; }
+    .section-title { font-size:18px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; color:var(--text); margin-bottom:3px; }
+    .section-sub { font-size:9.5px; letter-spacing:0.1em; color:var(--muted); }
+    .contract-body { padding:24px 28px; }
+    .clause { display:flex; gap:18px; margin-bottom:24px; padding-bottom:24px; border-bottom:1px solid var(--borderdim); }
+    .clause:last-child { margin-bottom:0; padding-bottom:0; border-bottom:none; }
+    .clause-n { font-size:9.5px; font-weight:700; color:var(--golddim); min-width:20px; padding-top:1px; flex-shrink:0; }
+    .clause-body { flex:1; }
+    .clause-title { font-size:8.5px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--golddim); margin-bottom:9px; }
+    .clause-text { font-family:Georgia,serif; font-size:13px; line-height:1.88; color:rgba(234,223,207,0.82); }
+
+    /* ── SIG SECTION ── */
+    .sig-section { background:var(--surface); border:1px solid var(--border); margin-bottom:22px; }
+    .sig-hd { padding:16px 28px 13px; border-bottom:1px solid var(--borderdim); }
+    .sig-eyebrow { font-size:7.5px; font-weight:700; letter-spacing:0.22em; text-transform:uppercase; color:var(--golddim); }
+    .sig-body { padding:24px 28px; }
+    .sig-grid { display:grid; grid-template-columns:1fr 1fr; gap:32px 40px; }
+
+    /* Zaria pre-sig block */
+    .zaria-sig-block {}
+    .sig-party-lbl { font-size:8.5px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--golddim); margin-bottom:14px; }
+    .zaria-sig-display {
+      padding:0 0 6px;
+      border-bottom:1px solid rgba(218,175,55,0.3);
+      margin-bottom:7px;
+      min-height:60px;
+      display:flex; align-items:flex-end;
+    }
+    .zaria-sig-display img {
+      height:58px;
+      max-width:100%;
+      object-fit:contain;
+      object-position:left bottom;
+    }
+    .sig-name-print { font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:18px; }
+    .sig-line { border-bottom:1px solid rgba(218,175,55,0.28); height:52px; margin-bottom:7px; }
+    .sig-line-lbl { font-size:8px; letter-spacing:0.12em; text-transform:uppercase; color:var(--sub); }
+
+    /* Signer sig block */
+    .sig-tabs { display:flex; gap:0; margin-bottom:14px; border:1px solid var(--borderdim); width:fit-content; }
+    .sig-tab { font-size:8.5px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; padding:7px 18px; cursor:pointer; color:var(--muted); background:none; border:none; transition:color 0.15s, background 0.15s; }
+    .sig-tab.active { color:var(--bg); background:var(--gold); }
+    .sig-canvas-wrap { position:relative; margin-bottom:8px; }
+    canvas#sigCanvas { display:block; width:100%; height:120px; background:rgba(218,175,55,0.03); border:1px solid rgba(218,175,55,0.2); cursor:crosshair; touch-action:none; }
+    .canvas-hint { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--sub); pointer-events:none; transition:opacity 0.2s; }
+    .clear-btn { font-size:8px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--golddim); background:none; border:none; cursor:pointer; padding:0; margin-bottom:16px; }
+    .clear-btn:hover { color:var(--gold); }
+
+    /* Type sig */
+    .type-sig-wrap { display:none; margin-bottom:8px; }
+    .type-sig-input {
+      width:100%; background:rgba(218,175,55,0.03); border:1px solid rgba(218,175,55,0.2);
+      color:var(--text); font-family:'Dancing Script',cursive; font-size:28px; font-weight:600;
+      padding:14px 16px; outline:none; transition:border-color 0.15s;
+    }
+    .type-sig-input:focus { border-color:var(--gold); }
+    .type-sig-input::placeholder { font-family:'League Spartan',sans-serif; font-size:10px; color:var(--sub); letter-spacing:0.1em; }
+
+    /* Date */
+    .date-row { display:flex; align-items:center; gap:14px; margin-bottom:20px; flex-wrap:wrap; }
+    .date-lbl { font-size:8px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--golddim); white-space:nowrap; }
+    .date-input { background:none; border:none; border-bottom:1px solid rgba(218,175,55,0.3); color:var(--text); font-family:'League Spartan',sans-serif; font-size:12px; font-weight:500; outline:none; padding:3px 6px; width:170px; }
+    .date-input:focus { border-color:var(--gold); }
+
+    /* Agreement check */
+    .agree-row { display:flex; align-items:flex-start; gap:12px; margin-bottom:24px; }
+    .agree-check { width:14px; height:14px; accent-color:var(--gold); margin-top:1px; flex-shrink:0; cursor:pointer; }
+    .agree-text { font-family:Georgia,serif; font-size:12px; line-height:1.7; color:var(--muted); font-style:italic; }
+
+    /* Submit */
+    .submit-btn {
+      display:block; width:100%; padding:16px; background:var(--gold); color:var(--bg);
+      font-family:'League Spartan',sans-serif; font-size:10px; font-weight:700;
+      letter-spacing:0.22em; text-transform:uppercase; border:none; cursor:pointer;
+      transition:opacity 0.15s;
+    }
+    .submit-btn:hover { opacity:0.88; }
+    .submit-btn:disabled { opacity:0.35; cursor:not-allowed; }
+
+    .error-msg { font-size:11px; color:#c0614f; letter-spacing:0.06em; margin-top:12px; display:none; }
+
+    /* ── CONFIRMATION ── */
+    #confirmationState { display:none; }
+    .confirm-wrap { max-width:560px; margin:80px auto; padding:20px; text-align:center; }
+    .confirm-mark { font-size:28px; margin-bottom:28px; opacity:0.6; }
+    .confirm-eyebrow { font-size:8px; font-weight:700; letter-spacing:0.28em; text-transform:uppercase; color:var(--golddim); margin-bottom:12px; }
+    .confirm-title { font-size:24px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; color:var(--text); margin-bottom:14px; }
+    .confirm-body { font-family:Georgia,serif; font-size:14px; line-height:1.85; color:var(--muted); margin-bottom:28px; }
+    .confirm-rule { width:40px; height:1px; background:var(--gold); opacity:0.4; margin:0 auto 28px; }
+    .confirm-footer { font-size:9px; letter-spacing:0.12em; text-transform:uppercase; color:var(--sub); }
+
+    /* ── UTIL ── */
+    .sig-note { margin-top:22px; padding-top:18px; border-top:1px solid var(--borderdim); font-family:Georgia,serif; font-size:11px; line-height:1.7; color:var(--sub); font-style:italic; }
+
+    @media (max-width:600px) {
+      .sig-grid { grid-template-columns:1fr; }
+      .doc-header { flex-direction:column; align-items:flex-start; gap:8px; }
+      .clause-text { font-size:12px; }
+    }
+
+    @media print {
+      body { background:white; color:#111; }
+      :root { --bg:white; --surface:#fafafa; --border:#ccc; --borderdim:#e5e5e5; --gold:#b8922a; --golddim:#9a7820; --text:#111; --muted:#555; --sub:#888; }
+      .submit-btn, .sig-tabs, .clear-btn, canvas#sigCanvas, .type-sig-wrap, .agree-row, .canvas-hint { display:none !important; }
+      #signaturePreview { display:block !important; }
+    }
+  </style>
+  <title>Crew Agreement &mdash; BLEUSKM Studios</title>
+</head>
+
+<body>
+
+<div id="contractState">
+<div class="contract-doc">
+
+  <div class="doc-header">
+    <div class="doc-header-left">
+      <span class="doc-wordmark">BLEUSKM Studios</span>
+      <span class="doc-hdivider"></span>
+      <span class="doc-label">CREW PRODUCTION AGREEMENT</span>
+    </div>
+  </div>
+  <div class="header-rule"></div>
+
+  <div class="party-bar">
+        <div class="party-cell">
+          <span class="party-lbl">Name</span>
+          <span class="party-val" id="pb_name">&#x2014;</span>
+        </div>
+        <div class="party-cell">
+          <span class="party-lbl">Role</span>
+          <span class="party-val" id="pb_role">&#x2014;</span>
+        </div>
+        <div class="party-cell">
+          <span class="party-lbl">Project</span>
+          <span class="party-val" id="pb_film">&#x2014;</span>
+        </div>
+        <div class="party-cell">
+          <span class="party-lbl">Production</span>
+          <span class="party-val">BLEUSKM Studios</span>
+        </div>
+  </div>
+
+  <div class="contract-section">
+    <div class="section-hd">
+      <span class="section-eyebrow">Short Film &mdash; Crew Agreement</span>
+      <h1 class="section-title">Crew Agreement</h1>
+      <p class="section-sub">BLEUSKM Studios &nbsp;&middot;&nbsp; Denton, TX &nbsp;&middot;&nbsp; 2026</p>
+    </div>
+    <div class="contract-body">
+        <div class="clause">
+          <p class="clause-n">1</p>
+          <div class="clause-body">
+            <p class="clause-title">PARTIES</p>
+            <p class="clause-text">This Agreement is entered into between <strong>BLEUSKM Studios</strong>, an independent film production company based in Denton, Texas, and the individual identified above (&ldquo;Crew Member&rdquo;), in connection with the short film production identified above.</p>
+          </div>
+        </div>
+        <div class="clause">
+          <p class="clause-n">2</p>
+          <div class="clause-body">
+            <p class="clause-title">VOLUNTARY, NON-PAID PARTICIPATION</p>
+            <p class="clause-text">Crew Member acknowledges and agrees that participation in this production is entirely voluntary and unpaid. No compensation, monetary or otherwise, is promised, implied, or expected &mdash; now or in the future &mdash; in exchange for services rendered on this production. Crew Member agrees to this arrangement knowingly and without coercion.</p>
+          </div>
+        </div>
+        <div class="clause">
+          <p class="clause-n">3</p>
+          <div class="clause-body">
+            <p class="clause-title">IMDb CREDIT</p>
+            <p class="clause-text">In recognition of their contribution, Crew Member will receive an official IMDb credit for their designated role in this production. Production will make reasonable efforts to submit accurate credits following completion of post-production. IMDb credit is the sole form of recognition provided under this Agreement.</p>
+          </div>
+        </div>
+        <div class="clause">
+          <p class="clause-n">4</p>
+          <div class="clause-body">
+            <p class="clause-title">MEDIA USAGE RIGHTS</p>
+            <p class="clause-text">Crew Member grants BLEUSKM Studios a perpetual, royalty-free, worldwide license to use any footage, photography, or materials produced during this production for purposes including film distribution, festival submissions, promotional materials, marketing campaigns, social media content, press materials, and archival use. Crew Member retains the right to use materials from this production for personal portfolio, demo reel, and professional self-promotion, provided BLEUSKM Studios receives appropriate credit.</p>
+          </div>
+        </div>
+        <div class="clause">
+          <p class="clause-n">5</p>
+          <div class="clause-body">
+            <p class="clause-title">INTELLECTUAL PROPERTY</p>
+            <p class="clause-text">All work product, footage, recordings, edits, designs, and other creative materials produced by Crew Member in the course of their services shall be works made for hire. All rights, title, and interest in such work product vest exclusively in Production.</p>
+          </div>
+        </div>
+        <div class="clause">
+          <p class="clause-n">6</p>
+          <div class="clause-body">
+            <p class="clause-title">LIABILITY WAIVER</p>
+            <p class="clause-text">Crew Member voluntarily assumes all risks associated with participation in this production, including physical activity on set, travel, equipment handling, and environmental conditions. Crew Member hereby releases, discharges, and holds harmless BLEUSKM Studios, its directors, producers, and representatives from any and all claims, liabilities, damages, injuries, or losses arising from participation, to the fullest extent permitted by applicable law.</p>
+          </div>
+        </div>
+        <div class="clause">
+          <p class="clause-n">7</p>
+          <div class="clause-body">
+            <p class="clause-title">COMMITMENT &amp; AVAILABILITY</p>
+            <p class="clause-text">Crew Member agrees to communicate their availability promptly and accurately throughout pre-production and production. If confirmed for a scheduled shoot day, Crew Member commits to attending unless an emergency arises, in which case advance notice must be provided as early as possible.</p>
+          </div>
+        </div>
+        <div class="clause">
+          <p class="clause-n">8</p>
+          <div class="clause-body">
+            <p class="clause-title">PRODUCTION DETAILS</p>
+            <p class="clause-text"><strong>Production Company:</strong> BLEUSKM Studios<br><strong>Location:</strong> Denton, Texas<br><strong>Format:</strong> Independent short film<br><strong>Genre:</strong> Afro-surrealist / Psychological drama</p>
+          </div>
+        </div>
+        <div class="clause">
+          <p class="clause-n">9</p>
+          <div class="clause-body">
+            <p class="clause-title">CONFIDENTIALITY</p>
+            <p class="clause-text">Crew Member agrees to keep the details of the script, production materials, and any unreleased content confidential until BLEUSKM Studios makes an official public announcement or release. This includes sharing script content, behind-the-scenes footage, or production information on social media without express written permission from BLEUSKM Studios.</p>
+          </div>
+        </div>
+        <div class="clause">
+          <p class="clause-n">10</p>
+          <div class="clause-body">
+            <p class="clause-title">ELECTRONIC SIGNATURE</p>
+            <p class="clause-text">Crew Member acknowledges and agrees that a typed or drawn electronic signature on this Agreement constitutes a legal and binding signature, equivalent in legal effect to a handwritten signature, pursuant to applicable electronic signature laws including the Electronic Signatures in Global and National Commerce Act (E-SIGN Act) and the Uniform Electronic Transactions Act (UETA). By signing below, Crew Member confirms they have read, understood, and voluntarily agreed to all terms in this Agreement.</p>
+          </div>
+        </div>
+        <div class="clause">
+          <p class="clause-n">11</p>
+          <div class="clause-body">
+            <p class="clause-title">GOVERNING LAW</p>
+            <p class="clause-text">This Agreement shall be governed by and construed in accordance with the laws of the State of Texas. Any disputes arising from this Agreement shall be resolved in Denton County, Texas.</p>
+          </div>
+        </div>
+    </div>
+  </div>
+
+  <div class="sig-section">
+    <div class="sig-hd"><span class="sig-eyebrow">Signatures</span></div>
+    <div class="sig-body">
+      <div class="sig-grid">
+        
+        <div class="zaria-sig-block">
+          <p class="sig-party-lbl">BLEUSKM Studios &mdash; Production</p>
+          <div class="zaria-sig-display"><img src="/contracts/zaria-signature.png" alt="Zaria Lashae signature" /></div>
+          <p class="sig-name-print">Zaria Lashae &mdash; Founder &amp; Director</p>
+          <div style="border-bottom:1px solid rgba(218,175,55,0.28);height:36px;margin-bottom:7px;"></div>
+          <p class="sig-line-lbl">Date: <span id="zariaDate"></span></p>
+        </div>
+
+        
+        <div>
+          <p class="sig-party-lbl">Crew Member</p>
+          <div class="sig-tabs">
+            <button class="sig-tab active" data-mode="draw" onclick="setSigMode('draw')">Draw</button>
+            <button class="sig-tab" data-mode="type" onclick="setSigMode('type')">Type</button>
+          </div>
+          <div class="sig-canvas-wrap">
+            <canvas id="sigCanvas"></canvas>
+            <span class="canvas-hint">Draw your signature here</span>
+          </div>
+          <div class="type-sig-wrap">
+            <input class="type-sig-input" type="text" placeholder="Type your full name" />
+          </div>
+          <button class="clear-btn" onclick="clearSig()">Clear</button>
+          <div class="date-row">
+            <span class="date-lbl">Date Signed</span>
+            <input class="date-input" id="dateSigned" type="text" placeholder="MM / DD / YYYY" />
+          </div>
+          <div class="agree-row">
+            <input type="checkbox" id="agreeCheck" class="agree-check" />
+            <label for="agreeCheck" class="agree-text" id="agreeLabel"></label>
+          </div>
+          <button class="submit-btn" id="submitBtn" onclick="submitContract()">Submit Agreement</button>
+          <p class="error-msg" id="errMsg"></p>
+        </div>
+
+      </div>
+      <p class="sig-note">By signing above, both parties confirm they have read, understood, and agreed to all terms of this Agreement. An electronic signature is legally binding under the E-SIGN Act and UETA.</p>
+    </div>
+  </div>
+
+</div>
+</div>
+
+
+<div id="confirmationState" style="display:none;">
+  <div class="confirm-wrap">
+    <div class="confirm-mark">&#x2726;</div>
+    <p class="confirm-eyebrow">Agreement Received</p>
+    <h1 class="confirm-title">You&rsquo;re Signed,<br><span id="confirmName"></span>.</h1>
+    <div class="confirm-rule"></div>
+    <p class="confirm-body">Your signed agreement has been received by BLEUSKM Studios for <em><span id="confirmFilm"></span></em>. We&rsquo;ll follow up with next steps shortly.</p>
+    <p class="confirm-footer">BLEUSKM Studios &nbsp;&middot;&nbsp; bleuskm.com &nbsp;&middot;&nbsp; Denton, TX</p>
+  </div>
+</div>
+
+
+<script>
+// ── URL PARAMS ──
+const P = Object.fromEntries(new URLSearchParams(location.search));
+const fill = (id, val) => { const el = document.getElementById(id); if (el && val) el.textContent = val; };
+
+// ── SIGNATURE CANVAS ──
+const canvas = document.getElementById('sigCanvas');
+const ctx = canvas ? canvas.getContext('2d') : null;
+let drawing = false, hasSig = false, sigMode = 'draw';
+
+function resizeCanvas() {
+  if (!canvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  ctx.strokeStyle = '#EADFCF';
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+}
+
+function getPos(e) {
+  const r = canvas.getBoundingClientRect();
+  const src = e.touches ? e.touches[0] : e;
+  return { x: src.clientX - r.left, y: src.clientY - r.top };
+}
+
+if (canvas) {
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  const hint = document.querySelector('.canvas-hint');
+
+  canvas.addEventListener('mousedown',  e => { drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); if (hint) hint.style.opacity = '0'; });
+  canvas.addEventListener('mousemove',  e => { if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); hasSig = true; });
+  canvas.addEventListener('mouseup',    () => { drawing = false; });
+  canvas.addEventListener('mouseleave', () => { drawing = false; });
+  canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); if (hint) hint.style.opacity = '0'; }, { passive: false });
+  canvas.addEventListener('touchmove',  e => { e.preventDefault(); if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); hasSig = true; }, { passive: false });
+  canvas.addEventListener('touchend',   () => { drawing = false; });
+}
+
+function clearSig() {
+  if (!canvas || !ctx) return;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  hasSig = false;
+  const hint = document.querySelector('.canvas-hint');
+  if (hint) hint.style.opacity = '1';
+}
+
+function setSigMode(mode) {
+  sigMode = mode;
+  document.querySelectorAll('.sig-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
+  const canvasWrap = document.querySelector('.sig-canvas-wrap');
+  const typeWrap   = document.querySelector('.type-sig-wrap');
+  if (canvasWrap) canvasWrap.style.display = mode === 'draw' ? 'block' : 'none';
+  if (typeWrap)   typeWrap.style.display   = mode === 'type' ? 'block' : 'none';
+  const clearBtn = document.querySelector('.clear-btn');
+  if (clearBtn) clearBtn.style.display = mode === 'draw' ? 'block' : 'none';
+}
+
+function getSigDataURL() {
+  if (sigMode === 'type') {
+    const inp = document.querySelector('.type-sig-input');
+    if (!inp || !inp.value.trim()) return null;
+    // render typed sig to offscreen canvas
+    const oc = document.createElement('canvas');
+    oc.width = 500; oc.height = 120;
+    const octx = oc.getContext('2d');
+    octx.fillStyle = 'transparent';
+    octx.fillRect(0,0,500,120);
+    octx.fillStyle = '#EADFCF';
+    octx.font = '600 48px "Dancing Script", cursive';
+    octx.fillText(inp.value.trim(), 16, 82);
+    return oc.toDataURL();
+  }
+  if (!hasSig) return null;
+  return canvas.toDataURL();
+}
+
+// ── SUBMIT ──
+async function submitContract() {
+  const btn = document.getElementById('submitBtn');
+  const errEl = document.getElementById('errMsg');
+
+  const sigData = getSigDataURL();
+  if (!sigData) { errEl.textContent = 'Please add your signature before submitting.'; errEl.style.display = 'block'; return; }
+
+  const agreed = document.getElementById('agreeCheck');
+  if (agreed && !agreed.checked) { errEl.textContent = 'Please check the agreement box before submitting.'; errEl.style.display = 'block'; return; }
+
+  const dateSigned = document.getElementById('dateSigned')?.value?.trim();
+  if (!dateSigned) { errEl.textContent = 'Please enter the date.'; errEl.style.display = 'block'; return; }
+
+  errEl.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+
+  const payload = {
+    contractType: CONTRACT_TYPE,
+    name:         P.name   || '',
+    email:        P.email  || '',
+    role:         P.role   || '',
+    film:         P.film   || '',
+    dateSigned,
+    signatureImage: sigData,
+    ...extraParams()
+  };
+
+  try {
+    const res = await fetch('/.netlify/functions/contract-submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error(await res.text());
+    showConfirmation();
+  } catch (err) {
+    errEl.textContent = 'Submission failed. Please try again or contact studio@bleuskm.com.';
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Submit Agreement';
+  }
+}
+
+function showConfirmation() {
+  document.getElementById('contractState').style.display  = 'none';
+  document.getElementById('confirmationState').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // fill confirmation name
+  const cn = document.getElementById('confirmName');
+  if (cn) cn.textContent = P.name ? P.name.split(' ')[0] : '';
+  const cf = document.getElementById('confirmFilm');
+  if (cf) cf.textContent = P.film || 'the production';
+  const cr = document.getElementById('confirmRole');
+  if (cr) cr.textContent = P.role || '';
+}
+</script>
+
+<script>
+const CONTRACT_TYPE = 'crew-agreement';
+  fill('pb_name', P.name);
+  fill('pb_role', P.role);
+  fill('pb_film', P.film);
+
+const zd = document.getElementById('zariaDate');
+if (zd) {
+  if (P.senddate) {
+    const d = new Date(P.senddate + 'T00:00:00');
+    zd.textContent = isNaN(d) ? P.senddate : d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  } else {
+    zd.textContent = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  }
+}
+
+const al = document.getElementById('agreeLabel');
+if (al) al.textContent = 'I agree that my signature serves as my legal electronic signature and I agree to all terms of this production agreement with BLEUSKM Studios.';
+function extraParams() {
+  return {  };
+}
+</script>
+</body>
+</html>
