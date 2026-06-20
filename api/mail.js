@@ -76,8 +76,9 @@ async function fetchInbox(limit, aliasFilter) {
     const total = status.messages || 0;
     if (total > 0) {
       const start = Math.max(1, total - 150);
-      for await (const msg of client.fetch(`${start}:*`, { envelope: true })) {
+      for await (const msg of client.fetch(`${start}:*`, { envelope: true, flags: true })) {
         const env = msg.envelope || {};
+        const flags = msg.flags || new Set();
         messages.push({
           uid: msg.uid,
           from: (env.from && env.from[0] && env.from[0].address) || '',
@@ -85,6 +86,7 @@ async function fetchInbox(limit, aliasFilter) {
           to: (env.to || []).map(t => t.address),
           subject: env.subject || '',
           date: env.date,
+          unread: !flags.has('\\Seen'),
         });
       }
     }
@@ -123,6 +125,8 @@ async function fetchMessageBody(uid) {
         date: parsed.date,
         text: parsed.text || '',
       };
+      // Mark as read now that someone's actually opened it.
+      try { await client.messageFlagsAdd(String(uid), ['\\Seen'], { uid: true }); } catch (e) { /* non-fatal */ }
     }
   } finally {
     lock.release();
