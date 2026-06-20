@@ -3,6 +3,7 @@
 
 const nodemailer = require('nodemailer');
 const { ImapFlow } = require('imapflow');
+const { simpleParser } = require('mailparser');
 
 const BASE_ID   = process.env.AIRTABLE_PRODUCTION_BASE || process.env.AIRTABLE_BASE || 'appXf1NxIVhYbuV4j';
 const TOKEN     = process.env.AIRTABLE_TOKEN;
@@ -100,6 +101,36 @@ async function fetchInbox(limit, aliasFilter) {
   return filtered.slice(0, limit);
 }
 
+async function fetchMessageBody(uid) {
+  const client = new ImapFlow({
+    host: 'imap.zoho.com',
+    port: 993,
+    secure: true,
+    auth: { user: ZOHO_USER, pass: ZOHO_PASS },
+    logger: false,
+  });
+  await client.connect();
+  let result = null;
+  const lock = await client.getMailboxLock('INBOX');
+  try {
+    const msg = await client.fetchOne(String(uid), { source: true }, { uid: true });
+    if (msg && msg.source) {
+      const parsed = await simpleParser(msg.source);
+      result = {
+        subject: parsed.subject || '',
+        from: (parsed.from && parsed.from.text) || '',
+        to: (parsed.to && parsed.to.text) || '',
+        date: parsed.date,
+        text: parsed.text || '',
+      };
+    }
+  } finally {
+    lock.release();
+  }
+  await client.logout();
+  return result;
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -124,12 +155,16 @@ module.exports = async (req, res) => {
 
     if (action === 'send') {
       if (!ZOHO_PASS) return res.status(500).json({ ok: false, error: 'Zoho not configured (missing ZOHO_APP_PASSWORD).' });
-      const { fromAlias = 'studio', to, bcc, subject, html, text, sentBy } = body;
+      const { fromAlias = 'studio', to, bcc, subject, html, text, sentBy, attachments } = body;
       if (!to && !bcc) return res.status(400).json({ ok: false, error: 'No recipient provided.' });
       const fromInfo = FROM_MAP[fromAlias] || FROM_MAP.studio;
       const transporter = getTransporter();
+      const mailAttachments = Array.isArray(attachments) && attachments.length
+        ? attachments.map(a => ({ filename: a.filename || 'attachment', content: a.content, encoding: 'base64', contentType: a.contentType || undefined }))
+        : undefined;
       await transporter.sendMail({
         from: fromInfo.display,
+        attachments: mailAttachments,
         to: to || undefined,
         bcc: bcc || undefined,
         replyTo: fromInfo.address,
@@ -147,6 +182,15 @@ module.exports = async (req, res) => {
       const alias = (req.query && req.query.alias) || null;
       const messages = await fetchInbox(limit, alias);
       return res.status(200).json({ ok: true, messages });
+    }
+
+    if (action === 'get-message') {
+      if (!ZOHO_PASS) return res.status(200).json({ ok: false, error: 'Zoho not configured.' });
+      const uid = req.query && req.query.uid;
+      if (!uid) return res.status(200).json({ ok: false, error: 'Missing uid' });
+      const msg = await fetchMessageBody(uid);
+      if (!msg) return res.status(200).json({ ok: false, error: 'Message not found' });
+      return res.status(200).json({ ok: true, message: msg });
     }
 
     if (action === 'sent-log') {
