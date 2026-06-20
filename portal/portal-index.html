@@ -1,0 +1,3609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLEUSKM Studios — Production Portal</title>
+<style>
+/* ── RESET + BASE ── */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;--surface:#141414;--surface2:#1c1c1c;--border:#2a2a2a;
+  --gold:#c9a84c;--gold2:#e0be6a;--text:#e0e0e0;--muted:#888;--red:#e05252;
+  --sidebar:220px;--header:56px;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+button{cursor:pointer;font-family:inherit}
+input,textarea,select{font-family:inherit;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:8px 12px;width:100%;outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--gold)}
+a{color:var(--gold);text-decoration:none}
+a:hover{color:var(--gold2)}
+.hidden{display:none!important}
+
+/* ── LOGIN ── */
+#login-screen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 40% 30%,#1a140a 0%,#0a0a0a 70%);
+}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px 40px;width:360px;text-align:center}
+.login-logo{font-size:10px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:8px}
+.login-title{font-size:22px;font-weight:700;margin-bottom:4px}
+.login-sub{font-size:12px;color:var(--muted);margin-bottom:32px}
+.login-box select,.login-box input{margin-bottom:14px;background:#0f0f0f;font-size:14px}
+.login-box select option{background:#0f0f0f}
+.btn-login{width:100%;padding:12px;background:var(--gold);color:#000;border:none;border-radius:6px;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;transition:.2s}
+.btn-login:hover{background:var(--gold2)}
+.login-error{color:var(--red);font-size:12px;margin-top:10px;min-height:18px}
+
+/* ── LAYOUT ── */
+#app{display:flex;height:100vh;overflow:hidden}
+#sidebar{
+  width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;
+}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#topbar{
+  height:var(--header);background:var(--surface);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;
+}
+#content{flex:1;overflow-y:auto;padding:24px}
+
+/* ── SIDEBAR ── */
+.sidebar-brand{padding:20px 16px 12px;border-bottom:1px solid var(--border)}
+.sidebar-brand .studio{font-size:9px;letter-spacing:.25em;color:var(--gold);text-transform:uppercase}
+.sidebar-brand .user-name{font-size:17px;font-weight:700;margin-top:8px;color:var(--text)}
+.sidebar-brand .dept{font-size:11px;font-weight:600;margin-top:1px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.sidebar-brand .film{font-size:10px;color:var(--muted);margin-top:1px}
+.nav-section{padding:12px 10px 4px;font-size:9px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase}
+.nav-item{
+  display:flex;align-items:center;gap:8px;padding:9px 16px;font-size:12px;
+  color:var(--muted);cursor:pointer;border-radius:0;transition:.15s;position:relative;
+  border-left:2px solid transparent;
+}
+.nav-item:hover{color:var(--text);background:#ffffff08}
+.nav-item.active{color:var(--gold);background:#c9a84c12;border-left-color:var(--gold)}
+.nav-badge{
+  background:var(--red);color:#fff;font-size:9px;font-weight:700;
+  min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;
+  justify-content:center;padding:0 4px;margin-left:auto;
+}
+.sidebar-footer{margin-top:auto;padding:12px;border-top:1px solid var(--border)}
+.btn-logout{width:100%;padding:8px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:6px;font-size:11px;letter-spacing:.05em}
+.btn-logout:hover{border-color:var(--red);color:var(--red)}
+
+/* ── TOPBAR ── */
+.topbar-title{font-size:14px;font-weight:600;flex:1}
+.topbar-dept{font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.btn-sm{padding:7px 14px;border-radius:6px;font-size:11px;font-weight:600;letter-spacing:.05em;border:none;transition:.15s}
+.btn-gold{background:var(--gold);color:#000}.btn-gold:hover{background:var(--gold2)}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+.btn-red{background:var(--red);color:#fff}.btn-red:hover{background:#f06262}
+
+/* ── CARDS / SECTIONS ── */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-title{font-size:14px;font-weight:700;letter-spacing:.05em}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px}
+.card-title{font-size:12px;font-weight:600;color:var(--gold);margin-bottom:8px;letter-spacing:.05em;text-transform:uppercase}
+.tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:12px;font-weight:600;letter-spacing:.05em}
+.tag-green{background:#1a3a1a;color:#6fcf6f}.tag-gold{background:#2a200a;color:var(--gold)}
+.tag-red{background:#2a0f0f;color:#e07070}.tag-blue{background:#0f1f2a;color:#70b0e0}
+.tag-muted{background:var(--surface2);color:var(--muted)}
+
+/* ── FILE CARDS ── */
+.file-card{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.file-icon{width:32px;height:32px;border-radius:6px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.file-meta{flex:1}
+.file-name{font-size:13px;font-weight:600}
+.file-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.file-actions{display:flex;gap:6px}
+
+/* ── GRID LAYOUTS ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+@media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
+
+/* ── TIMELINE ── */
+.timeline-phase{border-left:2px solid var(--border);padding:0 0 24px 20px;position:relative;margin-left:10px}
+.timeline-phase:last-child{padding-bottom:0}
+.timeline-dot{width:10px;height:10px;border-radius:50%;background:var(--border);position:absolute;left:-6px;top:4px}
+.timeline-dot.active{background:var(--gold)}
+.timeline-dot.done{background:#6fcf6f}
+.phase-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.phase-date{font-size:13px;font-weight:700;margin-bottom:6px}
+.phase-item{font-size:12px;color:var(--muted);padding:2px 0}
+
+/* ── CREW CARDS ── */
+.crew-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.crew-avatar{width:36px;height:36px;border-radius:50%;background:var(--gold);color:#000;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.crew-info{flex:1}
+.crew-name{font-size:13px;font-weight:600}
+.crew-role{font-size:11px;color:var(--gold);margin-top:1px}
+.crew-email{font-size:10px;color:var(--muted)}
+.crew-actions{display:flex;gap:6px}
+
+/* ── CONTRACTS HUB ── */
+.contract-group{margin-bottom:20px}
+.contract-group-title{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.contract-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;margin-bottom:6px}
+.contract-row-name{font-size:13px;font-weight:500}
+.contract-row-sub{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* ── LOCATION CARDS ── */
+.loc-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:8px}
+.loc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.loc-name{font-size:13px;font-weight:600}
+.loc-detail{font-size:11px;color:var(--muted);margin-bottom:2px}
+
+/* ── TAKE LOG ── */
+.take-row{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin-bottom:6px;display:grid;grid-template-columns:60px 60px 1fr 80px;gap:10px;align-items:center}
+.take-cell{font-size:12px}
+.take-label{font-size:9px;color:var(--muted);text-transform:uppercase;margin-bottom:2px}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:#000000cc;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:10px;width:100%;max-width:500px;padding:24px}
+.modal-title{font-size:15px;font-weight:700;margin-bottom:16px}
+.modal-row{margin-bottom:12px}
+.modal-label{font-size:11px;color:var(--muted);margin-bottom:4px}
+.modal-actions{display:flex;gap:8px;margin-top:20px;justify-content:flex-end}
+
+/* ── PUSH SELECTOR ── */
+.dept-checkboxes{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.dept-check{display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer}
+.dept-check input{width:auto}
+
+/* ── COMPACT CONTACT LIST (Availability, etc.) ── */
+.contact-scroll{max-height:190px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;padding:4px;margin-bottom:12px}
+.contact-row{display:flex;align-items:center;gap:7px;padding:4px 7px;font-size:11.5px;cursor:pointer;border-radius:4px;line-height:1.3}
+.contact-row:hover{background:rgba(255,255,255,0.04)}
+.contact-row input{width:auto;flex:0 0 auto;margin:0}
+.contact-row-name{flex:0 1 auto;max-width:42%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.contact-row-role{flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:11px}
+.contact-scroll-header{display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding:2px 7px 6px}
+
+/* ── NOTES ── */
+.note-card{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px 14px;margin-bottom:8px}
+.note-meta{font-size:10px;color:var(--muted);margin-bottom:6px}
+.note-content{font-size:13px;line-height:1.5}
+
+/* ── SCENE TABLE ── */
+.scene-table{width:100%;border-collapse:collapse}
+.scene-table th{text-align:left;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:8px 12px;border-bottom:1px solid var(--border)}
+.scene-table td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:top}
+.scene-table tr:last-child td{border-bottom:none}
+.scene-table tr:hover td{background:#ffffff05}
+
+/* ── UPLOAD ZONE ── */
+.upload-zone{border:2px dashed var(--border);border-radius:8px;padding:32px;text-align:center;cursor:pointer;transition:.2s}
+.upload-zone:hover{border-color:var(--gold);background:#c9a84c08}
+.upload-zone-icon{font-size:28px;margin-bottom:8px}
+.upload-zone-text{font-size:13px;color:var(--muted)}
+.upload-zone-sub{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* ── BUDGET TABLE ── */
+.budget-table{width:100%;border-collapse:collapse}
+.budget-table th{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:8px 12px;border-bottom:1px solid var(--border);text-align:left}
+.budget-table td{padding:10px 12px;font-size:12px;border-bottom:1px solid var(--border)}
+.budget-table .amount{text-align:right;font-family:monospace}
+.budget-total{font-weight:700;color:var(--gold)}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#444}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 18px;font-size:13px;z-index:200;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px #000a;transition:.3s}
+.toast.hidden{opacity:0;transform:translateY(8px)}
+
+/* ── AVAILABILITY GRID ── */
+.avail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.avail-card{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px}
+.avail-name{font-size:12px;font-weight:600}
+.avail-dates{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* ── OFFER LETTER ── */
+.offer-preview{background:#0f0f0f;border:1px solid var(--border);border-radius:6px;padding:20px;font-size:12px;line-height:1.8;color:var(--text);white-space:pre-wrap;font-family:Georgia,serif}
+
+/* tabs */
+.tabs{display:flex;gap:2px;margin-bottom:20px;border-bottom:1px solid var(--border)}
+.tab{padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:.15s}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tab:hover{color:var(--text)}
+.tab-panel{display:none}.tab-panel.active{display:block}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN SCREEN ══════════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">BLEUSKM Studios</div>
+    <div class="login-title">Production Portal</div>
+    <div class="login-sub">The Final Hand · 2026</div>
+    <input type="text" id="login-user" placeholder="Username" autocomplete="username" autocapitalize="none" />
+    <input type="password" id="login-pass" placeholder="Password" autocomplete="current-password" />
+    <button class="btn-login" onclick="doLogin()">Enter Portal</button>
+    <div class="login-error" id="login-err"></div>
+  </div>
+</div>
+
+<!-- ══ APP SHELL ══════════════════════════════════════════════════ -->
+<div id="app" class="hidden">
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="sidebar-brand">
+      <div class="studio">BLEUSKM Studios</div>
+      <div class="user-name" id="sb-name"></div>
+      <div class="dept" id="sb-dept">Director</div>
+      <div class="film" id="sb-film">The Final Hand</div>
+    </div>
+    <div id="nav-items"></div>
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="doLogout()">← Log Out</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main">
+    <div id="topbar">
+      <div>
+        <div class="topbar-title" id="tb-section">Dashboard</div>
+        <div class="topbar-dept" id="tb-dept"></div>
+      </div>
+      <div id="topbar-actions"></div>
+    </div>
+    <div id="content"></div>
+  </div>
+</div>
+
+<!-- ══ MODAL ══════════════════════════════════════════════════════ -->
+<div id="modal" class="modal-overlay hidden" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-title" id="modal-title"></div>
+    <div id="modal-body"></div>
+    <div class="modal-actions" id="modal-actions"></div>
+  </div>
+</div>
+
+<!-- ══ TOAST ══════════════════════════════════════════════════════ -->
+<div id="toast" class="toast hidden"></div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+// CONFIG
+// ════════════════════════════════════════════════════════════════
+const API = '/.netlify/functions/portal';
+const MAIL_API = '/.netlify/functions/mail';
+const CLOUDINARY_CLOUD = 'df2x5q7zw';
+const CLOUDINARY_PRESET = 'bleuskm_signatures'; // reuse existing unsigned preset
+
+const CONTRACT_BASE = 'https://bleuskm.com/crew/contract/';
+const FILM = 'The Final Hand';
+const CALENDLY_LINK = 'https://calendly.com/studio-bleuskm/30min';
+
+// Crew contract links (from existing crew)
+const CREW_CONTRACTS = [
+  {name:'Rachel Fornero',role:'Production Assistant (PA)',email:'rafo.email@gmail.com'},
+  {name:'Zee Abracosa',role:'Production Designer / Set Dresser',email:'zeeabracosa.work@gmail.com'},
+  {name:'Joshua Sweet',role:'AC / Camera Support',email:'joshua.snup@gmail.com'},
+  {name:'Nick Montopoli',role:'Composer',email:'nick.montopoli@gmail.com'},
+  {name:'Justice Rivera',role:'BTS',email:'Justice.jr1414@gmail.com'},
+  {name:'Sophia Alba',role:'Graphic Design / Poster Creation',email:'sophiaalba807@gmail.com'},
+  {name:'Hailey Trifiro',role:'Makeup',email:'htrifiro@icloud.com'},
+  {name:'Catherine Kudulis',role:'Production Assistant (PA)',email:'cat.kudulis@gmail.com'},
+  {name:'Danielle Hani',role:'Composer',email:'danielleh3164@gmail.com'},
+  {name:'Arquemond Sierra',role:'Post Production, Sound Mixer',email:'arquemond@gmail.com'},
+  {name:'Fabiola Torres',role:'Producer',email:'cgstudios.co@gmail.com'},
+  {name:'Toby Dull',role:'Editor',email:'tobydull21@gmail.com'},
+  {name:'Obi Okezie',role:'Cinematographer (Director of Photography)',email:'obi@everythingisplural.com'},
+  {name:'Regan Galindo',role:'Assistant Director',email:'2014regan1@gmail.com'},
+  {name:'Nathan Lowenstein',role:'Boom Operator',email:'nathanlowenstein03@gmail.com'},
+  {name:'Carmen Reeves & Ceion Scott',role:'Producer',email:'productionsgirlsnightout@gmail.com'},
+  {name:'Cole Harvey',role:'Boom Operator',email:'tcharvey@icloud.com'},
+];
+
+function todayISO() {
+  const d = new Date();
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  return `${d.getFullYear()}-${mm}-${dd}`;
+}
+
+// Map dashboard contract type labels -> deployed template slug + their extra fields
+const CONTRACT_TEMPLATES = {
+  'Crew Agreement':       { slug: 'crew-agreement',       extra: [] },
+  'Contractor Agreement': { slug: 'contractor-agreement', extra: [{key:'period', label:'Contract Period'}] },
+  'Cast Agreement':       { slug: 'actor-agreement',      extra: [{key:'character', label:'Character'}, {key:'shootdates', label:'Shoot Dates'}] },
+  'Actor Deal Memo':      { slug: 'actor-deal-memo',      extra: [{key:'character', label:'Character'}, {key:'shootdates', label:'Shoot Dates'}] },
+  'Talent Release':       { slug: 'talent-release',       extra: [{key:'filmdate', label:'Film Date'}] },
+  'Composer Agreement':   { slug: 'composer-agreement',   extra: [{key:'scope', label:'Scope of Work'}, {key:'deliverydate', label:'Delivery Date'}] },
+  'Editor Agreement':     { slug: 'editor-agreement',     extra: [{key:'scope', label:'Scope of Work'}, {key:'deliverydate', label:'Delivery Date'}] },
+  'Location Release':     { slug: 'location-release',     extra: [{key:'location', label:'Location'}, {key:'filmdate', label:'Film Date'}] },
+  'Media Release (BTS)':  { slug: 'media-release-bts',    extra: [{key:'filmdate', label:'Film Date'}] },
+  'Usage Rights':         { slug: 'usage-rights',         extra: [{key:'effectivedate', label:'Effective Date'}] },
+};
+
+// Full legal clause text per contract type, for the dashboard's "view entire contract" feature
+const CONTRACT_CLAUSES = {
+  'Crew Agreement': [
+    ['PARTIES','This Production Agreement is entered into between BLEUSKM Studios, an independent film production company based in Denton, Texas, and the individual identified above ("Crew Member"), in connection with the short film production identified above.'],
+    ['VOLUNTARY, NON-PAID PARTICIPATION','Crew Member acknowledges and agrees that participation in this production is entirely voluntary and unpaid. No compensation, monetary or otherwise, is promised, implied, or expected — now or in the future — in exchange for services rendered on this production.'],
+    ['IMDb CREDIT','In recognition of their contribution, Crew Member will receive an official IMDb credit for their designated role in this production. IMDb credit is the sole form of recognition provided under this Agreement.'],
+    ['MEDIA USAGE RIGHTS','Crew Member grants BLEUSKM Studios a perpetual, royalty-free, worldwide license to use any footage, photography, or materials produced during this production for film distribution, festival submissions, promotional materials, marketing, social media, press, and archival use. Crew Member retains personal portfolio and demo reel rights with appropriate credit.'],
+    ['LIABILITY WAIVER','Crew Member voluntarily assumes all risks associated with participation in this production and releases, discharges, and holds harmless BLEUSKM Studios, its directors, producers, and representatives from any claims, liabilities, damages, injuries, or losses arising from participation, to the fullest extent permitted by applicable law.'],
+    ['COMMITMENT & AVAILABILITY','Crew Member agrees to communicate availability promptly and accurately, and to attend confirmed shoot days unless an emergency requires advance notice.'],
+    ['PRODUCTION DETAILS','Production Company: BLEUSKM Studios. Location: Denton, Texas. Format: Independent short film. Genre: Afro-surrealist / Psychological drama.'],
+    ['CONFIDENTIALITY','Crew Member agrees to keep script, production materials, and unreleased content confidential until BLEUSKM Studios makes an official public announcement.'],
+    ['ELECTRONIC SIGNATURE','A typed or drawn electronic signature on this Agreement constitutes a legal and binding signature under the E-SIGN Act and UETA.'],
+    ['GOVERNING LAW','This Agreement is governed by the laws of the State of Texas. Disputes shall be resolved in Denton County, Texas.'],
+  ],
+  'Cast Agreement': [
+    ['PARTIES','This Agreement is entered into between BLEUSKM Studios, Denton, Texas, and the individual identified above ("Actor"), in connection with the short film production identified above.'],
+    ['ROLE & SERVICES','Actor agrees to portray the character identified above and perform all services reasonably required, including rehearsals, table reads, production days, and additional sessions reasonably requested.'],
+    ['VOLUNTARY, NON-PAID PARTICIPATION','Actor acknowledges that participation is entirely voluntary and unpaid. No monetary compensation is promised, implied, or expected.'],
+    ['IMDb CREDIT','Actor will receive an official IMDb credit for their role in this production.'],
+    ['GRANT OF RIGHTS','Actor grants Production an irrevocable, perpetual, worldwide, royalty-free license to use their name, likeness, voice, and performance in the film and all promotional, festival, and distribution materials.'],
+    ['MEDIA USAGE RIGHTS','Actor grants BLEUSKM Studios a perpetual, royalty-free, worldwide license to use footage featuring Actor for distribution, festivals, promotion, social media, press, and archival use. Actor retains personal portfolio rights with credit.'],
+    ['LIABILITY WAIVER','Actor voluntarily assumes all risks of participation and releases and holds harmless BLEUSKM Studios and its representatives from claims or losses arising from participation.'],
+    ['CONFIDENTIALITY','Actor agrees to keep all non-public aspects of the production confidential without prior written consent.'],
+    ['CONDUCT & PROFESSIONALISM','Actor agrees to conduct themselves professionally, follow reasonable direction, and arrive prepared for scheduled sessions.'],
+    ['WARRANTIES','Actor warrants they have full right and authority to enter this Agreement and no conflicting prior commitments.'],
+    ['ELECTRONIC SIGNATURE','A typed or drawn electronic signature constitutes a legal and binding signature under the E-SIGN Act and UETA.'],
+    ['GOVERNING LAW','This Agreement is governed by the laws of the State of Texas. Disputes shall be resolved in Denton County, Texas.'],
+  ],
+  'Actor Deal Memo': [
+    ['PARTIES & PURPOSE','This Deal Memo summarizes the principal terms of engagement between BLEUSKM Studios and the Actor identified above, and constitutes the binding understanding between the parties.'],
+    ['ROLE SUMMARY','Actor is engaged to portray the character identified above, including performance on scheduled shoot dates, table reads/rehearsals, and additional sessions as required.'],
+    ['SCHEDULE & CALL TIMES','Call times will be communicated no less than 48 hours in advance. Actor agrees to honor confirmed call times and notify Production of any conflict as early as possible.'],
+    ['COMPENSATION','This engagement is on a deferred/volunteer basis. Actor receives an IMDb credit; no monetary compensation, residuals, or backend participation is owed or implied.'],
+    ['CREDIT','Actor will receive an on-screen credit in the format customarily used by Production.'],
+    ['RIGHTS GRANT','Actor grants Production a perpetual, worldwide, royalty-free license to use their performance, likeness, name, and voice in the film and associated materials.'],
+    ['MEDIA USAGE RIGHTS','Actor grants BLEUSKM Studios a perpetual, royalty-free, worldwide license to use footage for distribution, festivals, promotion, social media, and archival use.'],
+    ['LIABILITY WAIVER','Actor releases and holds harmless BLEUSKM Studios from claims or losses arising from participation, to the fullest extent permitted by law.'],
+    ['CONFIDENTIALITY','Actor agrees to keep the script and non-public creative materials confidential through the film\'s official release.'],
+    ['ELECTRONIC SIGNATURE','A typed or drawn electronic signature constitutes a legal and binding signature under the E-SIGN Act and UETA.'],
+    ['GOVERNING LAW','This Memo is governed by the laws of the State of Texas.'],
+  ],
+  'Talent Release': [
+    ['PARTIES','This Talent Release is entered into between BLEUSKM Studios, Denton, Texas, and the individual identified above ("Talent").'],
+    ['GRANT OF RIGHTS','Talent irrevocably grants Production a perpetual, worldwide, royalty-free right to record, photograph, film, and capture Talent\'s name, voice, likeness, image, and performance, and to use such recordings in the film and all promotional, festival, archival, streaming, and ancillary materials.'],
+    ['SCOPE OF USE','Permitted uses include theatrical/festival exhibition, streaming, social media, press materials, trailers, EPKs, educational screenings, and behind-the-scenes content.'],
+    ['VOLUNTARY PARTICIPATION','Talent confirms participation is entirely voluntary and that no compensation is expected or promised.'],
+    ['WAIVER OF APPROVAL','Talent waives any right to review, approve, or object to the final edited version of any material incorporating their likeness.'],
+    ['LIABILITY WAIVER','Talent voluntarily assumes all risks and releases and holds harmless BLEUSKM Studios from claims arising from participation.'],
+    ['REPRESENTATION & WARRANTIES','Talent represents they are at least 18 (or, if a minor, this Release is countersigned by a parent/guardian) and have legal capacity to enter this Release.'],
+    ['ELECTRONIC SIGNATURE','A typed or drawn electronic signature constitutes a legal and binding signature under the E-SIGN Act and UETA.'],
+    ['GOVERNING LAW','This Release is governed by the laws of the State of Texas.'],
+  ],
+  'Composer Agreement': [
+    ['PARTIES','This Agreement is entered into between BLEUSKM Studios, Denton, Texas, and the individual identified above ("Composer"), for an original musical score/compositions for the short film identified above.'],
+    ['SERVICES','Composer agrees to compose, produce, and deliver original music as directed, including spotting sessions, scoring to picture, and delivery of final mixed stems.'],
+    ['DELIVERABLES','Composer shall deliver final mixed stereo and stem tracks, music files compatible with the editing system, and a cue sheet listing all compositions.'],
+    ['LICENSE GRANT','Composer grants Production a perpetual, worldwide, irrevocable, royalty-free synchronization and master use license for the Music in the film and all promotional, festival, and distribution materials.'],
+    ['OWNERSHIP OF COMPOSITIONS','Composer retains ownership of underlying compositions; Production owns the specific master recordings delivered under this Agreement.'],
+    ['COMPENSATION','This engagement is on a deferred/volunteer basis unless otherwise specified in a written addendum. Composer receives an appropriate music credit.'],
+    ['PERFORMING RIGHTS','Composer is responsible for registering compositions with their PRO (ASCAP, BMI, SESAC, etc.).'],
+    ['MEDIA USAGE RIGHTS','Composer grants BLEUSKM Studios a perpetual, royalty-free, worldwide license to use the Music for distribution, festivals, promotion, and archival use.'],
+    ['LIABILITY WAIVER','Composer releases and holds harmless BLEUSKM Studios from claims arising from this engagement.'],
+    ['WARRANTIES','Composer warrants the Music is original, does not infringe any copyright, and Composer has full right to grant the licenses herein.'],
+    ['ELECTRONIC SIGNATURE','A typed or drawn electronic signature constitutes a legal and binding signature under the E-SIGN Act and UETA.'],
+    ['GOVERNING LAW','This Agreement is governed by the laws of the State of Texas.'],
+  ],
+  'Contractor Agreement': [
+    ['PARTIES & RELATIONSHIP','This Independent Contractor Agreement is entered into between BLEUSKM Studios, Denton, Texas, and the individual identified above ("Contractor"), who is an independent contractor and not an employee, agent, or partner of Production.'],
+    ['SCOPE OF SERVICES','Contractor agrees to provide the services described in a professional manner consistent with industry standards.'],
+    ['DELIVERABLES & TIMELINE','Contractor agrees to deliver agreed-upon work product by dates specified in writing, and to promptly notify Production of any timeline conflict.'],
+    ['COMPENSATION','This engagement is on a deferred/volunteer basis unless otherwise specified in writing. Contractor receives an appropriate IMDb credit.'],
+    ['INTELLECTUAL PROPERTY','All deliverables created by Contractor shall be works made for hire and sole property of Production, with all rights irrevocably assigned to Production.'],
+    ['MEDIA USAGE RIGHTS','Contractor grants BLEUSKM Studios a perpetual, royalty-free, worldwide license to use materials produced during this engagement.'],
+    ['LIABILITY WAIVER','Contractor voluntarily assumes all risks and releases and holds harmless BLEUSKM Studios from claims arising from participation.'],
+    ['CONFIDENTIALITY','Contractor agrees to keep all non-public production information confidential without prior written consent.'],
+    ['TAXES & INSURANCE','Contractor is solely responsible for all taxes and any required licenses or insurance for this engagement.'],
+    ['WARRANTIES','Contractor warrants deliverables will be original, non-infringing, and that Contractor has full authority to enter this Agreement.'],
+    ['ELECTRONIC SIGNATURE','A typed or drawn electronic signature constitutes a legal and binding signature under the E-SIGN Act and UETA.'],
+    ['GOVERNING LAW','This Agreement is governed by the laws of the State of Texas.'],
+  ],
+  'Editor Agreement': [
+    ['PARTIES','This Agreement is entered into between BLEUSKM Studios, Denton, Texas, and the individual identified above ("Editor"), for post-production editing services on the short film identified above.'],
+    ['SERVICES','Editor agrees to provide assembly/rough cut editing, picture lock, color grading consultation (if within scope), and reasonably requested revisions.'],
+    ['DELIVERABLES','Editor agrees to deliver final edit files, project files, and exports in the format/resolution specified by the delivery date identified above.'],
+    ['REVISIONS','Editor agrees to provide up to three rounds of revisions as directed by Production; additional rounds may be negotiated separately.'],
+    ['COMPENSATION','This engagement is on a deferred/volunteer basis unless otherwise specified in writing. Editor receives an IMDb credit as "Editor" or appropriate editorial credit.'],
+    ['INTELLECTUAL PROPERTY','All edited materials and work product shall be works made for hire and exclusive property of Production. Editor may retain personal copies for portfolio use after official release.'],
+    ['MEDIA USAGE RIGHTS','Editor grants BLEUSKM Studios a perpetual, royalty-free, worldwide license to use materials produced during this engagement.'],
+    ['LIABILITY WAIVER','Editor releases and holds harmless BLEUSKM Studios from claims arising from this engagement.'],
+    ['CONFIDENTIALITY','Editor agrees to keep all footage and project files strictly confidential and not share/post/distribute without express written consent.'],
+    ['WARRANTIES','Editor warrants they have the right and capacity to enter this Agreement and services will not infringe third-party rights.'],
+    ['ELECTRONIC SIGNATURE','A typed or drawn electronic signature constitutes a legal and binding signature under the E-SIGN Act and UETA.'],
+    ['GOVERNING LAW','This Agreement is governed by the laws of the State of Texas.'],
+  ],
+  'Location Release': [
+    ['PARTIES','This Location Release is entered into between BLEUSKM Studios, Denton, Texas, and the individual/entity identified above ("Owner"), who represents authority to grant the permissions described.'],
+    ['GRANT OF PERMISSION','Owner grants Production the non-exclusive right to enter, use, and occupy the Location for filming, photographing, and recording, on the date(s) specified, plus reasonable pre-production/wrap activities.'],
+    ['SCOPE OF USE','Production may use the Location for footage, photography, production design, lighting, and may use depictions of it in the final film and all distribution contexts.'],
+    ['COMPENSATION','This Release is granted on a volunteer/courtesy basis. No compensation is owed unless separately agreed in writing.'],
+    ['CARE OF PROPERTY','Production agrees to take reasonable precautions to prevent damage and will repair or compensate for any damage directly caused, ordinary wear excepted.'],
+    ['RIGHT TO PHOTOGRAPH','Owner warrants the Location and its contents may be used in the film without restriction or additional compensation.'],
+    ['LIABILITY','Production agrees to conduct activities safely and in compliance with law. Owner is not responsible for injury, loss, or damage to Production personnel or equipment.'],
+    ['NO OBLIGATION TO USE','Production is under no obligation to use the Location or footage captured in the final film.'],
+    ['WARRANTIES','Owner warrants they own or have authority to grant access, and this Release does not violate any lease or third-party right.'],
+    ['ELECTRONIC SIGNATURE','A typed or drawn electronic signature constitutes a legal and binding signature under the E-SIGN Act and UETA.'],
+    ['GOVERNING LAW','This Release is governed by the laws of the State of Texas.'],
+  ],
+  'Media Release (BTS)': [
+    ['PARTIES','This Media Release is entered into between BLEUSKM Studios, Denton, Texas, and the individual identified above ("Subject").'],
+    ['GRANT OF RIGHTS','Subject grants Production a perpetual, worldwide, irrevocable, royalty-free right to record, photograph, film, and capture Subject\'s name, voice, likeness, image, and appearance in behind-the-scenes footage and documentary-style materials.'],
+    ['PERMITTED USES','Social media, press kits/EPKs, festival submissions, promotional trailers, the film\'s website, and documentary/archival content.'],
+    ['EDITORIAL CONTROL','Production retains full editorial control over all BTS Content, including editing, captioning, clipping, and adapting without further approval.'],
+    ['VOLUNTARY PARTICIPATION','Subject confirms this Release is granted voluntarily and understands BTS Content may be widely distributed.'],
+    ['NO ENDORSEMENT','Production may not use BTS Content to imply Subject\'s endorsement of any product, brand, or service without separate written consent.'],
+    ['LIABILITY WAIVER','Subject releases and holds harmless BLEUSKM Studios from claims arising from participation.'],
+    ['WARRANTIES','Subject warrants legal capacity to enter this Release and that no third-party consent is required.'],
+    ['ELECTRONIC SIGNATURE','A typed or drawn electronic signature constitutes a legal and binding signature under the E-SIGN Act and UETA.'],
+    ['GOVERNING LAW','This Release is governed by the laws of the State of Texas.'],
+  ],
+  'Usage Rights': [
+    ['PARTIES','This Usage Rights Agreement is entered into between BLEUSKM Studios, Denton, Texas, and the individual identified above ("Rights Holder").'],
+    ['GRANT OF USAGE RIGHTS','Rights Holder grants Production a non-exclusive, irrevocable, perpetual, worldwide, royalty-free license to use, reproduce, distribute, display, perform, edit, and exploit Rights Holder\'s name, likeness, voice, image, and creative contribution.'],
+    ['PERMITTED USES','Inclusion in the finished film, trailers/teasers, social media, press kits, festival submissions, streaming/broadcast, educational/archival screenings, and behind-the-scenes content.'],
+    ['EXCLUDED USES','Production will not use Rights Holder\'s likeness in a defamatory, sexually explicit, or endorsement-implying manner without separate written consent.'],
+    ['TERRITORY & TERM','The rights granted are worldwide and effective from the date of signing in perpetuity, unless terminated by mutual written agreement.'],
+    ['CONSIDERATION','Rights Holder will receive an IMDb credit. No monetary consideration is owed unless separately agreed in writing.'],
+    ['LIABILITY WAIVER','Rights Holder releases and holds harmless BLEUSKM Studios from claims arising from participation.'],
+    ['WARRANTIES','Rights Holder warrants full right and authority to grant the rights described, with no conflicting agreement.'],
+    ['ELECTRONIC SIGNATURE','A typed or drawn electronic signature constitutes a legal and binding signature under the E-SIGN Act and UETA.'],
+    ['GOVERNING LAW','This Agreement is governed by the laws of the State of Texas.'],
+  ],
+};
+
+function contractLink(name, email, role, type, extraValues) {
+  const tpl  = CONTRACT_TEMPLATES[type] || CONTRACT_TEMPLATES['Crew Agreement'];
+  const base = `https://bleuskm.com/contracts/${tpl.slug}/`;
+  const params = {name, email, role, film: STATE.filmName || FILM, senddate: todayISO()};
+  if (type) params.type = type;
+  if (extraValues) Object.assign(params, extraValues);
+  return base + '?' + new URLSearchParams(params).toString();
+}
+
+// ════════════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════════════
+let STATE = { dept: null, realDept: null, section: null, files: [], notes: [], locations: [], crew: [], filmName: 'The Final Hand' };
+
+// ════════════════════════════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════════════════════════════
+// Local user map (fallback when Netlify function unreachable)
+const LOCAL_USERS = {
+  'zaria':     { password: 'bleuskm2026', department: 'director',        name: 'Zaria' },
+  'cscott':    { password: 'bleuskmcrew', department: 'producer',        name: 'Ceion' },
+  'creeves':   { password: 'bleuskmcrew', department: 'producer',        name: 'Carmen' },
+  'ftorres':   { password: 'bleuskmcrew', department: 'producer',        name: 'Fabiola' },
+  'ookezie':   { password: 'bleuskmcam',  department: 'dp',              name: 'Obi' },
+  'rgalindo':  { password: 'bleuskm2026', department: 'ad',              name: 'Regan' },
+  'ckudulis':  { password: 'bleuscript',  department: 'scriptsupervisor', name: 'Catherine' },
+  'sound':     { password: 'sound2026',   department: 'sound',           name: 'Sound' },
+};
+
+async function doLogin() {
+  const username = (document.getElementById('login-user').value || '').toLowerCase().trim();
+  const pass     = document.getElementById('login-pass').value;
+  const err      = document.getElementById('login-err');
+  err.textContent = '';
+  if (!username) { err.textContent = 'Please enter your username.'; return; }
+  if (!pass)     { err.textContent = 'Please enter your password.'; return; }
+
+  try {
+    const res  = await fetch(API + '?action=auth', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ username, password: pass }),
+    });
+    const json = await res.json();
+    if (json.ok) {
+      STATE.dept     = json.department;
+      STATE.realDept = json.department;
+      STATE.username = username;
+      STATE.name     = json.name || (LOCAL_USERS[username] && LOCAL_USERS[username].name) || '';
+      sessionStorage.setItem('portal_dept', json.department);
+      sessionStorage.setItem('portal_user', username);
+      sessionStorage.setItem('portal_name', STATE.name);
+      startApp();
+    } else {
+      err.textContent = 'Incorrect username or password.';
+    }
+  } catch(e) {
+    // Fallback: local check
+    const user = LOCAL_USERS[username];
+    if (user && user.password === pass) {
+      STATE.dept     = user.department;
+      STATE.realDept = user.department;
+      STATE.username = username;
+      STATE.name     = user.name || '';
+      sessionStorage.setItem('portal_dept', user.department);
+      sessionStorage.setItem('portal_user', username);
+      sessionStorage.setItem('portal_name', STATE.name);
+      startApp();
+    } else {
+      err.textContent = 'Incorrect username or password.';
+    }
+  }
+}
+
+document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+document.getElementById('login-user').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('login-pass').focus(); });
+
+function doLogout() {
+  sessionStorage.removeItem('portal_dept');
+  sessionStorage.removeItem('portal_user');
+  sessionStorage.removeItem('portal_name');
+  STATE = {dept:null, section:null, files:[], notes:[], locations:[], crew:[]};
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('login-screen').classList.remove('hidden');
+}
+
+// Auto-restore session
+(function() {
+  const savedDept = sessionStorage.getItem('portal_dept');
+  const savedUser = sessionStorage.getItem('portal_user');
+  const savedName = sessionStorage.getItem('portal_name');
+  if (savedDept) { STATE.dept = savedDept; STATE.realDept = savedDept; STATE.username = savedUser || ''; STATE.name = savedName || ''; startApp(); }
+})();
+
+// ════════════════════════════════════════════════════════════════
+// NAVIGATION CONFIG
+// ════════════════════════════════════════════════════════════════
+const NAV = {
+  director: [
+    {id:'overview',   icon:'🎬', label:'Overview'},
+    {id:'script',     icon:'📄', label:'Scripts'},
+    {id:'shotlist',   icon:'🎥', label:'Shot List'},
+    {id:'storyboard', icon:'🖼', label:'Storyboards'},
+    {id:'notes',      icon:'📝', label:'Director Notes'},
+    {id:'scenes',     icon:'🎭', label:'Scene Breakdown'},
+    {id:'continuity', icon:'🔁', label:'Continuity Notes'},
+    {id:'crew',       icon:'👥', label:'Crew'},
+    {id:'castingdb',  icon:'🎟', label:'Casting Database'},
+    {id:'contracts',  icon:'📋', label:'Crew Contracts Hub'},
+    {id:'timeline',   icon:'📅', label:'Timeline'},
+    {id:'push',       icon:'📤', label:'Push to Dept'},
+    {id:'polls',      icon:'📊', label:'Meeting Polls'},
+    {id:'emailhub',   icon:'📧', label:'Email Hub'},
+    {id:'taskboard',  icon:'✅', label:'Task Board'},
+    {id:'managedepts',icon:'🗂', label:'Manage Departments'},
+    {id:'settings',   icon:'⚙️', label:'Production Settings'},
+  ],
+  producer: [
+    {id:'overview',    icon:'🎬', label:'Overview'},
+    {id:'timeline',    icon:'📅', label:'Timeline'},
+    {id:'locations',   icon:'📍', label:'Location Hub'},
+    {id:'crewcast',    icon:'👥', label:'Crew + Cast'},
+    {id:'castingdb',   icon:'🎟', label:'Casting Database'},
+    {id:'contracts',   icon:'📋', label:'Cast Contracts Hub'},
+    {id:'documents',   icon:'📁', label:'Documents'},
+    {id:'budget',      icon:'💰', label:'Budget / Schedule'},
+    {id:'availability',icon:'📆', label:'Availability'},
+    {id:'offers',      icon:'✉️', label:'Offer Letters'},
+    {id:'polls',       icon:'📊', label:'Meeting Polls'},
+    {id:'emailhub',    icon:'📧', label:'Casting Email'},
+    {id:'taskboard',   icon:'✅', label:'Task Board'},
+  ],
+  dp: [
+    {id:'overview',  icon:'🎬', label:'Overview'},
+    {id:'shotlist',  icon:'🎥', label:'Shot List'},
+    {id:'references',icon:'🖼', label:'References'},
+    {id:'camera',    icon:'📷', label:'Camera Language'},
+    {id:'lighting',  icon:'💡', label:'Lighting Direction'},
+    {id:'mood',      icon:'🎨', label:'Mood Images'},
+    {id:'script',    icon:'📄', label:'Script'},
+    {id:'timeline',  icon:'📅', label:'Timeline'},
+    {id:'emailhub',  icon:'📧', label:'Email Hub'},
+  ],
+  ad: [
+    {id:'overview',  icon:'🎬', label:'Overview'},
+    {id:'schedule',  icon:'📅', label:'Schedule'},
+    {id:'callsheets',icon:'📋', label:'Call Sheets'},
+    {id:'scenes',    icon:'🎭', label:'Scene Order'},
+    {id:'shootdays', icon:'🎬', label:'Shoot Days'},
+    {id:'timing',    icon:'⏱', label:'Timing Notes'},
+    {id:'script',    icon:'📄', label:'Script'},
+    {id:'timeline',  icon:'📅', label:'Timeline'},
+    {id:'polls',     icon:'📊', label:'Meeting Polls'},
+    {id:'emailhub',  icon:'📧', label:'Email Hub'},
+  ],
+  scriptsupervisor: [
+    {id:'overview',   icon:'🎬', label:'Overview'},
+    {id:'script',     icon:'📄', label:'Script'},
+    {id:'scenes',     icon:'🎭', label:'Scene Breakdown'},
+    {id:'continuity', icon:'🔁', label:'Continuity Notes'},
+    {id:'takelog',    icon:'🎞', label:'Take Log'},
+    {id:'timeline',   icon:'📅', label:'Timeline'},
+    {id:'emailhub',   icon:'📧', label:'Email Hub'},
+  ],
+  sound: [
+    {id:'overview',     icon:'🎬', label:'Overview'},
+    {id:'soundnotes',   icon:'🎵', label:'Sound Notes'},
+    {id:'silencecues',  icon:'🔇', label:'Silence Cues'},
+    {id:'environment',  icon:'🌿', label:'Environment Tone'},
+    {id:'moments',      icon:'🔔', label:'Key Sound Moments'},
+    {id:'script',       icon:'📄', label:'Script'},
+    {id:'timeline',     icon:'📅', label:'Timeline'},
+    {id:'emailhub',     icon:'📧', label:'Email Hub'},
+  ],
+};
+
+const DEPT_LABELS = {
+  director:'Director', producer:'Producer', dp:'DP / Camera',
+  ad:'Assistant Director', scriptsupervisor:'Script Supervisor', sound:'Sound',
+};
+
+// ════════════════════════════════════════════════════════════════
+// APP START
+// ════════════════════════════════════════════════════════════════
+async function startApp() {
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+
+  const label = DEPT_LABELS[STATE.dept] || STATE.dept;
+  document.getElementById('sb-dept').textContent = label;
+  document.getElementById('sb-name').textContent = STATE.name || '';
+  document.getElementById('tb-dept').textContent = STATE.name ? `${STATE.name} · ${label}` : label;
+
+  try {
+    const res  = await fetch(`${API}?action=get-settings`);
+    const data = await res.json();
+    const recs = data.records || [];
+    const filmSetting = recs.find(r => r.fields['Setting Name'] === 'Current Film');
+    if (filmSetting) STATE.filmName = filmSetting.fields['Value'] || STATE.filmName;
+  } catch(e) {}
+  const filmEl = document.getElementById('sb-film');
+  if (filmEl) filmEl.textContent = STATE.filmName;
+
+  buildNav();
+  await loadData();
+  navigate('overview');
+}
+
+function buildNav() {
+  const items = NAV[STATE.dept] || [];
+  const container = document.getElementById('nav-items');
+  container.innerHTML = '';
+  items.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'nav-item';
+    el.id = `nav-${item.id}`;
+    el.onclick = () => navigate(item.id);
+    el.innerHTML = `<span>${item.icon}</span><span>${item.label}</span>`;
+    if (item.badge) {
+      el.innerHTML += `<span class="nav-badge" id="badge-${item.id}"></span>`;
+    }
+    container.appendChild(el);
+  });
+}
+
+async function loadData() {
+  try {
+    // Load files for this department
+    const fr = await fetch(`${API}?action=get-files&dept=${encodeURIComponent(DEPT_LABELS[STATE.dept])}`);
+    const fd = await fr.json();
+    STATE.files = fd.records || [];
+    updateFileBadges();
+  } catch(e) { STATE.files = []; }
+
+  try {
+    const cr = await fetch(`${API}?action=get-crew`);
+    const cd = await cr.json();
+    STATE.crew = cd.records || [];
+  } catch(e) { STATE.crew = []; }
+}
+
+function updateFileBadges() {
+  const myDept = DEPT_LABELS[STATE.dept];
+  const unread = STATE.files.filter(f => {
+    const readBy = (f.fields['Read By'] || '');
+    return !readBy.includes(myDept);
+  });
+  // Show badge on relevant nav items
+  ['shotlist','script','references','camera','lighting','mood'].forEach(id => {
+    const badge = document.getElementById(`badge-${id}`);
+    if (badge) {
+      const cnt = unread.filter(f => f.fields['Section'] && f.fields['Section'].toLowerCase().includes(id)).length;
+      badge.textContent = cnt || '';
+      badge.style.display = cnt ? '' : 'none';
+    }
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+// NAVIGATE
+// ════════════════════════════════════════════════════════════════
+function navigate(sectionId) {
+  STATE.section = sectionId;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const navEl = document.getElementById(`nav-${sectionId}`);
+  if (navEl) navEl.classList.add('active');
+
+  const navItem = (NAV[STATE.dept] || []).find(n => n.id === sectionId);
+  document.getElementById('tb-section').textContent = navItem ? navItem.label : sectionId;
+  if (STATE.realDept && STATE.dept !== STATE.realDept) {
+    showReturnBanner();
+  } else {
+    document.getElementById('topbar-actions').innerHTML = '';
+  }
+
+  const content = document.getElementById('content');
+  content.innerHTML = '';
+  const renderer = SECTIONS[STATE.dept] && SECTIONS[STATE.dept][sectionId];
+  if (renderer) {
+    renderer(content);
+  } else {
+    genericSection(sectionId, content);
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// SECTION RENDERERS
+// ════════════════════════════════════════════════════════════════
+const SECTIONS = {};
+
+// ─── TIMELINES ───────────────────────────────────────────────────
+const TIMELINES = {
+  director: [
+    {date:'NOW – JULY 3', label:'CASTING', status:'active', items:['Run callbacks','Refine tone + intention','Begin visual ideas (loose)']},
+    {date:'JULY 5 – 10', label:'TABLE READ', status:'upcoming', items:['Lock character direction','Adjust script if needed','Communicate tone clearly']},
+    {date:'JULY 11 – 18', label:'FINAL PREP', status:'upcoming', items:['Approve: shot list, schedule, design','Final creative decisions']},
+    {date:'SHOOT DAY', label:'PRODUCTION', status:'upcoming', items:['Direct']},
+  ],
+  producer: [
+    {date:'NOW – JUNE 22', label:'LOGISTICS', status:'active', items:['Assist with scheduling callbacks','Organize logistics pipeline']},
+    {date:'JUNE 23 – JULY 3', label:'CONTRACTS + BUDGET', status:'active', items:['Track cast + contracts','Begin budget + scheduling docs']},
+    {date:'JULY 5 – 10', label:'LOCK LOGISTICS', status:'upcoming', items:['Lock: location logistics','Coordinate departments']},
+    {date:'JULY 11 – 18', label:'FINAL PREP', status:'upcoming', items:['Finalize: budget, schedule, production needs']},
+    {date:'SHOOT DAY', label:'PRODUCTION', status:'upcoming', items:['Manage operations behind the scenes']},
+  ],
+  dp: [
+    {date:'NOW – JULY 3', label:'RESEARCH', status:'active', items:['Gather references','Understand tone']},
+    {date:'JULY 5 – 10', label:'DEVELOPMENT', status:'upcoming', items:['Begin: shot ideas, camera language']},
+    {date:'JULY 11 – 18', label:'FINAL PREP', status:'upcoming', items:['Finalize: shot list, lighting plan']},
+    {date:'SHOOT DAY', label:'PRODUCTION', status:'upcoming', items:['Execute visuals']},
+  ],
+  ad: [
+    {date:'NOW – JULY 3', label:'OBSERVATION', status:'active', items:['Observe casting flow','Understand script + structure']},
+    {date:'JULY 5 – 10', label:'PLANNING', status:'upcoming', items:['Begin: scene breakdown, schedule planning']},
+    {date:'JULY 11 – 18', label:'BUILD', status:'upcoming', items:['Build: call sheets, shoot schedule','Coordinate with all departments']},
+    {date:'SHOOT DAY', label:'PRODUCTION', status:'upcoming', items:['Run the set','Control time + flow']},
+  ],
+  scriptsupervisor: [
+    {date:'NOW – JULY 3', label:'SCRIPT STUDY', status:'active', items:['Read script deeply','Begin notes']},
+    {date:'JULY 5 – 10', label:'TABLE READ', status:'upcoming', items:['Table read tracking: dialogue, pacing, continuity']},
+    {date:'JULY 11 – 18', label:'PREP', status:'upcoming', items:['Prepare: script notes, tracking system']},
+    {date:'SHOOT DAY', label:'PRODUCTION', status:'upcoming', items:['Track EVERYTHING','Continuity control']},
+  ],
+  sound: [
+    {date:'NOW – JULY 3', label:'PREP', status:'active', items:['Study script for sound moments','Begin environment notes']},
+    {date:'JULY 5 – 10', label:'PLANNING', status:'upcoming', items:['Table read: dialogue flow, silence cues']},
+    {date:'JULY 11 – 18', label:'FINAL PREP', status:'upcoming', items:['Finalize sound notes, equipment list']},
+    {date:'SHOOT DAY', label:'PRODUCTION', status:'upcoming', items:['Record clean audio','Monitor environment']},
+  ],
+};
+
+async function renderTimeline(el, deptKey) {
+  const label = DEPT_LABELS[deptKey];
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">${esc(label)} Timeline</div>
+      <button class="btn-sm btn-gold" onclick="showAddTimelinePhase('${deptKey}')">+ Add Phase</button>
+    </div>
+    <div id="timeline-container" style="max-width:600px"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
+  `;
+  let records = null;
+  try {
+    const res  = await fetch(`${API}?action=get-timeline&dept=${encodeURIComponent(label)}`);
+    const data = await res.json();
+    records = data.records || [];
+  } catch(e) { records = null; }
+  renderTimelinePhases(records, deptKey);
+}
+
+function renderTimelinePhases(records, deptKey) {
+  const container = document.getElementById('timeline-container');
+  if (!container) return;
+  STATE.timelinePhases = records || [];
+  let phases;
+  if (records && records.length) {
+    phases = records.map(r => ({
+      id: r.id,
+      label: r.fields['Phase'] || '',
+      date: r.fields['Action Label'] || '',
+      status: (r.fields['Status'] || '').toLowerCase(),
+      items: (r.fields['Description'] || '').split('\n').filter(Boolean),
+      rawDescription: r.fields['Description'] || '',
+      rawStatus: r.fields['Status'] || 'Upcoming',
+    }));
+  } else {
+    phases = (TIMELINES[deptKey] || []).map(p => ({...p, id: null}));
+  }
+  container.innerHTML = phases.map((p, idx) => `
+    <div class="timeline-phase">
+      <div class="timeline-dot ${p.status==='active'?'active':(p.status==='done'||p.status==='complete')?'done':''}"></div>
+      <div class="phase-label">${esc(p.label)}</div>
+      <div class="phase-date">${esc(p.date)}</div>
+      ${p.items.map(i=>`<div class="phase-item">→ ${esc(i)}</div>`).join('')}
+      ${p.id ? `
+        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+          <button class="btn-sm btn-outline" onclick="moveTimelinePhase(${idx},-1,'${deptKey}')" ${idx===0?'disabled':''}>↑ Move Up</button>
+          <button class="btn-sm btn-outline" onclick="moveTimelinePhase(${idx},1,'${deptKey}')" ${idx===phases.length-1?'disabled':''}>↓ Move Down</button>
+          <button class="btn-sm btn-outline" onclick="editTimelinePhase('${p.id}')">Edit</button>
+          <button class="btn-sm btn-outline" onclick="deleteTimelinePhase('${p.id}','${deptKey}')">Delete</button>
+        </div>
+      ` : ''}
+    </div>
+  `).join('');
+}
+
+function editTimelinePhase(recordId) {
+  const p = (STATE.timelinePhases||[]).find(r => r.id === recordId);
+  if (!p) return;
+  showModal('Edit Timeline Phase', `
+    <div class="modal-row"><div class="modal-label">Phase Name</div><input id="tp-edit-phase" value="${esc(p.fields['Phase']||'')}"></div>
+    <div class="modal-row"><div class="modal-label">Date Range</div><input id="tp-edit-dates" value="${esc(p.fields['Action Label']||'')}"></div>
+    <div class="modal-row"><div class="modal-label">Status</div>
+      <select id="tp-edit-status">
+        ${['Upcoming','Active','Complete'].map(s=>`<option ${p.fields['Status']===s?'selected':''}>${s}</option>`).join('')}
+      </select>
+    </div>
+    <div class="modal-row"><div class="modal-label">Action Items (one per line)</div><textarea id="tp-edit-items" rows="4">${esc(p.fields['Description']||'')}</textarea></div>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Save Changes', cls:'btn-gold', action:`saveTimelinePhaseEdit('${recordId}')`},
+  ]);
+}
+
+async function saveTimelinePhaseEdit(recordId) {
+  try {
+    await fetch(API + '?action=update-timeline', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        recordId,
+        phase: document.getElementById('tp-edit-phase').value,
+        actionLabel: document.getElementById('tp-edit-dates').value,
+        description: document.getElementById('tp-edit-items').value,
+        status: document.getElementById('tp-edit-status').value,
+      }),
+    });
+    closeModal();
+    toast('Phase updated','✅');
+    navigate('timeline');
+  } catch(e) { toast('Failed to update.','❌'); }
+}
+
+async function moveTimelinePhase(idx, direction, deptKey) {
+  const phases = STATE.timelinePhases || [];
+  const otherIdx = idx + direction;
+  if (otherIdx < 0 || otherIdx >= phases.length) return;
+  const a = phases[idx], b = phases[otherIdx];
+  const aSort = a.fields['Sort Index'] ?? idx;
+  const bSort = b.fields['Sort Index'] ?? otherIdx;
+  try {
+    await fetch(API + '?action=reorder-timeline', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ order: [{id:a.id, sortIndex:bSort}, {id:b.id, sortIndex:aSort}] }),
+    });
+    navigate('timeline');
+  } catch(e) { toast('Failed to reorder.','❌'); }
+}
+
+function showAddTimelinePhase(deptKey) {
+  showModal('Add Timeline Phase', `
+    <div class="modal-row"><div class="modal-label">Phase Name</div><input id="tp-phase" placeholder="e.g. TABLE READ"></div>
+    <div class="modal-row"><div class="modal-label">Date Range</div><input id="tp-dates" placeholder="e.g. JULY 5 – 10"></div>
+    <div class="modal-row"><div class="modal-label">Status</div>
+      <select id="tp-status"><option>Upcoming</option><option>Active</option><option>Complete</option></select>
+    </div>
+    <div class="modal-row"><div class="modal-label">Action Items (one per line)</div><textarea id="tp-items" rows="4" placeholder="Lock character direction&#10;Adjust script if needed"></textarea></div>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Add Phase', cls:'btn-gold', action:`saveTimelinePhase('${deptKey}')`},
+  ]);
+}
+
+async function saveTimelinePhase(deptKey) {
+  const phase   = document.getElementById('tp-phase').value.trim();
+  if (!phase) { toast('Phase name required.','⚠️'); return; }
+  try {
+    await fetch(API + '?action=add-timeline', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        phase,
+        actionLabel: document.getElementById('tp-dates').value,
+        description: document.getElementById('tp-items').value,
+        status: document.getElementById('tp-status').value,
+        department: DEPT_LABELS[deptKey],
+      }),
+    });
+    closeModal();
+    toast('Phase added','✅');
+    navigate('timeline');
+  } catch(e) { toast('Failed to add phase.','❌'); }
+}
+
+async function deleteTimelinePhase(recordId, deptKey) {
+  try {
+    await fetch(API + '?action=delete-timeline', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId}),
+    });
+    toast('Phase deleted','🗑');
+    navigate('timeline');
+  } catch(e) { toast('Failed to delete.','❌'); }
+}
+
+// ─── GENERIC FILE SECTION ────────────────────────────────────────
+function renderFileSection(container, sectionId, title, acceptTypes='*', hint='') {
+  const sectionFiles = STATE.files.filter(f => (f.fields['Section']||'').toLowerCase() === sectionId.toLowerCase());
+  container.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">${title}</div>
+      <button class="btn-sm btn-gold" onclick="showUploadModal('${sectionId}','${title}')">+ Upload</button>
+    </div>
+    ${hint ? `<p style="font-size:12px;color:var(--muted);margin-bottom:16px">${hint}</p>` : ''}
+    <div id="files-${sectionId}">
+      ${sectionFiles.length ? sectionFiles.map(f => renderFileCard(f)).join('') : '<p style="color:var(--muted);font-size:13px">No files yet. Upload the first one.</p>'}
+    </div>
+  `;
+}
+
+function renderFileCard(f) {
+  const ext = (f.fields['File Type']||'').split('/').pop().toUpperCase() || 'FILE';
+  const icon = f.fields['File Type']?.startsWith('image') ? '🖼' : f.fields['File Type']?.includes('pdf') ? '📄' : '📁';
+  return `
+    <div class="file-card">
+      <div class="file-icon">${icon}</div>
+      <div class="file-meta">
+        <div class="file-name">${esc(f.fields['Name']||'Untitled')}</div>
+        <div class="file-sub">${esc(f.fields['From Department']||'')} · ${esc(f.fields['Notes']||'')} · ${formatDate(f.fields['Created'])}</div>
+      </div>
+      <div class="file-actions">
+        <a href="${esc(f.fields['File URL']||'#')}" target="_blank" class="btn-sm btn-outline">Open</a>
+        ${STATE.realDept==='director'?`<button class="btn-sm btn-outline" onclick="showPushModal('${f.id}','${esc(f.fields['Name']||'')}')">Push</button>`:''}
+        <button class="btn-sm btn-outline" onclick="deleteFile('${f.id}')">🗑</button>
+      </div>
+    </div>
+  `;
+}
+
+async function deleteFile(recordId) {
+  try {
+    await fetch(API + '?action=delete-file', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId}),
+    });
+    toast('File deleted','🗑');
+    await loadData();
+    navigate(STATE.section);
+  } catch(e) { toast('Failed to delete file.','❌'); }
+}
+
+// ─── UPLOAD MODAL ────────────────────────────────────────────────
+function showUploadModal(sectionId, sectionTitle) {
+  showModal(`Upload to ${sectionTitle}`, `
+    <div class="modal-row"><div class="modal-label">File Name</div><input id="up-name" placeholder="e.g. Shot List v2"></div>
+    <div class="modal-row"><div class="modal-label">File</div>
+      <div class="upload-zone" onclick="document.getElementById('up-file').click()">
+        <div class="upload-zone-icon">📁</div>
+        <div class="upload-zone-text" id="up-file-label">Click to select file</div>
+        <div class="upload-zone-sub">PDF, images, docs accepted</div>
+      </div>
+      <input type="file" id="up-file" style="display:none" onchange="updateFileLabel()">
+    </div>
+    <div class="modal-row"><div class="modal-label">Notes (optional)</div><input id="up-notes" placeholder="Brief description"></div>
+    ${STATE.realDept==='director'?`
+    <div class="modal-row">
+      <div class="modal-label">Also push to departments:</div>
+      <div class="dept-checkboxes">
+        ${['Producer','DP','AD','Script Supervisor','Sound'].map(d=>`
+          <label class="dept-check"><input type="checkbox" value="${d}" class="push-check"> ${d}</label>
+        `).join('')}
+      </div>
+    </div>`:''}
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Upload', cls:'btn-gold', action:`doUpload('${sectionId}')`},
+  ]);
+}
+
+function updateFileLabel() {
+  const f = document.getElementById('up-file').files[0];
+  if (f) document.getElementById('up-file-label').textContent = f.name;
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result).split(',')[1] || '');
+    reader.onerror = () => reject(new Error('Could not read file.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+const MAX_UPLOAD_BYTES = 3.5 * 1024 * 1024; // ~3.5MB raw — stays under Vercel's request body cap once base64-encoded
+
+async function doUpload(sectionId) {
+  const name  = document.getElementById('up-name').value.trim();
+  const file  = document.getElementById('up-file').files[0];
+  const notes = document.getElementById('up-notes')?.value.trim() || '';
+  if (!file) { toast('Please select a file.', '⚠️'); return; }
+  if (file.size > MAX_UPLOAD_BYTES) {
+    toast(`File too large (${(file.size/1024/1024).toFixed(1)}MB). Please keep uploads under 3.5MB.`, '⚠️');
+    return;
+  }
+
+  toast('Uploading...', '⏳');
+  try {
+    const fileBase64 = await fileToBase64(file);
+
+    // Determine who to push to
+    const pushDepts = [];
+    document.querySelectorAll('.push-check:checked').forEach(cb => pushDepts.push(cb.value));
+
+    // Default target is whichever dashboard we're currently viewing; attribution is the real actor
+    const targetDept = DEPT_LABELS[STATE.dept];
+    const fromDept   = DEPT_LABELS[STATE.realDept] || targetDept;
+    const targets = pushDepts.length ? pushDepts : [targetDept];
+
+    // Upload the actual bytes once (to whichever dept is primary), then copy
+    // the resulting hosted URL to any additional pushed departments.
+    const [primary, ...rest] = targets;
+    const res = await fetch(API + '?action=add-file', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        name: name || file.name,
+        fileBase64,
+        filename: file.name,
+        fileType: file.type,
+        forDept: primary,
+        fromDept,
+        section: sectionId,
+        notes,
+      }),
+    });
+    const data = await res.json();
+    if (data.uploadError) throw new Error(data.uploadError);
+    const hostedUrl = data.records && data.records[0] && data.records[0].fields && data.records[0].fields['File URL'];
+
+    for (const forDept of rest) {
+      await fetch(API + '?action=add-file', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          name: name || file.name,
+          url: hostedUrl || '',
+          fileType: file.type,
+          forDept,
+          fromDept,
+          section: sectionId,
+          notes,
+        }),
+      });
+    }
+
+    closeModal();
+    toast(`"${name||file.name}" uploaded!`, '✅');
+    await loadData();
+    navigate(sectionId);
+  } catch(e) {
+    toast(e.message || 'Upload failed. Check your connection.', '❌');
+  }
+}
+
+// ─── PUSH MODAL ──────────────────────────────────────────────────
+function showPushModal(fileId, fileName) {
+  showModal('Push File to Departments', `
+    <p style="font-size:13px;margin-bottom:14px">Push <strong>${esc(fileName)}</strong> to:</p>
+    <div class="dept-checkboxes">
+      ${['Producer','DP','AD','Script Supervisor','Sound','All'].map(d=>`
+        <label class="dept-check"><input type="checkbox" value="${d}" class="push-dept"> ${d}</label>
+      `).join('')}
+    </div>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Push', cls:'btn-gold', action:`doPush('${fileId}')`},
+  ]);
+}
+
+async function doPush(fileId) {
+  const depts = [...document.querySelectorAll('.push-dept:checked')].map(c => c.value);
+  if (!depts.length) { toast('Select at least one department.','⚠️'); return; }
+  const rec = STATE.files.find(f => f.id === fileId);
+  if (!rec) return;
+  for (const d of depts) {
+    await fetch(API + '?action=add-file', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        name: rec.fields['Name'],
+        url: rec.fields['File URL'],
+        fileType: rec.fields['File Type'],
+        forDept: d,
+        fromDept: DEPT_LABELS[STATE.dept],
+        section: rec.fields['Section'],
+        notes: rec.fields['Notes'],
+      }),
+    });
+  }
+  closeModal();
+  toast(`Pushed to ${depts.join(', ')}`, '✅');
+}
+
+// ════════════════════════════════════════════════════════════════
+// DIRECTOR SECTIONS
+// ════════════════════════════════════════════════════════════════
+SECTIONS.director = {
+  overview: (el) => {
+    el.innerHTML = `
+      <div class="grid2" style="margin-bottom:20px">
+        <div class="card">
+          <div class="card-title">Current Phase</div>
+          <div style="font-size:20px;font-weight:700;color:var(--gold)">CASTING</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">NOW – JULY 3, 2026</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Crew Signed</div>
+          <div style="font-size:20px;font-weight:700">${STATE.crew.length} <span style="font-size:12px;color:var(--muted)">CORE</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Quick Actions</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn-sm btn-gold" onclick="navigate('script')">Upload Script</button>
+          <button class="btn-sm btn-gold" onclick="navigate('shotlist')">Shot List</button>
+          <button class="btn-sm btn-outline" onclick="navigate('push')">Push to Depts</button>
+          <button class="btn-sm btn-outline" onclick="navigate('crew')">View Crew</button>
+        </div>
+      </div>
+    `;
+  },
+  script: (el) => renderFileSection(el, 'script', 'Scripts', '.pdf,.fdx,.fountain', 'Upload your script here. Use the Push button to share with any department.'),
+  shotlist: (el) => renderFileSection(el, 'shotlist', 'Shot List', '.pdf,.xlsx,.csv', 'Upload shot lists. Push to DP when ready.'),
+  storyboard: (el) => renderFileSection(el, 'storyboard', 'Storyboards', 'image/*,.pdf'),
+  notes: (el) => renderNotesSection(el, 'Director', 'Director Notes'),
+  scenes: (el) => renderScenesSection(el, true),
+  continuity: (el) => renderContinuityNotes(el),
+  crew: (el) => renderCrewSection(el),
+  castingdb: (el) => renderCastingDatabase(el),
+  contracts: (el) => renderContractsHub(el, 'crew'),
+  timeline: (el) => renderTimeline(el, 'director'),
+  polls: (el) => renderMeetingPolls(el),
+  emailhub: (el) => renderEmailHub(el, null),
+  taskboard: (el) => renderTaskBoard(el),
+  managedepts: (el) => renderManageDepartments(el),
+  settings: (el) => renderProductionSettings(el),
+  push: (el) => {
+    el.innerHTML = `
+      <div class="section-title" style="margin-bottom:16px">Push to Departments</div>
+      <div class="card">
+        <div class="card-title">Send a Note to a Department</div>
+        <div class="modal-row"><div class="modal-label">To</div>
+          <select id="push-to">
+            <option value="All">All Departments</option>
+            <option value="Producer">Producer</option>
+            <option value="DP">DP / Camera</option>
+            <option value="AD">Assistant Director</option>
+            <option value="Script Supervisor">Script Supervisor</option>
+            <option value="Sound">Sound</option>
+          </select>
+        </div>
+        <div class="modal-row" style="margin-top:10px"><div class="modal-label">Note / Message</div>
+          <textarea id="push-note" rows="4" placeholder="Type your message or update..."></textarea>
+        </div>
+        <button class="btn-sm btn-gold" style="margin-top:10px" onclick="sendNote()">Send Note</button>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="card-title">Push a File</div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Upload files from any section and use the Push button, or upload directly here.</p>
+        <button class="btn-sm btn-gold" onclick="showUploadModal('push','Push File')">Upload + Push File</button>
+      </div>
+    `;
+  },
+};
+
+async function sendNote() {
+  const to      = document.getElementById('push-to').value;
+  const content = document.getElementById('push-note').value.trim();
+  if (!content) { toast('Please write a note first.','⚠️'); return; }
+  try {
+    await fetch(API + '?action=add-note', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({title:'Note from Director', content, author: STATE.name || 'Director', audience: to}),
+    });
+    document.getElementById('push-note').value = '';
+    toast(`Note sent to ${to}`, '✅');
+  } catch(e) { toast('Failed to send. Try again.','❌'); }
+}
+
+// ════════════════════════════════════════════════════════════════
+// PRODUCER SECTIONS
+// ════════════════════════════════════════════════════════════════
+SECTIONS.producer = {
+  overview: (el) => {
+    el.innerHTML = `
+      <div class="grid3" style="margin-bottom:20px">
+        <div class="card"><div class="card-title">Current Phase</div><div style="font-size:18px;font-weight:700;color:var(--gold)">CONTRACTS + BUDGET</div><div style="font-size:11px;color:var(--muted)">JUNE 23 – JULY 3</div></div>
+        <div class="card"><div class="card-title">Core Crew</div><div style="font-size:24px;font-weight:700">${STATE.crew.length}</div></div>
+        <div class="card"><div class="card-title">Contracts</div><div style="font-size:24px;font-weight:700">${CREW_CONTRACTS.length} <span style="font-size:11px;color:var(--muted)">links ready</span></div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Quick Actions</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn-sm btn-gold" onclick="navigate('contracts')">Contracts Hub</button>
+          <button class="btn-sm btn-gold" onclick="navigate('locations')">Location Hub</button>
+          <button class="btn-sm btn-outline" onclick="navigate('crewcast')">Crew + Cast</button>
+          <button class="btn-sm btn-outline" onclick="navigate('budget')">Budget</button>
+        </div>
+      </div>
+    `;
+  },
+  timeline: (el) => renderTimeline(el, 'producer'),
+  locations: (el) => renderLocationsSection(el),
+  crewcast: (el) => renderCrewSection(el),
+  castingdb: (el) => renderCastingDatabase(el),
+  contracts: (el) => renderContractsHub(el, 'cast'),
+  documents: (el) => renderFileSection(el, 'documents', 'Documents', '*', 'Signed contracts, releases, and other documents.'),
+  budget: (el) => renderBudgetSection(el),
+  availability: (el) => renderAvailabilitySection(el),
+  offers: (el) => renderOfferLetters(el),
+  polls: (el) => renderMeetingPolls(el),
+  emailhub: (el) => renderEmailHub(el, 'crew', {aliases:['crew','casting'], includeCast:true}),
+  taskboard: (el) => renderTaskBoard(el),
+};
+
+// ─── CONTRACTS HUB (scope: 'crew' for Director, 'cast' for Producer) ─────
+const CONTRACTS_HUB_SCOPE = {
+  crew: {
+    label: 'Crew',
+    types: ['Crew Agreement','Contractor Agreement'],
+    groups: [
+      {title:'CREW', items:[
+        {name:'Crew Agreement'},
+        {name:'Contractor Agreement'},
+      ]},
+    ],
+  },
+  cast: {
+    label: 'Cast',
+    types: ['Cast Agreement','Talent Release','Actor Deal Memo','Location Release','Media Release (BTS)','Editor Agreement','Composer Agreement','Usage Rights'],
+    groups: [
+      {title:'CAST', items:[
+        {name:'Cast Agreement'},
+        {name:'Talent Release'},
+        {name:'Actor Deal Memo'},
+      ]},
+      {title:'PRODUCTION', items:[
+        {name:'Location Release'},
+        {name:'Media Release (BTS)'},
+      ]},
+      {title:'POST', items:[
+        {name:'Editor Agreement'},
+        {name:'Composer Agreement'},
+      ]},
+    ],
+  },
+};
+
+async function renderContractsHub(el, scope) {
+  STATE.contractsScope = scope;
+  const cfg = CONTRACTS_HUB_SCOPE[scope];
+
+  el.innerHTML = `
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab(this,'tab-send')">Send Contracts</div>
+      <div class="tab" onclick="switchTab(this,'tab-signed')">Signed Contracts</div>
+      <div class="tab" onclick="switchTab(this,'tab-templates')">Templates</div>
+    </div>
+    <div class="tab-panel active" id="tab-send">
+      <div class="section-header">
+        <div class="section-title">${cfg.label} Agreement Links</div>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Edit name/role below, then copy the link to send. They fill in the form and sign — it saves back here automatically.</p>
+      <div id="contract-edit-form" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px">
+        <div class="grid2" style="gap:10px;margin-bottom:10px">
+          <div><div class="modal-label">Name (override)</div><input id="ce-name" placeholder="Full name"></div>
+          <div><div class="modal-label">Role (override)</div><input id="ce-role" placeholder="Role title"></div>
+        </div>
+        <div class="modal-row"><div class="modal-label">Contract Type</div>
+          <select id="ce-type" onchange="renderExtraFields()">
+            ${cfg.types.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('')}
+          </select>
+        </div>
+        <div><div class="modal-label">Email</div><input id="ce-email" placeholder="email@example.com" style="margin-bottom:10px"></div>
+        <div id="ce-extra-fields"></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn-sm btn-gold" onclick="buildContractLink()">Generate Link</button>
+          <button class="btn-sm btn-outline" onclick="copyContractLink()">Copy Link</button>
+        </div>
+        <div id="ce-link-out" style="margin-top:10px;font-size:11px;color:var(--muted);word-break:break-all"></div>
+      </div>
+      <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">— Or send directly to ${scope==='crew'?'CORE crew':'confirmed cast'} —</div>
+      <div id="contract-send-list"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
+    </div>
+    <div class="tab-panel" id="tab-signed">
+      <div class="section-title" style="margin-bottom:16px">Signed Contracts</div>
+      <div id="signed-list"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
+    </div>
+    <div class="tab-panel" id="tab-templates">
+      <div class="section-title" style="margin-bottom:16px">Contract Templates</div>
+      ${cfg.groups.map(g => `
+        <div class="contract-group">
+          <div class="contract-group-title">${g.title}</div>
+          ${g.items.map(item => `
+            <div class="contract-row">
+              <div><div class="contract-row-name">${item.name}</div></div>
+              <div style="display:flex;gap:6px">
+                <button class="btn-sm btn-gold" onclick="useTemplate('${esc(item.name)}')">Use This Template</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  if (scope === 'crew') {
+    renderContractSendList(STATE.crew.length ? STATE.crew.map(r=>({name:r.fields['Name']||'',role:(r.fields['Preferred role by Director']||'').toString().replace(/,/g,', ')||r.fields['Role']||'',email:r.fields['Email']||''})) : CREW_CONTRACTS);
+  } else {
+    try {
+      const res  = await fetch(`${API}?action=get-cast`);
+      const data = await res.json();
+      const cast = (data.records||[]).map(r=>({name:r.fields['Name']||'',role:r.fields['To Role']||r.fields['Role']||'',email:r.fields['Email']||''}));
+      renderContractSendList(cast, 'No confirmed cast yet — mark someone Confirmed in the Casting Database first.');
+    } catch(e) { renderContractSendList([], 'Could not load cast list.'); }
+  }
+
+  loadSignedContracts(cfg.types);
+  renderExtraFields();
+}
+
+function renderContractSendList(list, emptyMsg) {
+  const el = document.getElementById('contract-send-list');
+  if (!el) return;
+  if (!list.length) { el.innerHTML = `<p style="color:var(--muted);font-size:13px">${emptyMsg||'No one to show yet.'}</p>`; return; }
+  el.innerHTML = list.map(c => `
+    <div class="contract-row">
+      <div>
+        <div class="contract-row-name">${esc(c.name)}</div>
+        <div class="contract-row-sub">${esc(c.role)} · ${esc(c.email)}</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn-sm btn-outline" onclick="prefillContract('${esc(c.name)}','${esc(c.email)}','${esc(c.role)}')">Edit &amp; Send</button>
+        <a href="${contractLink(c.name,c.email,c.role)}" target="_blank" class="btn-sm btn-gold" style="display:inline-flex;align-items:center">Open</a>
+      </div>
+    </div>
+  `).join('');
+}
+
+function prefillContract(name, email, role, type) {
+  document.getElementById('ce-name').value  = name;
+  document.getElementById('ce-email').value = email;
+  document.getElementById('ce-role').value  = role;
+  if (type) document.getElementById('ce-type').value = type;
+  renderExtraFields();
+  buildContractLink();
+}
+
+function renderExtraFields() {
+  const type = document.getElementById('ce-type')?.value || 'Crew Agreement';
+  const tpl  = CONTRACT_TEMPLATES[type] || { extra: [] };
+  const el   = document.getElementById('ce-extra-fields');
+  if (!el) return;
+  el.innerHTML = tpl.extra.map(f => `
+    <div class="modal-row"><div class="modal-label">${esc(f.label)}</div><input id="ce-extra-${f.key}" placeholder="${esc(f.label)}"></div>
+  `).join('');
+}
+
+function buildContractLink() {
+  const name  = document.getElementById('ce-name').value.trim();
+  const email = document.getElementById('ce-email').value.trim();
+  const role  = document.getElementById('ce-role').value.trim();
+  const type  = document.getElementById('ce-type')?.value || '';
+  if (!name || !email) { toast('Name and email required.','⚠️'); return; }
+  const tpl = CONTRACT_TEMPLATES[type] || { extra: [] };
+  const extraValues = {};
+  tpl.extra.forEach(f => {
+    const v = document.getElementById(`ce-extra-${f.key}`)?.value.trim();
+    if (v) extraValues[f.key] = v;
+  });
+  const link = contractLink(name, email, role, type, extraValues);
+  document.getElementById('ce-link-out').innerHTML = `<a href="${link}" target="_blank">${link}</a>`;
+}
+
+function copyContractLink() {
+  const out = document.getElementById('ce-link-out').textContent.trim();
+  if (!out) { buildContractLink(); }
+  const link = document.getElementById('ce-link-out').textContent.trim();
+  if (link) { navigator.clipboard.writeText(link).then(() => toast('Link copied!','📋')); }
+}
+
+async function loadSignedContracts(typeFilter) {
+  try {
+    const res  = await fetch(`${API}?action=get-contracts`);
+    const data = await res.json();
+    let recs = data.records || [];
+    if (typeFilter && typeFilter.length) {
+      recs = recs.filter(r => typeFilter.includes(r.fields['Contract Type'] || 'Crew Agreement'));
+    }
+    const el   = document.getElementById('signed-list');
+    if (!el) return;
+    if (!recs.length) { el.innerHTML = '<p style="color:var(--muted);font-size:13px">No signed contracts yet.</p>'; return; }
+    STATE.contracts = recs;
+    el.innerHTML = recs.map(r => `
+      <div class="contract-row">
+        <div>
+          <div class="contract-row-name">${esc(r.fields['Name']||'Unknown')}</div>
+          <div class="contract-row-sub">${esc(r.fields['Role']||'')} ${r.fields['Contract Type']?'· '+esc(r.fields['Contract Type']):''} · Signed ${r.fields['Date Signed']||'—'}</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span class="tag tag-green">Signed</span>
+          <button class="btn-sm btn-outline" onclick="viewContract('${r.id}')">View / Print</button>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {}
+}
+
+function viewContract(recordId) {
+  const r = (STATE.contracts||[]).find(c => c.id === recordId);
+  if (!r) { toast('Contract not found.','⚠️'); return; }
+  const f = r.fields;
+  const sigAttachment = (f['Signature']||[])[0];
+  const sigUrl = sigAttachment ? sigAttachment.url : '';
+  const type = f['Contract Type'] || 'Crew Agreement';
+  const clauses = CONTRACT_CLAUSES[type] || [];
+  const film = STATE.filmName || FILM;
+
+  const clauseHtml = clauses.map((c, i) => `
+    <div class="clause">
+      <div class="clause-num">${i+1}</div>
+      <div class="clause-body">
+        <div class="clause-title">${esc(c[0])}</div>
+        <div class="clause-text">${esc(c[1])}</div>
+      </div>
+    </div>
+  `).join('');
+
+  const win = window.open('', '_blank');
+  win.document.write(`
+    <html><head><title>${esc(type)} — ${esc(f['Name']||'')}</title>
+    <style>
+      *{box-sizing:border-box}
+      body{font-family:'Segoe UI',Arial,sans-serif;max-width:760px;margin:50px auto;padding:0 20px;color:#1a1a1a;line-height:1.6;background:#fff}
+      .doc-header{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #c9a84c;padding-bottom:14px;margin-bottom:24px}
+      .wordmark{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#9a7820;font-weight:700}
+      .doctype{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#666}
+      h1{font-size:20px;margin:0 0 4px;text-transform:uppercase;letter-spacing:.03em}
+      .sub{font-size:11px;color:#777;margin-bottom:24px}
+      .partybar{display:flex;flex-wrap:wrap;gap:0;border:1px solid #ddd;margin-bottom:24px}
+      .party-cell{flex:1;min-width:140px;padding:10px 14px;border-right:1px solid #eee}
+      .party-cell:last-child{border-right:none}
+      .party-lbl{display:block;font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:#9a7820;margin-bottom:3px}
+      .party-val{font-size:13px;font-weight:600}
+      .clause{display:flex;gap:16px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid #eee}
+      .clause:last-child{border-bottom:none}
+      .clause-num{font-size:11px;font-weight:700;color:#9a7820;min-width:18px}
+      .clause-title{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#9a7820;margin-bottom:6px;font-weight:700}
+      .clause-text{font-family:Georgia,serif;font-size:13px;line-height:1.8;color:#333}
+      .sig-section{margin-top:32px;border-top:2px solid #c9a84c;padding-top:24px}
+      .sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:16px}
+      .sig-lbl{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#9a7820;margin-bottom:10px;font-weight:700}
+      .sig-img-box{border-bottom:1px solid #ccc;min-height:60px;display:flex;align-items:flex-end;padding-bottom:6px;margin-bottom:6px}
+      .sig-img-box img{max-height:55px;max-width:100%;object-fit:contain}
+      .sig-name{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#555}
+      .extra{margin-top:20px;padding:14px;background:#f9f6ee;border:1px solid #e5dcc3;font-size:12px}
+      .printbtn{margin-top:32px;padding:12px 22px;background:#c9a84c;color:#000;border:none;border-radius:6px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;font-size:11px;cursor:pointer}
+      @media print{.printbtn{display:none}}
+    </style></head><body>
+    <div class="doc-header">
+      <span class="wordmark">BLEUSKM Studios</span>
+      <span class="doctype">${esc(type)}</span>
+    </div>
+    <h1>${esc(type)}</h1>
+    <div class="sub">BLEUSKM Studios · Denton, TX · ${esc(film)}</div>
+
+    <div class="partybar">
+      <div class="party-cell"><span class="party-lbl">Name</span><span class="party-val">${esc(f['Name']||'—')}</span></div>
+      <div class="party-cell"><span class="party-lbl">Role</span><span class="party-val">${esc(f['Role']||'—')}</span></div>
+      <div class="party-cell"><span class="party-lbl">Project</span><span class="party-val">${esc(film)}</span></div>
+      <div class="party-cell"><span class="party-lbl">Date Signed</span><span class="party-val">${esc(f['Date Signed']||'—')}</span></div>
+    </div>
+
+    ${clauseHtml || '<p style="color:#999;font-size:13px">Full clause text not available for this contract type.</p>'}
+
+    ${f['Extra Details'] ? `<div class="extra"><strong>Additional Details:</strong><br>${esc(f['Extra Details']).replace(/\n/g,'<br>')}</div>` : ''}
+
+    <div class="sig-section">
+      <div class="sig-lbl">Signatures</div>
+      <div class="sig-grid">
+        <div>
+          <div class="sig-img-box"><img src="https://www.bleuskm.com/contracts/zaria-signature.png" alt="Zaria signature"></div>
+          <div class="sig-name">Zaria Lashae — Founder &amp; Director, BLEUSKM Studios</div>
+        </div>
+        <div>
+          <div class="sig-img-box">${sigUrl ? `<img src="${esc(sigUrl)}" alt="signature">` : '<span style="color:#999;font-size:11px">No signature on file</span>'}</div>
+          <div class="sig-name">${esc(f['Name']||'Signer')}</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="printbtn" onclick="window.print()">Print / Save as PDF</button>
+    </body></html>
+  `);
+  win.document.close();
+}
+
+// ─── LOCATIONS ───────────────────────────────────────────────────
+async function renderLocationsSection(el) {
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Location Hub</div>
+      <button class="btn-sm btn-gold" onclick="showAddLocation()">+ Add Location</button>
+    </div>
+    <div id="locations-list"><p style="color:var(--muted);font-size:13px">Loading locations...</p></div>
+  `;
+  try {
+    const res  = await fetch(`${API}?action=get-locations`);
+    const data = await res.json();
+    STATE.locations = data.records || [];
+    renderLocationCards();
+  } catch(e) {
+    document.getElementById('locations-list').innerHTML = '<p style="color:var(--muted)">Could not load locations.</p>';
+  }
+}
+
+function renderLocationCards() {
+  const el = document.getElementById('locations-list');
+  if (!el) return;
+  if (!STATE.locations.length) { el.innerHTML = '<p style="color:var(--muted);font-size:13px">No locations added yet.</p>'; return; }
+  const statusColors = {'Approved':'tag-green','Declined':'tag-red','Called - No Answer':'tag-muted','Called - Maybe Follow Up':'tag-gold','Not Yet Contacted':'tag-muted'};
+  el.innerHTML = STATE.locations.map(loc => {
+    const f = loc.fields;
+    const sc = statusColors[f['Status']] || 'tag-muted';
+    return `
+      <div class="loc-card">
+        <div class="loc-header">
+          <div class="loc-name">${esc(f['Location Name']||'Unnamed')}</div>
+          <span class="tag ${sc}">${esc(f['Status']||'Unknown')}</span>
+        </div>
+        <div class="loc-detail">${esc(f['Address']||'')}</div>
+        <div class="loc-detail">Contact: ${esc(f['Contact Person']||'—')} · ${esc(f['Phone']||'')} · ${esc(f['Email']||'')}</div>
+        ${f['Notes'] ? `<div style="font-size:11px;color:var(--muted);margin-top:4px">${esc(f['Notes'])}</div>` : ''}
+        <div style="margin-top:10px;display:flex;gap:6px">
+          <select style="flex:1;font-size:11px" onchange="updateLocStatus('${loc.id}',this.value)">
+            ${['Not Yet Contacted','Called - No Answer','Called - Maybe Follow Up','Approved','Declined'].map(s=>`<option ${f['Status']===s?'selected':''}>${s}</option>`).join('')}
+          </select>
+          ${f['Email']?`<a href="mailto:${esc(f['Email'])}" class="btn-sm btn-outline">Email</a>`:''}
+          <button class="btn-sm btn-outline" onclick="deleteLocation('${loc.id}')">🗑</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function deleteLocation(recordId) {
+  try {
+    await fetch(API + '?action=delete-location', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId}),
+    });
+    toast('Location deleted','🗑');
+    STATE.locations = STATE.locations.filter(l => l.id !== recordId);
+    renderLocationCards();
+  } catch(e) { toast('Failed to delete location.','❌'); }
+}
+
+function showAddLocation() {
+  showModal('Add Location', `
+    <div class="modal-row"><div class="modal-label">Location Name *</div><input id="loc-name" placeholder="e.g. Downtown Warehouse"></div>
+    <div class="modal-row"><div class="modal-label">Address</div><textarea id="loc-addr" rows="2" placeholder="Full address"></textarea></div>
+    <div class="modal-row"><div class="modal-label">Contact Person</div><input id="loc-contact" placeholder="Name"></div>
+    <div class="modal-row"><div class="modal-label">Phone</div><input id="loc-phone" placeholder="(xxx) xxx-xxxx"></div>
+    <div class="modal-row"><div class="modal-label">Email</div><input id="loc-email" type="email" placeholder="contact@example.com"></div>
+    <div class="modal-row"><div class="modal-label">Initial Status</div>
+      <select id="loc-status">
+        <option>Not Yet Contacted</option><option>Called - No Answer</option>
+        <option>Called - Maybe Follow Up</option><option>Approved</option><option>Declined</option>
+      </select>
+    </div>
+    <div class="modal-row"><div class="modal-label">Notes</div><textarea id="loc-notes" rows="2"></textarea></div>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Add Location', cls:'btn-gold', action:'doAddLocation()'},
+  ]);
+}
+
+async function doAddLocation() {
+  const name = document.getElementById('loc-name').value.trim();
+  if (!name) { toast('Location name required.','⚠️'); return; }
+  try {
+    await fetch(API + '?action=add-location', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        name,
+        address: document.getElementById('loc-addr').value,
+        contact: document.getElementById('loc-contact').value,
+        phone:   document.getElementById('loc-phone').value,
+        email:   document.getElementById('loc-email').value,
+        status:  document.getElementById('loc-status').value,
+        notes:   document.getElementById('loc-notes').value,
+      }),
+    });
+    closeModal();
+    toast('Location added!','✅');
+    const res  = await fetch(`${API}?action=get-locations`);
+    const data = await res.json();
+    STATE.locations = data.records || [];
+    renderLocationCards();
+  } catch(e) { toast('Failed to add location.','❌'); }
+}
+
+async function updateLocStatus(recordId, status) {
+  try {
+    await fetch(API + '?action=update-location', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId, status, notes:''}),
+    });
+    toast('Status updated','✅');
+  } catch(e) {}
+}
+
+// ─── BUDGET ──────────────────────────────────────────────────────
+async function renderBudgetSection(el) {
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Budget Tracker</div>
+      <button class="btn-sm btn-gold" onclick="addBudgetRow()">+ Add Category</button>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="budget-table" id="budget-tbl">
+        <thead><tr><th>Category</th><th>Allocated ($)</th><th>Spent ($)</th><th>Remaining</th><th></th></tr></thead>
+        <tbody id="budget-body"><tr><td colspan="5" style="color:var(--muted)">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  `;
+  await loadBudget();
+}
+
+async function loadBudget() {
+  try {
+    const res  = await fetch(`${API}?action=get-budget`);
+    const data = await res.json();
+    STATE.budget = data.records || [];
+  } catch(e) { STATE.budget = []; }
+  const tbody = document.getElementById('budget-body');
+  if (!tbody) return;
+  if (!STATE.budget.length) { tbody.innerHTML = '<tr><td colspan="5" style="color:var(--muted)">No budget categories yet.</td></tr>'; return; }
+  tbody.innerHTML = STATE.budget.map(r => {
+    const f = r.fields;
+    const alloc = f['Allocated'] || 0;
+    const spent = f['Spent'] || 0;
+    const rem   = alloc - spent;
+    return `<tr>
+      <td>${esc(f['Category']||'')}</td>
+      <td><input type="number" value="${alloc}" onblur="saveBudgetRow('${r.id}',this.value,null)" style="width:100px;background:transparent;border:none;color:var(--text);font-family:monospace"></td>
+      <td><input type="number" value="${spent}" onblur="saveBudgetRow('${r.id}',null,this.value)" style="width:100px;background:transparent;border:none;color:var(--text);font-family:monospace"></td>
+      <td style="font-family:monospace;color:${rem<0?'var(--red)':'var(--gold)'}">$${rem.toFixed(2)}</td>
+      <td><button class="btn-sm btn-outline" onclick="deleteBudgetRow('${r.id}')">🗑</button></td>
+    </tr>`;
+  }).join('');
+}
+
+async function saveBudgetRow(recordId, allocated, spent) {
+  const row = STATE.budget.find(r => r.id === recordId);
+  if (!row) return;
+  const finalAlloc = allocated !== null ? allocated : (row.fields['Allocated']||0);
+  const finalSpent = spent !== null ? spent : (row.fields['Spent']||0);
+  try {
+    await fetch(API + '?action=update-budget-row', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId, allocated: finalAlloc, spent: finalSpent}),
+    });
+    toast('Budget updated','✅');
+    loadBudget();
+  } catch(e) { toast('Failed to update.','❌'); }
+}
+
+function addBudgetRow() {
+  showModal('Add Budget Category', `
+    <div class="modal-row"><div class="modal-label">Category Name</div><input id="bg-cat" placeholder="e.g. Insurance"></div>
+    <div class="grid2" style="gap:10px">
+      <div><div class="modal-label">Allocated ($)</div><input id="bg-alloc" type="number" placeholder="0"></div>
+      <div><div class="modal-label">Spent ($)</div><input id="bg-spent" type="number" placeholder="0"></div>
+    </div>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Add', cls:'btn-gold', action:'saveBudgetCategory()'},
+  ]);
+}
+
+async function saveBudgetCategory() {
+  const category = document.getElementById('bg-cat').value.trim();
+  if (!category) { toast('Category name required.','⚠️'); return; }
+  try {
+    await fetch(API + '?action=add-budget-row', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        category,
+        allocated: document.getElementById('bg-alloc').value || 0,
+        spent: document.getElementById('bg-spent').value || 0,
+      }),
+    });
+    closeModal();
+    toast('Category added','✅');
+    loadBudget();
+  } catch(e) { toast('Failed to add category.','❌'); }
+}
+
+async function deleteBudgetRow(recordId) {
+  try {
+    await fetch(API + '?action=delete-budget-row', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId}),
+    });
+    toast('Category deleted','🗑');
+    loadBudget();
+  } catch(e) { toast('Failed to delete.','❌'); }
+}
+
+// ════════════════════════════════════════════════════════════════
+// EMAIL HUB — Zoho-backed send / inbox / sent-log (mailto fallback)
+// ════════════════════════════════════════════════════════════════
+const MAIL_ALIASES = {
+  studio:  { address:'studio@bleuskm.com',  label:'Studio (Zaria)', hub:'Studio' },
+  crew:    { address:'crew@bleuskm.com',    label:'Crew',           hub:'Crew' },
+  casting: { address:'casting@bleuskm.com', label:'Casting',        hub:'Casting' },
+};
+
+// Combined crew + (optionally) cast contact list, with Zaria/Director included
+// so any department can quickly reach her. Used by Email Hub and Offer Letters.
+async function getCombinedContacts(includeCast) {
+  const contacts = [];
+  if (STATE.realDept !== 'director') {
+    contacts.push({ name:'Zaria', role:'Director', email:'studio@bleuskm.com', type:'Studio' });
+  }
+  (STATE.crew||[]).forEach(r => {
+    const email = r.fields['Email']||'';
+    if (!email) return;
+    contacts.push({ name: r.fields['Name']||'', role: (r.fields['Preferred role by Director']||r.fields['Role']||'').toString(), email, type:'Crew' });
+  });
+  if (includeCast) {
+    try {
+      const res = await fetch(`${API}?action=get-casting`);
+      const data = await res.json();
+      (data.records||[]).forEach(r => {
+        const email = r.fields['Email']||'';
+        if (!email) return;
+        contacts.push({ name: r.fields['Name']||'', role: r.fields['To Role']||r.fields['Role']||'', email, type:'Cast' });
+      });
+    } catch(e) {}
+  }
+  return contacts;
+}
+
+async function sendZohoMail({fromAlias, to, bcc, subject, text, attachments}) {
+  const res = await fetch(MAIL_API + '?action=send', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ fromAlias, to, bcc, subject, text, attachments, sentBy: STATE.name || DEPT_LABELS[STATE.dept] || '' }),
+  });
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.error || 'Send failed');
+  return json;
+}
+
+// ── ATTACHMENTS (file + contract link) — shared by every compose surface ────
+function attachmentControlsHTML(targetId) {
+  return `
+    <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap">
+      <button type="button" class="btn-sm btn-outline" onclick="document.getElementById('file-${targetId}').click()">📎 Attach File</button>
+      <input type="file" id="file-${targetId}" style="display:none" onchange="handleAttachFilePick(this,'${targetId}')">
+      <button type="button" class="btn-sm btn-outline" onclick="toggleContractPanel('${targetId}')">📎 Attach Contract</button>
+    </div>
+    <div id="attach-status-${targetId}" style="font-size:11px;color:var(--muted);margin-bottom:6px"></div>
+    <div id="contract-panel-${targetId}" class="hidden" style="border:1px solid var(--border);padding:10px;border-radius:6px;margin-bottom:10px">
+      <div class="modal-label">Contract Type</div>
+      <select id="contract-type-${targetId}" style="margin-bottom:6px">
+        ${Object.keys(CONTRACT_TEMPLATES).map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('')}
+      </select>
+      <div class="grid2" style="gap:6px">
+        <input id="contract-name-${targetId}" placeholder="Recipient name">
+        <input id="contract-role-${targetId}" placeholder="Role / character">
+      </div>
+      <input id="contract-email-${targetId}" placeholder="Recipient email" style="margin-top:6px">
+      <button type="button" class="btn-sm btn-gold" style="margin-top:8px" onclick="insertContractLink('${targetId}')">Insert Link Into Message</button>
+    </div>
+  `;
+}
+
+function toggleContractPanel(targetId) {
+  document.getElementById(`contract-panel-${targetId}`)?.classList.toggle('hidden');
+}
+
+function insertContractLink(targetId) {
+  const type  = document.getElementById(`contract-type-${targetId}`)?.value;
+  const name  = document.getElementById(`contract-name-${targetId}`)?.value.trim() || '';
+  const email = document.getElementById(`contract-email-${targetId}`)?.value.trim() || '';
+  const role  = document.getElementById(`contract-role-${targetId}`)?.value.trim() || '';
+  const link  = contractLink(name, email, role, type);
+  const ta = document.getElementById(targetId);
+  if (ta) {
+    ta.value = (ta.value ? ta.value + '\n\n' : '') + `Your ${type}: ${link}`;
+    ta.dispatchEvent(new Event('input'));
+  }
+  document.getElementById(`contract-panel-${targetId}`)?.classList.add('hidden');
+  toast('Contract link added to message','📎');
+}
+
+async function handleAttachFilePick(input, targetId) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > MAX_UPLOAD_BYTES) { toast(`File too large (${(file.size/1024/1024).toFixed(1)}MB). Keep attachments under 3.5MB.`,'⚠️'); input.value=''; return; }
+  try {
+    const base64 = await fileToBase64(file);
+    STATE.pendingAttachment = { filename: file.name, content: base64, contentType: file.type || 'application/octet-stream' };
+    const statusEl = document.getElementById(`attach-status-${targetId}`);
+    if (statusEl) statusEl.innerHTML = `📎 ${esc(file.name)} attached &middot; <a href="javascript:void(0)" onclick="clearPendingAttachment('${targetId}')" style="color:var(--red)">remove</a>`;
+  } catch(e) { toast('Could not read file.','❌'); }
+}
+
+function clearPendingAttachment(targetId) {
+  STATE.pendingAttachment = null;
+  const statusEl = document.getElementById(`attach-status-${targetId}`);
+  if (statusEl) statusEl.innerHTML = '';
+  const fileInput = document.getElementById(`file-${targetId}`);
+  if (fileInput) fileInput.value = '';
+}
+
+async function loadSentLog(hub) {
+  try {
+    const res = await fetch(`${MAIL_API}?action=sent-log${hub ? `&hub=${encodeURIComponent(hub)}` : ''}`);
+    const json = await res.json();
+    return json.records || [];
+  } catch(e) { return []; }
+}
+
+async function loadInboxMsgs(alias, limit) {
+  try {
+    const res = await fetch(`${MAIL_API}?action=inbox&alias=${encodeURIComponent(alias||'')}&limit=${limit||20}`);
+    const json = await res.json();
+    if (!json.ok) return null;
+    return json.messages || [];
+  } catch(e) { return null; } // null = inbox not reachable; sending still works independently
+}
+
+function sentLogHTML(records) {
+  if (!records || !records.length) return '<p style="color:var(--muted);font-size:12px;padding:6px">Nothing sent yet.</p>';
+  return records.map(r => {
+    const f = r.fields || {};
+    const when = f['Sent At'] ? new Date(f['Sent At']).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '';
+    return `
+      <div style="padding:8px 6px;border-bottom:1px solid var(--border);font-size:12px">
+        <div style="display:flex;justify-content:space-between;gap:8px">
+          <strong style="color:var(--text)">${esc(f['Subject']||'(no subject)')}</strong>
+          <span style="color:var(--muted);white-space:nowrap">${esc(when)}</span>
+        </div>
+        <div style="color:var(--muted);margin-top:2px">To: ${esc((f['To']||'').toString().slice(0,140))}</div>
+        <div style="color:var(--muted);margin-top:1px">From ${esc(f['From Address']||'')} &middot; sent by ${esc(f['Sent By']||'')}</div>
+      </div>`;
+  }).join('');
+}
+
+function inboxHTML(messages) {
+  if (messages === null) return '<p style="color:var(--muted);font-size:12px;padding:6px">Inbox isn\'t connected yet — sending still works.</p>';
+  if (!messages.length) return '<p style="color:var(--muted);font-size:12px;padding:6px">No messages.</p>';
+  return messages.map(m => {
+    const when = m.date ? new Date(m.date).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '';
+    return `
+      <div style="padding:8px 6px;border-bottom:1px solid var(--border);font-size:12px;cursor:pointer" onclick="openInboxMessage(${m.uid})">
+        <div style="display:flex;justify-content:space-between;gap:8px">
+          <strong style="color:var(--text)">${esc(m.subject||'(no subject)')}</strong>
+          <span style="color:var(--muted);white-space:nowrap">${esc(when)}</span>
+        </div>
+        <div style="color:var(--muted);margin-top:2px">From: ${esc(m.fromName ? `${m.fromName} <${m.from}>` : (m.from||''))}</div>
+      </div>`;
+  }).join('');
+}
+
+async function openInboxMessage(uid) {
+  showModal('Loading…', '<p style="color:var(--muted);font-size:13px">Loading message...</p>', [
+    {label:'Close', cls:'btn-outline', action:'closeModal()'},
+  ]);
+  try {
+    const res = await fetch(`${MAIL_API}?action=get-message&uid=${encodeURIComponent(uid)}`);
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Failed to load message');
+    const m = data.message;
+    const when = m.date ? new Date(m.date).toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}) : '';
+    const bodyHtml = m.text
+      ? `<pre style="white-space:pre-wrap;font-family:inherit;font-size:13px;line-height:1.6;margin:0">${esc(m.text)}</pre>`
+      : '<p style="color:var(--muted);font-size:12px">No plain-text body available for this message.</p>';
+    showModal(m.subject || '(no subject)', `
+      <div style="font-size:11px;color:var(--muted);margin-bottom:4px">From: ${esc(m.from||'')}</div>
+      ${m.to ? `<div style="font-size:11px;color:var(--muted);margin-bottom:4px">To: ${esc(m.to)}</div>` : ''}
+      <div style="font-size:11px;color:var(--muted);margin-bottom:12px">${esc(when)}</div>
+      <div style="max-height:360px;overflow-y:auto;border-top:1px solid var(--border);padding-top:10px">${bodyHtml}</div>
+    `, [
+      {label:'Close', cls:'btn-outline', action:'closeModal()'},
+    ]);
+  } catch(e) {
+    showModal('Could Not Load Email', `<p style="color:var(--red);font-size:13px">${esc(e.message||'Failed to load message.')}</p>`, [
+      {label:'Close', cls:'btn-outline', action:'closeModal()'},
+    ]);
+  }
+}
+
+async function renderEmailHub(el, defaultAlias, opts) {
+  opts = opts || {};
+  STATE.pendingAttachment = null;
+  const locked = !!opts.lockAlias;
+  const availableAliases = opts.aliases || Object.keys(MAIL_ALIASES);
+  const includeCast = opts.includeCast !== false;
+  // STATE.emailHubAlias (set by clicking a tab) wins over the section's default,
+  // as long as it's a valid choice for this particular hub's tab set.
+  const alias = locked
+    ? (defaultAlias || 'studio')
+    : (availableAliases.includes(STATE.emailHubAlias) ? STATE.emailHubAlias : (defaultAlias || availableAliases[0]));
+  STATE.emailHubAlias = alias;
+
+  el.innerHTML = `
+    <div class="section-title" style="margin-bottom:16px">${locked ? MAIL_ALIASES[alias].label + ' Email' : 'Email Hub'}</div>
+    ${locked ? '' : `<div style="display:flex;gap:8px;margin-bottom:16px">
+      ${availableAliases.map(k => `<button class="btn-sm ${k===alias?'btn-gold':'btn-outline'}" onclick="switchEmailHubAlias('${k}')">${MAIL_ALIASES[k].label}</button>`).join('')}
+    </div>`}
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-title">Compose — from ${esc(MAIL_ALIASES[alias].address)}</div>
+      <div class="modal-label" style="margin-top:2px">Quick-Pick Recipients</div>
+      <div class="contact-scroll-header"><span id="eh-contact-count">0 of 0 selected</span>
+        <span><button class="btn-sm btn-outline" style="padding:2px 8px;font-size:10px" onclick="toggleAllEmailHubRecipients(true)">Select All</button>
+        <button class="btn-sm btn-outline" style="padding:2px 8px;font-size:10px" onclick="toggleAllEmailHubRecipients(false)">Deselect All</button></span>
+      </div>
+      <div class="contact-scroll" id="eh-contacts" style="margin-bottom:10px"><p style="color:var(--muted);font-size:12px;padding:6px">Loading contacts...</p></div>
+      <div class="modal-row"><div class="modal-label">To</div><input id="eh-to" placeholder="recipient@email.com (comma-separate for multiple)"></div>
+      <div class="modal-row" style="margin-top:8px"><div class="modal-label">Subject</div><input id="eh-subject" placeholder="Subject"></div>
+      <div class="modal-row" style="margin-top:8px"><div class="modal-label">Message</div><textarea id="eh-body" rows="5" placeholder="Type your message..."></textarea></div>
+      ${attachmentControlsHTML('eh-body')}
+      <button class="btn-sm btn-gold" style="margin-top:10px" onclick="sendEmailHubMessage(${locked ? `'${alias}'` : 'null'})">Send</button>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title">Inbox</div>
+        <div id="eh-inbox" style="max-height:320px;overflow-y:auto">Loading...</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Sent</div>
+        <div id="eh-sent" style="max-height:320px;overflow-y:auto">Loading...</div>
+      </div>
+    </div>
+  `;
+  const [messages, sent, allContacts] = await Promise.all([
+    loadInboxMsgs(alias, 25),
+    loadSentLog(MAIL_ALIASES[alias].hub),
+    getCombinedContacts(includeCast),
+  ]);
+  const inboxEl = document.getElementById('eh-inbox'); if (inboxEl) inboxEl.innerHTML = inboxHTML(messages);
+  const sentEl  = document.getElementById('eh-sent');  if (sentEl)  sentEl.innerHTML  = sentLogHTML(sent);
+  const contacts = filterContactsByAlias(allContacts, alias);
+  const contactsEl = document.getElementById('eh-contacts');
+  if (contactsEl) {
+    contactsEl.innerHTML = contacts.length ? contacts.map(c => `
+      <label class="contact-row">
+        <input type="checkbox" class="eh-recipient" value="${esc(c.email)}" onchange="syncEmailHubTo()">
+        <span class="contact-row-name">${esc(c.name)}</span>
+        <span class="contact-row-role">${esc(c.type)} &middot; ${esc(c.role)}</span>
+      </label>
+    `).join('') : '<p style="color:var(--muted);font-size:12px;padding:6px">No contacts with emails on file yet.</p>';
+  }
+  updateEmailHubContactCount();
+}
+
+// Crew-only on the Crew tab, cast-only on the Casting tab, everyone on Studio.
+function filterContactsByAlias(contacts, alias) {
+  if (alias === 'crew') return contacts.filter(c => c.type === 'Crew');
+  if (alias === 'casting') return contacts.filter(c => c.type === 'Cast');
+  return contacts;
+}
+
+function toggleAllEmailHubRecipients(state) {
+  document.querySelectorAll('.eh-recipient').forEach(cb => cb.checked = state);
+  syncEmailHubTo();
+}
+
+function updateEmailHubContactCount() {
+  const all = document.querySelectorAll('.eh-recipient');
+  const checked = document.querySelectorAll('.eh-recipient:checked');
+  const el = document.getElementById('eh-contact-count');
+  if (el) el.textContent = `${checked.length} of ${all.length} selected`;
+}
+
+function syncEmailHubTo() {
+  const checked = [...document.querySelectorAll('.eh-recipient:checked')].map(cb => cb.value);
+  const toField = document.getElementById('eh-to');
+  if (toField) toField.value = checked.join(', ');
+  updateEmailHubContactCount();
+}
+
+// ── QUICK EMAIL MODAL — reusable compose-to-multiple popup, used by any
+// "Email" button anywhere in the dash (Casting Database, Crew, etc.) ────────
+function showQuickEmailModal(opts) {
+  opts = opts || {};
+  const fromAlias = opts.fromAlias || 'studio';
+  const contacts = opts.contacts || [];
+  const preselected = new Set(opts.preselected || []);
+  showModal(`Email — from ${MAIL_ALIASES[fromAlias].address}`, `
+    <div class="contact-scroll-header"><span id="qe-count">0 of ${contacts.length} selected</span>
+      <span><button class="btn-sm btn-outline" style="padding:2px 8px;font-size:10px" onclick="toggleQuickEmailRecipients(true)">Select All</button>
+      <button class="btn-sm btn-outline" style="padding:2px 8px;font-size:10px" onclick="toggleQuickEmailRecipients(false)">Deselect All</button></span>
+    </div>
+    <div class="contact-scroll">
+      ${contacts.length ? contacts.map(c => `
+        <label class="contact-row">
+          <input type="checkbox" class="qe-recipient" value="${esc(c.email)}" ${preselected.has(c.email)?'checked':''} onchange="updateQuickEmailCount()">
+          <span class="contact-row-name">${esc(c.name)}</span>
+          <span class="contact-row-role">${esc(c.role||'')}${c.flag ? ` &middot; <span style="color:var(--red)">${esc(c.flag)}</span>` : ''}</span>
+        </label>
+      `).join('') : '<p style="color:var(--muted);font-size:12px;padding:6px">No contacts with emails on file.</p>'}
+    </div>
+    <div class="modal-row" style="margin-top:10px"><div class="modal-label">Subject</div><input id="qe-subject" placeholder="Subject"></div>
+    <div class="modal-row" style="margin-top:8px"><div class="modal-label">Message</div><textarea id="qe-body" rows="5" placeholder="Type your message..."></textarea></div>
+    ${attachmentControlsHTML('qe-body')}
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Send', cls:'btn-gold', action:`sendQuickEmail('${fromAlias}')`},
+  ]);
+  STATE.pendingAttachment = null;
+  updateQuickEmailCount();
+}
+
+function toggleQuickEmailRecipients(state) {
+  document.querySelectorAll('.qe-recipient').forEach(cb => cb.checked = state);
+  updateQuickEmailCount();
+}
+
+function updateQuickEmailCount() {
+  const all = document.querySelectorAll('.qe-recipient');
+  const checked = document.querySelectorAll('.qe-recipient:checked');
+  const el = document.getElementById('qe-count');
+  if (el) el.textContent = `${checked.length} of ${all.length} selected`;
+}
+
+async function sendQuickEmail(fromAlias) {
+  const checked = [...document.querySelectorAll('.qe-recipient:checked')].map(cb => cb.value);
+  const subject = document.getElementById('qe-subject')?.value.trim();
+  const text = document.getElementById('qe-body')?.value.trim();
+  if (!checked.length) { toast('Select at least one recipient.','⚠️'); return; }
+  if (!text) { toast('Write a message first.','⚠️'); return; }
+  const attachments = STATE.pendingAttachment ? [STATE.pendingAttachment] : undefined;
+  try {
+    await sendZohoMail({ fromAlias, bcc: checked.join(','), subject, text, attachments });
+    toast(`Sent to ${checked.length} ${checked.length===1?'person':'people'}.`,'✅');
+    STATE.pendingAttachment = null;
+    closeModal();
+  } catch(e) {
+    toast('Zoho send failed — opening your email client instead.','⚠️');
+    STATE.pendingAttachment = null;
+    closeModal();
+    window.location.href = `mailto:?bcc=${checked.join(',')}&subject=${encodeURIComponent(subject||'')}&body=${encodeURIComponent(text||'')}`;
+  }
+}
+
+function switchEmailHubAlias(alias) {
+  STATE.emailHubAlias = alias;
+  navigate('emailhub');
+}
+
+async function sendEmailHubMessage(lockedAlias) {
+  const alias   = lockedAlias || STATE.emailHubAlias || 'studio';
+  const to      = document.getElementById('eh-to')?.value.trim();
+  const subject = document.getElementById('eh-subject')?.value.trim();
+  const text    = document.getElementById('eh-body')?.value.trim();
+  if (!to)   { toast('Enter at least one recipient.','⚠️'); return; }
+  if (!text) { toast('Write a message first.','⚠️'); return; }
+  const attachments = STATE.pendingAttachment ? [STATE.pendingAttachment] : undefined;
+  try {
+    await sendZohoMail({ fromAlias: alias, to, subject, text, attachments });
+    toast('Email sent!','✅');
+    STATE.pendingAttachment = null;
+    navigate('emailhub');
+  } catch(e) {
+    toast('Zoho send failed — opening your email client instead.','⚠️');
+    STATE.pendingAttachment = null;
+    window.location.href = `mailto:${to}?subject=${encodeURIComponent(subject||'')}&body=${encodeURIComponent(text||'')}`;
+  }
+}
+
+// ─── AVAILABILITY ────────────────────────────────────────────────
+function renderAvailabilitySection(el) {
+  const contacts = (STATE.crew.length ? STATE.crew.map(r=>({
+    name: r.fields['Name']||'',
+    role: (r.fields['Preferred role by Director']||'').toString().replace(/,/g,', ')||r.fields['Role']||'',
+    email: r.fields['Email']||'',
+  })) : CREW_CONTRACTS).filter(c => c.email);
+
+  el.innerHTML = `
+    <div class="section-title" style="margin-bottom:16px">Availability Tracker</div>
+    <div class="card">
+      <div class="card-title">Select Recipients</div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:8px">All CORE crew with an email on file. Cast can be added here once you start tracking them too.</p>
+      <div class="contact-scroll-header"><span id="avail-count">${contacts.length} of ${contacts.length} selected</span><span>${contacts.length} total</span></div>
+      <div class="contact-scroll">
+        ${contacts.length ? contacts.map(c=>`
+          <label class="contact-row">
+            <input type="checkbox" class="avail-recipient" value="${esc(c.email)}" checked onchange="updateAvailCount()">
+            <span class="contact-row-name">${esc(c.name)}</span>
+            <span class="contact-row-role">${esc(c.role)}</span>
+          </label>
+        `).join('') : '<p style="color:var(--muted);font-size:12px;padding:6px">No crew with emails on file yet.</p>'}
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <button class="btn-sm btn-outline" onclick="toggleAllAvailRecipients(true)">Select All</button>
+        <button class="btn-sm btn-outline" onclick="toggleAllAvailRecipients(false)">Clear All</button>
+      </div>
+      <div class="modal-row"><div class="modal-label">Date Range to Check</div><input id="avail-dates" placeholder="e.g. July 5–18, 2026"></div>
+      <div class="modal-row"><div class="modal-label">Message</div><textarea id="avail-msg" rows="3" placeholder="Hi! We're scheduling and need your availability for..."></textarea></div>
+      <button class="btn-sm btn-gold" style="margin-top:8px" onclick="sendAvailRequest()">Send (from crew@bleuskm.com)</button>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <div class="card-title">Recently Sent</div>
+      <div id="avail-sent-log" style="max-height:240px;overflow-y:auto">Loading...</div>
+    </div>
+  `;
+  loadSentLog('Crew').then(r => { const sl = document.getElementById('avail-sent-log'); if (sl) sl.innerHTML = sentLogHTML(r); });
+}
+
+function toggleAllAvailRecipients(state) {
+  document.querySelectorAll('.avail-recipient').forEach(cb => cb.checked = state);
+  updateAvailCount();
+}
+
+function updateAvailCount() {
+  const all = document.querySelectorAll('.avail-recipient');
+  const checked = document.querySelectorAll('.avail-recipient:checked');
+  const el = document.getElementById('avail-count');
+  if (el) el.textContent = `${checked.length} of ${all.length} selected`;
+}
+
+async function sendAvailRequest() {
+  const checked = [...document.querySelectorAll('.avail-recipient:checked')].map(cb => cb.value);
+  const dates   = document.getElementById('avail-dates')?.value.trim() || '';
+  const msg     = document.getElementById('avail-msg')?.value.trim() || '';
+  if (!checked.length) { toast('Select at least one recipient.','⚠️'); return; }
+  const subject = `Availability Check — ${STATE.filmName || FILM}`;
+  const bodyText = (msg || 'Hi, please reply with your availability for our upcoming shoot dates. Thank you!') + (dates ? `\n\nDates we're checking: ${dates}` : '');
+  try {
+    await sendZohoMail({ fromAlias:'crew', bcc: checked.join(','), subject, text: bodyText });
+    toast(`Availability request sent to ${checked.length} ${checked.length===1?'person':'people'}.`,'✅');
+    loadSentLog('Crew').then(r => { const sl = document.getElementById('avail-sent-log'); if (sl) sl.innerHTML = sentLogHTML(r); });
+  } catch(e) {
+    toast('Zoho send failed — opening your email client instead.','⚠️');
+    const subj = encodeURIComponent(subject);
+    const body = encodeURIComponent(bodyText);
+    window.location.href = `mailto:?bcc=${checked.join(',')}&subject=${subj}&body=${body}`;
+  }
+}
+
+// ─── OFFER LETTERS ───────────────────────────────────────────────
+async function renderOfferLetters(el) {
+  STATE.pendingAttachment = null;
+  el.innerHTML = `
+    <div class="section-title" style="margin-bottom:16px">Offer Letters</div>
+    <div class="card">
+      <div class="card-title">Generate Offer Letter</div>
+      <div class="modal-label" style="margin-top:2px">Quick-Pick Recipient</div>
+      <div class="contact-scroll" id="ol-contacts" style="margin-bottom:10px"><p style="color:var(--muted);font-size:12px;padding:6px">Loading contacts...</p></div>
+      <div class="grid2" style="gap:10px;margin-bottom:10px">
+        <div><div class="modal-label">To (Full Name)</div><input id="ol-name" placeholder="Actor / Crew name" oninput="previewOffer()"></div>
+        <div><div class="modal-label">Role</div><input id="ol-role" placeholder="e.g. Lead Actor" oninput="previewOffer()"></div>
+      </div>
+      <div><div class="modal-label">Email (to send to)</div><input id="ol-email" placeholder="email@example.com" style="margin-bottom:10px"></div>
+      <div><div class="modal-label">Custom Message (optional)</div><textarea id="ol-custom" rows="2" placeholder="Add any extra details..." oninput="previewOffer()"></textarea></div>
+      ${attachmentControlsHTML('ol-custom')}
+      <div style="margin-top:14px;margin-bottom:8px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">Preview</div>
+      <div class="offer-preview" id="offer-preview"></div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn-sm btn-gold" onclick="sendOfferEmail()">Send via Email</button>
+        <button class="btn-sm btn-outline" onclick="copyOffer()">Copy Letter</button>
+      </div>
+    </div>
+  `;
+  previewOffer();
+  const contacts = await getCombinedContacts(true);
+  const contactsEl = document.getElementById('ol-contacts');
+  if (contactsEl) {
+    contactsEl.innerHTML = contacts.length ? contacts.map(c => `
+      <label class="contact-row" onclick="selectOfferContact('${esc(c.name)}','${esc(c.email)}','${esc(c.role)}')" style="cursor:pointer">
+        <span class="contact-row-name">${esc(c.name)}</span>
+        <span class="contact-row-role">${esc(c.type)} &middot; ${esc(c.role)}</span>
+      </label>
+    `).join('') : '<p style="color:var(--muted);font-size:12px;padding:6px">No contacts with emails on file yet.</p>';
+  }
+}
+
+function selectOfferContact(name, email, role) {
+  const nameEl = document.getElementById('ol-name');
+  const emailEl = document.getElementById('ol-email');
+  const roleEl = document.getElementById('ol-role');
+  if (nameEl) nameEl.value = name;
+  if (emailEl) emailEl.value = email;
+  if (roleEl && !roleEl.value) roleEl.value = role;
+  previewOffer();
+}
+
+function previewOffer() {
+  const name   = document.getElementById('ol-name')?.value || '[Name]';
+  const role   = document.getElementById('ol-role')?.value || '[Role]';
+  const custom = document.getElementById('ol-custom')?.value || '';
+  const text   = `Dear ${name},
+
+We are thrilled to officially offer you the role of ${role} on our production of "${STATE.filmName}" by BLEUSKM Studios.
+
+Your talent and dedication have made you the right fit for this project, and we look forward to creating something powerful together.
+
+${custom ? custom + '\n\n' : ''}Please find your crew agreement attached. Once signed and returned, your position will be confirmed.
+
+Shoot dates and call sheets will follow. If you have any questions, do not hesitate to reach out.
+
+Welcome to the team.
+
+With gratitude,
+Zaria
+Director / Writer
+BLEUSKM Studios`;
+  const el = document.getElementById('offer-preview');
+  if (el) el.textContent = text;
+}
+
+function copyOffer() {
+  const text = document.getElementById('offer-preview')?.textContent;
+  if (text) navigator.clipboard.writeText(text).then(() => toast('Letter copied!','📋'));
+}
+
+async function sendOfferEmail() {
+  const email = document.getElementById('ol-email')?.value.trim();
+  const name  = document.getElementById('ol-name')?.value || '';
+  const text  = document.getElementById('offer-preview')?.textContent || '';
+  if (!email) { toast('Enter recipient email.','⚠️'); return; }
+  const subject = `Official Offer — ${STATE.filmName} | BLEUSKM Studios`;
+  const attachments = STATE.pendingAttachment ? [STATE.pendingAttachment] : undefined;
+  try {
+    await sendZohoMail({ fromAlias:'casting', to: email, subject, text, attachments });
+    toast(`Offer sent to ${name||email}.`,'✅');
+    STATE.pendingAttachment = null;
+  } catch(e) {
+    toast('Zoho send failed — opening your email client instead.','⚠️');
+    STATE.pendingAttachment = null;
+    const subj = encodeURIComponent(subject);
+    const body = encodeURIComponent(text);
+    window.location.href = `mailto:${email}?subject=${subj}&body=${body}`;
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// MEETING POLLS — group-availability scheduling (table reads, crew
+// meetings, DP/1st AC syncs, etc.) Pick-the-best-overlap, not 1:1 booking.
+// ════════════════════════════════════════════════════════════════
+const POLL_BASE = 'https://bleuskm.com/poll/';
+
+async function renderMeetingPolls(el) {
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Meeting Polls</div>
+      <button class="btn-sm btn-gold" onclick="showCreatePollModal()">+ New Poll</button>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Send a quick "what times work for you" check to any mix of crew and cast — table reads, crew meetings, DP/1st AC syncs, final prep. Everyone checks every time that works for them; see the tally below and lock in whichever has the most overlap.</p>
+    <div id="polls-list"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
+  `;
+  await loadPollsList();
+}
+
+async function loadPollsList() {
+  const wrap = document.getElementById('polls-list');
+  try {
+    const res = await fetch(`${API}?action=get-polls`);
+    const data = await res.json();
+    const polls = data.records || [];
+    STATE.polls = polls;
+    if (!wrap) return;
+    wrap.innerHTML = polls.length ? polls.map(p => pollCardHTML(p)).join('') : '<p style="color:var(--muted);font-size:13px">No polls yet. Create one above.</p>';
+  } catch(e) { if (wrap) wrap.innerHTML = '<p style="color:var(--muted);font-size:13px">Failed to load polls.</p>'; }
+}
+
+function pollCardHTML(p) {
+  const f = p.fields || {};
+  return `
+    <div class="card" style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">
+        <div>
+          <div class="card-title">${esc(f['Title']||'Untitled Poll')}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">${esc(f['Status']||'Open')} &middot; created by ${esc(f['Created By']||'')}${f['Final Time']?` &middot; Final time: <strong style="color:var(--gold)">${esc(f['Final Time'])}</strong>`:''}</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+          <button class="btn-sm btn-outline" onclick="copyPollLink('${p.id}')">Copy Link</button>
+          <button class="btn-sm btn-outline" onclick="togglePollResults('${p.id}')">View Results</button>
+          ${!f['Final Time'] ? `<button class="btn-sm btn-outline" onclick="showLockFinalTime('${p.id}')">Lock Final Time</button>` : ''}
+          <button class="btn-sm btn-outline" onclick="deletePoll('${p.id}')">🗑</button>
+        </div>
+      </div>
+      <div id="poll-results-${p.id}" class="hidden" style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px"></div>
+    </div>
+  `;
+}
+
+function copyPollLink(pollId) {
+  const link = `${POLL_BASE}?id=${pollId}`;
+  navigator.clipboard.writeText(link).then(() => toast('Poll link copied!','📋'));
+}
+
+async function togglePollResults(pollId) {
+  const box = document.getElementById(`poll-results-${pollId}`);
+  if (!box) return;
+  if (!box.classList.contains('hidden')) { box.classList.add('hidden'); return; }
+  box.classList.remove('hidden');
+  box.innerHTML = 'Loading...';
+  try {
+    const res = await fetch(`${API}?action=get-poll-results&pollId=${encodeURIComponent(pollId)}`);
+    const data = await res.json();
+    const responses = data.records || [];
+    const poll = (STATE.polls||[]).find(p => p.id === pollId);
+    const options = ((poll && poll.fields['Options']) || '').split('\n').map(s=>s.trim()).filter(Boolean);
+    box.innerHTML = renderPollTally(options, responses);
+  } catch(e) { box.innerHTML = '<p style="color:var(--muted);font-size:12px">Failed to load results.</p>'; }
+}
+
+function renderPollTally(options, responses) {
+  if (!responses.length) return '<p style="color:var(--muted);font-size:12px">No responses yet.</p>';
+  const tally = {};
+  options.forEach(o => tally[o] = []);
+  responses.forEach(r => {
+    const sel = (r.fields['Selected Options']||'').split('\n').map(s=>s.trim()).filter(Boolean);
+    sel.forEach(s => { if (!tally[s]) tally[s] = []; tally[s].push(r.fields['Respondent Name']||'Someone'); });
+  });
+  const sorted = Object.entries(tally).sort((a,b) => b[1].length - a[1].length);
+  return `
+    <p style="font-size:11px;color:var(--muted);margin-bottom:8px">${responses.length} ${responses.length===1?'response':'responses'}</p>
+    ${sorted.map(([opt,names]) => `
+      <div style="margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:600"><span>${esc(opt)}</span><span style="color:var(--gold)">${names.length}</span></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">${names.length?esc(names.join(', ')):'—'}</div>
+      </div>
+    `).join('')}
+  `;
+}
+
+function showLockFinalTime(pollId) {
+  const poll = (STATE.polls||[]).find(p => p.id === pollId);
+  const options = ((poll && poll.fields['Options']) || '').split('\n').map(s=>s.trim()).filter(Boolean);
+  showModal('Lock Final Time', `
+    <div class="modal-row"><div class="modal-label">Final Meeting Time</div>
+      <select id="poll-final-time">
+        ${options.map(o=>`<option value="${esc(o)}">${esc(o)}</option>`).join('')}
+      </select>
+    </div>
+    <div class="modal-row" style="margin-top:8px"><div class="modal-label">Google Meet Link (optional)</div><input id="poll-meet-link" placeholder="https://meet.google.com/..."></div>
+    <div class="modal-row" style="margin-top:8px"><div class="modal-label">Send Announcement From</div>
+      <select id="poll-announce-from">
+        <option value="crew">crew@bleuskm.com</option>
+        <option value="casting">casting@bleuskm.com</option>
+        <option value="studio">studio@bleuskm.com</option>
+      </select>
+    </div>
+    <label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;cursor:pointer">
+      <input type="checkbox" id="poll-announce-send" checked style="width:auto"> Email everyone who responded with the final time + link
+    </label>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Lock It In', cls:'btn-gold', action:`saveLockFinalTime('${pollId}')`},
+  ]);
+}
+
+async function saveLockFinalTime(pollId) {
+  const finalTime  = document.getElementById('poll-final-time').value;
+  const meetLink   = document.getElementById('poll-meet-link')?.value.trim() || '';
+  const fromAlias  = document.getElementById('poll-announce-from')?.value || 'crew';
+  const shouldSend = document.getElementById('poll-announce-send')?.checked;
+  const poll = (STATE.polls||[]).find(p => p.id === pollId);
+  const title = (poll && poll.fields['Title']) || 'Meeting';
+  try {
+    await fetch(API + '?action=update-poll', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ recordId: pollId, status: 'Closed', finalTime }),
+    });
+
+    if (shouldSend) {
+      try {
+        const res = await fetch(`${API}?action=get-poll-results&pollId=${encodeURIComponent(pollId)}`);
+        const data = await res.json();
+        const emails = [...new Set((data.records||[]).map(r => r.fields['Respondent Email']).filter(Boolean))];
+        if (emails.length) {
+          const subject = `Final time locked — ${title}`;
+          const bodyText = `Hi!\n\nThe final time for "${title}" is locked in:\n\n${finalTime}\n\n${meetLink ? `Join here: ${meetLink}\n\n` : ''}See you then!`;
+          try {
+            await sendZohoMail({ fromAlias, bcc: emails.join(','), subject, text: bodyText });
+            toast(`Final time locked and announced to ${emails.length} ${emails.length===1?'person':'people'}.`,'✅');
+          } catch(e) {
+            toast('Locked in — Zoho send failed, opening your email client.','⚠️');
+            window.location.href = `mailto:?bcc=${emails.join(',')}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
+          }
+        } else {
+          toast('Final time locked in (no respondent emails to announce to).','✅');
+        }
+      } catch(e) { toast('Final time locked in (could not load responses to announce).','✅'); }
+    } else {
+      toast('Final time locked in','✅');
+    }
+    closeModal();
+    navigate('polls');
+  } catch(e) { toast('Failed to lock final time.','❌'); }
+}
+
+async function deletePoll(pollId) {
+  try {
+    await fetch(API + '?action=delete-poll', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({recordId:pollId}) });
+    toast('Poll deleted','🗑');
+    loadPollsList();
+  } catch(e) { toast('Failed to delete poll.','❌'); }
+}
+
+async function showCreatePollModal() {
+  const crewContacts = (STATE.crew||[]).map(r => ({
+    name: r.fields['Name']||'', role: r.fields['Preferred role by Director']||r.fields['Role']||'', email: r.fields['Email']||'', type: 'Crew',
+  })).filter(c => c.email);
+  let castContacts = [];
+  try {
+    const res = await fetch(`${API}?action=get-casting`);
+    const data = await res.json();
+    castContacts = (data.records||[]).map(r => ({
+      name: r.fields['Name']||'', role: r.fields['To Role']||r.fields['Role']||'', email: r.fields['Email']||'', type: 'Cast',
+    })).filter(c => c.email);
+  } catch(e) {}
+  const contacts = [...crewContacts, ...castContacts];
+
+  showModal('New Meeting Poll', `
+    <div class="modal-row"><div class="modal-label">Meeting Title</div><input id="poll-title" placeholder="e.g. Table Read — Cast & Crew"></div>
+    <div class="modal-row"><div class="modal-label">Candidate Times (one per line)</div><textarea id="poll-options" rows="4" placeholder="July 6, 2:00pm&#10;July 7, 10:00am&#10;July 8, 4:00pm"></textarea></div>
+    <div class="modal-row"><div class="modal-label">Send From</div>
+      <select id="poll-from">
+        <option value="crew">crew@bleuskm.com</option>
+        <option value="casting">casting@bleuskm.com</option>
+        <option value="studio">studio@bleuskm.com</option>
+      </select>
+    </div>
+    <div class="modal-row"><div class="modal-label">Recipients</div>
+      <div class="contact-scroll-header"><span id="poll-contact-count">${contacts.length} of ${contacts.length} selected</span>
+        <span><button class="btn-sm btn-outline" style="padding:2px 8px;font-size:10px" onclick="togglePollRecipients(true)">Select All</button>
+        <button class="btn-sm btn-outline" style="padding:2px 8px;font-size:10px" onclick="togglePollRecipients(false)">Deselect All</button></span>
+      </div>
+      <div class="contact-scroll">
+        ${contacts.length ? contacts.map(c => `
+          <label class="contact-row">
+            <input type="checkbox" class="poll-recipient" value="${esc(c.email)}" checked onchange="updatePollContactCount()">
+            <span class="contact-row-name">${esc(c.name)}</span>
+            <span class="contact-row-role">${esc(c.type)} &middot; ${esc(c.role)}</span>
+          </label>
+        `).join('') : '<p style="color:var(--muted);font-size:12px;padding:6px">No crew or cast contacts with emails on file yet.</p>'}
+      </div>
+    </div>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Create & Send', cls:'btn-gold', action:'createAndSendPoll()'},
+  ]);
+}
+
+function updatePollContactCount() {
+  const all = document.querySelectorAll('.poll-recipient');
+  const checked = document.querySelectorAll('.poll-recipient:checked');
+  const el = document.getElementById('poll-contact-count');
+  if (el) el.textContent = `${checked.length} of ${all.length} selected`;
+}
+
+function togglePollRecipients(state) {
+  document.querySelectorAll('.poll-recipient').forEach(cb => cb.checked = state);
+  updatePollContactCount();
+}
+
+async function createAndSendPoll() {
+  const title      = document.getElementById('poll-title').value.trim();
+  const optionsRaw = document.getElementById('poll-options').value.trim();
+  const fromAlias  = document.getElementById('poll-from').value;
+  const checked    = [...document.querySelectorAll('.poll-recipient:checked')].map(cb => cb.value);
+  if (!title)      { toast('Give the meeting a title.','⚠️'); return; }
+  if (!optionsRaw) { toast('Add at least one candidate time.','⚠️'); return; }
+  if (!checked.length) { toast('Select at least one recipient.','⚠️'); return; }
+
+  try {
+    const res = await fetch(API + '?action=create-poll', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ title, options: optionsRaw, createdBy: STATE.name || DEPT_LABELS[STATE.dept] || '' }),
+    });
+    const data = await res.json();
+    const pollId = data.records && data.records[0] && data.records[0].id;
+    if (!pollId) throw new Error('Could not create poll.');
+
+    const link = `${POLL_BASE}?id=${pollId}`;
+    const subject = `Quick poll — ${title}`;
+    const bodyText = `Hi! We're locking in a time for "${title}". Please check every time below that works for you:\n\n${link}\n\nThanks!`;
+    try {
+      await sendZohoMail({ fromAlias, bcc: checked.join(','), subject, text: bodyText });
+      toast(`Poll created and sent to ${checked.length} ${checked.length===1?'person':'people'}.`,'✅');
+    } catch(e) {
+      toast('Poll created — Zoho send failed, opening your email client.','⚠️');
+      window.location.href = `mailto:?bcc=${checked.join(',')}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
+    }
+    closeModal();
+    navigate('polls');
+  } catch(e) { toast('Failed to create poll.','❌'); }
+}
+
+// ════════════════════════════════════════════════════════════════
+// TASK BOARD — assign + track work across producers (and anyone else)
+// ════════════════════════════════════════════════════════════════
+const TASK_ASSIGNEES = ['Ceion','Carmen','Fabiola','Director (Zaria)','Unassigned'];
+const TASK_STATUSES  = ['To Do','In Progress','Done'];
+
+function currentAssigneeLabel() {
+  if (STATE.name === 'Zaria') return 'Director (Zaria)';
+  return STATE.name || '';
+}
+
+async function renderTaskBoard(el) {
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Task Board</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+          <input type="checkbox" id="tb-mine-only" style="width:auto" onchange="loadTaskBoard()"> My tasks only
+        </label>
+        <button class="btn-sm btn-gold" onclick="showNewTaskModal()">+ New Task</button>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Assign work to Ceion, Carmen, Fabiola, or yourself, and track it through To Do → In Progress → Done.</p>
+    <div class="grid3" id="tb-columns" style="align-items:start">
+      <p style="color:var(--muted);font-size:13px">Loading...</p>
+    </div>
+  `;
+  await loadTaskBoard();
+}
+
+async function loadTaskBoard() {
+  try {
+    const res = await fetch(`${API}?action=get-tasks`);
+    const data = await res.json();
+    STATE.tasks = data.records || [];
+  } catch(e) { STATE.tasks = []; }
+
+  const mineOnly = document.getElementById('tb-mine-only')?.checked;
+  const me = currentAssigneeLabel();
+  let tasks = STATE.tasks;
+  if (mineOnly && me) tasks = tasks.filter(t => t.fields['Assigned To'] === me);
+
+  const cols = document.getElementById('tb-columns');
+  if (!cols) return;
+  cols.innerHTML = TASK_STATUSES.map(status => {
+    const inCol = tasks.filter(t => (t.fields['Status']||'To Do') === status);
+    return `
+      <div class="card" style="min-height:120px">
+        <div class="card-title" style="margin-bottom:10px">${esc(status)} <span style="color:var(--muted);font-weight:400">(${inCol.length})</span></div>
+        ${inCol.length ? inCol.map(t => taskCardHTML(t)).join('') : '<p style="color:var(--muted);font-size:12px">Nothing here.</p>'}
+      </div>
+    `;
+  }).join('');
+}
+
+function taskCardHTML(t) {
+  const f = t.fields;
+  const due = f['Due Date'] ? new Date(f['Due Date']+'T00:00:00') : null;
+  const overdue = due && due < new Date(new Date().toDateString()) && f['Status'] !== 'Done';
+  return `
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:10px;margin-bottom:8px">
+      <div style="font-size:13px;font-weight:600;color:var(--text)">${esc(f['Title']||'Untitled')}</div>
+      ${f['Description'] ? `<div style="font-size:11px;color:var(--muted);margin-top:4px">${esc(f['Description'])}</div>` : ''}
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:10px;color:var(--muted)">
+        <span class="tag tag-muted">${esc(f['Assigned To']||'Unassigned')}</span>
+        ${due ? `<span style="color:${overdue?'var(--red)':'var(--muted)'}">${overdue?'⚠ ':''}Due ${due.toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>` : ''}
+      </div>
+      <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+        <select style="font-size:10px;flex:1" onchange="updateTaskStatus('${t.id}',this.value)">
+          ${TASK_STATUSES.map(s=>`<option ${f['Status']===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+        <button class="btn-sm btn-outline" style="padding:2px 8px;font-size:10px" onclick="deleteTask('${t.id}')">🗑</button>
+      </div>
+    </div>
+  `;
+}
+
+function showNewTaskModal() {
+  showModal('New Task', `
+    <div class="modal-row"><div class="modal-label">Title</div><input id="task-title" placeholder="e.g. Send contracts to confirmed cast"></div>
+    <div class="modal-row" style="margin-top:8px"><div class="modal-label">Description (optional)</div><textarea id="task-desc" rows="3" placeholder="Any details..."></textarea></div>
+    <div class="grid2" style="gap:10px;margin-top:8px">
+      <div><div class="modal-label">Assign To</div>
+        <select id="task-assignee">
+          ${TASK_ASSIGNEES.map(a=>`<option ${a===currentAssigneeLabel()?'selected':''}>${esc(a)}</option>`).join('')}
+        </select>
+      </div>
+      <div><div class="modal-label">Due Date (optional)</div><input id="task-due" type="date"></div>
+    </div>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Create', cls:'btn-gold', action:'saveNewTask()'},
+  ]);
+}
+
+async function saveNewTask() {
+  const title = document.getElementById('task-title')?.value.trim();
+  const description = document.getElementById('task-desc')?.value.trim();
+  const assignedTo = document.getElementById('task-assignee')?.value;
+  const dueDate = document.getElementById('task-due')?.value;
+  if (!title) { toast('Give the task a title.','⚠️'); return; }
+  try {
+    await fetch(API + '?action=create-task', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ title, description, assignedTo, dueDate, createdBy: STATE.name || DEPT_LABELS[STATE.dept] || '' }),
+    });
+    closeModal();
+    toast('Task created','✅');
+    loadTaskBoard();
+  } catch(e) { toast('Failed to create task.','❌'); }
+}
+
+async function updateTaskStatus(recordId, status) {
+  try {
+    await fetch(API + '?action=update-task', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ recordId, status }),
+    });
+    loadTaskBoard();
+  } catch(e) { toast('Failed to update task.','❌'); }
+}
+
+async function deleteTask(recordId) {
+  try {
+    await fetch(API + '?action=delete-task', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ recordId }),
+    });
+    toast('Task deleted','🗑');
+    loadTaskBoard();
+  } catch(e) { toast('Failed to delete task.','❌'); }
+}
+
+// ════════════════════════════════════════════════════════════════
+// DP SECTIONS
+// ════════════════════════════════════════════════════════════════
+SECTIONS.dp = {
+  overview: (el) => { el.innerHTML = deptOverview('DP / Camera', 'NOW – JULY 3: Gather references + understand tone', 'Finalize shot list + lighting plan by July 18.'); },
+  shotlist:  (el) => renderFileSection(el, 'shotlist',   'Shot List',          '.pdf,.xlsx', 'Shot lists pushed here from Director will appear below.'),
+  references:(el) => renderFileSection(el, 'references', 'References',         'image/*,.pdf'),
+  camera:    (el) => renderNotesSection(el, 'DP',        'Camera Language'),
+  lighting:  (el) => renderNotesSection(el, 'DP',        'Lighting Direction'),
+  mood:      (el) => renderFileSection(el, 'mood',       'Mood Images',        'image/*'),
+  script:    (el) => renderFileSection(el, 'script',     'Script',             '.pdf', 'Scripts pushed here from Director.'),
+  timeline:  (el) => renderTimeline(el, 'dp'),
+  emailhub:  (el) => renderEmailHub(el, 'crew', {aliases:['crew','casting'], includeCast:true}),
+};
+
+// ════════════════════════════════════════════════════════════════
+// AD SECTIONS
+// ════════════════════════════════════════════════════════════════
+SECTIONS.ad = {
+  overview:   (el) => { el.innerHTML = deptOverview('Assistant Director', 'NOW – JULY 3: Observe casting, understand script + structure', 'Build call sheets + shoot schedule by July 11.'); },
+  schedule:   (el) => renderFileSection(el, 'schedule',   'Schedule',    '.pdf,.xlsx'),
+  callsheets: (el) => renderFileSection(el, 'callsheets', 'Call Sheets', '.pdf'),
+  scenes:     (el) => renderFileSection(el, 'scenes',     'Scene Order', '.pdf'),
+  shootdays:  (el) => renderNotesSection(el, 'AD', 'Shoot Days'),
+  timing:     (el) => renderNotesSection(el, 'AD', 'Timing Notes'),
+  script:     (el) => renderFileSection(el, 'script',     'Script',      '.pdf', 'Scripts pushed from Director appear here.'),
+  timeline:   (el) => renderTimeline(el, 'ad'),
+  polls:      (el) => renderMeetingPolls(el),
+  emailhub:   (el) => renderEmailHub(el, 'crew', {lockAlias:true, includeCast:false}),
+};
+
+// ════════════════════════════════════════════════════════════════
+// SCRIPT SUPERVISOR SECTIONS
+// ════════════════════════════════════════════════════════════════
+SECTIONS.scriptsupervisor = {
+  overview:   (el) => { el.innerHTML = deptOverview('Script Supervisor', 'NOW – JULY 3: Read script deeply, begin notes', 'Track everything on shoot day — continuity is the mission.'); },
+  script:     (el) => renderFileSection(el, 'script',    'Script',            '.pdf', 'Scripts pushed from Director appear here.'),
+  scenes:     (el) => renderSceneBreakdown(el),
+  continuity: (el) => renderContinuityNotes(el),
+  takelog:    (el) => renderTakeLog(el),
+  timeline:   (el) => renderTimeline(el, 'scriptsupervisor'),
+  emailhub:   (el) => renderEmailHub(el, 'crew', {lockAlias:true, includeCast:false}),
+};
+
+async function renderContinuityNotes(el) {
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Continuity Notes</div>
+      <button class="btn-sm btn-gold" onclick="addContinuityNote()">+ Add Note</button>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Track actor movements, hand placement, props, wardrobe consistency, and timing. Visible to Director and Script Supervisor.</p>
+    <div id="continuity-list"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
+  `;
+  await loadContinuity();
+}
+
+async function loadContinuity() {
+  try {
+    const res  = await fetch(`${API}?action=get-continuity`);
+    const data = await res.json();
+    STATE.continuity = data.records || [];
+  } catch(e) { STATE.continuity = []; }
+  const el = document.getElementById('continuity-list');
+  if (!el) return;
+  el.innerHTML = STATE.continuity.length ? STATE.continuity.map(r => {
+    const f = r.fields;
+    return `
+      <div class="note-card">
+        <div class="note-meta">Scene ${esc(f['Scene']||'')} · Take ${esc(f['Take']||'')} · ${esc(f['Category']||'')} ${f['Created By']?'· '+esc(f['Created By']):''}</div>
+        <div class="note-content">${esc(f['Note']||'')}</div>
+        <button class="btn-sm btn-outline" style="margin-top:8px" onclick="deleteContinuity('${r.id}')">🗑 Delete</button>
+      </div>
+    `;
+  }).join('') : '<p style="color:var(--muted);font-size:13px">No continuity notes yet.</p>';
+}
+
+async function deleteContinuity(recordId) {
+  try {
+    await fetch(API + '?action=delete-continuity', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId}),
+    });
+    toast('Note deleted','🗑');
+    loadContinuity();
+  } catch(e) { toast('Failed to delete.','❌'); }
+}
+
+function addContinuityNote() {
+  showModal('Add Continuity Note', `
+    <div class="grid2" style="gap:10px">
+      <div><div class="modal-label">Scene #</div><input id="cn-scene" placeholder="e.g. 3"></div>
+      <div><div class="modal-label">Take #</div><input id="cn-take" placeholder="e.g. 2"></div>
+    </div>
+    <div class="modal-row" style="margin-top:10px"><div class="modal-label">Category</div>
+      <select id="cn-cat">
+        <option>Dialogue</option><option>Actor Movement</option><option>Hand Placement</option>
+        <option>Props</option><option>Wardrobe</option><option>Timing</option><option>General</option>
+      </select>
+    </div>
+    <div class="modal-row"><div class="modal-label">Note</div><textarea id="cn-note" rows="4" placeholder="Describe what to track..."></textarea></div>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Save Note', cls:'btn-gold', action:'saveContinuityNote()'},
+  ]);
+}
+
+async function saveContinuityNote() {
+  try {
+    await fetch(API + '?action=add-continuity', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        scene:     document.getElementById('cn-scene').value,
+        take:      document.getElementById('cn-take').value,
+        category:  document.getElementById('cn-cat').value,
+        note:      document.getElementById('cn-note').value,
+        createdBy: STATE.name || DEPT_LABELS[STATE.realDept] || DEPT_LABELS[STATE.dept],
+      }),
+    });
+    closeModal();
+    navigate(STATE.section);
+    toast('Note saved','✅');
+  } catch(e) { toast('Failed to save note.','❌'); }
+}
+
+async function renderTakeLog(el) {
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Take Log</div>
+      <button class="btn-sm btn-gold" onclick="addTake()">+ Log Take</button>
+    </div>
+    <div style="overflow-x:auto">
+      <div style="display:grid;grid-template-columns:60px 60px 1fr 80px 40px;gap:10px;padding:8px 14px;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);border-bottom:1px solid var(--border)">
+        <div>Scene</div><div>Take</div><div>Notes</div><div>Best?</div><div></div>
+      </div>
+      <div id="take-rows"><p style="padding:16px;color:var(--muted);font-size:13px">Loading...</p></div>
+    </div>
+  `;
+  await loadTakes();
+}
+
+async function loadTakes() {
+  try {
+    const res  = await fetch(`${API}?action=get-takelog`);
+    const data = await res.json();
+    STATE.takes = data.records || [];
+  } catch(e) { STATE.takes = []; }
+  const el = document.getElementById('take-rows');
+  if (!el) return;
+  el.innerHTML = STATE.takes.length ? STATE.takes.map(r => {
+    const f = r.fields;
+    return `
+      <div class="take-row" style="grid-template-columns:60px 60px 1fr 80px 40px">
+        <div class="take-cell">${esc(f['Scene']||'')}</div>
+        <div class="take-cell">${esc(f['Take Number']||'')}</div>
+        <div class="take-cell">${esc(f['Notes']||'')}</div>
+        <div class="take-cell">${f['Best Take'] ? '<span class="tag tag-gold">✓ Best</span>' : ''}</div>
+        <div class="take-cell"><button class="btn-sm btn-outline" onclick="deleteTake('${r.id}')">🗑</button></div>
+      </div>
+    `;
+  }).join('') : '<p style="padding:16px;color:var(--muted);font-size:13px">No takes logged yet.</p>';
+}
+
+async function deleteTake(recordId) {
+  try {
+    await fetch(API + '?action=delete-take', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId}),
+    });
+    toast('Take deleted','🗑');
+    loadTakes();
+  } catch(e) { toast('Failed to delete.','❌'); }
+}
+
+function addTake() {
+  showModal('Log Take', `
+    <div class="grid2" style="gap:10px">
+      <div><div class="modal-label">Scene #</div><input id="tk-scene" placeholder="3"></div>
+      <div><div class="modal-label">Take #</div><input id="tk-take" placeholder="1"></div>
+    </div>
+    <div class="modal-row" style="margin-top:10px"><div class="modal-label">Notes</div><textarea id="tk-notes" rows="3" placeholder="Dialogue changes, blocking, props..."></textarea></div>
+    <div style="margin-top:10px"><label class="dept-check"><input type="checkbox" id="tk-best"> Mark as Best Take</label></div>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Log Take', cls:'btn-gold', action:'saveTake()'},
+  ]);
+}
+
+async function saveTake() {
+  try {
+    await fetch(API + '?action=add-take', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        scene: document.getElementById('tk-scene').value,
+        take:  document.getElementById('tk-take').value,
+        notes: document.getElementById('tk-notes').value,
+        best:  document.getElementById('tk-best').checked,
+      }),
+    });
+    closeModal();
+    navigate('takelog');
+    toast('Take logged','✅');
+  } catch(e) { toast('Failed to log take.','❌'); }
+}
+
+function renderSceneBreakdown(el) {
+  renderScenesSection(el, true);
+}
+
+async function renderScenesSection(el, allowEdit) {
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Scene Breakdown</div>
+      ${allowEdit ? '<button class="btn-sm btn-gold" onclick="addSceneRow()">+ Add Scene</button>' : ''}
+    </div>
+    <div style="overflow-x:auto">
+      <table class="scene-table">
+        <thead><tr><th>#</th><th>Location</th><th>Characters</th><th>Day/Night</th><th>Key Action</th>${allowEdit?'<th></th>':''}</tr></thead>
+        <tbody id="scene-body"><tr><td colspan="6" style="color:var(--muted)">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  `;
+  await loadScenes(allowEdit);
+}
+
+async function loadScenes(allowEdit) {
+  try {
+    const res  = await fetch(`${API}?action=get-scenes`);
+    const data = await res.json();
+    STATE.scenes = data.records || [];
+  } catch(e) { STATE.scenes = []; }
+  const tbody = document.getElementById('scene-body');
+  if (!tbody) return;
+  if (!STATE.scenes.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted)">No scenes added yet.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = STATE.scenes.map(r => {
+    const f = r.fields;
+    return `<tr>
+      <td>${esc(f['Scene Number']||'')}</td>
+      <td>${esc(f['Location']||'')}</td>
+      <td>${esc(f['Characters']||'')}</td>
+      <td><span class="tag ${f['Day or Night']==='Day'?'tag-gold':'tag-blue'}">${esc(f['Day or Night']||'')}</span></td>
+      <td>${esc(f['Key Action']||'')}</td>
+      ${allowEdit ? `<td><button class="btn-sm btn-outline" onclick="deleteScene('${r.id}',${allowEdit})">🗑</button></td>` : ''}
+    </tr>`;
+  }).join('');
+}
+
+async function deleteScene(recordId, allowEdit) {
+  try {
+    await fetch(API + '?action=delete-scene', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId}),
+    });
+    toast('Scene deleted','🗑');
+    loadScenes(allowEdit);
+  } catch(e) { toast('Failed to delete scene.','❌'); }
+}
+
+// ════════════════════════════════════════════════════════════════
+// SOUND SECTIONS
+// ════════════════════════════════════════════════════════════════
+SECTIONS.sound = {
+  overview:    (el) => { el.innerHTML = deptOverview('Sound', 'NOW – JULY 3: Study script for key sound moments', 'Track environment tone and silence cues on shoot day.'); },
+  soundnotes:  (el) => renderNotesSection(el, 'Sound', 'Sound Notes'),
+  silencecues: (el) => renderNotesSection(el, 'Sound', 'Silence Cues', 'Mark scenes that require silence — no background music, no extra noise.'),
+  environment: (el) => renderNotesSection(el, 'Sound', 'Environment Tone', 'Describe the ambient sound texture for each location.'),
+  moments:     (el) => renderKeyMoments(el),
+  script:      (el) => renderFileSection(el, 'script', 'Script', '.pdf', 'Scripts pushed from Director appear here.'),
+  timeline:    (el) => renderTimeline(el, 'sound'),
+  emailhub:    (el) => renderEmailHub(el, 'crew', {lockAlias:true, includeCast:false}),
+};
+
+async function renderKeyMoments(el) {
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Key Sound Moments</div>
+      <button class="btn-sm btn-gold" onclick="addSoundMoment()">+ Add Moment</button>
+    </div>
+    <div id="moments-list"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
+  `;
+  await loadSoundMoments();
+}
+
+async function loadSoundMoments() {
+  try {
+    const res  = await fetch(`${API}?action=get-soundmoments`);
+    const data = await res.json();
+    STATE.moments = data.records || [];
+  } catch(e) { STATE.moments = []; }
+  const el = document.getElementById('moments-list');
+  if (!el) return;
+  el.innerHTML = STATE.moments.length ? STATE.moments.map(r => `
+    <div class="card">
+      <div class="card-title">${esc(r.fields['Label']||'')}</div>
+      <div style="font-size:12px;color:var(--muted)">${esc(r.fields['Note']||'')}</div>
+      <button class="btn-sm btn-outline" style="margin-top:8px" onclick="deleteSoundMoment('${r.id}')">🗑 Delete</button>
+    </div>
+  `).join('') : '<p style="color:var(--muted);font-size:13px">No moments added yet.</p>';
+}
+
+function addSoundMoment() {
+  showModal('Add Key Sound Moment', `
+    <div class="modal-row"><div class="modal-label">Sound Moment</div><input id="sm-label" placeholder="e.g. Door slam"></div>
+    <div class="modal-row"><div class="modal-label">Notes</div><textarea id="sm-note" rows="3" placeholder="What to capture, continuity notes..."></textarea></div>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Add', cls:'btn-gold', action:'saveSoundMoment()'},
+  ]);
+}
+
+async function saveSoundMoment() {
+  try {
+    await fetch(API + '?action=add-soundmoment', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({label: document.getElementById('sm-label').value, note: document.getElementById('sm-note').value}),
+    });
+    closeModal();
+    toast('Moment added','✅');
+    loadSoundMoments();
+  } catch(e) { toast('Failed to add moment.','❌'); }
+}
+
+async function deleteSoundMoment(recordId) {
+  try {
+    await fetch(API + '?action=delete-soundmoment', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId}),
+    });
+    toast('Moment deleted','🗑');
+    loadSoundMoments();
+  } catch(e) { toast('Failed to delete.','❌'); }
+}
+
+// ════════════════════════════════════════════════════════════════
+// SHARED HELPERS
+// ════════════════════════════════════════════════════════════════
+function deptOverview(dept, phase, focus) {
+  return `
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-title">Current Phase</div>
+      <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:4px">${esc(phase)}</div>
+      <div style="font-size:12px;color:var(--muted)">${esc(focus)}</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Notes from Director</div>
+      <div id="director-notes-preview"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
+    </div>
+  `;
+}
+
+// Load director notes preview for dept overviews
+async function loadDirectorNotesPreview() {
+  const el = document.getElementById('director-notes-preview');
+  if (!el) return;
+  try {
+    const res  = await fetch(`${API}?action=get-notes&dept=${encodeURIComponent(DEPT_LABELS[STATE.dept])}`);
+    const data = await res.json();
+    const recs = data.records || [];
+    el.innerHTML = recs.length
+      ? recs.slice(0,3).map(r=>`
+          <div class="note-card">
+            <div class="note-meta">${esc(r.fields['Author']||'Director')} · ${esc(r.fields['Title']||'')}</div>
+            <div class="note-content">${esc(r.fields['Note']||'')}</div>
+          </div>`).join('')
+      : '<p style="color:var(--muted);font-size:13px">No messages yet.</p>';
+  } catch(e) { if(el) el.innerHTML = '<p style="color:var(--muted);font-size:13px">Could not load notes.</p>'; }
+}
+
+// Auto-load director notes after overview renders
+const _origNav = navigate;
+// patch overview to load notes
+const _overrideNavigate = navigate;
+
+function openCrewEmailModal(email) {
+  const contacts = (STATE.crew||[]).filter(r => r.fields['Email']).map(r => ({
+    name: r.fields['Name']||'Unknown', email: r.fields['Email'],
+    role: (r.fields['Preferred role by Director']||r.fields['Role']||'').toString(),
+  }));
+  showQuickEmailModal({ fromAlias:'crew', contacts, preselected:[email] });
+}
+
+function renderCrewSection(el) {
+  const canEdit = STATE.realDept === 'director' || STATE.realDept === 'producer';
+  const liveCrew = STATE.crew.map(r => {
+    const f = r.fields;
+    return {
+      id: r.id,
+      name:  f['Name'] || '',
+      role:  (f['Preferred role by Director']||'').toString().replace(/,/g,', ') || f['Role'] || '',
+      email: f['Email'] || '',
+    };
+  });
+  const list = liveCrew.length ? liveCrew : CREW_CONTRACTS;
+
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Crew + Cast</div>
+      ${canEdit ? '<button class="btn-sm btn-gold" onclick="showAddCrew()">+ Add Crew</button>' : ''}
+    </div>
+    ${list.map(c => {
+      const initials = c.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+      return `
+        <div class="crew-card">
+          <div class="crew-avatar">${initials}</div>
+          <div class="crew-info">
+            <div class="crew-name">${esc(c.name)}</div>
+            <div class="crew-role">${esc(c.role)}</div>
+            <div class="crew-email">${esc(c.email)}</div>
+          </div>
+          <div class="crew-actions">
+            ${c.email ? `<button class="btn-sm btn-outline" onclick="openCrewEmailModal('${esc(c.email)}')">Email</button>` : ''}
+            <a href="${contractLink(c.name,c.email,c.role)}" target="_blank" class="btn-sm btn-gold">Contract</a>
+            ${canEdit && c.id ? `<button class="btn-sm btn-outline" onclick="deleteCrew('${c.id}')">🗑</button>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('')}
+  `;
+}
+
+function showAddCrew() {
+  showModal('Add Crew Member', `
+    <div class="modal-row"><div class="modal-label">Name *</div><input id="cr-name" placeholder="Full name"></div>
+    <div class="modal-row"><div class="modal-label">Email *</div><input id="cr-email" type="email" placeholder="email@example.com"></div>
+    <div class="modal-row"><div class="modal-label">Role</div><input id="cr-role" placeholder="e.g. Boom Operator"></div>
+    <div class="modal-row"><div class="modal-label">Phone</div><input id="cr-phone" placeholder="(xxx) xxx-xxxx"></div>
+    <p style="font-size:11px;color:var(--muted)">This adds them as CORE crew — they'll appear across all dashboards.</p>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Add Crew', cls:'btn-gold', action:'saveCrew()'},
+  ]);
+}
+
+async function saveCrew() {
+  const name  = document.getElementById('cr-name').value.trim();
+  const email = document.getElementById('cr-email').value.trim();
+  if (!name || !email) { toast('Name and email required.','⚠️'); return; }
+  try {
+    await fetch(API + '?action=add-crew', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        name, email,
+        role:  document.getElementById('cr-role').value,
+        phone: document.getElementById('cr-phone').value,
+      }),
+    });
+    closeModal();
+    toast('Crew member added','✅');
+    await loadData();
+    navigate(STATE.section);
+  } catch(e) { toast('Failed to add crew.','❌'); }
+}
+
+async function deleteCrew(recordId) {
+  try {
+    await fetch(API + '?action=delete-crew', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId}),
+    });
+    toast('Crew member removed','🗑');
+    await loadData();
+    navigate(STATE.section);
+  } catch(e) { toast('Failed to remove crew.','❌'); }
+}
+
+// ─── CASTING DATABASE ────────────────────────────────────────────
+async function renderCastingDatabase(el) {
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Casting Database — Callbacks</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-sm btn-outline" onclick="showAddCharacterNoteModal()">+ Add Role Notes</button>
+        <button class="btn-sm btn-outline" onclick="openMissingSelfTapeReminderModal()">📨 Remind Missing Self-Tapes</button>
+        <button class="btn-sm btn-gold" onclick="sendConfirmedAvailability()">📅 Schedule Final Callback</button>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Grouped by character. Each role has a casting brief at the top — what to look for in self-tapes for that part — followed by everyone marked "Callback" for it. The button above emails your Calendly link (from casting@bleuskm.com) to everyone currently marked Confirmed, so they can book their final callback slot.</p>
+    <div id="casting-list"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
+    <div class="card" style="margin-top:16px">
+      <div class="card-title">Casting — Recently Sent</div>
+      <div id="casting-sent-log" style="max-height:240px;overflow-y:auto">Loading...</div>
+    </div>
+  `;
+  await loadCastingDb();
+  loadSentLog('Casting').then(r => { const sl = document.getElementById('casting-sent-log'); if (sl) sl.innerHTML = sentLogHTML(r); });
+}
+
+async function sendConfirmedAvailability() {
+  const confirmed = (STATE.casting||[]).filter(r => r.fields['Cast Status'] === 'Confirmed' && r.fields['Email']);
+  if (!confirmed.length) { toast('No one is marked Confirmed yet.','⚠️'); return; }
+  const emails = confirmed.map(r => r.fields['Email']);
+  const subject = `You're Confirmed — ${STATE.filmName || FILM} | Schedule Your Meeting`;
+  const bodyText = `Hi,\n\nCongratulations — you're confirmed for "${STATE.filmName || FILM}"!\n\n` +
+    `Please use the link below to pick a date and time for a quick meeting with us:\n${CALENDLY_LINK}\n\n` +
+    `We're excited to have you on board.\n\nBLEUSKM Studios`;
+  try {
+    await sendZohoMail({ fromAlias:'casting', bcc: emails.join(','), subject, text: bodyText });
+    toast(`Sent to ${confirmed.length} confirmed ${confirmed.length===1?'person':'people'}.`, '✅');
+    loadSentLog('Casting').then(r => { const sl = document.getElementById('casting-sent-log'); if (sl) sl.innerHTML = sentLogHTML(r); });
+  } catch(e) {
+    toast('Zoho send failed — opening your email client instead.','⚠️');
+    const subj = encodeURIComponent(subject);
+    const body = encodeURIComponent(bodyText);
+    window.location.href = `mailto:?bcc=${emails.join(',')}&subject=${subj}&body=${body}`;
+  }
+}
+
+function openCastingEmailModal(recordId) {
+  const rec = (STATE.casting||[]).find(r => r.id === recordId);
+  if (!rec || !rec.fields['Email']) return;
+  const contacts = (STATE.casting||[]).filter(r => r.fields['Email']).map(r => ({
+    name: r.fields['Name']||'Unknown', email: r.fields['Email'], role: castCharacter(r.fields),
+    flag: r.fields['Self Tape URL'] ? '' : 'No self-tape yet',
+  }));
+  showQuickEmailModal({ fromAlias:'casting', contacts, preselected:[rec.fields['Email']] });
+}
+
+function openMissingSelfTapeReminderModal() {
+  const contacts = (STATE.casting||[]).filter(r => r.fields['Email']).map(r => ({
+    name: r.fields['Name']||'Unknown', email: r.fields['Email'], role: castCharacter(r.fields),
+    flag: r.fields['Self Tape URL'] ? '' : 'No self-tape yet',
+  }));
+  const missing = contacts.filter(c => c.flag).map(c => c.email);
+  if (!missing.length) { toast('Everyone here already has a self-tape on file.','✅'); return; }
+  showQuickEmailModal({ fromAlias:'casting', contacts, preselected: missing });
+}
+
+function castCharacter(f) {
+  return (f['To Role'] || f['Role'] || '').trim() || 'Unspecified Role';
+}
+
+function slugify(s) {
+  return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'role';
+}
+
+async function loadCastingDb() {
+  try {
+    const res  = await fetch(`${API}?action=get-casting`);
+    const data = await res.json();
+    STATE.casting = data.records || [];
+  } catch(e) { STATE.casting = []; }
+  try {
+    const nres = await fetch(`${API}?action=get-character-notes`);
+    const ndata = await nres.json();
+    STATE.characterNotes = {};
+    (ndata.records||[]).forEach(r => { STATE.characterNotes[r.fields['Character']] = { id: r.id, note: r.fields['Casting Notes']||'' }; });
+  } catch(e) { STATE.characterNotes = {}; }
+
+  const el = document.getElementById('casting-list');
+  if (!el) return;
+  if (!STATE.casting.length) { el.innerHTML = '<p style="color:var(--muted);font-size:13px">No callback candidates right now.</p>'; return; }
+
+  const groups = {};
+  STATE.casting.forEach(r => {
+    const char = castCharacter(r.fields);
+    (groups[char] = groups[char] || []).push(r);
+  });
+  // Show characters with casting notes set even before any callback candidates exist.
+  Object.keys(STATE.characterNotes||{}).forEach(char => { groups[char] = groups[char] || []; });
+
+  el.innerHTML = Object.keys(groups).length
+    ? Object.keys(groups).sort().map(char => characterGroupHTML(char, groups[char])).join('')
+    : '<p style="color:var(--muted);font-size:13px">No callback candidates right now.</p>';
+}
+
+function characterGroupHTML(character, recs) {
+  const slug = slugify(character);
+  const noteInfo = (STATE.characterNotes||{})[character] || { note: '' };
+  return `
+    <div class="card" style="margin-bottom:10px;border-color:var(--golddim);background:var(--goldfaint,rgba(218,175,55,0.05))">
+      <div class="card-title">🎭 ${esc(character)}</div>
+      <div class="modal-label" style="margin-top:8px">What we're looking for in this role</div>
+      <textarea id="char-note-${slug}" rows="2" placeholder="e.g. Looking for quiet intensity, strong improv, comfortable with the monologue in scene 4, age 30–45...">${esc(noteInfo.note)}</textarea>
+      <button class="btn-sm btn-gold" style="margin-top:8px" onclick="saveCharacterNote('${esc(character)}','char-note-${slug}')">Save Casting Notes</button>
+    </div>
+    ${recs.length ? recs.map(r => castingSubmissionCardHTML(r)).join('') : '<p style="color:var(--muted);font-size:12px;margin:0 0 14px 4px">No callback candidates for this role yet.</p>'}
+  `;
+}
+
+function showAddCharacterNoteModal() {
+  showModal('Add Casting Notes for a Role', `
+    <div class="modal-row"><div class="modal-label">Character / Role Name</div><input id="new-char-name" placeholder="e.g. Marcus"></div>
+    <div class="modal-row" style="margin-top:8px"><div class="modal-label">What we're looking for</div><textarea id="new-char-note" rows="3" placeholder="e.g. Looking for quiet intensity, strong improv, comfortable with the monologue in scene 4, age 30–45..."></textarea></div>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Save', cls:'btn-gold', action:'saveNewCharacterNote()'},
+  ]);
+}
+
+async function saveNewCharacterNote() {
+  const character = document.getElementById('new-char-name')?.value.trim();
+  const note = document.getElementById('new-char-note')?.value.trim() || '';
+  if (!character) { toast('Enter a character name.','⚠️'); return; }
+  try {
+    await fetch(API + '?action=save-character-note', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ character, note, updatedBy: STATE.name || DEPT_LABELS[STATE.dept] || '' }),
+    });
+    closeModal();
+    toast('Casting notes added','✅');
+    loadCastingDb();
+  } catch(e) { toast('Failed to save casting notes.','❌'); }
+}
+
+async function saveCharacterNote(character, inputId) {
+  const note = document.getElementById(inputId)?.value.trim() || '';
+  try {
+    await fetch(API + '?action=save-character-note', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ character, note, updatedBy: STATE.name || DEPT_LABELS[STATE.dept] || '' }),
+    });
+    STATE.characterNotes = STATE.characterNotes || {};
+    STATE.characterNotes[character] = { note };
+    toast('Casting notes saved','✅');
+  } catch(e) { toast('Failed to save casting notes.','❌'); }
+}
+
+function castingSubmissionCardHTML(r) {
+  const f = r.fields;
+  const castStatus = f['Cast Status'] || 'Pending';
+  const notesLines = (f['Notes']||'').split('\n').filter(Boolean);
+  const castColors = {'Confirmed':'tag-green','Not Cast':'tag-red','Pending':'tag-muted'};
+  return `
+    <div class="card" style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div>
+          <div class="card-title" style="margin-bottom:2px">${esc(f['Name']||'Unknown')}</div>
+          <div style="font-size:11px;color:var(--gold)">${esc(f['Role']||f['To Role']||'')}</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px">${esc(f['Email']||'')} ${f['Phone']?'· '+esc(f['Phone']):''}</div>
+        </div>
+        <span class="tag ${castColors[castStatus]||'tag-muted'}">${esc(castStatus)}</span>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+        ${f['Self Tape URL'] ? `<a href="${esc(f['Self Tape URL'])}" target="_blank" class="btn-sm btn-outline">View Self-Tape</a>` : ''}
+        ${f['Email'] ? `<button class="btn-sm btn-outline" onclick="openCastingEmailModal('${r.id}')">Email</button>` : ''}
+        <button class="btn-sm btn-gold" onclick="updateCastStatus('${r.id}','Confirmed')">Confirm Cast</button>
+        <button class="btn-sm btn-outline" onclick="updateCastStatus('${r.id}','Not Cast')">Not Cast</button>
+        <button class="btn-sm btn-outline" onclick="updateCastStatus('${r.id}','Pending')">Reset to Pending</button>
+      </div>
+      <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:10px">
+        <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Notes</div>
+        ${notesLines.length ? notesLines.map(l=>`<div style="font-size:12px;color:var(--text);margin-bottom:4px">${esc(l)}</div>`).join('') : '<div style="font-size:12px;color:var(--muted)">No notes yet.</div>'}
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <input id="cn-input-${r.id}" placeholder="Add a note for the team..." style="flex:1">
+          <button class="btn-sm btn-gold" onclick="addCastingNote('${r.id}')">Add</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function updateCastStatus(recordId, castStatus) {
+  try {
+    await fetch(API + '?action=update-casting-status', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId, castStatus}),
+    });
+    toast(`Marked ${castStatus}`,'✅');
+    loadCastingDb();
+  } catch(e) { toast('Failed to update status.','❌'); }
+}
+
+async function addCastingNote(recordId) {
+  const input = document.getElementById(`cn-input-${recordId}`);
+  const note = input?.value.trim();
+  if (!note) { toast('Write a note first.','⚠️'); return; }
+  try {
+    await fetch(API + '?action=add-casting-note', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId, note, author: STATE.name || DEPT_LABELS[STATE.realDept] || DEPT_LABELS[STATE.dept]}),
+    });
+    toast('Note added','✅');
+    loadCastingDb();
+  } catch(e) { toast('Failed to add note.','❌'); }
+}
+
+// ─── MANAGE DEPARTMENTS (Director view-as) ────────────────────────
+function renderManageDepartments(el) {
+  const depts = [
+    {key:'producer', label:'Producer', icon:'🎬'},
+    {key:'dp', label:'DP / Camera', icon:'📷'},
+    {key:'ad', label:'Assistant Director', icon:'🎭'},
+    {key:'scriptsupervisor', label:'Script Supervisor', icon:'📝'},
+    {key:'sound', label:'Sound', icon:'🎵'},
+  ];
+  el.innerHTML = `
+    <div class="section-title" style="margin-bottom:16px">Manage Departments</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Open any department's dashboard directly to upload files, add notes, or push something into their workspace. You'll see exactly what they see.</p>
+    <div class="grid2">
+      ${depts.map(d => `
+        <div class="card">
+          <div class="card-title">${d.icon} ${d.label}</div>
+          <button class="btn-sm btn-gold" style="margin-top:8px" onclick="switchToDept('${d.key}')">Open ${d.label} Dashboard</button>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+async function switchToDept(deptKey) {
+  STATE.dept = deptKey;
+  document.getElementById('sb-dept').textContent = DEPT_LABELS[deptKey];
+  document.getElementById('tb-dept').textContent = STATE.name ? `${STATE.name} · Viewing ${DEPT_LABELS[deptKey]}` : DEPT_LABELS[deptKey];
+  buildNav();
+  showReturnBanner();
+  await loadData();
+  navigate('overview');
+}
+
+async function returnToDirector() {
+  STATE.dept = STATE.realDept;
+  document.getElementById('sb-dept').textContent = DEPT_LABELS[STATE.dept];
+  document.getElementById('tb-dept').textContent = STATE.name ? `${STATE.name} · ${DEPT_LABELS[STATE.dept]}` : DEPT_LABELS[STATE.dept];
+  buildNav();
+  document.getElementById('topbar-actions').innerHTML = '';
+  await loadData();
+  navigate('overview');
+}
+
+function showReturnBanner() {
+  document.getElementById('topbar-actions').innerHTML = `
+    <span style="font-size:11px;color:var(--muted);margin-right:8px">Viewing as Director</span>
+    <button class="btn-sm btn-red" onclick="returnToDirector()">← Return to My Dashboard</button>
+  `;
+}
+
+// ─── PRODUCTION SETTINGS ──────────────────────────────────────────
+function renderProductionSettings(el) {
+  el.innerHTML = `
+    <div class="section-title" style="margin-bottom:16px">Production Settings</div>
+    <div class="card">
+      <div class="card-title">Film Name</div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:10px">This dashboard can be reused for every film you produce. Changing this updates contract links and offer letters for everyone.</p>
+      <div style="display:flex;gap:8px">
+        <input id="set-film-name" value="${esc(STATE.filmName)}" placeholder="e.g. The Final Hand">
+        <button class="btn-sm btn-gold" onclick="saveFilmName()">Save</button>
+      </div>
+    </div>
+  `;
+}
+
+async function saveFilmName() {
+  const name = document.getElementById('set-film-name').value.trim();
+  if (!name) { toast('Film name required.','⚠️'); return; }
+  try {
+    await fetch(API + '?action=update-setting', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({name:'Current Film', value:name}),
+    });
+    STATE.filmName = name;
+    document.getElementById('sb-film').textContent = name;
+    toast('Film name updated for everyone','✅');
+  } catch(e) { toast('Failed to save.','❌'); }
+}
+
+function renderNotesSection(el, audience, title, hint='') {
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">${title}</div>
+      <button class="btn-sm btn-gold" onclick="showAddNote('${audience}','${title}')">+ Add Note</button>
+    </div>
+    ${hint ? `<p style="font-size:12px;color:var(--muted);margin-bottom:14px">${hint}</p>` : ''}
+    <div id="notes-list-${audience.replace(/\s/g,'')}"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
+  `;
+  loadNotes(audience);
+}
+
+async function loadNotes(audience) {
+  const safeKey = audience.replace(/\s/g,'');
+  const el = document.getElementById(`notes-list-${safeKey}`);
+  if (!el) return;
+  try {
+    const res  = await fetch(`${API}?action=get-notes&dept=${encodeURIComponent(audience)}`);
+    const data = await res.json();
+    const recs = data.records || [];
+    el.innerHTML = recs.length
+      ? recs.map(r=>`
+          <div class="note-card">
+            <div class="note-meta">${esc(r.fields['Author']||'')} · ${esc(r.fields['Title']||'')}</div>
+            <div class="note-content">${esc(r.fields['Note']||'')}</div>
+            <button class="btn-sm btn-outline" style="margin-top:8px" onclick="deleteNote('${r.id}','${audience}')">🗑 Delete</button>
+          </div>`).join('')
+      : '<p style="color:var(--muted);font-size:13px">No notes yet.</p>';
+  } catch(e) { if(el) el.innerHTML = '<p style="color:var(--muted);font-size:13px">Could not load notes.</p>'; }
+}
+
+async function deleteNote(recordId, audience) {
+  try {
+    await fetch(API + '?action=delete-note', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({recordId}),
+    });
+    toast('Note deleted','🗑');
+    loadNotes(audience);
+  } catch(e) { toast('Failed to delete note.','❌'); }
+}
+
+function showAddNote(audience, title) {
+  showModal(`Add ${title} Note`, `
+    <div class="modal-row"><div class="modal-label">Title</div><input id="note-title" placeholder="Note title"></div>
+    <div class="modal-row"><div class="modal-label">Note</div><textarea id="note-content" rows="5" placeholder="Write your note here..."></textarea></div>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Save Note', cls:'btn-gold', action:`doAddNote('${audience}')`},
+  ]);
+}
+
+async function doAddNote(audience) {
+  const title   = document.getElementById('note-title').value.trim();
+  const content = document.getElementById('note-content').value.trim();
+  if (!content) { toast('Please write a note.','⚠️'); return; }
+  try {
+    await fetch(API + '?action=add-note', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({title: title||'Note', content, author: STATE.name || DEPT_LABELS[STATE.realDept] || DEPT_LABELS[STATE.dept], audience}),
+    });
+    closeModal();
+    toast('Note saved','✅');
+    loadNotes(audience);
+  } catch(e) { toast('Failed to save note.','❌'); }
+}
+
+// Generic fallback section
+function genericSection(sectionId, el) {
+  el.innerHTML = `<div class="card"><div class="card-title" style="text-transform:capitalize">${sectionId}</div><p style="color:var(--muted);font-size:13px">This section is being set up.</p></div>`;
+}
+
+function addSceneRow() {
+  showModal('Add Scene', `
+    <div class="modal-row"><div class="modal-label">Scene #</div><input id="sc-num" placeholder="5"></div>
+    <div class="modal-row"><div class="modal-label">Location</div><input id="sc-loc" placeholder="e.g. Casino Bar"></div>
+    <div class="modal-row"><div class="modal-label">Characters</div><input id="sc-chars" placeholder="e.g. Marcus, Delia"></div>
+    <div class="modal-row"><div class="modal-label">Day / Night</div>
+      <select id="sc-dn"><option>Day</option><option selected>Night</option></select>
+    </div>
+    <div class="modal-row"><div class="modal-label">Key Action</div><textarea id="sc-action" rows="2"></textarea></div>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'Add Scene', cls:'btn-gold', action:'saveScene()'},
+  ]);
+}
+
+async function saveScene() {
+  try {
+    await fetch(API + '?action=add-scene', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        num:    document.getElementById('sc-num').value,
+        loc:    document.getElementById('sc-loc').value,
+        chars:  document.getElementById('sc-chars').value,
+        dn:     document.getElementById('sc-dn').value,
+        action: document.getElementById('sc-action').value,
+      }),
+    });
+    closeModal();
+    navigate(STATE.section);
+    toast('Scene added','✅');
+  } catch(e) { toast('Failed to add scene.','❌'); }
+}
+
+function useTemplate(typeName) {
+  // Switch to Send Contracts tab and preselect this contract type
+  const sendTab = document.querySelector('.tabs .tab');
+  if (sendTab) switchTab(sendTab, 'tab-send');
+  const typeSelect = document.getElementById('ce-type');
+  if (typeSelect) typeSelect.value = typeName;
+  renderExtraFields();
+  toast(`Ready to send a ${typeName} — fill in name/email above`, '📋');
+  document.getElementById('ce-name')?.focus();
+}
+
+// ════════════════════════════════════════════════════════════════
+// MODAL + TOAST HELPERS
+// ════════════════════════════════════════════════════════════════
+function showModal(title, body, actions=[]) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML = body;
+  document.getElementById('modal-actions').innerHTML = actions.map(a =>
+    `<button class="btn-sm ${a.cls}" onclick="${a.action}">${a.label}</button>`
+  ).join('');
+  document.getElementById('modal').classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.add('hidden');
+}
+
+let _toastTimer;
+function toast(msg, icon='ℹ️') {
+  const el = document.getElementById('toast');
+  el.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+  el.classList.remove('hidden');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.add('hidden'), 3000);
+}
+
+function switchTab(tabEl, panelId) {
+  tabEl.closest('.tabs').querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  tabEl.classList.add('active');
+  const container = tabEl.closest('.tabs').nextElementSibling;
+  let panel = container;
+  // Find all tab panels as siblings
+  let el = tabEl.closest('.tabs').nextElementSibling;
+  while(el) { el.classList.remove('active'); el = el.nextElementSibling; }
+  document.getElementById(panelId)?.classList.add('active');
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function formatDate(d) {
+  if (!d) return '';
+  try { return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric'}); } catch(e) { return d; }
+}
+
+// After overview renders, load director notes
+const _navOrig = navigate;
+window.navigate = function(sectionId) {
+  _navOrig(sectionId);
+  if (sectionId === 'overview') {
+    setTimeout(loadDirectorNotesPreview, 100);
+  }
+};
+// Re-bind
+(function reBindNav(){
+  const nav = NAV[STATE.dept]||[];
+  // nav items already reference window.navigate indirectly via onclick — fine
+})();
+</script>
+</body>
+</html>
