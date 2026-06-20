@@ -18,6 +18,8 @@ const TABLES = {
   soundmoments:'tbl59oUC6f3hKeauN',
   casting:    'tblLGmXULNb9ebFxH',
   settings:   'tbl8Z3kwQmrnga4sU',
+  polls:        'tblBQ2y1z2KeGSs6S',
+  pollresponses:'tbll27h1bqQh02KMJ',
 };
 
 const FILES_ATTACHMENT_FIELD = 'fldlZcbMXEFM0AfQH'; // Portal Files → Attachment (multipleAttachments)
@@ -487,6 +489,71 @@ async function netlifyHandler(event) {
       });
       return { statusCode: 200, headers, body: JSON.stringify(data) };
     }
+  }
+
+  // ── MEETING POLLS (group-availability scheduling) ────────────────────────
+  if (action === 'create-poll') {
+    const data = await airtable('POST', TABLES.polls, {
+      records: [{
+        fields: {
+          'Title':      body.title || 'Meeting Poll',
+          'Options':    body.options || '',
+          'Created By': body.createdBy || '',
+          'Status':     'Open',
+          'Created':    new Date().toISOString(),
+        },
+      }],
+    });
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  if (action === 'get-polls') {
+    const data = await airtable('GET', TABLES.polls, null, `?sort[0][field]=Created&sort[0][direction]=desc`);
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  // Public — used by the unauthenticated poll response page.
+  if (action === 'get-poll') {
+    const data = await airtable('GET', TABLES.polls, null, `/${params.id}`);
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  if (action === 'update-poll') {
+    const fields = {};
+    if (body.status)    fields['Status'] = body.status;
+    if (body.finalTime) fields['Final Time'] = body.finalTime;
+    const data = await airtable('PATCH', TABLES.polls, {
+      records: [{ id: body.recordId, fields }],
+    });
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  if (action === 'delete-poll') {
+    const data = await airtable('DELETE', TABLES.polls, null, `?records[]=${body.recordId}`);
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  // Public — submitted from the poll response page.
+  if (action === 'submit-poll-response') {
+    const data = await airtable('POST', TABLES.pollresponses, {
+      records: [{
+        fields: {
+          'Respondent Name':  body.name || '',
+          'Poll Id':          body.pollId || '',
+          'Respondent Email': body.email || '',
+          'Respondent Role':  body.role || '',
+          'Selected Options': (body.selectedOptions || []).join('\n'),
+          'Submitted':        new Date().toISOString(),
+        },
+      }],
+    });
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  if (action === 'get-poll-results') {
+    const filter = encodeURIComponent(`{Poll Id}="${params.pollId || body.pollId || ''}"`);
+    const data = await airtable('GET', TABLES.pollresponses, null, `?filterByFormula=${filter}`);
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
   return { statusCode: 400, headers, body: JSON.stringify({ error: 'Unknown action' }) };
