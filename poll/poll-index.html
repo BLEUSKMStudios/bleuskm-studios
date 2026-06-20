@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meeting Poll — BLEUSKM Studios</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="poll.css" />
+</head>
+<body>
+
+  <header class="poll-header">
+    <span class="wordmark">BLEUSKM STUDIOS</span>
+    <div class="header-rule" style="margin-top:10px"></div>
+  </header>
+
+  <main class="poll-main">
+    <span class="poll-eyebrow">MEETING AVAILABILITY POLL</span>
+    <h1 class="poll-title" id="pollTitle">Loading…</h1>
+    <p class="poll-sub">Check every time below that works for you, fill in your info, and submit. No need to pick just one — we'll lock in whichever time has the most overlap and follow up with the final date.</p>
+
+    <div class="poll-error hidden" id="pollError"></div>
+
+    <p id="pollLoading" style="color:var(--muted);font-size:13px">Loading poll…</p>
+
+    <div id="pollForm" class="hidden">
+      <div class="poll-section">
+        <div class="poll-label">Times That Work For You</div>
+        <div id="pollOptions"></div>
+      </div>
+
+      <div class="poll-section">
+        <div class="poll-label">Your Info</div>
+        <input class="poll-input" id="p-name" placeholder="Full Name">
+        <input class="poll-input" id="p-email" placeholder="Email (optional)">
+        <input class="poll-input" id="p-role" placeholder="Role (e.g. Sound, Lead Actor) — optional">
+        <button class="submit-btn" id="submitBtn">Submit My Availability</button>
+      </div>
+    </div>
+
+    <div class="poll-success hidden" id="pollSuccess">
+      <div class="poll-success-icon">✦</div>
+      <h2 class="poll-success-title">Got it — thank you!</h2>
+      <p class="poll-success-text">Your availability has been recorded. BLEUSKM Studios will follow up once the final time is locked in.</p>
+    </div>
+  </main>
+
+  <script src="poll.js"></script>
+</body>
+</html>
