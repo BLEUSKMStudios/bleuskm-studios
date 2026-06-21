@@ -585,6 +585,7 @@ const NAV = {
   ],
   producer: [
     {id:'overview',    icon:'🎬', label:'Overview'},
+    {id:'script',      icon:'📄', label:'Script'},
     {id:'timeline',    icon:'📅', label:'Timeline'},
     {id:'locations',   icon:'📍', label:'Location Hub'},
     {id:'crewcast',    icon:'👥', label:'Crew + Cast'},
@@ -1256,6 +1257,7 @@ SECTIONS.producer = {
     renderCurrentPhase('producer');
   },
   timeline: (el) => renderTimeline(el, 'producer'),
+  script: (el) => renderFileSection(el, 'script', 'Script', '.pdf,.fdx,.fountain', 'Upload your script here. Use the Push button to share with any department.'),
   locations: (el) => renderLocationsSection(el),
   crewcast: (el) => renderCrewSection(el),
   castingdb: (el) => renderCastingDatabase(el),
