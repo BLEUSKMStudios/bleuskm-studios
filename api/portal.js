@@ -482,6 +482,19 @@ async function netlifyHandler(event) {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
+  if (action === 'edit-casting-note-line') {
+    const curr = await airtable('GET', TABLES.casting, null, `/${body.recordId}`);
+    const lines = ((curr.fields || {})['Notes'] || '').split('\n').filter(Boolean);
+    if (body.lineIndex < 0 || body.lineIndex >= lines.length) {
+      return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'Note not found' }) };
+    }
+    lines[body.lineIndex] = body.note || lines[body.lineIndex];
+    const data = await airtable('PATCH', TABLES.casting, {
+      records: [{ id: body.recordId, fields: { 'Notes': lines.join('\n') } }],
+    });
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
   // ── SETTINGS (e.g. current film name) ────────────────────────────────────
   if (action === 'get-settings') {
     const data = await airtable('GET', TABLES.settings, null, '?maxRecords=50');
@@ -593,6 +606,62 @@ async function netlifyHandler(event) {
       });
       return { statusCode: 200, headers, body: JSON.stringify(data) };
     }
+  }
+
+  // Per-role notes as an actual list — add/delete/edit individual lines, same
+  // pattern as the per-candidate Notes thread, instead of one overwritable field.
+  if (action === 'add-character-note') {
+    const character = (body.character || '').trim();
+    if (!character) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'Missing character name' }) };
+    const filter = encodeURIComponent(`{Character}="${character.replace(/"/g, '\\"')}"`);
+    const existing = await airtable('GET', TABLES.characternotes, null, `?filterByFormula=${filter}`);
+    const recs = existing.records || [];
+    const stamp = new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    const line = `[${body.author || 'Unknown'} • ${stamp}]: ${body.note || ''}`;
+    if (recs.length) {
+      const prior = (recs[0].fields || {})['Casting Notes'] || '';
+      const updated = prior ? `${prior}\n${line}` : line;
+      const data = await airtable('PATCH', TABLES.characternotes, {
+        records: [{ id: recs[0].id, fields: { 'Casting Notes': updated, 'Updated By': body.author || '', 'Updated': new Date().toISOString() } }],
+      });
+      return { statusCode: 200, headers, body: JSON.stringify(data) };
+    } else {
+      const data = await airtable('POST', TABLES.characternotes, {
+        records: [{ fields: { 'Character': character, 'Casting Notes': line, 'Updated By': body.author || '', 'Updated': new Date().toISOString() } }],
+      });
+      return { statusCode: 200, headers, body: JSON.stringify(data) };
+    }
+  }
+
+  if (action === 'delete-character-note-line') {
+    const character = (body.character || '').trim();
+    const filter = encodeURIComponent(`{Character}="${character.replace(/"/g, '\\"')}"`);
+    const existing = await airtable('GET', TABLES.characternotes, null, `?filterByFormula=${filter}`);
+    const recs = existing.records || [];
+    if (!recs.length) return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    const lines = ((recs[0].fields || {})['Casting Notes'] || '').split('\n').filter(Boolean);
+    lines.splice(body.lineIndex, 1);
+    const data = await airtable('PATCH', TABLES.characternotes, {
+      records: [{ id: recs[0].id, fields: { 'Casting Notes': lines.join('\n') } }],
+    });
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  if (action === 'edit-character-note-line') {
+    const character = (body.character || '').trim();
+    const filter = encodeURIComponent(`{Character}="${character.replace(/"/g, '\\"')}"`);
+    const existing = await airtable('GET', TABLES.characternotes, null, `?filterByFormula=${filter}`);
+    const recs = existing.records || [];
+    if (!recs.length) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'Role notes not found' }) };
+    const lines = ((recs[0].fields || {})['Casting Notes'] || '').split('\n').filter(Boolean);
+    if (body.lineIndex < 0 || body.lineIndex >= lines.length) {
+      return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'Note not found' }) };
+    }
+    lines[body.lineIndex] = body.note || lines[body.lineIndex];
+    const data = await airtable('PATCH', TABLES.characternotes, {
+      records: [{ id: recs[0].id, fields: { 'Casting Notes': lines.join('\n') } }],
+    });
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
   // ── PRODUCTION TASKS (task board) ────────────────────────────────────────
