@@ -2963,6 +2963,8 @@ async function renderPushWidget(el, deptKey) {
   await loadPushInbox(deptKey);
 }
 
+const _pushNoteCache = {};
+
 async function loadPushInbox(deptKey) {
   const elx = document.getElementById(`push-inbox-${deptKey}`);
   if (!elx) return;
@@ -2974,17 +2976,33 @@ async function loadPushInbox(deptKey) {
       const toPerson = r.fields['To Person'] || '';
       return !toPerson || toPerson === me;
     });
+    mine.forEach(r => { _pushNoteCache[r.id] = r; });
     elx.innerHTML = mine.length ? `<div class="note-grid">${mine.map(r => `
-      <div class="note-square">
+      <div class="note-square" style="cursor:pointer" onclick="openPushNote('${r.id}','${deptKey}')">
         <div>
           <div class="note-meta">${esc(r.fields['From Person']||r.fields['From Department']||'')} → ${esc(r.fields['To Person'] ? r.fields['To Person'] : 'Whole Dept')}</div>
           <div style="font-size:12px;font-weight:600;margin-bottom:4px">${esc(r.fields['Title']||'')}</div>
           <div class="note-content">${esc(r.fields['Content']||'')}</div>
         </div>
-        <button class="btn-sm btn-outline" style="margin-top:8px;align-self:flex-start" onclick="deletePushNote('${r.id}','${deptKey}')">🗑 Delete</button>
+        <button class="btn-sm btn-outline" style="margin-top:8px;align-self:flex-start" onclick="event.stopPropagation();deletePushNote('${r.id}','${deptKey}')">🗑 Delete</button>
       </div>
     `).join('')}</div>` : '<p style="color:var(--muted);font-size:13px">Nothing pushed here yet.</p>';
   } catch(e) { elx.innerHTML = '<p style="color:var(--muted);font-size:13px">Could not load.</p>'; }
+}
+
+// Opens the full, untruncated note in a modal — the note-square card clamps
+// content to 5 lines, so this is how the rest of a longer note gets read.
+function openPushNote(recordId, deptKey) {
+  const r = _pushNoteCache[recordId];
+  if (!r) return;
+  const meta = `${r.fields['From Person']||r.fields['From Department']||''} → ${r.fields['To Person'] ? r.fields['To Person'] : 'Whole Dept'}`;
+  showModal(r.fields['Title'] || 'Note', `
+    <div class="note-meta" style="margin-bottom:10px">${esc(meta)}</div>
+    <div style="font-size:14px;line-height:1.6;white-space:pre-wrap">${esc(r.fields['Content']||'')}</div>
+  `, [
+    {label:'Close', cls:'btn-outline', action:'closeModal()'},
+    {label:'🗑 Delete', cls:'btn-outline', action:`deletePushNote('${recordId}','${deptKey}');closeModal();`},
+  ]);
 }
 
 async function deletePushNote(recordId, deptKey) {
