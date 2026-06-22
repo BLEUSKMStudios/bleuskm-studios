@@ -459,6 +459,13 @@ async function netlifyHandler(event) {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
+  if (action === 'update-casting-rating') {
+    const data = await airtable('PATCH', TABLES.casting, {
+      records: [{ id: body.recordId, fields: { 'Producer Rating': body.rating || 0 } }],
+    });
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
   if (action === 'add-casting-note') {
     const curr = await airtable('GET', TABLES.casting, null, `/${body.recordId}`);
     const existing = (curr.fields || {})['Notes'] || '';
