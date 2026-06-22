@@ -2945,6 +2945,7 @@ async function sendPushNote() {
     const toLabel = (PUSH_DEPTS.find(d=>d.key===toDept)||{}).label || toDept;
     toast(`Note pushed to ${toPerson || toLabel}`,'✅');
     loadPushInbox(STATE.dept);
+    loadSentNotes(STATE.dept);
   } catch(e) { toast('Failed to push note.','❌'); }
 }
 
@@ -2959,8 +2960,15 @@ async function renderPushWidget(el, deptKey) {
       <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Send a quick note to any department — or to a specific person once there's more than one of them.</p>
       <div id="push-inbox-${deptKey}"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
     </div>
+    <div class="card" style="margin-top:16px">
+      <div class="section-header" style="margin-bottom:8px">
+        <div class="card-title">Sent by You</div>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Notes you've pushed out — click one to edit or delete it. Edits update wherever the note was sent.</p>
+      <div id="push-sent-${deptKey}"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
+    </div>
   `;
-  await loadPushInbox(deptKey);
+  await Promise.all([loadPushInbox(deptKey), loadSentNotes(deptKey)]);
 }
 
 const _pushNoteCache = {};
@@ -3003,6 +3011,68 @@ function openPushNote(recordId, deptKey) {
     {label:'Close', cls:'btn-outline', action:'closeModal()'},
     {label:'🗑 Delete', cls:'btn-outline', action:`deletePushNote('${recordId}','${deptKey}');closeModal();`},
   ]);
+}
+
+// Notes the logged-in person has sent, regardless of which department or
+// person they were sent to — so a pushed note also shows up on the
+// sender's own dashboard, not just the recipient's.
+async function loadSentNotes(deptKey) {
+  const elx = document.getElementById(`push-sent-${deptKey}`);
+  if (!elx) return;
+  const me = STATE.name || '';
+  if (!me) { elx.innerHTML = '<p style="color:var(--muted);font-size:13px">Nothing yet.</p>'; return; }
+  try {
+    const res = await fetch(`${API}?action=get-sent-notes&person=${encodeURIComponent(me)}`);
+    const data = await res.json();
+    const mine = data.records || [];
+    mine.forEach(r => { _pushNoteCache[r.id] = r; });
+    elx.innerHTML = mine.length ? `<div class="note-grid">${mine.map(r => {
+      const toLabel = r.fields['To Person'] ? r.fields['To Person'] : (DEPT_LABELS[r.fields['To Department']] || r.fields['To Department'] || 'Everyone');
+      return `
+      <div class="note-square" style="cursor:pointer" onclick="openSentNote('${r.id}','${deptKey}')">
+        <div>
+          <div class="note-meta">To: ${esc(toLabel)}</div>
+          <div style="font-size:12px;font-weight:600;margin-bottom:4px">${esc(r.fields['Title']||'')}</div>
+          <div class="note-content">${esc(r.fields['Content']||'')}</div>
+        </div>
+        <button class="btn-sm btn-outline" style="margin-top:8px;align-self:flex-start" onclick="event.stopPropagation();deletePushNote('${r.id}','${deptKey}')">🗑 Delete</button>
+      </div>
+    `; }).join('')}</div>` : '<p style="color:var(--muted);font-size:13px">You haven\'t pushed any notes yet.</p>';
+  } catch(e) { elx.innerHTML = '<p style="color:var(--muted);font-size:13px">Could not load.</p>'; }
+}
+
+// Opens one of YOUR sent notes in an editable modal. Saving PATCHes the
+// same Airtable record the recipient reads from, so the edit shows up
+// on their dashboard the next time they load their inbox.
+function openSentNote(recordId, deptKey) {
+  const r = _pushNoteCache[recordId];
+  if (!r) return;
+  const toLabel = r.fields['To Person'] ? r.fields['To Person'] : (DEPT_LABELS[r.fields['To Department']] || r.fields['To Department'] || 'Everyone');
+  showModal('Edit Note', `
+    <div class="modal-row"><div class="modal-label">To</div><div style="font-size:13px;color:var(--muted)">${esc(toLabel)}</div></div>
+    <div class="modal-row" style="margin-top:8px"><div class="modal-label">Title</div><input id="pn-edit-title" value="${esc(r.fields['Title']||'')}"></div>
+    <div class="modal-row" style="margin-top:8px"><div class="modal-label">Message</div><textarea id="pn-edit-content" rows="5">${esc(r.fields['Content']||'')}</textarea></div>
+  `, [
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+    {label:'🗑 Delete', cls:'btn-outline', action:`deletePushNote('${recordId}','${deptKey}');closeModal();`},
+    {label:'Save', cls:'btn-gold', action:`saveEditedPushNote('${recordId}','${deptKey}')`},
+  ]);
+}
+
+async function saveEditedPushNote(recordId, deptKey) {
+  const title   = document.getElementById('pn-edit-title')?.value.trim() || 'Note';
+  const content = document.getElementById('pn-edit-content')?.value.trim();
+  if (!content) { toast('Write a message first.','⚠️'); return; }
+  try {
+    await fetch(API + '?action=update-pushed-note', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ recordId, title, content }),
+    });
+    closeModal();
+    toast('Note updated','✅');
+    loadSentNotes(deptKey);
+    loadPushInbox(deptKey);
+  } catch(e) { toast('Failed to update note.','❌'); }
 }
 
 async function deletePushNote(recordId, deptKey) {
