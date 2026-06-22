@@ -742,6 +742,25 @@ async function netlifyHandler(event) {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
+  // Notes the current person has sent — regardless of which department they
+  // were sent to, so a note shows up on the sender's own dashboard too.
+  if (action === 'get-sent-notes') {
+    const person = params.person || '';
+    const filter = encodeURIComponent(`{From Person}="${person}"`);
+    const data = await airtable('GET', TABLES.pushednotes, null, `?filterByFormula=${filter}&sort[0][field]=Created&sort[0][direction]=desc&maxRecords=200`);
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  if (action === 'update-pushed-note') {
+    const fields = {};
+    if (body.title !== undefined)   fields['Title'] = body.title;
+    if (body.content !== undefined) fields['Content'] = body.content;
+    const data = await airtable('PATCH', TABLES.pushednotes, {
+      records: [{ id: body.recordId, fields }],
+    });
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
   return { statusCode: 400, headers, body: JSON.stringify({ error: 'Unknown action' }) };
 }
 
