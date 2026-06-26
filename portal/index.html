@@ -1286,6 +1286,192 @@ SECTIONS.producer = {
   emailhub: (el) => renderEmailHub(el, 'crew', {aliases:['crew','casting'], includeCast:true}),
 };
 
+// ════════════════════════════════════════════════════════════════
+// LOCATION HUB
+// ════════════════════════════════════════════════════════════════
+async function renderLocationsSection(el) {
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">📍 Location Hub</div>
+      <button class="btn-sm btn-gold" onclick="showAddLocationModal()">+ Add Location</button>
+    </div>
+    <div id="locations-list"><p style="color:var(--muted);font-size:13px">Loading locations…</p></div>
+  `;
+  await loadLocations();
+}
+
+async function loadLocations() {
+  const el = document.getElementById('locations-list');
+  if (!el) return;
+  try {
+    const res = await fetch('/api/airtable-proxy?table=Portal+Locations');
+    const data = await res.json();
+    const recs = data.records || [];
+    STATE.locations = recs;
+    if (!recs.length) {
+      el.innerHTML = '<p style="color:var(--muted);font-size:13px">No locations yet. Click <strong>+ Add Location</strong> to add one.</p>';
+      return;
+    }
+    el.innerHTML = recs.map(r => {
+      const f = r.fields;
+      const status = f['Status'] || '';
+      const statusColor = status === 'Confirmed' ? 'var(--gold)' : status === 'Rejected' ? '#e55' : 'var(--muted)';
+      return `
+        <div class="file-card" style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+            <div style="flex:1;min-width:0">
+              <div style="font-weight:700;font-size:14px;margin-bottom:4px">${esc(f['Location Name']||'Unnamed Location')}</div>
+              ${f['Address'] ? `<div class="file-meta" style="margin-bottom:4px">📍 ${esc(f['Address'])}</div>` : ''}
+              ${f['Contact Person'] ? `<div class="file-meta">👤 ${esc(f['Contact Person'])}${f['Phone'] ? ' · ' + esc(f['Phone']) : ''}${f['Email'] ? ' · ' + esc(f['Email']) : ''}</div>` : ''}
+              ${f['Notes'] ? `<div class="file-meta" style="margin-top:6px;font-style:italic">${esc(f['Notes'])}</div>` : ''}
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">
+              ${status ? `<span style="font-size:11px;font-weight:600;color:${statusColor};text-transform:uppercase;letter-spacing:.04em">${esc(status)}</span>` : ''}
+              <div class="file-actions">
+                <button class="btn-sm btn-outline" onclick="showEditLocationModal('${r.id}')">Edit</button>
+                <button class="btn-sm btn-outline" style="color:#e55;border-color:#e55" onclick="deleteLocation('${r.id}')">Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch(e) {
+    if (el) el.innerHTML = '<p style="color:#e55;font-size:13px">Failed to load locations. Try refreshing.</p>';
+  }
+}
+
+function locationFormHtml(f = {}) {
+  const statuses = ['Scouting','Confirmed','On Hold','Rejected'];
+  return `
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div>
+        <div class="modal-label">Location Name *</div>
+        <input id="loc-name" value="${esc(f['Location Name']||'')}" placeholder="e.g. Zaria's Apartment">
+      </div>
+      <div>
+        <div class="modal-label">Address</div>
+        <textarea id="loc-address" rows="2" placeholder="Street, City, State">${esc(f['Address']||'')}</textarea>
+      </div>
+      <div class="grid2" style="gap:10px">
+        <div>
+          <div class="modal-label">Contact Person</div>
+          <input id="loc-contact" value="${esc(f['Contact Person']||'')}" placeholder="Owner / Manager name">
+        </div>
+        <div>
+          <div class="modal-label">Status</div>
+          <select id="loc-status">
+            <option value="">— Select —</option>
+            ${statuses.map(s => `<option value="${s}"${f['Status']===s?' selected':''}>${s}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="grid2" style="gap:10px">
+        <div>
+          <div class="modal-label">Phone</div>
+          <input id="loc-phone" value="${esc(f['Phone']||'')}" placeholder="(555) 000-0000">
+        </div>
+        <div>
+          <div class="modal-label">Email</div>
+          <input id="loc-email" type="email" value="${esc(f['Email']||'')}" placeholder="contact@email.com">
+        </div>
+      </div>
+      <div>
+        <div class="modal-label">Notes</div>
+        <textarea id="loc-notes" rows="3" placeholder="Parking, access codes, special instructions…">${esc(f['Notes']||'')}</textarea>
+      </div>
+    </div>
+  `;
+}
+
+function getLocationFormValues() {
+  return {
+    'Location Name': document.getElementById('loc-name')?.value.trim() || '',
+    'Address':        document.getElementById('loc-address')?.value.trim() || '',
+    'Contact Person': document.getElementById('loc-contact')?.value.trim() || '',
+    'Phone':          document.getElementById('loc-phone')?.value.trim() || '',
+    'Email':          document.getElementById('loc-email')?.value.trim() || '',
+    'Status':         document.getElementById('loc-status')?.value || '',
+    'Notes':          document.getElementById('loc-notes')?.value.trim() || '',
+  };
+}
+
+function showAddLocationModal() {
+  showModal('Add Location', locationFormHtml(), [
+    {label:'Save', cls:'btn-gold', action:'saveNewLocation()'},
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+  ]);
+}
+
+async function saveNewLocation() {
+  const fields = getLocationFormValues();
+  if (!fields['Location Name']) { toast('Location name is required.','⚠️'); return; }
+  Object.keys(fields).forEach(k => { if (!fields[k]) delete fields[k]; });
+  try {
+    const res = await fetch('/api/airtable-proxy', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({table:'Portal Locations', fields}),
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    closeModal();
+    toast('Location added!','📍');
+    await loadLocations();
+  } catch(e) { toast('Failed to save location.','⚠️'); }
+}
+
+function showEditLocationModal(recordId) {
+  const r = (STATE.locations||[]).find(loc => loc.id === recordId);
+  if (!r) { toast('Location not found.','⚠️'); return; }
+  showModal('Edit Location', locationFormHtml(r.fields), [
+    {label:'Save Changes', cls:'btn-gold', action:`saveEditLocation('${recordId}')`},
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+  ]);
+}
+
+async function saveEditLocation(recordId) {
+  const fields = getLocationFormValues();
+  if (!fields['Location Name']) { toast('Location name is required.','⚠️'); return; }
+  Object.keys(fields).forEach(k => { if (!fields[k]) delete fields[k]; });
+  try {
+    const res = await fetch('/api/airtable-proxy', {
+      method: 'PATCH',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({table:'Portal Locations', id: recordId, fields}),
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    closeModal();
+    toast('Location updated!','✅');
+    await loadLocations();
+  } catch(e) { toast('Failed to update location.','⚠️'); }
+}
+
+async function deleteLocation(recordId) {
+  const r = (STATE.locations||[]).find(loc => loc.id === recordId);
+  const name = r ? (r.fields['Location Name']||'this location') : 'this location';
+  showModal('Delete Location', `<p>Delete <strong>${esc(name)}</strong>? This cannot be undone.</p>`, [
+    {label:'Delete', cls:'btn-gold', action:`confirmDeleteLocation('${recordId}')`},
+    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
+  ]);
+}
+
+async function confirmDeleteLocation(recordId) {
+  try {
+    const res = await fetch('/api/airtable-proxy', {
+      method: 'DELETE',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({table:'Portal Locations', id: recordId}),
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    closeModal();
+    toast('Location deleted.','🗑️');
+    await loadLocations();
+  } catch(e) { toast('Failed to delete location.','⚠️'); }
+}
+
 // My Tasks — shown on the producer's own Overview (not a separate tab).
 // Read/track-only: only the Director can add, edit, delete, or reschedule
 // from the main Task Board. Producers see just their own tasks here and can
