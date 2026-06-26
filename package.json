@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "nodemailer": "^6.9.13",
+    "@vercel/analytics": "^2.0.1",
     "imapflow": "^1.0.151",
-    "mailparser": "^3.6.9"
+    "mailparser": "^3.6.9",
+    "nodemailer": "^6.9.13"
   }
 }
