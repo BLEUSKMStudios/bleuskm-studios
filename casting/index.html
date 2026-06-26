@@ -1431,20 +1431,18 @@ body { background: #080808; color: #EADFCF; }
 </footer>
 
 <script>
-var AIRTABLE_TOKEN = 'pat4zUowRMotxgqVA.415605c7a68e67cff288f42f8c2b75f48653ef33d98f6b895bd3a4da59931fb4';
-var AIRTABLE_BASE  = 'appXf1NxIVhYbuV4j';
-var TBL_CASTING    = 'tblLGmXULNb9ebFxH';
-var TBL_NEWSLETTER = 'tblSMb3y7vrvjbONx';
-var TBL_INQUIRIES  = 'tblwfk7tmoFhGIia5';
-var TBL_CREW       = 'tblCR7Cg3WugORlwO';
-var TBL_NOTIFY     = 'tblcSHay5dfYcbDKC';
+var TBL_CASTING    = 'Casting Submissions';
+var TBL_NEWSLETTER = 'Newsletter';
+var TBL_INQUIRIES  = 'Project Inquiries';
+var TBL_CREW       = 'Crew applications';
+var TBL_NOTIFY     = 'Film Notifications';
 
-async function sendToAirtable(tableId, fields) {
+async function sendToAirtable(tableName, fields) {
   try {
-    var r = await fetch('https://api.airtable.com/v0/' + AIRTABLE_BASE + '/' + tableId, {
+    var r = await fetch('/api/airtable-proxy', {
       method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + AIRTABLE_TOKEN, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fields: fields })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: tableName, fields: fields })
     });
     var j = await r.json(); console.log('Airtable:', j); return j;
   } catch(e) { console.error('Airtable error:', e); }
