@@ -580,14 +580,12 @@ const NAV = {
     {id:'script',     icon:'📄', label:'Scripts'},
     {id:'shotlist',   icon:'🎥', label:'Shot List'},
     {id:'storyboard', icon:'🖼', label:'Storyboards'},
-    {id:'notes',      icon:'📝', label:'Director Notes'},
     {id:'scenes',     icon:'🎭', label:'Scene Breakdown'},
     {id:'continuity', icon:'🔁', label:'Continuity Notes'},
     {id:'crew',       icon:'👥', label:'Crew'},
     {id:'castingdb',  icon:'🎟', label:'Casting Database'},
     {id:'contracts',  icon:'📋', label:'Crew Contracts Hub'},
     {id:'timeline',   icon:'📅', label:'Timeline'},
-    {id:'push',       icon:'📤', label:'Push to Dept'},
     {id:'polls',      icon:'📊', label:'Meeting Polls'},
     {id:'emailhub',   icon:'📧', label:'Email Hub'},
     {id:'taskboard',  icon:'✅', label:'Task Board'},
@@ -1207,17 +1205,27 @@ SECTIONS.director = {
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button class="btn-sm btn-gold" onclick="navigate('script')">Upload Script</button>
           <button class="btn-sm btn-gold" onclick="navigate('shotlist')">Shot List</button>
-          <button class="btn-sm btn-outline" onclick="navigate('push')">Push to Depts</button>
           <button class="btn-sm btn-outline" onclick="navigate('crew')">View Crew</button>
         </div>
       </div>
+      <div class="card" style="margin-top:16px">
+        <div class="card-title">Push Files to Departments</div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Upload a file and push it to any department.</p>
+        <button class="btn-sm btn-gold" onclick="showUploadModal('push','Push File')">Upload + Push</button>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="card-title">My Task Board</div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Tasks you have assigned or are tracking.</p>
+        <div id="my-tasks-board"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
+      </div>
     `;
     renderCurrentPhase('director');
+    renderPushWidget(el, 'director');
+    renderMyTasksWidget();
   },
   script: (el) => renderFileSection(el, 'script', 'Scripts', '.pdf,.fdx,.fountain', 'Upload your script here. Use the Push button to share with any department.'),
   shotlist: (el) => renderFileSection(el, 'shotlist', 'Shot List', '.pdf,.xlsx,.csv', 'Upload shot lists. Push to DP when ready.'),
   storyboard: (el) => renderFileSection(el, 'storyboard', 'Storyboards', 'image/*,.pdf'),
-  notes: (el) => renderNotesSection(el, 'Director', 'Director Notes'),
   scenes: (el) => renderScenesSection(el, true),
   continuity: (el) => renderContinuityNotes(el),
   crew: (el) => renderCrewSection(el),
@@ -1229,17 +1237,6 @@ SECTIONS.director = {
   taskboard: (el) => renderTaskBoard(el),
   managedepts: (el) => renderManageDepartments(el),
   settings: (el) => renderProductionSettings(el),
-  push: (el) => {
-    el.innerHTML = `
-      <div class="section-title" style="margin-bottom:16px">Push to Departments</div>
-      <div class="card">
-        <div class="card-title">Push a File</div>
-        <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Upload files from any section and use the Push button, or upload directly here.</p>
-        <button class="btn-sm btn-gold" onclick="showUploadModal('push','Push File')">Upload + Push File</button>
-      </div>
-    `;
-    renderPushWidget(el, 'director');
-  },
 };
 
 // ════════════════════════════════════════════════════════════════
@@ -4264,7 +4261,15 @@ async function doAddNote(audience) {
 
 // Generic fallback section
 function genericSection(sectionId, el) {
-  el.innerHTML = `<div class="card"><div class="card-title" style="text-transform:capitalize">${sectionId}</div><p style="color:var(--muted);font-size:13px">This section is being set up.</p></div>`;
+  el.innerHTML = `<div class="card"><div class="card-title" style="text-transform:capitalize">${sectionId}</div><p style="color:var(--muted);font-size:13px">This section is coming soon.</p></div>`;
+  if (sectionId === 'overview') {
+    const tb = document.createElement('div');
+    tb.className = 'card';
+    tb.style.marginTop = '16px';
+    tb.innerHTML = '<div class="card-title">My Tasks</div><p style="font-size:12px;color:var(--muted);margin-bottom:10px">Tasks assigned to you by the Director.</p><div id="my-tasks-board"><p style="color:var(--muted);font-size:13px">Loading...</p></div>';
+    el.appendChild(tb);
+    renderMyTasksWidget();
+  }
 }
 
 function addSceneRow() {
