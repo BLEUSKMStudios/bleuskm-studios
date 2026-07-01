@@ -580,11 +580,14 @@ const NAV = {
     {id:'script',     icon:'📄', label:'Scripts'},
     {id:'shotlist',   icon:'🎥', label:'Shot List'},
     {id:'storyboard', icon:'🖼', label:'Storyboards'},
+    {id:'notes',      icon:'📝', label:'Director Notes'},
     {id:'scenes',     icon:'🎭', label:'Scene Breakdown'},
     {id:'continuity', icon:'🔁', label:'Continuity Notes'},
     {id:'crew',       icon:'👥', label:'Crew'},
     {id:'castingdb',  icon:'🎟', label:'Casting Database'},
+    {id:'contracts',  icon:'📋', label:'Crew Contracts Hub'},
     {id:'timeline',   icon:'📅', label:'Timeline'},
+    {id:'push',       icon:'📤', label:'Push to Dept'},
     {id:'polls',      icon:'📊', label:'Meeting Polls'},
     {id:'emailhub',   icon:'📧', label:'Email Hub'},
     {id:'taskboard',  icon:'✅', label:'Task Board'},
@@ -1204,37 +1207,39 @@ SECTIONS.director = {
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button class="btn-sm btn-gold" onclick="navigate('script')">Upload Script</button>
           <button class="btn-sm btn-gold" onclick="navigate('shotlist')">Shot List</button>
+          <button class="btn-sm btn-outline" onclick="navigate('push')">Push to Depts</button>
           <button class="btn-sm btn-outline" onclick="navigate('crew')">View Crew</button>
         </div>
       </div>
-      <div class="card" style="margin-top:16px">
-        <div class="card-title">Push Files to Departments</div>
-        <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Upload a file and push it to any department.</p>
-        <button class="btn-sm btn-gold" onclick="showUploadModal('push','Push File')">Upload + Push</button>
-      </div>
-      <div class="card" style="margin-top:16px">
-        <div class="card-title">My Task Board</div>
-        <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Tasks you have assigned or are tracking.</p>
-        <div id="my-tasks-board"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
-      </div>
     `;
     renderCurrentPhase('director');
-    renderPushWidget(el, 'director');
-    renderMyTasksWidget();
   },
   script: (el) => renderFileSection(el, 'script', 'Scripts', '.pdf,.fdx,.fountain', 'Upload your script here. Use the Push button to share with any department.'),
   shotlist: (el) => renderFileSection(el, 'shotlist', 'Shot List', '.pdf,.xlsx,.csv', 'Upload shot lists. Push to DP when ready.'),
   storyboard: (el) => renderFileSection(el, 'storyboard', 'Storyboards', 'image/*,.pdf'),
+  notes: (el) => renderNotesSection(el, 'Director', 'Director Notes'),
   scenes: (el) => renderScenesSection(el, true),
   continuity: (el) => renderContinuityNotes(el),
   crew: (el) => renderCrewSection(el),
-  castingdb: (el) => renderCastingTab(el),
+  castingdb: (el) => renderCastingDatabase(el),
+  contracts: (el) => renderContractsHub(el, 'crew'),
   timeline: (el) => renderTimeline(el, 'director'),
   polls: (el) => renderMeetingPolls(el),
   emailhub: (el) => renderEmailHub(el, null),
   taskboard: (el) => renderTaskBoard(el),
   managedepts: (el) => renderManageDepartments(el),
   settings: (el) => renderProductionSettings(el),
+  push: (el) => {
+    el.innerHTML = `
+      <div class="section-title" style="margin-bottom:16px">Push to Departments</div>
+      <div class="card">
+        <div class="card-title">Push a File</div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Upload files from any section and use the Push button, or upload directly here.</p>
+        <button class="btn-sm btn-gold" onclick="showUploadModal('push','Push File')">Upload + Push File</button>
+      </div>
+    `;
+    renderPushWidget(el, 'director');
+  },
 };
 
 // ════════════════════════════════════════════════════════════════
@@ -1272,6 +1277,7 @@ SECTIONS.producer = {
   locations: (el) => renderLocationsSection(el),
   crewcast: (el) => renderCrewSection(el),
   castingdb: (el) => renderCastingDatabase(el),
+  contracts: (el) => renderContractsHub(el, 'cast'),
   documents: (el) => renderFileSection(el, 'documents', 'Documents', '*', 'Signed contracts, releases, and other documents.'),
   budget: (el) => renderBudgetSection(el),
   availability: (el) => renderAvailabilitySection(el),
@@ -3653,107 +3659,43 @@ function openCrewEmailModal(email) {
   showQuickEmailModal({ fromAlias:'crew', contacts, preselected:[email] });
 }
 
-async function renderCrewSection(el) {
-  el.innerHTML = `
-    <div class="tabs">
-      <div class="tab active" onclick="switchTab(this,'crew-tab-list')">Crew Members</div>
-      <div class="tab" onclick="switchTab(this,'crew-tab-contracts')">Contracts</div>
-    </div>
-    <div class="tab-panel active" id="crew-tab-list">
-      <div class="section-header" style="margin-top:16px">
-        <div class="section-title">Production Crew — The Final Hand</div>
-      </div>
-      <div id="crew-list"><p style="color:var(--muted);font-size:13px">Loading crew…</p></div>
-    </div>
-    <div class="tab-panel" id="crew-tab-contracts"></div>
-  `;
-  await loadCrewList();
-  renderContractsHub(document.getElementById('crew-tab-contracts'), 'crew');
-}
+function renderCrewSection(el) {
+  const canEdit = STATE.realDept === 'director' || STATE.realDept === 'producer';
+  const liveCrew = STATE.crew.map(r => {
+    const f = r.fields;
+    return {
+      id: r.id,
+      name:  f['Name'] || '',
+      role:  (f['Preferred role by Director']||'').toString().replace(/,/g,', ') || f['Role'] || '',
+      email: f['Email'] || '',
+    };
+  });
+  const list = liveCrew.length ? liveCrew : CREW_CONTRACTS;
 
-async function loadCrewList() {
-  const el = document.getElementById('crew-list');
-  if (!el) return;
-  try {
-    const res = await fetch('/api/airtable-proxy?table=Crew+applications');
-    const data = await res.json();
-    STATE.crew = data.records || [];
-    const recs = STATE.crew.filter(r => r.fields['For the final Hand']);
-    if (!recs.length) { el.innerHTML = '<p style="color:var(--muted);font-size:13px">No crew for The Final Hand yet.</p>'; return; }
-    const sorted = recs.sort((a,b) => {
-      const ord = {'CORE':0,'SUPPORT':1,'WAITLIST':2};
-      const as = typeof a.fields['Status'] === 'object' ? a.fields['Status']?.name : (a.fields['Status']||'');
-      const bs = typeof b.fields['Status'] === 'object' ? b.fields['Status']?.name : (b.fields['Status']||'');
-      return (ord[as]??3) - (ord[bs]??3);
-    });
-    el.innerHTML = sorted.map(r => {
-      const f = r.fields;
-      const status = typeof f['Status'] === 'object' ? f['Status']?.name : (f['Status']||'');
-      const dirRole = Array.isArray(f['Preferred role by Director']) ? f['Preferred role by Director'].map(s => typeof s==='object'?s.name:s).join(', ') : '';
-      const displayRole = dirRole || f['Role'] || '';
-      const statusColor = status==='CORE' ? 'var(--gold)' : status==='SUPPORT' ? '#7fb3f5' : 'var(--muted)';
-      return `<div class="file-card" style="margin-bottom:10px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
-          <div style="flex:1;min-width:0">
-            <div style="font-weight:700;font-size:14px">${esc(f['Name']||'Unknown')}</div>
-            <div class="file-meta">${esc(displayRole)}</div>
-            ${f['Email'] ? '<div class="file-meta">'+esc(f['Email'])+(f['Phone']?' · '+esc(f['Phone']):'')+'</div>' : ''}
-            ${f['Film set role notes'] ? '<div class="file-meta" style="font-style:italic;margin-top:4px">'+esc(f['Film set role notes'])+'</div>' : ''}
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Crew + Cast</div>
+      ${canEdit ? '<button class="btn-sm btn-gold" onclick="showAddCrew()">+ Add Crew</button>' : ''}
+    </div>
+    ${list.map(c => {
+      const initials = c.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+      return `
+        <div class="crew-card">
+          <div class="crew-avatar">${initials}</div>
+          <div class="crew-info">
+            <div class="crew-name">${esc(c.name)}</div>
+            <div class="crew-role">${esc(c.role)}</div>
+            <div class="crew-email">${esc(c.email)}</div>
           </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">
-            ${status ? '<span style="font-size:11px;font-weight:700;color:'+statusColor+';letter-spacing:.04em;text-transform:uppercase">'+esc(status)+'</span>' : ''}
-            <button class="btn-sm btn-outline" onclick="showEditCrewModal(\'${r.id}\')">Edit</button>
+          <div class="crew-actions">
+            ${c.email ? `<button class="btn-sm btn-outline" onclick="openCrewEmailModal('${esc(c.email)}')">Email</button>` : ''}
+            <a href="${contractLink(c.name,c.email,c.role)}" target="_blank" class="btn-sm btn-gold">Contract</a>
+            ${canEdit && c.id ? `<button class="btn-sm btn-outline" onclick="deleteCrew('${c.id}')">🗑</button>` : ''}
           </div>
         </div>
-      </div>`;
-    }).join('');
-  } catch(e) { if(el) el.innerHTML = '<p style="color:#e55;font-size:13px">Failed to load crew.</p>'; }
-}
-
-function showEditCrewModal(recordId) {
-  const r = (STATE.crew||[]).find(c => c.id === recordId);
-  if (!r) { toast('Not found.','⚠️'); return; }
-  const f = r.fields;
-  const statusVal = typeof f['Status']==='object' ? f['Status']?.name : (f['Status']||'');
-  const statuses = ['CORE','SUPPORT','WAITLIST','NOT SELECTED'];
-  showModal('Edit Crew Member', `<div style="display:flex;flex-direction:column;gap:12px">
-    <div class="grid2" style="gap:10px">
-      <div><div class="modal-label">Name</div><input id="ecm-name" value="${esc(f['Name']||'')}"></div>
-      <div><div class="modal-label">Role</div><input id="ecm-role" value="${esc(f['Role']||'')}"></div>
-    </div>
-    <div class="grid2" style="gap:10px">
-      <div><div class="modal-label">Email</div><input id="ecm-email" type="email" value="${esc(f['Email']||'')}"></div>
-      <div><div class="modal-label">Phone</div><input id="ecm-phone" value="${esc(f['Phone']||'')}"></div>
-    </div>
-    <div><div class="modal-label">Status</div><select id="ecm-status">${statuses.map(s=>'<option value="'+s+'"'+(statusVal===s?' selected':'')+'>'+s+'</option>').join('')}</select></div>
-    <div><div class="modal-label">Film Set Role Notes</div><textarea id="ecm-rolenotes" rows="2">${esc(f['Film set role notes']||'')}</textarea></div>
-    <div><div class="modal-label">Internal Notes</div><textarea id="ecm-notes" rows="2">${esc(f['Notes']||'')}</textarea></div>
-  </div>`, [
-    {label:'Save Changes', cls:'btn-gold', action:`saveCrewEdit('${recordId}')`},
-    {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
-  ]);
-}
-
-async function saveCrewEdit(recordId) {
-  const fields = {
-    'Name': document.getElementById('ecm-name')?.value.trim()||'',
-    'Role': document.getElementById('ecm-role')?.value.trim()||'',
-    'Email': document.getElementById('ecm-email')?.value.trim()||'',
-    'Phone': document.getElementById('ecm-phone')?.value.trim()||'',
-    'Status': document.getElementById('ecm-status')?.value||'',
-    'Film set role notes': document.getElementById('ecm-rolenotes')?.value.trim()||'',
-    'Notes': document.getElementById('ecm-notes')?.value.trim()||'',
-  };
-  Object.keys(fields).forEach(k => { if (!fields[k]) delete fields[k]; });
-  try {
-    const res = await fetch('/api/airtable-proxy', {
-      method:'PATCH', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({table:'Crew applications', id:recordId, fields}),
-    });
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
-    closeModal(); toast('Saved!','✅'); await loadCrewList();
-  } catch(e) { toast('Failed to save.','⚠️'); }
+      `;
+    }).join('')}
+  `;
 }
 
 function showAddCrew() {
@@ -3802,113 +3744,27 @@ async function deleteCrew(recordId) {
 }
 
 // ─── CASTING DATABASE ────────────────────────────────────────────
-async function renderCastingTab(el) {
-  el.innerHTML = `
-    <div class="tabs">
-      <div class="tab active" onclick="switchTab(this,'cast-tab-db')">Casting Database</div>
-      <div class="tab" onclick="switchTab(this,'cast-tab-contracts')">Cast Contracts</div>
-    </div>
-    <div class="tab-panel active" id="cast-tab-db"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
-    <div class="tab-panel" id="cast-tab-contracts"></div>
-  `;
-  await renderCastingDatabase(document.getElementById('cast-tab-db'));
-  renderContractsHub(document.getElementById('cast-tab-contracts'), 'cast');
-}
-
 async function renderCastingDatabase(el) {
-  el.innerHTML = '<p style="color:var(--muted);font-size:13px">Loading casting submissions...</p>';
-  let allRecords = [], cursor = null;
-  do {
-    let url = '/api/airtable-proxy?table=Casting+Submissions';
-    if (cursor) url += '&offset=' + encodeURIComponent(cursor);
-    const res = await fetch(url);
-    const data = await res.json();
-    allRecords = allRecords.concat(data.records || []);
-    cursor = data.offset || null;
-  } while (cursor);
-
-  const getStatus = r => { const s = r.fields['Cast Status']; return typeof s === 'string' ? s : (s?.name || ''); };
-  const confirmed = allRecords.filter(r => getStatus(r) === 'Confirmed');
-  const rest = allRecords.filter(r => getStatus(r) !== 'Confirmed');
-
-  const groups = {};
-  rest.forEach(r => {
-    const role = r.fields['Role'] || 'Unassigned';
-    if (!groups[role]) groups[role] = [];
-    groups[role].push(r);
-  });
-
-  let html = '<div class="card" style="margin-bottom:16px">';
-  html += '<div class="card-title" style="display:flex;align-items:center;justify-content:space-between">';
-  html += '<span>\u2705 Confirmed Cast (' + confirmed.length + ')</span>';
-  html += '<button class="btn btn-sm" id="cast-send-btn">Send Contracts</button></div>';
-  if (!confirmed.length) {
-    html += '<p style="color:var(--muted);font-size:13px;margin:8px 0">No confirmed cast yet.</p>';
-  } else {
-    confirmed.forEach(r => {
-      const f = r.fields;
-      const name = esc(f['Name'] || f['Full Name'] || '\u2014');
-      const role = esc(f['Role'] || '\u2014');
-      html += '<div style="padding:6px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">';
-      html += '<span style="font-weight:600">' + name + '</span>';
-      html += '<span style="color:var(--muted);font-size:12px">\u2014 ' + role + '</span>';
-      html += '<button class="btn btn-sm cast-uncast-btn" style="margin-left:auto;background:#c0392b" data-id="' + r.id + '">\u2717 Uncast</button></div>';
-    });
-  }
-  html += '</div>';
-
-  Object.keys(groups).sort().forEach(role => {
-    const people = groups[role];
-    const gid = 'cg_' + role.replace(/[^a-z0-9]/gi, '_');
-    html += '<div class="card" style="margin-bottom:10px">';
-    html += '<div class="card-title cast-group-toggle" style="cursor:pointer;user-select:none" data-gid="' + gid + '">';
-    html += '\uD83C\uDFAD ' + esc(role) + ' <span style="font-size:12px;font-weight:400;color:var(--muted)">(' + people.length + ') \u25be</span></div>';
-    html += '<div id="' + gid + '" style="display:none">';
-    people.forEach(r => {
-      const f = r.fields;
-      const nm = esc(f['Name'] || f['Full Name'] || '\u2014');
-      const rat = f['Rating'] || f['Star Rating'] || '';
-      const tape = esc(f['Self Tape Status'] || f['Tape Status'] || '\u2014');
-      const st = esc(getStatus(r) || '\u2014');
-      const reel = f['Reel Link'] || f['Demo Reel'] || '';
-      html += '<div style="padding:8px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap">';
-      html += '<span style="font-weight:600;min-width:140px">' + nm + '</span>';
-      if (rat) html += '<span style="font-size:12px">\u2b50 ' + esc(String(rat)) + '</span>';
-      html += '<span style="font-size:12px;color:var(--muted)">Tape: ' + tape + '</span>';
-      html += '<span style="font-size:12px;color:var(--muted)">Status: ' + st + '</span>';
-      if (reel) html += '<a href="' + esc(reel) + '" target="_blank" style="font-size:12px">\uD83C\uDFAC Reel</a>';
-      html += '<button class="btn btn-sm cast-confirm-btn" style="margin-left:auto;background:#1a7a4a" data-id="' + r.id + '">\u2713 Cast</button></div>';
-    });
-    html += '</div></div>';
-  });
-
-  el.innerHTML = html;
-
-  el.querySelector('#cast-send-btn')?.addEventListener('click', function() {
-    toast('Cast contracts \u2014 coming soon', '\uD83D\uDCCB');
-  });
-  el.querySelectorAll('.cast-uncast-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() { updateCastStatus(this.dataset.id, null); });
-  });
-  el.querySelectorAll('.cast-group-toggle').forEach(function(hdr) {
-    hdr.addEventListener('click', function() {
-      var d = document.getElementById(this.dataset.gid);
-      if (d) d.style.display = d.style.display === 'none' ? 'block' : 'none';
-    });
-  });
-  el.querySelectorAll('.cast-confirm-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() { updateCastStatus(this.dataset.id, 'Confirmed'); });
-  });
+  el.innerHTML = `
+    <div class="section-header">
+      <div class="section-title">Casting Database — Callbacks</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-sm btn-outline" onclick="showAddCharacterNoteModal()">+ Add Role Notes</button>
+        <button class="btn-sm btn-outline" onclick="openMissingSelfTapeReminderModal()">📨 Remind Missing Self-Tapes</button>
+        <button class="btn-sm btn-gold" onclick="sendConfirmedAvailability()">📅 Schedule Final Callback</button>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Grouped by character. Each role has a casting brief at the top — what to look for in self-tapes for that part — followed by everyone marked "Callback" for it. The button above emails your Calendly link (from casting@bleuskm.com) to everyone currently marked Confirmed, so they can book their final callback slot.</p>
+    <div id="casting-list"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
+    <div class="card" style="margin-top:16px">
+      <div class="card-title">Casting — Recently Sent</div>
+      <div id="casting-sent-log" style="max-height:240px;overflow-y:auto">Loading...</div>
+    </div>
+  `;
+  await loadCastingDb();
+  loadSentLog('Casting').then(r => { const sl = document.getElementById('casting-sent-log'); if (sl) sl.innerHTML = sentLogHTML(r); });
 }
-async function updateCastStatus(recordId, status) {
-  try {
-    const body = {table:'Casting Submissions', id: recordId, fields: {'Cast Status': status}};
-    await fetch('/api/airtable-proxy', {method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
-    toast(status ? 'Marked as Confirmed' : 'Removed from confirmed', '🎭');
-    const panel = document.getElementById('cast-tab-db');
-    if (panel) renderCastingDatabase(panel);
-  } catch(e) { toast('Error updating cast status','❌'); }
-}
+
 async function sendConfirmedAvailability() {
   const confirmed = (STATE.casting||[]).filter(r => r.fields['Cast Status'] === 'Confirmed' && r.fields['Email']);
   if (!confirmed.length) { toast('No one is marked Confirmed yet.','⚠️'); return; }
@@ -4408,15 +4264,7 @@ async function doAddNote(audience) {
 
 // Generic fallback section
 function genericSection(sectionId, el) {
-  el.innerHTML = `<div class="card"><div class="card-title" style="text-transform:capitalize">${sectionId}</div><p style="color:var(--muted);font-size:13px">This section is coming soon.</p></div>`;
-  if (sectionId === 'overview') {
-    const tb = document.createElement('div');
-    tb.className = 'card';
-    tb.style.marginTop = '16px';
-    tb.innerHTML = '<div class="card-title">My Tasks</div><p style="font-size:12px;color:var(--muted);margin-bottom:10px">Tasks assigned to you by the Director.</p><div id="my-tasks-board"><p style="color:var(--muted);font-size:13px">Loading...</p></div>';
-    el.appendChild(tb);
-    renderMyTasksWidget();
-  }
+  el.innerHTML = `<div class="card"><div class="card-title" style="text-transform:capitalize">${sectionId}</div><p style="color:var(--muted);font-size:13px">This section is being set up.</p></div>`;
 }
 
 function addSceneRow() {
@@ -4530,4 +4378,3 @@ window.navigate = function(sectionId) {
 </script>
 </body>
 </html>
-  
