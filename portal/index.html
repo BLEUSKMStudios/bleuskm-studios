@@ -3828,7 +3828,6 @@ async function renderCastingDatabase(el) {
   } while (cursor);
 
   const getStatus = r => { const s = r.fields['Cast Status']; return typeof s === 'string' ? s : (s?.name || ''); };
-
   const confirmed = allRecords.filter(r => getStatus(r) === 'Confirmed');
   const rest = allRecords.filter(r => getStatus(r) !== 'Confirmed');
 
@@ -3841,51 +3840,66 @@ async function renderCastingDatabase(el) {
 
   let html = '<div class="card" style="margin-bottom:16px">';
   html += '<div class="card-title" style="display:flex;align-items:center;justify-content:space-between">';
-  html += '<span>✅ Confirmed Cast (' + confirmed.length + ')</span>';
-  html += '<button class="btn btn-sm" onclick="alert('Contract sending coming soon')">Send Contracts</button></div>';
+  html += '<span>\u2705 Confirmed Cast (' + confirmed.length + ')</span>';
+  html += '<button class="btn btn-sm" id="cast-send-btn">Send Contracts</button></div>';
   if (!confirmed.length) {
     html += '<p style="color:var(--muted);font-size:13px;margin:8px 0">No confirmed cast yet.</p>';
   } else {
     confirmed.forEach(r => {
       const f = r.fields;
-      const name = esc(f['Name'] || f['Full Name'] || '—');
-      const role = esc(f['Role'] || '—');
+      const name = esc(f['Name'] || f['Full Name'] || '\u2014');
+      const role = esc(f['Role'] || '\u2014');
       html += '<div style="padding:6px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">';
       html += '<span style="font-weight:600">' + name + '</span>';
-      html += '<span style="color:var(--muted);font-size:12px">— ' + role + '</span>';
-      html += '<button class="btn btn-sm" style="margin-left:auto;background:#c0392b" onclick="updateCastStatus(\'' + r.id + '\',null)">✗ Uncast</button></div>';
+      html += '<span style="color:var(--muted);font-size:12px">\u2014 ' + role + '</span>';
+      html += '<button class="btn btn-sm cast-uncast-btn" style="margin-left:auto;background:#c0392b" data-id="' + r.id + '">\u2717 Uncast</button></div>';
     });
   }
   html += '</div>';
 
   Object.keys(groups).sort().forEach(role => {
     const people = groups[role];
-    const gid = 'cg_' + role.replace(/[^a-z0-9]/gi,'_');
+    const gid = 'cg_' + role.replace(/[^a-z0-9]/gi, '_');
     html += '<div class="card" style="margin-bottom:10px">';
-    html += '<div class="card-title" style="cursor:pointer" onclick="var d=document.getElementById(\'' + gid + '\');d.style.display=d.style.display===\'none\'?\'block\':\'none\'">';
-    html += '🎭 ' + esc(role) + ' <span style="font-size:12px;font-weight:400;color:var(--muted)">(' + people.length + ') ▾</span></div>';
+    html += '<div class="card-title cast-group-toggle" style="cursor:pointer;user-select:none" data-gid="' + gid + '">';
+    html += '\uD83C\uDFAD ' + esc(role) + ' <span style="font-size:12px;font-weight:400;color:var(--muted)">(' + people.length + ') \u25be</span></div>';
     html += '<div id="' + gid + '" style="display:none">';
     people.forEach(r => {
       const f = r.fields;
-      const nm = esc(f['Name'] || f['Full Name'] || '—');
+      const nm = esc(f['Name'] || f['Full Name'] || '\u2014');
       const rat = f['Rating'] || f['Star Rating'] || '';
-      const tape = esc(f['Self Tape Status'] || f['Tape Status'] || '—');
-      const st = esc(getStatus(r) || '—');
+      const tape = esc(f['Self Tape Status'] || f['Tape Status'] || '\u2014');
+      const st = esc(getStatus(r) || '\u2014');
       const reel = f['Reel Link'] || f['Demo Reel'] || '';
       html += '<div style="padding:8px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap">';
       html += '<span style="font-weight:600;min-width:140px">' + nm + '</span>';
-      if (rat) html += '<span style="font-size:12px">⭐ ' + esc(String(rat)) + '</span>';
+      if (rat) html += '<span style="font-size:12px">\u2b50 ' + esc(String(rat)) + '</span>';
       html += '<span style="font-size:12px;color:var(--muted)">Tape: ' + tape + '</span>';
       html += '<span style="font-size:12px;color:var(--muted)">Status: ' + st + '</span>';
-      if (reel) html += '<a href="' + esc(reel) + '" target="_blank" style="font-size:12px">🎬 Reel</a>';
-      html += '<button class="btn btn-sm" style="margin-left:auto;background:#1a7a4a" onclick="updateCastStatus(\'' + r.id + '\',\'Confirmed\')">✓ Cast</button></div>';
+      if (reel) html += '<a href="' + esc(reel) + '" target="_blank" style="font-size:12px">\uD83C\uDFAC Reel</a>';
+      html += '<button class="btn btn-sm cast-confirm-btn" style="margin-left:auto;background:#1a7a4a" data-id="' + r.id + '">\u2713 Cast</button></div>';
     });
     html += '</div></div>';
   });
 
   el.innerHTML = html;
-}
 
+  el.querySelector('#cast-send-btn')?.addEventListener('click', function() {
+    toast('Cast contracts \u2014 coming soon', '\uD83D\uDCCB');
+  });
+  el.querySelectorAll('.cast-uncast-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { updateCastStatus(this.dataset.id, null); });
+  });
+  el.querySelectorAll('.cast-group-toggle').forEach(function(hdr) {
+    hdr.addEventListener('click', function() {
+      var d = document.getElementById(this.dataset.gid);
+      if (d) d.style.display = d.style.display === 'none' ? 'block' : 'none';
+    });
+  });
+  el.querySelectorAll('.cast-confirm-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { updateCastStatus(this.dataset.id, 'Confirmed'); });
+  });
+}
 async function updateCastStatus(recordId, status) {
   try {
     const body = {table:'Casting Submissions', id: recordId, fields: {'Cast Status': status}};
