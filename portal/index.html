@@ -1228,7 +1228,7 @@ SECTIONS.director = {
   scenes: (el) => renderScenesSection(el, true),
   continuity: (el) => renderContinuityNotes(el),
   crew: (el) => renderCrewSection(el),
-  castingdb: (el) => renderCastingDatabase(el),
+  castingdb: (el) => renderCastingTab(el),
   timeline: (el) => renderTimeline(el, 'director'),
   polls: (el) => renderMeetingPolls(el),
   emailhub: (el) => renderEmailHub(el, null),
@@ -1272,7 +1272,6 @@ SECTIONS.producer = {
   locations: (el) => renderLocationsSection(el),
   crewcast: (el) => renderCrewSection(el),
   castingdb: (el) => renderCastingDatabase(el),
-  contracts: (el) => renderContractsHub(el, 'cast'),
   documents: (el) => renderFileSection(el, 'documents', 'Documents', '*', 'Signed contracts, releases, and other documents.'),
   budget: (el) => renderBudgetSection(el),
   availability: (el) => renderAvailabilitySection(el),
@@ -3803,27 +3802,99 @@ async function deleteCrew(recordId) {
 }
 
 // ─── CASTING DATABASE ────────────────────────────────────────────
-async function renderCastingDatabase(el) {
+async function renderCastingTab(el) {
   el.innerHTML = `
-    <div class="section-header">
-      <div class="section-title">Casting Database — Callbacks</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn-sm btn-outline" onclick="showAddCharacterNoteModal()">+ Add Role Notes</button>
-        <button class="btn-sm btn-outline" onclick="openMissingSelfTapeReminderModal()">📨 Remind Missing Self-Tapes</button>
-        <button class="btn-sm btn-gold" onclick="sendConfirmedAvailability()">📅 Schedule Final Callback</button>
-      </div>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab(this,'cast-tab-db')">Casting Database</div>
+      <div class="tab" onclick="switchTab(this,'cast-tab-contracts')">Cast Contracts</div>
     </div>
-    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Grouped by character. Each role has a casting brief at the top — what to look for in self-tapes for that part — followed by everyone marked "Callback" for it. The button above emails your Calendly link (from casting@bleuskm.com) to everyone currently marked Confirmed, so they can book their final callback slot.</p>
-    <div id="casting-list"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
-    <div class="card" style="margin-top:16px">
-      <div class="card-title">Casting — Recently Sent</div>
-      <div id="casting-sent-log" style="max-height:240px;overflow-y:auto">Loading...</div>
-    </div>
+    <div class="tab-panel active" id="cast-tab-db"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
+    <div class="tab-panel" id="cast-tab-contracts"></div>
   `;
-  await loadCastingDb();
-  loadSentLog('Casting').then(r => { const sl = document.getElementById('casting-sent-log'); if (sl) sl.innerHTML = sentLogHTML(r); });
+  await renderCastingDatabase(document.getElementById('cast-tab-db'));
+  renderContractsHub(document.getElementById('cast-tab-contracts'), 'cast');
 }
 
+async function renderCastingDatabase(el) {
+  el.innerHTML = '<p style="color:var(--muted);font-size:13px">Loading casting submissions...</p>';
+  let allRecords = [], cursor = null;
+  do {
+    let url = '/api/airtable-proxy?table=Casting+Submissions';
+    if (cursor) url += '&offset=' + encodeURIComponent(cursor);
+    const res = await fetch(url);
+    const data = await res.json();
+    allRecords = allRecords.concat(data.records || []);
+    cursor = data.offset || null;
+  } while (cursor);
+
+  const getStatus = r => { const s = r.fields['Cast Status']; return typeof s === 'string' ? s : (s?.name || ''); };
+
+  const confirmed = allRecords.filter(r => getStatus(r) === 'Confirmed');
+  const rest = allRecords.filter(r => getStatus(r) !== 'Confirmed');
+
+  const groups = {};
+  rest.forEach(r => {
+    const role = r.fields['Role'] || 'Unassigned';
+    if (!groups[role]) groups[role] = [];
+    groups[role].push(r);
+  });
+
+  let html = '<div class="card" style="margin-bottom:16px">';
+  html += '<div class="card-title" style="display:flex;align-items:center;justify-content:space-between">';
+  html += '<span>✅ Confirmed Cast (' + confirmed.length + ')</span>';
+  html += '<button class="btn btn-sm" onclick="alert('Contract sending coming soon')">Send Contracts</button></div>';
+  if (!confirmed.length) {
+    html += '<p style="color:var(--muted);font-size:13px;margin:8px 0">No confirmed cast yet.</p>';
+  } else {
+    confirmed.forEach(r => {
+      const f = r.fields;
+      const name = esc(f['Name'] || f['Full Name'] || '—');
+      const role = esc(f['Role'] || '—');
+      html += '<div style="padding:6px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">';
+      html += '<span style="font-weight:600">' + name + '</span>';
+      html += '<span style="color:var(--muted);font-size:12px">— ' + role + '</span>';
+      html += '<button class="btn btn-sm" style="margin-left:auto;background:#c0392b" onclick="updateCastStatus(\'' + r.id + '\',null)">✗ Uncast</button></div>';
+    });
+  }
+  html += '</div>';
+
+  Object.keys(groups).sort().forEach(role => {
+    const people = groups[role];
+    const gid = 'cg_' + role.replace(/[^a-z0-9]/gi,'_');
+    html += '<div class="card" style="margin-bottom:10px">';
+    html += '<div class="card-title" style="cursor:pointer" onclick="var d=document.getElementById(\'' + gid + '\');d.style.display=d.style.display===\'none\'?\'block\':\'none\'">';
+    html += '🎭 ' + esc(role) + ' <span style="font-size:12px;font-weight:400;color:var(--muted)">(' + people.length + ') ▾</span></div>';
+    html += '<div id="' + gid + '" style="display:none">';
+    people.forEach(r => {
+      const f = r.fields;
+      const nm = esc(f['Name'] || f['Full Name'] || '—');
+      const rat = f['Rating'] || f['Star Rating'] || '';
+      const tape = esc(f['Self Tape Status'] || f['Tape Status'] || '—');
+      const st = esc(getStatus(r) || '—');
+      const reel = f['Reel Link'] || f['Demo Reel'] || '';
+      html += '<div style="padding:8px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap">';
+      html += '<span style="font-weight:600;min-width:140px">' + nm + '</span>';
+      if (rat) html += '<span style="font-size:12px">⭐ ' + esc(String(rat)) + '</span>';
+      html += '<span style="font-size:12px;color:var(--muted)">Tape: ' + tape + '</span>';
+      html += '<span style="font-size:12px;color:var(--muted)">Status: ' + st + '</span>';
+      if (reel) html += '<a href="' + esc(reel) + '" target="_blank" style="font-size:12px">🎬 Reel</a>';
+      html += '<button class="btn btn-sm" style="margin-left:auto;background:#1a7a4a" onclick="updateCastStatus(\'' + r.id + '\',\'Confirmed\')">✓ Cast</button></div>';
+    });
+    html += '</div></div>';
+  });
+
+  el.innerHTML = html;
+}
+
+async function updateCastStatus(recordId, status) {
+  try {
+    const body = {table:'Casting Submissions', id: recordId, fields: {'Cast Status': status}};
+    await fetch('/api/airtable-proxy', {method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+    toast(status ? 'Marked as Confirmed' : 'Removed from confirmed', '🎭');
+    const panel = document.getElementById('cast-tab-db');
+    if (panel) renderCastingDatabase(panel);
+  } catch(e) { toast('Error updating cast status','❌'); }
+}
 async function sendConfirmedAvailability() {
   const confirmed = (STATE.casting||[]).filter(r => r.fields['Cast Status'] === 'Confirmed' && r.fields['Email']);
   if (!confirmed.length) { toast('No one is marked Confirmed yet.','⚠️'); return; }
@@ -4445,3 +4516,4 @@ window.navigate = function(sectionId) {
 </script>
 </body>
 </html>
+  
