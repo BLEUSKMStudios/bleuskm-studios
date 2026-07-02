@@ -587,7 +587,6 @@ const NAV = {
     {id:'castingdb',  icon:'🎟', label:'Casting Database'},
     {id:'contracts',  icon:'📋', label:'Crew Contracts Hub'},
     {id:'timeline',   icon:'📅', label:'Timeline'},
-    {id:'push',       icon:'📤', label:'Push to Dept'},
     {id:'polls',      icon:'📊', label:'Meeting Polls'},
     {id:'emailhub',   icon:'📧', label:'Email Hub'},
     {id:'taskboard',  icon:'✅', label:'Task Board'},
@@ -1215,6 +1214,11 @@ SECTIONS.director = {
       </div>
     `;
     renderCurrentPhase('director');
+    // Push to Departments (moved from push tab)
+    const _pushWrap = document.createElement('div');
+    _pushWrap.style.marginTop = '24px';
+    SECTIONS.director.push(_pushWrap);
+    el.appendChild(_pushWrap);
   },
   script: (el) => renderFileSection(el, 'script', 'Scripts', '.pdf,.fdx,.fountain', 'Upload your script here. Use the Push button to share with any department.'),
   shotlist: (el) => renderFileSection(el, 'shotlist', 'Shot List', '.pdf,.xlsx,.csv', 'Upload shot lists. Push to DP when ready.'),
