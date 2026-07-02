@@ -1099,9 +1099,11 @@ async function doUpload(sectionId) {
     document.querySelectorAll('.push-check:checked').forEach(cb => pushDepts.push(cb.value));
 
     // Default target is whichever dashboard we're currently viewing; attribution is the real actor
-    const targetDept = DEPT_LABELS[STATE.dept];
+        const targetDept = DEPT_LABELS[STATE.dept];
     const fromDept   = DEPT_LABELS[STATE.realDept] || targetDept;
-    const targets = pushDepts.length ? pushDepts : [targetDept];
+    // Director defaults to 'All' so uploads appear on every dept's dashboard
+    const defaultDept = STATE.dept === 'director' ? 'All' : targetDept;
+    const targets = pushDepts.length ? pushDepts : [defaultDept];
 
     // Upload the actual bytes once (to whichever dept is primary), then copy
     // the resulting hosted URL to any additional pushed departments.
