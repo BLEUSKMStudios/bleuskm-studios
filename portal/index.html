@@ -486,6 +486,24 @@ function contractLink(name, email, role, type, extraValues) {
   return base + '?' + new URLSearchParams(params).toString();
 }
 
+function updateNoteBadge() {
+  const login = STATE.username || '';
+  const unread = (STATE.notes || []).filter(n => {
+    const parentId = (n.fields['Parent ID'] || '').trim();
+    if (parentId) return false; // only count root notes
+    const readBy = (n.fields['Read By'] || '').split(' ').filter(Boolean);
+    return !readBy.includes(login);
+  });
+  const badge = document.getElementById('badge-overview');
+  if (badge) {
+    badge.textContent = unread.length || '';
+    badge.style.display = unread.length ? '' : 'none';
+    badge.style.background = '#FFD700';
+    badge.style.color = '#111';
+    badge.style.fontWeight = 'bold';
+  }
+}
+
 // ════════════════════════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════════════════════════
@@ -576,7 +594,7 @@ function doLogout() {
 // ════════════════════════════════════════════════════════════════
 const NAV = {
   director: [
-    {id:'overview',   icon:'🎬', label:'Overview'},
+    {id:'overview',   icon:'🎬', label:'Overview', badge:true},
     {id:'script',     icon:'📄', label:'Scripts'},
     {id:'shotlist',   icon:'🎥', label:'Shot List'},
     {id:'storyboard', icon:'🖼', label:'Storyboards'},
@@ -594,7 +612,7 @@ const NAV = {
     {id:'settings',   icon:'⚙️', label:'Production Settings'},
   ],
   producer: [
-    {id:'overview',    icon:'🎬', label:'Overview'},
+    {id:'overview',    icon:'🎬', label:'Overview', badge:true},
     {id:'script',      icon:'📄', label:'Script'},
     {id:'timeline',    icon:'📅', label:'Timeline'},
     {id:'locations',   icon:'📍', label:'Location Hub'},
@@ -609,7 +627,7 @@ const NAV = {
     {id:'emailhub',    icon:'📧', label:'Casting Email'},
   ],
   dp: [
-    {id:'overview',  icon:'🎬', label:'Overview'},
+    {id:'overview',  icon:'🎬', label:'Overview', badge:true},
     {id:'shotlist',  icon:'🎥', label:'Shot List'},
     {id:'references',icon:'🖼', label:'References'},
     {id:'camera',    icon:'📷', label:'Camera Language'},
@@ -620,7 +638,7 @@ const NAV = {
     {id:'emailhub',  icon:'📧', label:'Email Hub'},
   ],
   ad: [
-    {id:'overview',  icon:'🎬', label:'Overview'},
+    {id:'overview',  icon:'🎬', label:'Overview', badge:true},
     {id:'schedule',  icon:'📅', label:'Schedule'},
     {id:'callsheets',icon:'📋', label:'Call Sheets'},
     {id:'scenes',    icon:'🎭', label:'Scene Order'},
@@ -632,7 +650,7 @@ const NAV = {
     {id:'emailhub',  icon:'📧', label:'Email Hub'},
   ],
   scriptsupervisor: [
-    {id:'overview',   icon:'🎬', label:'Overview'},
+    {id:'overview',   icon:'🎬', label:'Overview', badge:true},
     {id:'script',     icon:'📄', label:'Script'},
     {id:'scenes',     icon:'🎭', label:'Scene Breakdown'},
     {id:'continuity', icon:'🔁', label:'Continuity Notes'},
@@ -641,7 +659,7 @@ const NAV = {
     {id:'emailhub',   icon:'📧', label:'Email Hub'},
   ],
   sound: [
-    {id:'overview',     icon:'🎬', label:'Overview'},
+    {id:'overview',     icon:'🎬', label:'Overview', badge:true},
     {id:'soundnotes',   icon:'🎵', label:'Sound Notes'},
     {id:'silencecues',  icon:'🔇', label:'Silence Cues'},
     {id:'environment',  icon:'🌿', label:'Environment Tone'},
@@ -711,6 +729,13 @@ async function loadData() {
   } catch(e) { STATE.files = []; }
 
   try {
+    const nr = await fetch(`${API}?action=get-thread-notes&login=${encodeURIComponent(STATE.username||'')}&dept=${encodeURIComponent(STATE.dept||'')}`);
+    const nd = await nr.json();
+    STATE.notes = nd.records || [];
+    updateNoteBadge();
+  } catch(e) { STATE.notes = []; }
+
+  try {
     const cr = await fetch(`${API}?action=get-crew`);
     const cd = await cr.json();
     STATE.crew = cd.records || [];
@@ -735,6 +760,195 @@ function updateFileBadges() {
 }
 
 // ════════════════════════════════════════════════════════════════
+// NOTES PANEL
+// ════════════════════════════════════════════════════════════════════════════════
+// Login → dept mapping for compose "To" dropdown
+const USER_DEPT_MAP = {
+  zaria:'director', cscott:'producer', creeves:'producer', ftorres:'producer',
+  ookezie:'dp', jsweet:'dp', cspak:'dp', rgalindo:'ad', jfresz:'sound',
+  ckudulis:'scriptsupervisor', sound:'sound',
+};
+const USER_NAME_MAP = {
+  zaria:'Zaria (Director)', cscott:'Ceion', creeves:'Carmen', ftorres:'Fabiola',
+  ookezie:'Obi', jsweet:'Joshua (DP)', cspak:'Che', rgalindo:'Regan',
+  jfresz:'Joshua (Sound)', ckudulis:'Catherine', sound:'Sound',
+};
+const DEPT_DISPLAY = {
+  director:'Director', producer:'Producer', dp:'DP / Camera',
+  ad:'AD', scriptsupervisor:'Script Supervisor', sound:'Sound',
+};
+
+async function renderNotesPanel(container) {
+  // Remove existing panel if any
+  const existing = container.querySelector('.notes-panel');
+  if (existing) existing.remove();
+
+  const panel = document.createElement('div');
+  panel.className = 'notes-panel';
+  panel.style.cssText = 'margin-top:28px;border-top:2px solid #333;padding-top:18px;';
+
+  const login = STATE.username || '';
+  const isDirector = login === 'zaria';
+
+  // Reload notes fresh
+  try {
+    const nr = await fetch(`${API}?action=get-thread-notes&login=${encodeURIComponent(login)}&dept=${encodeURIComponent(STATE.dept||'')}`);
+    const nd = await nr.json();
+    STATE.notes = nd.records || [];
+    updateNoteBadge();
+  } catch(e) { STATE.notes = STATE.notes || []; }
+
+  const notes = STATE.notes || [];
+  // Separate root notes and replies
+  const roots = notes.filter(n => !(n.fields['Parent ID'] || '').trim());
+  const replies = notes.filter(n => (n.fields['Parent ID'] || '').trim());
+
+  // Header row
+  const hdr = document.createElement('div');
+  hdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;';
+  hdr.innerHTML = `<h3 style="margin:0;font-size:1rem;letter-spacing:.05em;">💬 MESSAGES & NOTES</h3>`;
+
+  const composeBtn = document.createElement('button');
+  composeBtn.textContent = '+ New Message';
+  composeBtn.style.cssText = 'background:#FFD700;color:#111;border:none;padding:6px 14px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:.85rem;';
+  composeBtn.onclick = () => openComposeModal();
+  hdr.appendChild(composeBtn);
+  panel.appendChild(hdr);
+
+  if (roots.length === 0) {
+    const empty = document.createElement('p');
+    empty.style.cssText = 'color:#888;font-size:.88rem;';
+    empty.textContent = 'No messages yet.';
+    panel.appendChild(empty);
+  }
+
+  roots.forEach(root => {
+    const rf = root.fields || {};
+    const rootId = root.id;
+    const readBy = (rf['Read By'] || '').split(' ').filter(Boolean);
+    const isUnread = !readBy.includes(login);
+    const threadReplies = replies.filter(r => (r.fields['Parent ID'] || '').trim() === rootId);
+
+    const card = document.createElement('div');
+    card.style.cssText = `background:#1a1a1a;border-radius:8px;padding:14px;margin-bottom:10px;border-left:3px solid ${isUnread ? '#FFD700' : '#444'};`;
+
+    const fromName = USER_NAME_MAP[rf['From Person']] || rf['From Person'] || rf['From Department'] || '?';
+    const toName = rf['To Person'] ? (USER_NAME_MAP[rf['To Person']] || rf['To Person']) : (rf['To Department'] ? (DEPT_DISPLAY[rf['To Department']] || rf['To Department']) : 'All');
+    const ts = rf['Created'] ? new Date(rf['Created']).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '';
+
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+        <div>
+          ${isUnread ? '<span style="background:#FFD700;color:#111;font-size:.7rem;font-weight:bold;padding:2px 6px;border-radius:10px;margin-right:6px;">NEW</span>' : ''}
+          <span style="font-weight:bold;font-size:.9rem;">${rf['Title'] || 'Note'}</span>
+          <span style="color:#888;font-size:.78rem;margin-left:8px;">From: ${fromName} → To: ${toName}</span>
+        </div>
+        <span style="color:#666;font-size:.75rem;white-space:nowrap;">${ts}</span>
+      </div>
+      <p style="margin:8px 0 6px;font-size:.88rem;color:#ccc;">${(rf['Content'] || '').replace(/\n/g,'<br>')}</p>
+      <div class="thread-replies-${rootId}" style="margin-left:16px;border-left:2px solid #333;padding-left:12px;margin-top:8px;"></div>
+    `;
+
+    // Render existing replies
+    const replyBox = card.querySelector(`.thread-replies-${rootId}`);
+    threadReplies.forEach(rep => {
+      const rf2 = rep.fields || {};
+      const fromName2 = USER_NAME_MAP[rf2['From Person']] || rf2['From Person'] || '?';
+      const ts2 = rf2['Created'] ? new Date(rf2['Created']).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '';
+      const rd = document.createElement('div');
+      rd.style.cssText = 'padding:6px 0;border-bottom:1px solid #2a2a2a;';
+      rd.innerHTML = `<span style="font-size:.78rem;color:#aaa;font-weight:bold;">${fromName2}</span> <span style="font-size:.75rem;color:#666;">${ts2}</span><p style="margin:4px 0 0;font-size:.85rem;color:#ccc;">${(rf2['Content']||'').replace(/\n/g,'<br>')}</p>`;
+      replyBox.appendChild(rd);
+    });
+
+    // Reply + mark-read buttons
+    const btnRow = document.createElement('div');
+    btnRow.style.cssText = 'display:flex;gap:8px;margin-top:10px;';
+    const replyBtn = document.createElement('button');
+    replyBtn.textContent = '↩ Reply';
+    replyBtn.style.cssText = 'background:#2a2a2a;color:#ccc;border:1px solid #444;padding:4px 10px;border-radius:5px;cursor:pointer;font-size:.8rem;';
+    replyBtn.onclick = () => openReplyModal(rootId, rf['Title'] || 'Note');
+    btnRow.appendChild(replyBtn);
+
+    if (isUnread) {
+      const markBtn = document.createElement('button');
+      markBtn.textContent = '✓ Mark read';
+      markBtn.style.cssText = 'background:#1a2a1a;color:#8f8;border:1px solid #4a4;padding:4px 10px;border-radius:5px;cursor:pointer;font-size:.8rem;';
+      markBtn.onclick = async () => {
+        await fetch(`${API}`, { method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ action:'mark-note-read', recordId: rootId, login }) });
+        renderNotesPanel(container);
+      };
+      btnRow.appendChild(markBtn);
+    }
+    card.appendChild(btnRow);
+
+    // Mark as read on open automatically if director
+    if (isUnread && isDirector) {
+      fetch(`${API}`, { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ action:'mark-note-read', recordId: rootId, login: 'zaria' }) });
+    }
+
+    panel.appendChild(card);
+  });
+
+  container.appendChild(panel);
+
+  // ── COMPOSE MODAL ──────────────────────────────────────────────────────────
+  function openComposeModal(parentId, reSubject) {
+    const isReply = !!parentId;
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:center;justify-content:center;';
+
+    const allLogins = Object.keys(USER_NAME_MAP).filter(u => u !== login);
+    const toOptions = isDirector
+      ? `<optgroup label="Send to person">${allLogins.map(u=>`<option value="person:${u}">${USER_NAME_MAP[u]}</option>`).join('')}</optgroup>
+         <optgroup label="Send to dept">${Object.entries(DEPT_DISPLAY).filter(([k])=>k!=='director').map(([k,v])=>`<option value="dept:${k}">${v} (whole dept)</option>`).join('')}</optgroup>`
+      : `<option value="person:zaria">Zaria (Director)</option>`;
+
+    overlay.innerHTML = `
+      <div style="background:#1c1c1c;border-radius:10px;padding:24px;width:440px;max-width:95vw;">
+        <h3 style="margin:0 0 16px;">${isReply ? '↩ Reply to: '+reSubject : '+ New Message'}</h3>
+        ${!isReply ? `<label style="font-size:.85rem;display:block;margin-bottom:4px;">Subject</label>
+        <input id="nc-subject" style="width:100%;background:#111;color:#fff;border:1px solid #444;border-radius:6px;padding:7px;margin-bottom:12px;box-sizing:border-box;" placeholder="Subject..." />` : ''}
+        ${!isReply ? `<label style="font-size:.85rem;display:block;margin-bottom:4px;">To</label>
+        <select id="nc-to" style="width:100%;background:#111;color:#fff;border:1px solid #444;border-radius:6px;padding:7px;margin-bottom:12px;">${toOptions}</select>` : ''}
+        <label style="font-size:.85rem;display:block;margin-bottom:4px;">Message</label>
+        <textarea id="nc-content" rows="4" style="width:100%;background:#111;color:#fff;border:1px solid #444;border-radius:6px;padding:7px;box-sizing:border-box;" placeholder="Type your message..."></textarea>
+        <div style="display:flex;gap:10px;margin-top:14px;justify-content:flex-end;">
+          <button id="nc-cancel" style="background:#333;color:#ccc;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;">Cancel</button>
+          <button id="nc-send" style="background:#FFD700;color:#111;border:none;padding:8px 18px;border-radius:6px;font-weight:bold;cursor:pointer;">Send</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    overlay.querySelector('#nc-cancel').onclick = () => overlay.remove();
+    overlay.querySelector('#nc-send').onclick = async () => {
+      const content = (overlay.querySelector('#nc-content') || {}).value || '';
+      if (!content.trim()) return;
+      const subject = isReply ? reSubject : ((overlay.querySelector('#nc-subject') || {}).value || 'Note');
+      let toPerson = '', toDept = '';
+      if (!isReply) {
+        const toVal = (overlay.querySelector('#nc-to') || {}).value || '';
+        if (toVal.startsWith('person:')) toPerson = toVal.slice(7);
+        else if (toVal.startsWith('dept:')) toDept = toVal.slice(5);
+      } else {
+        // Reply goes back to the director (or to whoever started the thread)
+        toPerson = login === 'zaria' ? '' : 'zaria';
+        toDept = login === 'zaria' ? '' : '';
+      }
+      const fromDept = STATE.dept || '';
+      await fetch(`${API}`, { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ action:'add-thread-note', title: subject, content, fromPerson: login,
+          fromDept, toPerson, toDept, parentId: parentId || '' }) });
+      overlay.remove();
+      renderNotesPanel(container);
+    };
+  }
+
+  function openReplyModal(parentId, subject) { openComposeModal(parentId, subject); }
+}
+
 // NAVIGATE
 // ════════════════════════════════════════════════════════════════
 function navigate(sectionId) {
@@ -756,6 +970,7 @@ function navigate(sectionId) {
   const renderer = SECTIONS[STATE.dept] && SECTIONS[STATE.dept][sectionId];
   if (renderer) {
     renderer(content);
+    if (sectionId === 'overview') { setTimeout(() => renderNotesPanel(content), 0); }
   } else {
     genericSection(sectionId, content);
   }
