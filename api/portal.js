@@ -112,9 +112,16 @@ async function netlifyHandler(event) {
 
   // ── FILES ─────────────────────────────────────────────────────────────────
   if (action === 'get-files') {
-    const dept = params.dept || '';
-    const filter = encodeURIComponent(`OR({For Department}="${dept}",{For Department}="All")`);
-    const data = await airtable('GET', TABLES.files, null, `?filterByFormula=${filter}&sort[0][field]=Created&sort[0][direction]=desc`);
+        const dept = params.dept || '';
+    let fileQuery;
+    if (dept === 'Director') {
+      // Director is master — sees all files from every department
+      fileQuery = '?sort[0][field]=Created&sort[0][direction]=desc';
+    } else {
+      const filter = encodeURIComponent(`OR({For Department}="${dept}",{For Department}="All")`);
+      fileQuery = `?filterByFormula=${filter}&sort[0][field]=Created&sort[0][direction]=desc`;
+    }
+    const data = await airtable('GET', TABLES.files, null, fileQuery);
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
