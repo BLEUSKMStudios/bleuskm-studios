@@ -768,6 +768,56 @@ async function netlifyHandler(event) {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
+// ── THREADED NOTES (per-person/dept notes with threading + read tracking) ──────────
+  if (action === 'get-thread-notes') {
+    const login = params.login || '';
+    const dept  = params.dept  || '';
+    let data;
+    if (login === 'zaria') {
+      // Director sees all notes
+      data = await airtable('GET', TABLES.pushednotes, null, `?sort[0][field]=Created&sort[0][direction]=desc&maxRecords=500`);
+    } else {
+      // Person sees notes sent directly to them OR broadcast to their dept (no specific person)
+      const filter = encodeURIComponent(`OR({To Person}="${login}",AND({To Person}="",{To Department}="${dept}"))`);
+      data = await airtable('GET', TABLES.pushednotes, null, `?filterByFormula=${filter}&sort[0][field]=Created&sort[0][direction]=desc&maxRecords=200`);
+    }
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  if (action === 'add-thread-note') {
+    const data = await airtable('POST', TABLES.pushednotes, {
+      records: [{
+        fields: {
+          'Title':           body.title      || 'Note',
+          'Content':         body.content    || '',
+          'From Department': body.fromDept   || '',
+          'From Person':     body.fromPerson || '',
+          'To Department':   body.toDept     || '',
+          'To Person':       body.toPerson   || '',
+          'Parent ID':       body.parentId   || '',
+          'Read By':         body.fromPerson || '',
+          'Created':         new Date().toISOString(),
+        },
+      }],
+    });
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  if (action === 'mark-note-read') {
+    const recId = body.recordId;
+    const login = body.login || '';
+    const curr  = await airtable('GET', TABLES.pushednotes, null, `/${recId}`);
+    const existing = (curr.fields || {})['Read By'] || '';
+    const readers  = existing ? existing.split(' ').filter(Boolean) : [];
+    if (!readers.includes(login)) {
+      readers.push(login);
+      await airtable('PATCH', TABLES.pushednotes, {
+        records: [{ id: recId, fields: { 'Read By': readers.join(' ') } }],
+      });
+    }
+    return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+  }
+
   return { statusCode: 400, headers, body: JSON.stringify({ error: 'Unknown action' }) };
 }
 
