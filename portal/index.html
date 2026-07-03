@@ -1740,7 +1740,11 @@ async function renderMyTasksWidget() {
   } catch(e) { STATE.tasks = []; }
 
   const me = currentAssigneeLabel();
-  const mine = STATE.tasks.filter(t => (t.fields['Assigned To']||'') === me);
+  if (!me) { el.innerHTML = '<p style="color:var(--muted);font-size:13px">No tasks assigned to you yet.</p>'; return; }
+  const mine = STATE.tasks.filter(t => {
+    const at = t.fields['Assigned To'];
+    return (typeof at === 'object' ? (at && at.name) : at) === me;
+  });
   if (!mine.length) { el.innerHTML = '<p style="color:var(--muted);font-size:13px">No tasks assigned to you yet.</p>'; return; }
 
   el.innerHTML = `
