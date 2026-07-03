@@ -875,6 +875,30 @@ async function renderNotesPanel(container) {
       };
       btnRow.appendChild(markBtn);
     }
+    const canEdit = (rf['From Person'] || '') === login || isDirector;
+    if (canEdit) {
+      const editBtn = document.createElement('button');
+      editBtn.textContent = '✏ Edit';
+      editBtn.style.cssText = 'background:transparent;color:#aaa;border:1px solid #555;padding:4px 10px;border-radius:5px;cursor:pointer;font-size:.78rem;margin-left:4px;';
+      editBtn.onclick = () => {
+        const newContent = prompt('Edit message:', rf['Content'] || '');
+        if (newContent === null) return;
+        fetch(`${API}?action=edit-thread-note`, { method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ recordId: rootId, content: newContent }) })
+          .then(() => renderNotesPanel(container));
+      };
+      btnRow.appendChild(editBtn);
+      const delBtn = document.createElement('button');
+      delBtn.textContent = '🗑 Delete';
+      delBtn.style.cssText = 'background:transparent;color:#e05555;border:1px solid #e05555;padding:4px 10px;border-radius:5px;cursor:pointer;font-size:.78rem;margin-left:4px;';
+      delBtn.onclick = async () => {
+        if (!confirm('Delete this message?')) return;
+        await fetch(`${API}?action=delete-thread-note`, { method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ recordId: rootId }) });
+        renderNotesPanel(container);
+      };
+      btnRow.appendChild(delBtn);
+    }
     card.appendChild(btnRow);
 
     panel.appendChild(card);
@@ -912,8 +936,11 @@ async function renderNotesPanel(container) {
     document.body.appendChild(overlay);
     overlay.querySelector('#nc-cancel').onclick = () => overlay.remove();
     overlay.querySelector('#nc-send').onclick = async () => {
+      const btn = overlay.querySelector('#nc-send');
+      if (btn._sending) return;
+      btn._sending = true; btn.disabled = true;
       const content = (overlay.querySelector('#nc-content') || {}).value || '';
-      if (!content.trim()) return;
+      if (!content.trim()) { btn._sending = false; btn.disabled = false; return; }
       const subject = isReply ? reSubject : ((overlay.querySelector('#nc-subject') || {}).value || 'Note');
       let toPerson = '', toDept = '';
       if (!isReply) {
