@@ -883,12 +883,6 @@ async function renderNotesPanel(container) {
     }
     card.appendChild(btnRow);
 
-    // Mark as read on open automatically if director
-    if (isUnread && isDirector) {
-      fetch(`${API}?action=mark-note-read`, { method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ recordId: rootId, login: 'zaria' }) });
-    }
-
     panel.appendChild(card);
   });
 
