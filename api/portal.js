@@ -89,7 +89,19 @@ async function netlifyHandler(event) {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-  if (action === 'add-crew') {
+  // ── CONTACTS POOL (crew: SUPPORT/NOT THIS PROJECT + all casting) ──────────
+if (action === 'get-contacts-crew') {
+  const filter = encodeURIComponent(`OR(UPPER({Status})="SUPPORT",UPPER({Status})="NOT THIS PROJECT")`);
+  const data = await airtable('GET', TABLES.crew, null, `?filterByFormula=${filter}&maxRecords=200&sort[0][field]=Name&sort[0][direction]=asc`);
+  return { statusCode: 200, headers, body: JSON.stringify(data) };
+}
+
+if (action === 'get-contacts-cast') {
+  const data = await airtable('GET', TABLES.casting, null, `?maxRecords=300&sort[0][field]=Name&sort[0][direction]=asc`);
+  return { statusCode: 200, headers, body: JSON.stringify(data) };
+}
+
+if (action === 'add-crew') {
     const data = await airtable('POST', TABLES.crew, {
       records: [{
         fields: {
