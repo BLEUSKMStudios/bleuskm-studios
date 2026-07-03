@@ -2874,7 +2874,7 @@ async function renderOfferLetters(el) {
     </div>
   `;
   previewOffer();
-  const contacts = await (()=>{const cast=(STATE.casting||[]).filter(c=>c.fields&&c.fields["Cast Status"]==="Confirmed").map(c=>({name:c.fields["Name"]||"",role:"Cast · "+(c.fields["Role"]||""),email:c.fields["Email"]||"",type:"cast"}));const finCrew=JSON.parse(localStorage.getItem("bleuskm_finalized_crew")||"[]");return[...cast,...finCrew];})()// offerLetterContacts;
+  const contacts = await (()=>{const cast=(STATE.casting||[]).filter(c=>c.fields&&c.fields["Cast Status"]==="Confirmed").map(c=>({name:c.fields["Name"]||"",role:"Cast · "+(c.fields["Role"]||""),email:c.fields["Email"]||"",type:"cast"}));return cast;})()// offerLetterContacts;
   const contactsEl = document.getElementById('ol-contacts');
   if (contactsEl) {
     contactsEl.innerHTML = contacts.length ? contacts.map(c => `
@@ -2884,41 +2884,7 @@ async function renderOfferLetters(el) {
       </label>
     `).join('') : '<p style="color:var(--muted);font-size:12px;padding:6px">No contacts with emails on file yet.</p>';
   }
-  // Director-only: finalized crew manager
-  if (STATE.realDept === 'director') {
-    var mgr = document.getElementById('ol-crew-mgr');
-    if (!mgr) {
-      var crewData = STATE.crew || [];
-      var savedCrew = JSON.parse(localStorage.getItem('bleuskm_finalized_crew') || '[]');
-      var savedEmails = savedCrew.map(function(x){return x.email;});
-      var d = document.createElement('div');
-      d.id = 'ol-crew-mgr';
-      d.style.cssText = 'margin-top:16px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:8px';
-      d.innerHTML = '<div style="font-weight:600;font-size:13px;margin-bottom:8px">&#127908; Finalize Crew for Offer Letters (Director Only)</div>'
-        + '<div id="ol-crew-pick" style="display:flex;flex-direction:column;gap:5px;max-height:180px;overflow-y:auto;margin-bottom:8px">'
-        + (crewData.length ? crewData.map(function(cr){
-            var nm=(cr.fields&&cr.fields['Name'])||cr.name||'';
-            var em=(cr.fields&&cr.fields['Email'])||cr.email||'';
-            var rl=(cr.fields&&(cr.fields['Department']||cr.fields['Role']))||'Crew';
-            var chk=savedEmails.indexOf(em)>-1?' checked':'';
-            return '<label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">'
-              +'<input type="checkbox" data-name="'+nm.replace(/"/g,'&quot;')+'" data-email="'+em.replace(/"/g,'&quot;')+'" data-role="'+rl.replace(/"/g,'&quot;')+'"'+chk+'>'
-              +'<span>'+nm+' <span style="color:var(--muted)">&middot; '+rl+'</span></span></label>';
-          }).join('') : '<p style="color:var(--muted);font-size:12px">No crew loaded yet.</p>')
-        + '</div>'
-        + '<button class="btn-sm" onclick="saveFinalizedCrew()">Save &amp; Update Crew</button>';
-      if (contactsEl && contactsEl.parentNode) {
-        contactsEl.parentNode.insertBefore(d, contactsEl);
-      }
-    }
-  }
-}
 
-function saveFinalizedCrew() {
-  var boxes = document.querySelectorAll('#ol-crew-pick input[type=checkbox]:checked');
-  var arr = Array.from(boxes).map(function(b){return{name:b.dataset.name,email:b.dataset.email,role:b.dataset.role,type:'crew'};});
-  localStorage.setItem('bleuskm_finalized_crew', JSON.stringify(arr));
-  renderOfferLetters();
 }
 
 function selectOfferContact(name, email, role) {
