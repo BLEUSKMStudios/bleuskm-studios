@@ -339,6 +339,19 @@ const CONTRACT_TEMPLATES = {
   'Usage Rights':         { slug: 'usage-rights',         extra: [{key:'effectivedate', label:'Effective Date'}] },
 };
 
+const CAST_DRIVE_DOCS = {
+  'Skyler Kinney':       { agreement: '1bCBvQAB7q2JIFhDS1VQoR--R9gfjtnmGmDgiIP8LvjU', character: 'Bartender' },
+  'Camryn Browning':     { agreement: '11YK8ofefmy5dC-mJJa0PPT6laUGW9zxb54S2w0l3Ni4', character: 'Waitress' },
+  'Alexandria Woods':    { agreement: '15mkMd5H-2N1DaJVIkFU5s8O0Gm8rtopLQgCUJ0QdgzM', character: 'Sister 1' },
+  'Chip Clester':        { agreement: '1URciU_NMyAo5DQBDJN7QzJa72iWs78Ll2U-Otv9KNks', character: 'Table Patron' },
+  'Dion Monroe Sherrod': { agreement: '1kwEZ5tQCwtGEdcTQ3jMQzoydafw5ZrkEJiTo2RKtKbs', character: 'The Player' },
+  'Thomas Price':        { agreement: '1pYVj__zGdLf_KY3u2J-WU59qWHrLVQZW0z9AYDUS0CE', character: 'The Stranger' },
+};
+const SHARED_DRIVE_DOCS = {
+  release: '1yA5GPYEhbRuoquAEz6BM3-N0zSU7JXZpLW-rEzkEt3g',
+  memo:    '1oi4VMydAkpYWpiEhEQhmCRHIcL7JAyigDAtfUxbRj5w',
+};
+
 // Full legal clause text per contract type, for the dashboard's "view entire contract" feature
 const CONTRACT_CLAUSES = {
   'Crew Agreement': [
@@ -2859,6 +2872,10 @@ async function renderOfferLetters(el) {
       <div class="card-title">Generate Offer Letter</div>
       <div class="modal-label" style="margin-top:2px">Finalized Cast &amp; Crew</div>
       <div class="contact-scroll" id="ol-contacts" style="margin-bottom:10px"><p style="color:var(--muted);font-size:12px;padding:6px">Loading contacts...</p></div>
+      <div id="ol-contract-links" style="display:none;border:1px solid rgba(240,192,64,0.25);border-radius:8px;padding:12px;margin-bottom:12px;background:rgba(240,192,64,0.04)">
+        <div class="modal-label" style="margin-bottom:8px;color:#f0c040">📄 Contracts for <span id="ol-contract-name" style="color:#fff"></span></div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px" id="ol-contract-btns"></div>
+      </div>
       <div class="grid2" style="gap:10px;margin-bottom:10px">
         <div><div class="modal-label">To (Full Name)</div><input id="ol-name" placeholder="Actor / Crew name" oninput="previewOffer()"></div>
         <div><div class="modal-label">Role</div><input id="ol-role" placeholder="e.g. Lead Actor" oninput="previewOffer()"></div>
@@ -2919,7 +2936,29 @@ function selectOfferContact(name, email, role) {
   if (rcpName) rcpName.value = name;
   if (rcpEmail) rcpEmail.value = email;
   if (rcpRole) rcpRole.value = role;
+  updateOLContractLinks(name);
   previewOffer();
+}
+
+function updateOLContractLinks(name) {
+  const panel = document.getElementById('ol-contract-links');
+  const nameSpan = document.getElementById('ol-contract-name');
+  const btns = document.getElementById('ol-contract-btns');
+  if (!panel) return;
+  if (!name) { panel.style.display = 'none'; return; }
+  const actor = CAST_DRIVE_DOCS[name];
+  const base = 'https://docs.google.com/document/d/';
+  if (nameSpan) nameSpan.textContent = name;
+  const docs = [
+    { label: '📝 Cast Agreement', id: actor ? actor.agreement : null },
+    { label: '📋 Talent Release', id: SHARED_DRIVE_DOCS ? SHARED_DRIVE_DOCS.release : null },
+    { label: '📄 Actor Deal Memo', id: SHARED_DRIVE_DOCS ? SHARED_DRIVE_DOCS.memo : null },
+  ];
+  if (btns) btns.innerHTML = docs.map(doc => doc.id
+    ? `<a href="${base}${doc.id}/edit" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(240,192,64,0.12);border:1px solid rgba(240,192,64,0.35);border-radius:6px;color:#f0c040;font-size:12px;font-weight:600;text-decoration:none">${doc.label}</a>`
+    : `<span style="color:var(--muted);font-size:12px">${doc.label} — not yet on file</span>`
+  ).join('');
+  panel.style.display = 'block';
 }
 
 function previewOffer() {
