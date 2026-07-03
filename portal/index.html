@@ -2906,12 +2906,19 @@ async function renderOfferLetters(el) {
               +'<span>'+nm+' <span style="color:var(--muted)">&middot; '+rl+'</span></span></label>';
           }).join('') : '<p style="color:var(--muted);font-size:12px">No crew loaded yet.</p>')
         + '</div>'
-        + '<button class="btn-sm" onclick="(function(){var boxes=document.querySelectorAll('#ol-crew-pick input[type=checkbox]:checked');var arr=Array.from(boxes).map(function(b){return{name:b.dataset.name,email:b.dataset.email,role:b.dataset.role,type:'crew'};});localStorage.setItem('bleuskm_finalized_crew',JSON.stringify(arr));renderOfferLetters();})()">Save &amp; Update Crew</button>';
+        + '<button class="btn-sm" onclick="saveFinalizedCrew()">Save &amp; Update Crew</button>';
       if (contactsEl && contactsEl.parentNode) {
         contactsEl.parentNode.insertBefore(d, contactsEl);
       }
     }
   }
+}
+
+function saveFinalizedCrew() {
+  var boxes = document.querySelectorAll('#ol-crew-pick input[type=checkbox]:checked');
+  var arr = Array.from(boxes).map(function(b){return{name:b.dataset.name,email:b.dataset.email,role:b.dataset.role,type:'crew'};});
+  localStorage.setItem('bleuskm_finalized_crew', JSON.stringify(arr));
+  renderOfferLetters();
 }
 
 function selectOfferContact(name, email, role) {
