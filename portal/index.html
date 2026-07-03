@@ -3530,7 +3530,6 @@ async function deletePushNote(recordId, deptKey) {
 // DP SECTIONS
 // ════════════════════════════════════════════════════════════════
 SECTIONS.dp = {
-  overview: (el) => { el.innerHTML = deptOverview('dp'); renderPushWidget(el, 'dp'); renderCurrentPhase('dp'); },
   shotlist:  (el) => renderFileSection(el, 'shotlist',   'Shot List',          '.pdf,.xlsx', 'Shot lists pushed here from Director will appear below.'),
   references:(el) => renderFileSection(el, 'references', 'References',         'image/*,.pdf'),
   camera:    (el) => renderNotesSection(el, 'DP',        'Camera Language'),
@@ -3545,7 +3544,6 @@ SECTIONS.dp = {
 // AD SECTIONS
 // ════════════════════════════════════════════════════════════════
 SECTIONS.ad = {
-  overview:   (el) => { el.innerHTML = deptOverview('ad'); renderPushWidget(el, 'ad'); renderCurrentPhase('ad'); },
   schedule:   (el) => renderFileSection(el, 'schedule',   'Schedule',    '.pdf,.xlsx'),
   callsheets: (el) => renderFileSection(el, 'callsheets', 'Call Sheets', '.pdf'),
   scenes:     (el) => renderFileSection(el, 'scenes',     'Scene Order', '.pdf'),
@@ -3561,7 +3559,6 @@ SECTIONS.ad = {
 // SCRIPT SUPERVISOR SECTIONS
 // ════════════════════════════════════════════════════════════════
 SECTIONS.scriptsupervisor = {
-  overview:   (el) => { el.innerHTML = deptOverview('scriptsupervisor'); renderPushWidget(el, 'scriptsupervisor'); renderCurrentPhase('scriptsupervisor'); },
   script:     (el) => renderFileSection(el, 'script',    'Script',            '.pdf', 'Scripts pushed from Director appear here.'),
   scenes:     (el) => renderSceneBreakdown(el),
   continuity: (el) => renderContinuityNotes(el),
@@ -3790,7 +3787,6 @@ async function deleteScene(recordId, allowEdit) {
 // SOUND SECTIONS
 // ════════════════════════════════════════════════════════════════
 SECTIONS.sound = {
-  overview:    (el) => { el.innerHTML = deptOverview('sound'); renderPushWidget(el, 'sound'); renderCurrentPhase('sound'); },
   soundnotes:  (el) => renderNotesSection(el, 'Sound', 'Sound Notes'),
   silencecues: (el) => renderNotesSection(el, 'Sound', 'Silence Cues', 'Mark scenes that require silence — no background music, no extra noise.'),
   environment: (el) => renderNotesSection(el, 'Sound', 'Environment Tone', 'Describe the ambient sound texture for each location.'),
