@@ -603,6 +603,7 @@ const NAV = {
     {id:'continuity', icon:'🔁', label:'Continuity Notes'},
     {id:'crew',       icon:'👥', label:'Crew'},
     {id:'castingdb',  icon:'🎟', label:'Casting Database'},
+    {id:'contacts',   icon:'📇', label:'Contacts'},
     {id:'timeline',   icon:'📅', label:'Timeline'},
     {id:'polls',      icon:'📊', label:'Meeting Polls'},
     {id:'emailhub',   icon:'📧', label:'Email Hub'},
@@ -987,6 +988,90 @@ function renderProducerCrewWithContracts(el) {
   const sub = el.querySelector('#prod-crew-sub-body');
   if (t === 'list') renderCrewSection(sub);
   else renderContractsHub(sub, 'cast');
+}
+
+
+function renderContactsPool(el) {
+  window._contactsEl = el;
+  const t = window._contactsTab || 'crew';
+  el.innerHTML = `<div style="display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid #333;">
+    <button onclick="window._contactsTab='crew';renderContactsPool(window._contactsEl)"
+      style="padding:8px 20px;border:none;cursor:pointer;font-size:.88rem;border-radius:6px 6px 0 0;
+      background:${t==='crew'?'#FFD700':'#1a1a1a'};color:${t==='crew'?'#111':'#888'};">👥 Crew Pool</button>
+    <button onclick="window._contactsTab='cast';renderContactsPool(window._contactsEl)"
+      style="padding:8px 20px;border:none;cursor:pointer;font-size:.88rem;border-radius:6px 6px 0 0;margin-left:4px;
+      background:${t==='cast'?'#FFD700':'#1a1a1a'};color:${t==='cast'?'#111':'#888'};">🎟 Casting Pool</button>
+  </div><div id="contacts-sub-body"></div>`;
+  const sub = el.querySelector('#contacts-sub-body');
+  if (t === 'crew') renderCrewContactsPool(sub);
+  else renderCastContactsPool(sub);
+}
+
+async function renderCrewContactsPool(el) {
+  el.innerHTML = '<p style="color:var(--muted);font-size:13px">Loading crew contacts…</p>';
+  try {
+    const res = await fetch(`${API}?action=get-contacts-crew`);
+    const data = await res.json();
+    const recs = data.records || [];
+    if (!recs.length) { el.innerHTML = '<p style="color:var(--muted);font-size:13px">No crew in the contacts pool yet.</p>'; return; }
+    el.innerHTML = `
+      <div style="margin-bottom:12px;color:var(--muted);font-size:12px">${recs.length} contact${recs.length!==1?'s':''} — SUPPORT &amp; NOT THIS PROJECT</div>
+      <div style="display:grid;gap:10px;">
+        ${recs.map(r => {
+          const f = r.fields;
+          const status = (f['Status']||'').toUpperCase();
+          const badge = status === 'SUPPORT' ? '#2a7a2a' : '#7a2a2a';
+          const ltRoles = (f['LT Roles']||'').trim();
+          return `<div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:14px 16px;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;">
+            <div style="flex:1;min-width:180px;">
+              <div style="font-weight:600;font-size:.95rem;margin-bottom:2px;">${f['Name']||'—'}</div>
+              <div style="color:var(--gold);font-size:.82rem;margin-bottom:${ltRoles?'4px':'0'};">${f['Role']||''}</div>
+              ${ltRoles ? `<div style="color:#aaa;font-size:.78rem;">Also: ${ltRoles}</div>` : ''}
+            </div>
+            <div style="min-width:160px;">
+              ${f['Email'] ? `<div style="font-size:.82rem;margin-bottom:3px;">✉ <a href="mailto:${f['Email']}" style="color:#aaa;text-decoration:none;">${f['Email']}</a></div>` : ''}
+              ${f['Phone'] ? `<div style="font-size:.82rem;color:#aaa;">📞 ${f['Phone']}</div>` : ''}
+            </div>
+            <div style="align-self:center;">
+              <span style="background:${badge};color:#fff;font-size:.72rem;padding:3px 8px;border-radius:4px;font-weight:600;">${status}</span>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+  } catch(e) { el.innerHTML = '<p style="color:#f66;font-size:13px">Error loading crew contacts.</p>'; }
+}
+
+async function renderCastContactsPool(el) {
+  el.innerHTML = '<p style="color:var(--muted);font-size:13px">Loading casting contacts…</p>';
+  try {
+    const res = await fetch(`${API}?action=get-contacts-cast`);
+    const data = await res.json();
+    const recs = data.records || [];
+    if (!recs.length) { el.innerHTML = '<p style="color:var(--muted);font-size:13px">No casting submissions yet.</p>'; return; }
+    el.innerHTML = `
+      <div style="margin-bottom:12px;color:var(--muted);font-size:12px">${recs.length} submission${recs.length!==1?'s':''}</div>
+      <div style="display:grid;gap:10px;">
+        ${recs.map(r => {
+          const f = r.fields;
+          const cs = f['Casting Status']||'';
+          const castSt = f['Cast Status']||'';
+          return `<div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:14px 16px;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;">
+            <div style="flex:1;min-width:180px;">
+              <div style="font-weight:600;font-size:.95rem;margin-bottom:2px;">${f['Name']||'—'}</div>
+              <div style="color:var(--gold);font-size:.82rem;">${f['Role']||f['Film']||''}</div>
+            </div>
+            <div style="min-width:160px;">
+              ${f['Email'] ? `<div style="font-size:.82rem;margin-bottom:3px;">✉ <a href="mailto:${f['Email']}" style="color:#aaa;text-decoration:none;">${f['Email']}</a></div>` : ''}
+              ${f['Phone'] ? `<div style="font-size:.82rem;color:#aaa;">📞 ${f['Phone']}</div>` : ''}
+            </div>
+            <div style="align-self:center;display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
+              ${cs ? `<span style="background:#1e3a5a;color:#7af;font-size:.72rem;padding:3px 8px;border-radius:4px;">${cs}</span>` : ''}
+              ${castSt ? `<span style="background:#2a4a1a;color:#afa;font-size:.72rem;padding:3px 8px;border-radius:4px;">${castSt}</span>` : ''}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+  } catch(e) { el.innerHTML = '<p style="color:#f66;font-size:13px">Error loading casting contacts.</p>'; }
 }
 
 // NAVIGATE
@@ -1479,6 +1564,7 @@ SECTIONS.director = {
   continuity: (el) => renderContinuityNotes(el),
   crew: (el) => renderCrewWithContracts(el),
   castingdb: (el) => renderCastingWithContracts(el),
+    contacts:  (el) => renderContactsPool(el),
   contracts: (el) => renderContractsHub(el, 'crew'),
   timeline: (el) => renderTimeline(el, 'director'),
   polls: (el) => renderMeetingPolls(el),
