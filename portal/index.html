@@ -872,11 +872,11 @@ async function renderNotesPanel(container) {
 
     if (isUnread) {
       const markBtn = document.createElement('button');
-      markBtn.textContent = '✓ Mark read';
-      markBtn.style.cssText = 'background:#1a2a1a;color:#8f8;border:1px solid #4a4;padding:4px 10px;border-radius:5px;cursor:pointer;font-size:.8rem;';
+      markBtn.textContent = '✓ Mark as Read';
+      markBtn.style.cssText = 'background:transparent;color:#FFD700;border:1px solid #FFD700;padding:4px 10px;border-radius:5px;cursor:pointer;font-size:.78rem;letter-spacing:.03em;';
       markBtn.onclick = async () => {
-        await fetch(`${API}`, { method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ action:'mark-note-read', recordId: rootId, login }) });
+        await fetch(`${API}?action=mark-note-read`, { method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ recordId: rootId, login }) });
         renderNotesPanel(container);
       };
       btnRow.appendChild(markBtn);
@@ -885,8 +885,8 @@ async function renderNotesPanel(container) {
 
     // Mark as read on open automatically if director
     if (isUnread && isDirector) {
-      fetch(`${API}`, { method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ action:'mark-note-read', recordId: rootId, login: 'zaria' }) });
+      fetch(`${API}?action=mark-note-read`, { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ recordId: rootId, login: 'zaria' }) });
     }
 
     panel.appendChild(card);
@@ -938,8 +938,8 @@ async function renderNotesPanel(container) {
         toDept = login === 'zaria' ? '' : '';
       }
       const fromDept = STATE.dept || '';
-      await fetch(`${API}`, { method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ action:'add-thread-note', title: subject, content, fromPerson: login,
+      await fetch(`${API}?action=add-thread-note`, { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ title: subject, content, fromPerson: login,
           fromDept, toPerson, toDept, parentId: parentId || '' }) });
       overlay.remove();
       renderNotesPanel(container);
@@ -1429,11 +1429,7 @@ SECTIONS.director = {
       </div>
     `;
     renderCurrentPhase('director');
-    // Push to Departments (moved from push tab)
-    const _pushWrap = document.createElement('div');
-    _pushWrap.style.marginTop = '24px';
-    SECTIONS.director.push(_pushWrap);
-    el.appendChild(_pushWrap);
+
   },
   script: (el) => renderFileSection(el, 'script', 'Scripts', '.pdf,.fdx,.fountain', 'Upload your script here. Use the Push button to share with any department.'),
   shotlist: (el) => renderFileSection(el, 'shotlist', 'Shot List', '.pdf,.xlsx,.csv', 'Upload shot lists. Push to DP when ready.'),
