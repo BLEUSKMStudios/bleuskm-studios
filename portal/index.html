@@ -1019,8 +1019,6 @@ async function renderCrewContactsPool(el) {
       <div style="display:grid;gap:10px;">
         ${recs.map(r => {
           const f = r.fields;
-          const status = (f['Status']||'').toUpperCase();
-          const badge = status === 'SUPPORT' ? '#2a7a2a' : '#7a2a2a';
           const ltRoles = (f['LT Roles']||'').trim();
           return `<div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:14px 16px;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;">
             <div style="flex:1;min-width:180px;">
@@ -1031,9 +1029,6 @@ async function renderCrewContactsPool(el) {
             <div style="min-width:160px;">
               ${f['Email'] ? `<div style="font-size:.82rem;margin-bottom:3px;">✉ <a href="mailto:${f['Email']}" style="color:#aaa;text-decoration:none;">${f['Email']}</a></div>` : ''}
               ${f['Phone'] ? `<div style="font-size:.82rem;color:#aaa;">📞 ${f['Phone']}</div>` : ''}
-            </div>
-            <div style="align-self:center;">
-              <span style="background:${badge};color:#fff;font-size:.72rem;padding:3px 8px;border-radius:4px;font-weight:600;">${status}</span>
             </div>
           </div>`;
         }).join('')}
@@ -1053,20 +1048,13 @@ async function renderCastContactsPool(el) {
       <div style="display:grid;gap:10px;">
         ${recs.map(r => {
           const f = r.fields;
-          const cs = f['Casting Status']||'';
-          const castSt = f['Cast Status']||'';
           return `<div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:14px 16px;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;">
             <div style="flex:1;min-width:180px;">
-              <div style="font-weight:600;font-size:.95rem;margin-bottom:2px;">${f['Name']||'—'}</div>
-              <div style="color:var(--gold);font-size:.82rem;">${f['Role']||f['Film']||''}</div>
+              <div style="font-weight:600;font-size:.95rem;">${f['Name']||'—'}</div>
             </div>
             <div style="min-width:160px;">
               ${f['Email'] ? `<div style="font-size:.82rem;margin-bottom:3px;">✉ <a href="mailto:${f['Email']}" style="color:#aaa;text-decoration:none;">${f['Email']}</a></div>` : ''}
               ${f['Phone'] ? `<div style="font-size:.82rem;color:#aaa;">📞 ${f['Phone']}</div>` : ''}
-            </div>
-            <div style="align-self:center;display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
-              ${cs ? `<span style="background:#1e3a5a;color:#7af;font-size:.72rem;padding:3px 8px;border-radius:4px;">${cs}</span>` : ''}
-              ${castSt ? `<span style="background:#2a4a1a;color:#afa;font-size:.72rem;padding:3px 8px;border-radius:4px;">${castSt}</span>` : ''}
             </div>
           </div>`;
         }).join('')}
