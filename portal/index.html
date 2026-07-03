@@ -1845,34 +1845,25 @@ async function updateMyTaskStatus(recordId, status) {
 // ─── CONTRACTS HUB (scope: 'crew' for Director, 'cast' for Producer) ─────
 const CONTRACTS_HUB_SCOPE = {
   crew: {
-    label: 'Crew',
-    types: ['Crew Agreement','Contractor Agreement'],
-    groups: [
-      {title:'CREW', items:[
-        {name:'Crew Agreement'},
-        {name:'Contractor Agreement'},
-      ]},
-    ],
+    label: 'Crew Contracts',
+    items: [
+      {name:'Crew Agreement'},
+      {name:'Contractor Agreement'},
+      {name:'Composer Agreement'},
+      {name:'Editor Agreement'},
+      {name:'Location Release'},
+    ]
   },
   cast: {
-    label: 'Cast',
-    types: ['Cast Agreement','Talent Release','Actor Deal Memo','Location Release','Media Release (BTS)','Editor Agreement','Composer Agreement','Usage Rights'],
-    groups: [
-      {title:'CAST', items:[
-        {name:'Cast Agreement'},
-        {name:'Talent Release'},
-        {name:'Actor Deal Memo'},
-      ]},
-      {title:'PRODUCTION', items:[
-        {name:'Location Release'},
-        {name:'Media Release (BTS)'},
-      ]},
-      {title:'POST', items:[
-        {name:'Editor Agreement'},
-        {name:'Composer Agreement'},
-      ]},
-    ],
-  },
+    label: 'Cast Contracts',
+    items: [
+      {name:'Cast Agreement'},
+      {name:'Actor Deal Memo'},
+      {name:'Talent Release'},
+      {name:'Media Release (BTS)'},
+      {name:'Usage Rights'},
+    ]
+  }
 };
 
 async function renderContractsHub(el, scope) {
