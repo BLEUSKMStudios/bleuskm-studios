@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BLEUSKM Studios — Production Portal</title>
+<title>BLEUSKM Studios â Production Portal</title>
 <style>
-/* ── RESET + BASE ── */
+/* ââ RESET + BASE ââ */
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#0a0a0a;--surface:#141414;--surface2:#1c1c1c;--border:#2a2a2a;
@@ -20,7 +20,7 @@ a{color:var(--gold);text-decoration:none}
 a:hover{color:var(--gold2)}
 .hidden{display:none!important}
 
-/* ── LOGIN ── */
+/* ââ LOGIN ââ */
 #login-screen{
   min-height:100vh;display:flex;align-items:center;justify-content:center;
   background:radial-gradient(ellipse at 40% 30%,#1a140a 0%,#0a0a0a 70%);
@@ -35,7 +35,7 @@ a:hover{color:var(--gold2)}
 .btn-login:hover{background:var(--gold2)}
 .login-error{color:var(--red);font-size:12px;margin-top:10px;min-height:18px}
 
-/* ── LAYOUT ── */
+/* ââ LAYOUT ââ */
 #app{display:flex;height:100vh;overflow:hidden}
 #sidebar{
   width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);
@@ -48,7 +48,7 @@ a:hover{color:var(--gold2)}
 }
 #content{flex:1;overflow-y:auto;padding:24px}
 
-/* ── SIDEBAR ── */
+/* ââ SIDEBAR ââ */
 .sidebar-brand{padding:20px 16px 12px;border-bottom:1px solid var(--border)}
 .sidebar-brand .studio{font-size:9px;letter-spacing:.25em;color:var(--gold);text-transform:uppercase}
 .sidebar-brand .user-name{font-size:17px;font-weight:700;margin-top:8px;color:var(--text)}
@@ -71,7 +71,7 @@ a:hover{color:var(--gold2)}
 .btn-logout{width:100%;padding:8px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:6px;font-size:11px;letter-spacing:.05em}
 .btn-logout:hover{border-color:var(--red);color:var(--red)}
 
-/* ── TOPBAR ── */
+/* ââ TOPBAR ââ */
 .topbar-title{font-size:14px;font-weight:600;flex:1}
 .topbar-dept{font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
 .btn-sm{padding:7px 14px;border-radius:6px;font-size:11px;font-weight:600;letter-spacing:.05em;border:none;transition:.15s}
@@ -79,7 +79,7 @@ a:hover{color:var(--gold2)}
 .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
 .btn-red{background:var(--red);color:#fff}.btn-red:hover{background:#f06262}
 
-/* ── CARDS / SECTIONS ── */
+/* ââ CARDS / SECTIONS ââ */
 .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .section-title{font-size:14px;font-weight:700;letter-spacing:.05em}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px}
@@ -98,14 +98,14 @@ a:hover{color:var(--gold2)}
 .note-input:focus,.note-edit-input:focus{border-color:var(--gold);outline:none}
 .note-line{max-width:560px}
 .note-line-text{white-space:pre-wrap}
-/* ── CALLBACK RATING (star scale) ── */
+/* ââ CALLBACK RATING (star scale) ââ */
 .rating-stars{display:flex;gap:2px;align-items:center}
 .rating-star{cursor:pointer;font-size:15px;color:var(--border);line-height:1;background:none;border:none;padding:0}
 .rating-star.filled{color:var(--gold)}
 .rating-star:hover{color:var(--gold2)}
 .rating-label{font-size:10px;color:var(--muted);margin-left:6px}
 
-/* ── FILE CARDS ── */
+/* ââ FILE CARDS ââ */
 .file-card{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
 .file-icon{width:32px;height:32px;border-radius:6px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
 .file-meta{flex:1}
@@ -113,12 +113,12 @@ a:hover{color:var(--gold2)}
 .file-sub{font-size:11px;color:var(--muted);margin-top:2px}
 .file-actions{display:flex;gap:6px}
 
-/* ── GRID LAYOUTS ── */
+/* ââ GRID LAYOUTS ââ */
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
 @media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
 
-/* ── TIMELINE ── */
+/* ââ TIMELINE ââ */
 .timeline-phase{border-left:2px solid var(--border);padding:0 0 24px 20px;position:relative;margin-left:10px}
 .timeline-phase:last-child{padding-bottom:0}
 .timeline-dot{width:10px;height:10px;border-radius:50%;background:var(--border);position:absolute;left:-6px;top:4px}
@@ -128,7 +128,7 @@ a:hover{color:var(--gold2)}
 .phase-date{font-size:13px;font-weight:700;margin-bottom:6px}
 .phase-item{font-size:12px;color:var(--muted);padding:2px 0}
 
-/* ── CREW CARDS ── */
+/* ââ CREW CARDS ââ */
 .crew-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
 .crew-avatar{width:36px;height:36px;border-radius:50%;background:var(--gold);color:#000;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
 .crew-info{flex:1}
@@ -137,25 +137,25 @@ a:hover{color:var(--gold2)}
 .crew-email{font-size:10px;color:var(--muted)}
 .crew-actions{display:flex;gap:6px}
 
-/* ── CONTRACTS HUB ── */
+/* ââ CONTRACTS HUB ââ */
 .contract-group{margin-bottom:20px}
 .contract-group-title{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
 .contract-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;margin-bottom:6px}
 .contract-row-name{font-size:13px;font-weight:500}
 .contract-row-sub{font-size:10px;color:var(--muted);margin-top:2px}
 
-/* ── LOCATION CARDS ── */
+/* ââ LOCATION CARDS ââ */
 .loc-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:8px}
 .loc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
 .loc-name{font-size:13px;font-weight:600}
 .loc-detail{font-size:11px;color:var(--muted);margin-bottom:2px}
 
-/* ── TAKE LOG ── */
+/* ââ TAKE LOG ââ */
 .take-row{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin-bottom:6px;display:grid;grid-template-columns:60px 60px 1fr 80px;gap:10px;align-items:center}
 .take-cell{font-size:12px}
 .take-label{font-size:9px;color:var(--muted);text-transform:uppercase;margin-bottom:2px}
 
-/* ── MODAL ── */
+/* ââ MODAL ââ */
 .modal-overlay{position:fixed;inset:0;background:#000000cc;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
 .modal{background:var(--surface);border:1px solid var(--border);border-radius:10px;width:100%;max-width:500px;padding:24px}
 .modal-title{font-size:15px;font-weight:700;margin-bottom:16px}
@@ -163,12 +163,12 @@ a:hover{color:var(--gold2)}
 .modal-label{font-size:11px;color:var(--muted);margin-bottom:4px}
 .modal-actions{display:flex;gap:8px;margin-top:20px;justify-content:flex-end}
 
-/* ── PUSH SELECTOR ── */
+/* ââ PUSH SELECTOR ââ */
 .dept-checkboxes{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .dept-check{display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer}
 .dept-check input{width:auto}
 
-/* ── COMPACT CONTACT LIST (Availability, etc.) ── */
+/* ââ COMPACT CONTACT LIST (Availability, etc.) ââ */
 .contact-scroll{max-height:190px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;padding:4px;margin-bottom:12px}
 .contact-row{display:flex;align-items:center;gap:7px;padding:4px 7px;font-size:11.5px;cursor:pointer;border-radius:4px;line-height:1.3}
 .contact-row:hover{background:rgba(255,255,255,0.04)}
@@ -177,7 +177,7 @@ a:hover{color:var(--gold2)}
 .contact-row-role{flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:11px}
 .contact-scroll-header{display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding:2px 7px 6px}
 
-/* ── NOTES ── */
+/* ââ NOTES ââ */
 .note-card{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px 14px;margin-bottom:8px}
 .note-meta{font-size:10px;color:var(--muted);margin-bottom:6px}
 .note-content{font-size:13px;line-height:1.5}
@@ -185,44 +185,44 @@ a:hover{color:var(--gold2)}
 .note-square{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;justify-content:space-between;min-height:130px;aspect-ratio:1/1;overflow:hidden}
 .note-square .note-content{overflow:hidden;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical}
 
-/* ── SCENE TABLE ── */
+/* ââ SCENE TABLE ââ */
 .scene-table{width:100%;border-collapse:collapse}
 .scene-table th{text-align:left;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:8px 12px;border-bottom:1px solid var(--border)}
 .scene-table td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:top}
 .scene-table tr:last-child td{border-bottom:none}
 .scene-table tr:hover td{background:#ffffff05}
 
-/* ── UPLOAD ZONE ── */
+/* ââ UPLOAD ZONE ââ */
 .upload-zone{border:2px dashed var(--border);border-radius:8px;padding:32px;text-align:center;cursor:pointer;transition:.2s}
 .upload-zone:hover{border-color:var(--gold);background:#c9a84c08}
 .upload-zone-icon{font-size:28px;margin-bottom:8px}
 .upload-zone-text{font-size:13px;color:var(--muted)}
 .upload-zone-sub{font-size:11px;color:var(--muted);margin-top:4px}
 
-/* ── BUDGET TABLE ── */
+/* ââ BUDGET TABLE ââ */
 .budget-table{width:100%;border-collapse:collapse}
 .budget-table th{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:8px 12px;border-bottom:1px solid var(--border);text-align:left}
 .budget-table td{padding:10px 12px;font-size:12px;border-bottom:1px solid var(--border)}
 .budget-table .amount{text-align:right;font-family:monospace}
 .budget-total{font-weight:700;color:var(--gold)}
 
-/* ── SCROLLBAR ── */
+/* ââ SCROLLBAR ââ */
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:#444}
 
-/* ── TOAST ── */
+/* ââ TOAST ââ */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 18px;font-size:13px;z-index:200;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px #000a;transition:.3s}
 .toast.hidden{opacity:0;transform:translateY(8px)}
 
-/* ── AVAILABILITY GRID ── */
+/* ââ AVAILABILITY GRID ââ */
 .avail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
 .avail-card{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px}
 .avail-name{font-size:12px;font-weight:600}
 .avail-dates{font-size:11px;color:var(--muted);margin-top:4px}
 
-/* ── OFFER LETTER ── */
+/* ââ OFFER LETTER ââ */
 .offer-preview{background:#0f0f0f;border:1px solid var(--border);border-radius:6px;padding:20px;font-size:12px;line-height:1.8;color:var(--text);white-space:pre-wrap;font-family:Georgia,serif}
 
 /* tabs */
@@ -235,12 +235,12 @@ a:hover{color:var(--gold2)}
 </head>
 <body>
 
-<!-- ══ LOGIN SCREEN ══════════════════════════════════════════════ -->
+<!-- ââ LOGIN SCREEN ââââââââââââââââââââââââââââââââââââââââââââââ -->
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo">BLEUSKM Studios</div>
     <div class="login-title">Production Portal</div>
-    <div class="login-sub">The Final Hand · 2026</div>
+    <div class="login-sub">The Final Hand Â· 2026</div>
     <input type="text" id="login-user" placeholder="Username" autocomplete="username" autocapitalize="none" />
     <input type="password" id="login-pass" placeholder="Password" autocomplete="current-password" />
     <button class="btn-login" onclick="doLogin()">Enter Portal</button>
@@ -248,7 +248,7 @@ a:hover{color:var(--gold2)}
   </div>
 </div>
 
-<!-- ══ APP SHELL ══════════════════════════════════════════════════ -->
+<!-- ââ APP SHELL ââââââââââââââââââââââââââââââââââââââââââââââââââ -->
 <div id="app" class="hidden">
   <!-- SIDEBAR -->
   <div id="sidebar">
@@ -260,7 +260,7 @@ a:hover{color:var(--gold2)}
     </div>
     <div id="nav-items"></div>
     <div class="sidebar-footer">
-      <button class="btn-logout" onclick="doLogout()">← Log Out</button>
+      <button class="btn-logout" onclick="doLogout()">â Log Out</button>
     </div>
   </div>
 
@@ -277,7 +277,7 @@ a:hover{color:var(--gold2)}
   </div>
 </div>
 
-<!-- ══ MODAL ══════════════════════════════════════════════════════ -->
+<!-- ââ MODAL ââââââââââââââââââââââââââââââââââââââââââââââââââââââ -->
 <div id="modal" class="modal-overlay hidden" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <div class="modal-title" id="modal-title"></div>
@@ -286,13 +286,13 @@ a:hover{color:var(--gold2)}
   </div>
 </div>
 
-<!-- ══ TOAST ══════════════════════════════════════════════════════ -->
+<!-- ââ TOAST ââââââââââââââââââââââââââââââââââââââââââââââââââââââ -->
 <div id="toast" class="toast hidden"></div>
 
 <script>
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // CONFIG
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 const API = '/.netlify/functions/portal';
 const MAIL_API = '/.netlify/functions/mail';
 const CLOUDINARY_CLOUD = 'df2x5q7zw';
@@ -339,24 +339,12 @@ const CONTRACT_TEMPLATES = {
   'Usage Rights':         { slug: 'usage-rights',         extra: [{key:'effectivedate', label:'Effective Date'}] },
 };
 
-const CAST_DRIVE_DOCS = {
-  'Skyler Kinney':       { agreement: '1bCBvQAB7q2JIFhDS1VQoR--R9gfjtnmGmDgiIP8LvjU', character: 'Bartender' },
-  'Camryn Browning':     { agreement: '11YK8ofefmy5dC-mJJa0PPT6laUGW9zxb54S2w0l3Ni4', character: 'Waitress' },
-  'Alexandria Woods':    { agreement: '15mkMd5H-2N1DaJVIkFU5s8O0Gm8rtopLQgCUJ0QdgzM', character: 'Sister 1' },
-  'Chip Clester':        { agreement: '1URciU_NMyAo5DQBDJN7QzJa72iWs78Ll2U-Otv9KNks', character: 'Table Patron' },
-  'Dion Monroe Sherrod': { agreement: '1kwEZ5tQCwtGEdcTQ3jMQzoydafw5ZrkEJiTo2RKtKbs', character: 'The Player' },
-  'Thomas Price':        { agreement: '1pYVj__zGdLf_KY3u2J-WU59qWHrLVQZW0z9AYDUS0CE', character: 'The Stranger' },
-};
-const SHARED_DRIVE_DOCS = {
-  release: '1yA5GPYEhbRuoquAEz6BM3-N0zSU7JXZpLW-rEzkEt3g',
-  memo:    '1oi4VMydAkpYWpiEhEQhmCRHIcL7JAyigDAtfUxbRj5w',
-};
 
 // Full legal clause text per contract type, for the dashboard's "view entire contract" feature
 const CONTRACT_CLAUSES = {
   'Crew Agreement': [
     ['PARTIES','This Production Agreement is entered into between BLEUSKM Studios, an independent film production company based in Denton, Texas, and the individual identified above ("Crew Member"), in connection with the short film production identified above.'],
-    ['VOLUNTARY, NON-PAID PARTICIPATION','Crew Member acknowledges and agrees that participation in this production is entirely voluntary and unpaid. No compensation, monetary or otherwise, is promised, implied, or expected — now or in the future — in exchange for services rendered on this production.'],
+    ['VOLUNTARY, NON-PAID PARTICIPATION','Crew Member acknowledges and agrees that participation in this production is entirely voluntary and unpaid. No compensation, monetary or otherwise, is promised, implied, or expected â now or in the future â in exchange for services rendered on this production.'],
     ['IMDb CREDIT','In recognition of their contribution, Crew Member will receive an official IMDb credit for their designated role in this production. IMDb credit is the sole form of recognition provided under this Agreement.'],
     ['MEDIA USAGE RIGHTS','Crew Member grants BLEUSKM Studios a perpetual, royalty-free, worldwide license to use any footage, photography, or materials produced during this production for film distribution, festival submissions, promotional materials, marketing, social media, press, and archival use. Crew Member retains personal portfolio and demo reel rights with appropriate credit.'],
     ['LIABILITY WAIVER','Crew Member voluntarily assumes all risks associated with participation in this production and releases, discharges, and holds harmless BLEUSKM Studios, its directors, producers, and representatives from any claims, liabilities, damages, injuries, or losses arising from participation, to the fullest extent permitted by applicable law.'],
@@ -512,14 +500,14 @@ function updateNoteBadge() {
   }
 }
 
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // STATE
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 let STATE = { dept: null, realDept: null, section: null, files: [], notes: [], locations: [], crew: [], filmName: 'The Final Hand' };
 
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // AUTH
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // Local user map (fallback when Netlify function unreachable)
 const LOCAL_USERS = {
   'zaria':     { password: 'bleuskm2026', department: 'director',        name: 'Zaria' },
@@ -598,82 +586,82 @@ function doLogout() {
   if (savedDept) { STATE.dept = savedDept; STATE.realDept = savedDept; STATE.username = savedUser || ''; STATE.name = savedName || ''; setTimeout(startApp, 0); }
 })();
 
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // NAVIGATION CONFIG
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 const NAV = {
   director: [
-    {id:'overview',   icon:'🎬', label:'Overview', badge:true},
-    {id:'script',     icon:'📄', label:'Scripts'},
-    {id:'shotlist',   icon:'🎥', label:'Shot List'},
-    {id:'storyboard', icon:'🖼', label:'Storyboards'},
-    {id:'scenes',     icon:'🎭', label:'Scene Breakdown'},
-    {id:'continuity', icon:'🔁', label:'Continuity Notes'},
-    {id:'crew',       icon:'👥', label:'Crew'},
-    {id:'castingdb',  icon:'🎟', label:'Casting Database'},
-    {id:'contacts',   icon:'📇', label:'Contacts'},
-    {id:'timeline',   icon:'📅', label:'Timeline'},
-    {id:'polls',      icon:'📊', label:'Meeting Polls'},
-    {id:'emailhub',   icon:'📧', label:'Email Hub'},
-    {id:'taskboard',  icon:'✅', label:'Task Board'},
-    {id:'managedepts',icon:'🗂', label:'Manage Departments'},
-    {id:'settings',   icon:'⚙️', label:'Production Settings'},
+    {id:'overview',   icon:'ð¬', label:'Overview', badge:true},
+    {id:'script',     icon:'ð', label:'Scripts'},
+    {id:'shotlist',   icon:'ð¥', label:'Shot List'},
+    {id:'storyboard', icon:'ð¼', label:'Storyboards'},
+    {id:'scenes',     icon:'ð­', label:'Scene Breakdown'},
+    {id:'continuity', icon:'ð', label:'Continuity Notes'},
+    {id:'crew',       icon:'ð¥', label:'Crew'},
+    {id:'castingdb',  icon:'ð', label:'Casting Database'},
+    {id:'contacts',   icon:'ð', label:'Contacts'},
+    {id:'timeline',   icon:'ð', label:'Timeline'},
+    {id:'polls',      icon:'ð', label:'Meeting Polls'},
+    {id:'emailhub',   icon:'ð§', label:'Email Hub'},
+    {id:'taskboard',  icon:'â', label:'Task Board'},
+    {id:'managedepts',icon:'ð', label:'Manage Departments'},
+    {id:'settings',   icon:'âï¸', label:'Production Settings'},
   ],
   producer: [
-    {id:'overview',    icon:'🎬', label:'Overview', badge:true},
-    {id:'script',      icon:'📄', label:'Script'},
-    {id:'timeline',    icon:'📅', label:'Timeline'},
-    {id:'locations',   icon:'📍', label:'Location Hub'},
-    {id:'crewcast',    icon:'👥', label:'Crew + Cast'},
-    {id:'castingdb',   icon:'🎟', label:'Casting Database'},
-    {id:'documents',   icon:'📁', label:'Documents'},
-    {id:'budget',      icon:'💰', label:'Budget / Schedule'},
-    {id:'availability',icon:'📆', label:'Availability'},
-    {id:'offers',      icon:'✉️', label:'Offer Letters'},
-    {id:'polls',       icon:'📊', label:'Meeting Polls'},
-    {id:'emailhub',    icon:'📧', label:'Casting Email'},
+    {id:'overview',    icon:'ð¬', label:'Overview', badge:true},
+    {id:'script',      icon:'ð', label:'Script'},
+    {id:'timeline',    icon:'ð', label:'Timeline'},
+    {id:'locations',   icon:'ð', label:'Location Hub'},
+    {id:'crewcast',    icon:'ð¥', label:'Crew + Cast'},
+    {id:'castingdb',   icon:'ð', label:'Casting Database'},
+    {id:'documents',   icon:'ð', label:'Documents'},
+    {id:'budget',      icon:'ð°', label:'Budget / Schedule'},
+    {id:'availability',icon:'ð', label:'Availability'},
+    {id:'offers',      icon:'âï¸', label:'Offer Letters'},
+    {id:'polls',       icon:'ð', label:'Meeting Polls'},
+    {id:'emailhub',    icon:'ð§', label:'Casting Email'},
   ],
   dp: [
-    {id:'overview',  icon:'🎬', label:'Overview', badge:true},
-    {id:'shotlist',  icon:'🎥', label:'Shot List'},
-    {id:'references',icon:'🖼', label:'References'},
-    {id:'camera',    icon:'📷', label:'Camera Language'},
-    {id:'lighting',  icon:'💡', label:'Lighting Direction'},
-    {id:'mood',      icon:'🎨', label:'Mood Images'},
-    {id:'script',    icon:'📄', label:'Script'},
-    {id:'timeline',  icon:'📅', label:'Timeline'},
-    {id:'emailhub',  icon:'📧', label:'Email Hub'},
+    {id:'overview',  icon:'ð¬', label:'Overview', badge:true},
+    {id:'shotlist',  icon:'ð¥', label:'Shot List'},
+    {id:'references',icon:'ð¼', label:'References'},
+    {id:'camera',    icon:'ð·', label:'Camera Language'},
+    {id:'lighting',  icon:'ð¡', label:'Lighting Direction'},
+    {id:'mood',      icon:'ð¨', label:'Mood Images'},
+    {id:'script',    icon:'ð', label:'Script'},
+    {id:'timeline',  icon:'ð', label:'Timeline'},
+    {id:'emailhub',  icon:'ð§', label:'Email Hub'},
   ],
   ad: [
-    {id:'overview',  icon:'🎬', label:'Overview', badge:true},
-    {id:'schedule',  icon:'📅', label:'Schedule'},
-    {id:'callsheets',icon:'📋', label:'Call Sheets'},
-    {id:'scenes',    icon:'🎭', label:'Scene Order'},
-    {id:'shootdays', icon:'🎬', label:'Shoot Days'},
-    {id:'timing',    icon:'⏱', label:'Timing Notes'},
-    {id:'script',    icon:'📄', label:'Script'},
-    {id:'timeline',  icon:'📅', label:'Timeline'},
-    {id:'polls',     icon:'📊', label:'Meeting Polls'},
-    {id:'emailhub',  icon:'📧', label:'Email Hub'},
+    {id:'overview',  icon:'ð¬', label:'Overview', badge:true},
+    {id:'schedule',  icon:'ð', label:'Schedule'},
+    {id:'callsheets',icon:'ð', label:'Call Sheets'},
+    {id:'scenes',    icon:'ð­', label:'Scene Order'},
+    {id:'shootdays', icon:'ð¬', label:'Shoot Days'},
+    {id:'timing',    icon:'â±', label:'Timing Notes'},
+    {id:'script',    icon:'ð', label:'Script'},
+    {id:'timeline',  icon:'ð', label:'Timeline'},
+    {id:'polls',     icon:'ð', label:'Meeting Polls'},
+    {id:'emailhub',  icon:'ð§', label:'Email Hub'},
   ],
   scriptsupervisor: [
-    {id:'overview',   icon:'🎬', label:'Overview', badge:true},
-    {id:'script',     icon:'📄', label:'Script'},
-    {id:'scenes',     icon:'🎭', label:'Scene Breakdown'},
-    {id:'continuity', icon:'🔁', label:'Continuity Notes'},
-    {id:'takelog',    icon:'🎞', label:'Take Log'},
-    {id:'timeline',   icon:'📅', label:'Timeline'},
-    {id:'emailhub',   icon:'📧', label:'Email Hub'},
+    {id:'overview',   icon:'ð¬', label:'Overview', badge:true},
+    {id:'script',     icon:'ð', label:'Script'},
+    {id:'scenes',     icon:'ð­', label:'Scene Breakdown'},
+    {id:'continuity', icon:'ð', label:'Continuity Notes'},
+    {id:'takelog',    icon:'ð', label:'Take Log'},
+    {id:'timeline',   icon:'ð', label:'Timeline'},
+    {id:'emailhub',   icon:'ð§', label:'Email Hub'},
   ],
   sound: [
-    {id:'overview',     icon:'🎬', label:'Overview', badge:true},
-    {id:'soundnotes',   icon:'🎵', label:'Sound Notes'},
-    {id:'silencecues',  icon:'🔇', label:'Silence Cues'},
-    {id:'environment',  icon:'🌿', label:'Environment Tone'},
-    {id:'moments',      icon:'🔔', label:'Key Sound Moments'},
-    {id:'script',       icon:'📄', label:'Script'},
-    {id:'timeline',     icon:'📅', label:'Timeline'},
-    {id:'emailhub',     icon:'📧', label:'Email Hub'},
+    {id:'overview',     icon:'ð¬', label:'Overview', badge:true},
+    {id:'soundnotes',   icon:'ðµ', label:'Sound Notes'},
+    {id:'silencecues',  icon:'ð', label:'Silence Cues'},
+    {id:'environment',  icon:'ð¿', label:'Environment Tone'},
+    {id:'moments',      icon:'ð', label:'Key Sound Moments'},
+    {id:'script',       icon:'ð', label:'Script'},
+    {id:'timeline',     icon:'ð', label:'Timeline'},
+    {id:'emailhub',     icon:'ð§', label:'Email Hub'},
   ],
 };
 
@@ -682,9 +670,9 @@ const DEPT_LABELS = {
   ad:'AD', scriptsupervisor:'Script Supervisor', sound:'Sound',
 };
 
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // APP START
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 async function startApp() {
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
@@ -692,7 +680,7 @@ async function startApp() {
   const label = DEPT_LABELS[STATE.dept] || STATE.dept;
   document.getElementById('sb-dept').textContent = label;
   document.getElementById('sb-name').textContent = STATE.name || '';
-  document.getElementById('tb-dept').textContent = STATE.name ? `${STATE.name} · ${label}` : label;
+  document.getElementById('tb-dept').textContent = STATE.name ? `${STATE.name} Â· ${label}` : label;
 
   try {
     const res  = await fetch(`${API}?action=get-settings`);
@@ -766,10 +754,10 @@ function updateFileBadges() {
   });
 }
 
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // NOTES PANEL
-// ════════════════════════════════════════════════════════════════════════════════
-// Login → dept mapping for compose "To" dropdown
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Login â dept mapping for compose "To" dropdown
 const USER_DEPT_MAP = {
   zaria:'director', cscott:'producer', creeves:'producer', ftorres:'producer',
   ookezie:'dp', jsweet:'dp', cspak:'dp', rgalindo:'ad', jfresz:'sound',
@@ -813,7 +801,7 @@ async function renderNotesPanel(container) {
   // Header row
   const hdr = document.createElement('div');
   hdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;';
-  hdr.innerHTML = `<h3 style="margin:0;font-size:1rem;letter-spacing:.05em;">💬 MESSAGES & NOTES</h3>`;
+  hdr.innerHTML = `<h3 style="margin:0;font-size:1rem;letter-spacing:.05em;">ð¬ MESSAGES & NOTES</h3>`;
 
   const composeBtn = document.createElement('button');
   composeBtn.textContent = '+ New Message';
@@ -848,7 +836,7 @@ async function renderNotesPanel(container) {
         <div>
           ${isUnread ? '<span style="background:#FFD700;color:#111;font-size:.7rem;font-weight:bold;padding:2px 6px;border-radius:10px;margin-right:6px;">NEW</span>' : ''}
           <span style="font-weight:bold;font-size:.9rem;">${rf['Title'] || 'Note'}</span>
-          <span style="color:#888;font-size:.78rem;margin-left:8px;">From: ${fromName} → To: ${toName}</span>
+          <span style="color:#888;font-size:.78rem;margin-left:8px;">From: ${fromName} â To: ${toName}</span>
         </div>
         <span style="color:#666;font-size:.75rem;white-space:nowrap;">${ts}</span>
       </div>
@@ -872,14 +860,14 @@ async function renderNotesPanel(container) {
     const btnRow = document.createElement('div');
     btnRow.style.cssText = 'display:flex;gap:8px;margin-top:10px;';
     const replyBtn = document.createElement('button');
-    replyBtn.textContent = '↩ Reply';
+    replyBtn.textContent = 'â© Reply';
     replyBtn.style.cssText = 'background:#2a2a2a;color:#ccc;border:1px solid #444;padding:4px 10px;border-radius:5px;cursor:pointer;font-size:.8rem;';
     replyBtn.onclick = () => openReplyModal(rootId, rf['Title'] || 'Note');
     btnRow.appendChild(replyBtn);
 
     if (isUnread) {
       const markBtn = document.createElement('button');
-      markBtn.textContent = '✓ Mark as Read';
+      markBtn.textContent = 'â Mark as Read';
       markBtn.style.cssText = 'background:transparent;color:#FFD700;border:1px solid #FFD700;padding:4px 10px;border-radius:5px;cursor:pointer;font-size:.78rem;letter-spacing:.03em;';
       markBtn.onclick = async () => {
         await fetch(`${API}?action=mark-note-read`, { method:'POST', headers:{'Content-Type':'application/json'},
@@ -895,7 +883,7 @@ async function renderNotesPanel(container) {
 
   container.appendChild(panel);
 
-  // ── COMPOSE MODAL ──────────────────────────────────────────────────────────
+  // ââ COMPOSE MODAL ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   function openComposeModal(parentId, reSubject) {
     const isReply = !!parentId;
     const overlay = document.createElement('div');
@@ -909,7 +897,7 @@ async function renderNotesPanel(container) {
 
     overlay.innerHTML = `
       <div style="background:#1c1c1c;border-radius:10px;padding:24px;width:440px;max-width:95vw;">
-        <h3 style="margin:0 0 16px;">${isReply ? '↩ Reply to: '+reSubject : '+ New Message'}</h3>
+        <h3 style="margin:0 0 16px;">${isReply ? 'â© Reply to: '+reSubject : '+ New Message'}</h3>
         ${!isReply ? `<label style="font-size:.85rem;display:block;margin-bottom:4px;">Subject</label>
         <input id="nc-subject" style="width:100%;background:#111;color:#fff;border:1px solid #444;border-radius:6px;padding:7px;margin-bottom:12px;box-sizing:border-box;" placeholder="Subject..." />` : ''}
         ${!isReply ? `<label style="font-size:.85rem;display:block;margin-bottom:4px;">To</label>
@@ -956,10 +944,10 @@ function renderCrewWithContracts(el) {
   el.innerHTML = `<div style="display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid #333;">
     <button onclick="window._crewSubTab='list';renderCrewWithContracts(window._crewSubEl)"
       style="padding:8px 20px;border:none;cursor:pointer;font-size:.88rem;border-radius:6px 6px 0 0;
-      background:${t==='list'?'#FFD700':'#1a1a1a'};color:${t==='list'?'#111':'#888'};">👥 Crew List</button>
+      background:${t==='list'?'#FFD700':'#1a1a1a'};color:${t==='list'?'#111':'#888'};">ð¥ Crew List</button>
     <button onclick="window._crewSubTab='contracts';renderCrewWithContracts(window._crewSubEl)"
       style="padding:8px 20px;border:none;cursor:pointer;font-size:.88rem;border-radius:6px 6px 0 0;margin-left:4px;
-      background:${t==='contracts'?'#FFD700':'#1a1a1a'};color:${t==='contracts'?'#111':'#888'};">📋 Contracts</button>
+      background:${t==='contracts'?'#FFD700':'#1a1a1a'};color:${t==='contracts'?'#111':'#888'};">ð Contracts</button>
   </div><div id="crew-sub-body"></div>`;
   const sub = el.querySelector('#crew-sub-body');
   if (t === 'list') renderCrewSection(sub);
@@ -972,10 +960,10 @@ function renderCastingWithContracts(el) {
   el.innerHTML = `<div style="display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid #333;">
     <button onclick="window._castSubTab='db';renderCastingWithContracts(window._castSubEl)"
       style="padding:8px 20px;border:none;cursor:pointer;font-size:.88rem;border-radius:6px 6px 0 0;
-      background:${t==='db'?'#FFD700':'#1a1a1a'};color:${t==='db'?'#111':'#888'};">🎟 Casting</button>
+      background:${t==='db'?'#FFD700':'#1a1a1a'};color:${t==='db'?'#111':'#888'};">ð Casting</button>
     <button onclick="window._castSubTab='contracts';renderCastingWithContracts(window._castSubEl)"
       style="padding:8px 20px;border:none;cursor:pointer;font-size:.88rem;border-radius:6px 6px 0 0;margin-left:4px;
-      background:${t==='contracts'?'#FFD700':'#1a1a1a'};color:${t==='contracts'?'#111':'#888'};">📋 Contracts</button>
+      background:${t==='contracts'?'#FFD700':'#1a1a1a'};color:${t==='contracts'?'#111':'#888'};">ð Contracts</button>
   </div><div id="cast-sub-body"></div>`;
   const sub = el.querySelector('#cast-sub-body');
   if (t === 'db') renderCastingDatabase(sub);
@@ -988,10 +976,10 @@ function renderProducerCrewWithContracts(el) {
   el.innerHTML = `<div style="display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid #333;">
     <button onclick="window._prodCrewSubTab='list';renderProducerCrewWithContracts(window._prodCrewSubEl)"
       style="padding:8px 20px;border:none;cursor:pointer;font-size:.88rem;border-radius:6px 6px 0 0;
-      background:${t==='list'?'#FFD700':'#1a1a1a'};color:${t==='list'?'#111':'#888'};">👥 Crew + Cast</button>
+      background:${t==='list'?'#FFD700':'#1a1a1a'};color:${t==='list'?'#111':'#888'};">ð¥ Crew + Cast</button>
     <button onclick="window._prodCrewSubTab='contracts';renderProducerCrewWithContracts(window._prodCrewSubEl)"
       style="padding:8px 20px;border:none;cursor:pointer;font-size:.88rem;border-radius:6px 6px 0 0;margin-left:4px;
-      background:${t==='contracts'?'#FFD700':'#1a1a1a'};color:${t==='contracts'?'#111':'#888'};">📋 Contracts</button>
+      background:${t==='contracts'?'#FFD700':'#1a1a1a'};color:${t==='contracts'?'#111':'#888'};">ð Contracts</button>
   </div><div id="prod-crew-sub-body"></div>`;
   const sub = el.querySelector('#prod-crew-sub-body');
   if (t === 'list') renderCrewSection(sub);
@@ -1005,10 +993,10 @@ function renderContactsPool(el) {
   el.innerHTML = `<div style="display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid #333;">
     <button onclick="window._contactsTab='crew';renderContactsPool(window._contactsEl)"
       style="padding:8px 20px;border:none;cursor:pointer;font-size:.88rem;border-radius:6px 6px 0 0;
-      background:${t==='crew'?'#FFD700':'#1a1a1a'};color:${t==='crew'?'#111':'#888'};">👥 Crew Pool</button>
+      background:${t==='crew'?'#FFD700':'#1a1a1a'};color:${t==='crew'?'#111':'#888'};">ð¥ Crew Pool</button>
     <button onclick="window._contactsTab='cast';renderContactsPool(window._contactsEl)"
       style="padding:8px 20px;border:none;cursor:pointer;font-size:.88rem;border-radius:6px 6px 0 0;margin-left:4px;
-      background:${t==='cast'?'#FFD700':'#1a1a1a'};color:${t==='cast'?'#111':'#888'};">🎟 Casting Pool</button>
+      background:${t==='cast'?'#FFD700':'#1a1a1a'};color:${t==='cast'?'#111':'#888'};">ð Casting Pool</button>
   </div><div id="contacts-sub-body"></div>`;
   const sub = el.querySelector('#contacts-sub-body');
   if (t === 'crew') renderCrewContactsPool(sub);
@@ -1016,27 +1004,27 @@ function renderContactsPool(el) {
 }
 
 async function renderCrewContactsPool(el) {
-  el.innerHTML = '<p style="color:var(--muted);font-size:13px">Loading crew contacts…</p>';
+  el.innerHTML = '<p style="color:var(--muted);font-size:13px">Loading crew contactsâ¦</p>';
   try {
     const res = await fetch(`${API}?action=get-contacts-crew`);
     const data = await res.json();
     const recs = data.records || [];
     if (!recs.length) { el.innerHTML = '<p style="color:var(--muted);font-size:13px">No crew in the contacts pool yet.</p>'; return; }
     el.innerHTML = `
-      <div style="margin-bottom:12px;color:var(--muted);font-size:12px">${recs.length} contact${recs.length!==1?'s':''} — SUPPORT &amp; NOT THIS PROJECT</div>
+      <div style="margin-bottom:12px;color:var(--muted);font-size:12px">${recs.length} contact${recs.length!==1?'s':''} â SUPPORT &amp; NOT THIS PROJECT</div>
       <div style="display:grid;gap:10px;">
         ${recs.map(r => {
           const f = r.fields;
           const ltRoles = (f['LT Roles']||'').trim();
           return `<div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:14px 16px;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;">
             <div style="flex:1;min-width:180px;">
-              <div style="font-weight:600;font-size:.95rem;margin-bottom:2px;">${f['Name']||'—'}</div>
+              <div style="font-weight:600;font-size:.95rem;margin-bottom:2px;">${f['Name']||'â'}</div>
               <div style="color:var(--gold);font-size:.82rem;margin-bottom:${ltRoles?'4px':'0'};">${f['Role']||''}</div>
               ${ltRoles ? `<div style="color:#aaa;font-size:.78rem;">Also: ${ltRoles}</div>` : ''}
             </div>
             <div style="min-width:160px;">
-              ${f['Email'] ? `<div style="font-size:.82rem;margin-bottom:3px;">✉ <a href="mailto:${f['Email']}" style="color:#aaa;text-decoration:none;">${f['Email']}</a></div>` : ''}
-              ${f['Phone'] ? `<div style="font-size:.82rem;color:#aaa;">📞 ${f['Phone']}</div>` : ''}
+              ${f['Email'] ? `<div style="font-size:.82rem;margin-bottom:3px;">â <a href="mailto:${f['Email']}" style="color:#aaa;text-decoration:none;">${f['Email']}</a></div>` : ''}
+              ${f['Phone'] ? `<div style="font-size:.82rem;color:#aaa;">ð ${f['Phone']}</div>` : ''}
             </div>
           </div>`;
         }).join('')}
@@ -1045,7 +1033,7 @@ async function renderCrewContactsPool(el) {
 }
 
 async function renderCastContactsPool(el) {
-  el.innerHTML = '<p style="color:var(--muted);font-size:13px">Loading casting contacts…</p>';
+  el.innerHTML = '<p style="color:var(--muted);font-size:13px">Loading casting contactsâ¦</p>';
   try {
     const res = await fetch(`${API}?action=get-contacts-cast`);
     const data = await res.json();
@@ -1058,11 +1046,11 @@ async function renderCastContactsPool(el) {
           const f = r.fields;
           return `<div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:14px 16px;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;">
             <div style="flex:1;min-width:180px;">
-              <div style="font-weight:600;font-size:.95rem;">${f['Name']||'—'}</div>
+              <div style="font-weight:600;font-size:.95rem;">${f['Name']||'â'}</div>
             </div>
             <div style="min-width:160px;">
-              ${f['Email'] ? `<div style="font-size:.82rem;margin-bottom:3px;">✉ <a href="mailto:${f['Email']}" style="color:#aaa;text-decoration:none;">${f['Email']}</a></div>` : ''}
-              ${f['Phone'] ? `<div style="font-size:.82rem;color:#aaa;">📞 ${f['Phone']}</div>` : ''}
+              ${f['Email'] ? `<div style="font-size:.82rem;margin-bottom:3px;">â <a href="mailto:${f['Email']}" style="color:#aaa;text-decoration:none;">${f['Email']}</a></div>` : ''}
+              ${f['Phone'] ? `<div style="font-size:.82rem;color:#aaa;">ð ${f['Phone']}</div>` : ''}
             </div>
           </div>`;
         }).join('')}
@@ -1071,7 +1059,7 @@ async function renderCastContactsPool(el) {
 }
 
 // NAVIGATE
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function navigate(sectionId) {
   STATE.section = sectionId;
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -1097,24 +1085,24 @@ function navigate(sectionId) {
   }
 }
 
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // SECTION RENDERERS
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 const SECTIONS = {};
 
-// ─── TIMELINES ───────────────────────────────────────────────────
+// âââ TIMELINES âââââââââââââââââââââââââââââââââââââââââââââââââââ
 const TIMELINES = {
   director: [
-    {date:'NOW – JULY 3', label:'CASTING', status:'active', items:['Run callbacks','Refine tone + intention','Begin visual ideas (loose)']},
-    {date:'JULY 5 – 10', label:'TABLE READ', status:'upcoming', items:['Lock character direction','Adjust script if needed','Communicate tone clearly']},
-    {date:'JULY 11 – 18', label:'FINAL PREP', status:'upcoming', items:['Approve: shot list, schedule, design','Final creative decisions']},
+    {date:'NOW â JULY 3', label:'CASTING', status:'active', items:['Run callbacks','Refine tone + intention','Begin visual ideas (loose)']},
+    {date:'JULY 5 â 10', label:'TABLE READ', status:'upcoming', items:['Lock character direction','Adjust script if needed','Communicate tone clearly']},
+    {date:'JULY 11 â 18', label:'FINAL PREP', status:'upcoming', items:['Approve: shot list, schedule, design','Final creative decisions']},
     {date:'SHOOT DAY', label:'PRODUCTION', status:'upcoming', items:['Direct']},
   ],
   producer: [
-    {date:'NOW – JUNE 22', label:'LOGISTICS', status:'active', items:['Assist with scheduling callbacks','Organize logistics pipeline']},
-    {date:'JUNE 23 – JULY 3', label:'CONTRACTS + BUDGET', status:'active', items:['Track cast + contracts','Begin budget + scheduling docs']},
-    {date:'JULY 5 – 10', label:'LOCK LOGISTICS', status:'upcoming', items:['Lock: location logistics','Coordinate departments']},
-    {date:'JULY 11 – 18', label:'FINAL PREP', status:'upcoming', items:['Finalize: budget, schedule, production needs']},
+    {date:'NOW â JUNE 22', label:'LOGISTICS', status:'active', items:['Assist with scheduling callbacks','Organize logistics pipeline']},
+    {date:'JUNE 23 â JULY 3', label:'CONTRACTS + BUDGET', status:'active', items:['Track cast + contracts','Begin budget + scheduling docs']},
+    {date:'JULY 5 â 10', label:'LOCK LOGISTICS', status:'upcoming', items:['Lock: location logistics','Coordinate departments']},
+    {date:'JULY 11 â 18', label:'FINAL PREP', status:'upcoming', items:['Finalize: budget, schedule, production needs']},
     {date:'SHOOT DAY', label:'PRODUCTION', status:'upcoming', items:['Manage operations behind the scenes']},
   ],
   dp: [
@@ -1122,25 +1110,25 @@ const TIMELINES = {
     {date:'WEEK OF JULY 6', label:'FIRST CREW MEETING', status:'upcoming', items:['Director will coordinate availability']},
     {date:'WEEK OF JULY 12', label:'DEPT. COORDINATION', status:'upcoming', items:['Table read and DP + 1st AC Meeting (separate meetings)','Storyboard / Shot List will be distributed prior to this meeting, as we move through the next phase']},
     {date:'WEEK OF JULY 19', label:'FINAL PREP MEETING', status:'upcoming', items:['Confirm logistics, prepare for shoot']},
-    {date:'WEEK OF JULY 26', label:'TARGET SHOOT WINDOW', status:'upcoming', items:['1–2 day shoot (3 days if needed)','Single location','If members are free the weekend of July 31st, we can shoot that weekend']},
-    {date:'FIRST WEEK OF AUGUST (2ND – 8TH)', label:'BACKUP SHOOT WEEK', status:'upcoming', items:[]},
+    {date:'WEEK OF JULY 26', label:'TARGET SHOOT WINDOW', status:'upcoming', items:['1â2 day shoot (3 days if needed)','Single location','If members are free the weekend of July 31st, we can shoot that weekend']},
+    {date:'FIRST WEEK OF AUGUST (2ND â 8TH)', label:'BACKUP SHOOT WEEK', status:'upcoming', items:[]},
   ],
   ad: [
-    {date:'NOW – JULY 3', label:'OBSERVATION', status:'active', items:['Observe casting flow','Understand script + structure']},
-    {date:'JULY 5 – 10', label:'PLANNING', status:'upcoming', items:['Begin: scene breakdown, schedule planning']},
-    {date:'JULY 11 – 18', label:'BUILD', status:'upcoming', items:['Build: call sheets, shoot schedule','Coordinate with all departments']},
+    {date:'NOW â JULY 3', label:'OBSERVATION', status:'active', items:['Observe casting flow','Understand script + structure']},
+    {date:'JULY 5 â 10', label:'PLANNING', status:'upcoming', items:['Begin: scene breakdown, schedule planning']},
+    {date:'JULY 11 â 18', label:'BUILD', status:'upcoming', items:['Build: call sheets, shoot schedule','Coordinate with all departments']},
     {date:'SHOOT DAY', label:'PRODUCTION', status:'upcoming', items:['Run the set','Control time + flow']},
   ],
   scriptsupervisor: [
-    {date:'NOW – JULY 3', label:'SCRIPT STUDY', status:'active', items:['Read script deeply','Begin notes']},
-    {date:'JULY 5 – 10', label:'TABLE READ', status:'upcoming', items:['Table read tracking: dialogue, pacing, continuity']},
-    {date:'JULY 11 – 18', label:'PREP', status:'upcoming', items:['Prepare: script notes, tracking system']},
+    {date:'NOW â JULY 3', label:'SCRIPT STUDY', status:'active', items:['Read script deeply','Begin notes']},
+    {date:'JULY 5 â 10', label:'TABLE READ', status:'upcoming', items:['Table read tracking: dialogue, pacing, continuity']},
+    {date:'JULY 11 â 18', label:'PREP', status:'upcoming', items:['Prepare: script notes, tracking system']},
     {date:'SHOOT DAY', label:'PRODUCTION', status:'upcoming', items:['Track EVERYTHING','Continuity control']},
   ],
   sound: [
-    {date:'NOW – JULY 3', label:'PREP', status:'active', items:['Study script for sound moments','Begin environment notes']},
-    {date:'JULY 5 – 10', label:'PLANNING', status:'upcoming', items:['Table read: dialogue flow, silence cues']},
-    {date:'JULY 11 – 18', label:'FINAL PREP', status:'upcoming', items:['Finalize sound notes, equipment list']},
+    {date:'NOW â JULY 3', label:'PREP', status:'active', items:['Study script for sound moments','Begin environment notes']},
+    {date:'JULY 5 â 10', label:'PLANNING', status:'upcoming', items:['Table read: dialogue flow, silence cues']},
+    {date:'JULY 11 â 18', label:'FINAL PREP', status:'upcoming', items:['Finalize sound notes, equipment list']},
     {date:'SHOOT DAY', label:'PRODUCTION', status:'upcoming', items:['Record clean audio','Monitor environment']},
   ],
 };
@@ -1186,11 +1174,11 @@ function renderTimelinePhases(records, deptKey) {
       <div class="timeline-dot ${p.status==='active'?'active':(p.status==='done'||p.status==='complete')?'done':''}"></div>
       <div class="phase-label">${esc(p.label)}</div>
       <div class="phase-date">${esc(p.date)}</div>
-      ${p.items.map(i=>`<div class="phase-item">→ ${esc(i)}</div>`).join('')}
+      ${p.items.map(i=>`<div class="phase-item">â ${esc(i)}</div>`).join('')}
       ${p.id ? `
         <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
-          <button class="btn-sm btn-outline" onclick="moveTimelinePhase(${idx},-1,'${deptKey}')" ${idx===0?'disabled':''}>↑ Move Up</button>
-          <button class="btn-sm btn-outline" onclick="moveTimelinePhase(${idx},1,'${deptKey}')" ${idx===phases.length-1?'disabled':''}>↓ Move Down</button>
+          <button class="btn-sm btn-outline" onclick="moveTimelinePhase(${idx},-1,'${deptKey}')" ${idx===0?'disabled':''}>â Move Up</button>
+          <button class="btn-sm btn-outline" onclick="moveTimelinePhase(${idx},1,'${deptKey}')" ${idx===phases.length-1?'disabled':''}>â Move Down</button>
           <button class="btn-sm btn-outline" onclick="editTimelinePhase('${p.id}')">Edit</button>
           <button class="btn-sm btn-outline" onclick="deleteTimelinePhase('${p.id}','${deptKey}')">Delete</button>
         </div>
@@ -1201,7 +1189,7 @@ function renderTimelinePhases(records, deptKey) {
 
 // Pulls whatever the Timeline page would show for this department (real Airtable
 // phases if any exist, otherwise the built-in defaults) and fills in that
-// dashboard's "Current Phase" overview card — so editing the Timeline updates
+// dashboard's "Current Phase" overview card â so editing the Timeline updates
 // the Overview automatically instead of relying on separate hardcoded text.
 async function renderCurrentPhase(deptKey) {
   const label = DEPT_LABELS[deptKey];
@@ -1259,9 +1247,9 @@ async function saveTimelinePhaseEdit(recordId) {
       }),
     });
     closeModal();
-    toast('Phase updated','✅');
+    toast('Phase updated','â');
     navigate('timeline');
-  } catch(e) { toast('Failed to update.','❌'); }
+  } catch(e) { toast('Failed to update.','â'); }
 }
 
 async function moveTimelinePhase(idx, direction, deptKey) {
@@ -1277,13 +1265,13 @@ async function moveTimelinePhase(idx, direction, deptKey) {
       body: JSON.stringify({ order: [{id:a.id, sortIndex:bSort}, {id:b.id, sortIndex:aSort}] }),
     });
     navigate('timeline');
-  } catch(e) { toast('Failed to reorder.','❌'); }
+  } catch(e) { toast('Failed to reorder.','â'); }
 }
 
 function showAddTimelinePhase(deptKey) {
   showModal('Add Timeline Phase', `
     <div class="modal-row"><div class="modal-label">Phase Name</div><input id="tp-phase" placeholder="e.g. TABLE READ"></div>
-    <div class="modal-row"><div class="modal-label">Date Range</div><input id="tp-dates" placeholder="e.g. JULY 5 – 10"></div>
+    <div class="modal-row"><div class="modal-label">Date Range</div><input id="tp-dates" placeholder="e.g. JULY 5 â 10"></div>
     <div class="modal-row"><div class="modal-label">Status</div>
       <select id="tp-status"><option>Upcoming</option><option>Active</option><option>Complete</option></select>
     </div>
@@ -1296,7 +1284,7 @@ function showAddTimelinePhase(deptKey) {
 
 async function saveTimelinePhase(deptKey) {
   const phase   = document.getElementById('tp-phase').value.trim();
-  if (!phase) { toast('Phase name required.','⚠️'); return; }
+  if (!phase) { toast('Phase name required.','â ï¸'); return; }
   try {
     await fetch(API + '?action=add-timeline', {
       method:'POST', headers:{'Content-Type':'application/json'},
@@ -1309,9 +1297,9 @@ async function saveTimelinePhase(deptKey) {
       }),
     });
     closeModal();
-    toast('Phase added','✅');
+    toast('Phase added','â');
     navigate('timeline');
-  } catch(e) { toast('Failed to add phase.','❌'); }
+  } catch(e) { toast('Failed to add phase.','â'); }
 }
 
 async function deleteTimelinePhase(recordId, deptKey) {
@@ -1320,12 +1308,12 @@ async function deleteTimelinePhase(recordId, deptKey) {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({recordId}),
     });
-    toast('Phase deleted','🗑');
+    toast('Phase deleted','ð');
     navigate('timeline');
-  } catch(e) { toast('Failed to delete.','❌'); }
+  } catch(e) { toast('Failed to delete.','â'); }
 }
 
-// ─── GENERIC FILE SECTION ────────────────────────────────────────
+// âââ GENERIC FILE SECTION ââââââââââââââââââââââââââââââââââââââââ
 function renderFileSection(container, sectionId, title, acceptTypes='*', hint='') {
   const sectionFiles = STATE.files.filter(f => (f.fields['Section']||'').toLowerCase() === sectionId.toLowerCase());
   container.innerHTML = `
@@ -1342,18 +1330,18 @@ function renderFileSection(container, sectionId, title, acceptTypes='*', hint=''
 
 function renderFileCard(f) {
   const ext = (f.fields['File Type']||'').split('/').pop().toUpperCase() || 'FILE';
-  const icon = f.fields['File Type']?.startsWith('image') ? '🖼' : f.fields['File Type']?.includes('pdf') ? '📄' : '📁';
+  const icon = f.fields['File Type']?.startsWith('image') ? 'ð¼' : f.fields['File Type']?.includes('pdf') ? 'ð' : 'ð';
   return `
     <div class="file-card">
       <div class="file-icon">${icon}</div>
       <div class="file-meta">
         <div class="file-name">${esc(f.fields['Name']||'Untitled')}</div>
-        <div class="file-sub">${esc(f.fields['From Department']||'')} · ${esc(f.fields['Notes']||'')} · ${formatDate(f.fields['Created'])}</div>
+        <div class="file-sub">${esc(f.fields['From Department']||'')} Â· ${esc(f.fields['Notes']||'')} Â· ${formatDate(f.fields['Created'])}</div>
       </div>
       <div class="file-actions">
         <a href="${esc(f.fields['File URL']||'#')}" target="_blank" class="btn-sm btn-outline">Open</a>
         ${STATE.realDept==='director'?`<button class="btn-sm btn-outline" onclick="showPushModal('${f.id}','${esc(f.fields['Name']||'')}')">Push</button>`:''}
-        <button class="btn-sm btn-outline" onclick="deleteFile('${f.id}')">🗑</button>
+        <button class="btn-sm btn-outline" onclick="deleteFile('${f.id}')">ð</button>
       </div>
     </div>
   `;
@@ -1365,19 +1353,19 @@ async function deleteFile(recordId) {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({recordId}),
     });
-    toast('File deleted','🗑');
+    toast('File deleted','ð');
     await loadData();
     navigate(STATE.section);
-  } catch(e) { toast('Failed to delete file.','❌'); }
+  } catch(e) { toast('Failed to delete file.','â'); }
 }
 
-// ─── UPLOAD MODAL ────────────────────────────────────────────────
+// âââ UPLOAD MODAL ââââââââââââââââââââââââââââââââââââââââââââââââ
 function showUploadModal(sectionId, sectionTitle) {
   showModal(`Upload to ${sectionTitle}`, `
     <div class="modal-row"><div class="modal-label">File Name</div><input id="up-name" placeholder="e.g. Shot List v2"></div>
     <div class="modal-row"><div class="modal-label">File</div>
       <div class="upload-zone" onclick="document.getElementById('up-file').click()">
-        <div class="upload-zone-icon">📁</div>
+        <div class="upload-zone-icon">ð</div>
         <div class="upload-zone-text" id="up-file-label">Click to select file</div>
         <div class="upload-zone-sub">PDF, images, docs accepted</div>
       </div>
@@ -1413,19 +1401,19 @@ function fileToBase64(file) {
   });
 }
 
-const MAX_UPLOAD_BYTES = 3.5 * 1024 * 1024; // ~3.5MB raw — stays under Vercel's request body cap once base64-encoded
+const MAX_UPLOAD_BYTES = 3.5 * 1024 * 1024; // ~3.5MB raw â stays under Vercel's request body cap once base64-encoded
 
 async function doUpload(sectionId) {
   const name  = document.getElementById('up-name').value.trim();
   const file  = document.getElementById('up-file').files[0];
   const notes = document.getElementById('up-notes')?.value.trim() || '';
-  if (!file) { toast('Please select a file.', '⚠️'); return; }
+  if (!file) { toast('Please select a file.', 'â ï¸'); return; }
   if (file.size > MAX_UPLOAD_BYTES) {
-    toast(`File too large (${(file.size/1024/1024).toFixed(1)}MB). Please keep uploads under 3.5MB.`, '⚠️');
+    toast(`File too large (${(file.size/1024/1024).toFixed(1)}MB). Please keep uploads under 3.5MB.`, 'â ï¸');
     return;
   }
 
-  toast('Uploading...', '⏳');
+  toast('Uploading...', 'â³');
   try {
     const fileBase64 = await fileToBase64(file);
 
@@ -1476,15 +1464,15 @@ async function doUpload(sectionId) {
     }
 
     closeModal();
-    toast(`"${name||file.name}" uploaded!`, '✅');
+    toast(`"${name||file.name}" uploaded!`, 'â');
     await loadData();
     navigate(sectionId);
   } catch(e) {
-    toast(e.message || 'Upload failed. Check your connection.', '❌');
+    toast(e.message || 'Upload failed. Check your connection.', 'â');
   }
 }
 
-// ─── PUSH MODAL ──────────────────────────────────────────────────
+// âââ PUSH MODAL ââââââââââââââââââââââââââââââââââââââââââââââââââ
 function showPushModal(fileId, fileName) {
   showModal('Push File to Departments', `
     <p style="font-size:13px;margin-bottom:14px">Push <strong>${esc(fileName)}</strong> to:</p>
@@ -1501,7 +1489,7 @@ function showPushModal(fileId, fileName) {
 
 async function doPush(fileId) {
   const depts = [...document.querySelectorAll('.push-dept:checked')].map(c => c.value);
-  if (!depts.length) { toast('Select at least one department.','⚠️'); return; }
+  if (!depts.length) { toast('Select at least one department.','â ï¸'); return; }
   const rec = STATE.files.find(f => f.id === fileId);
   if (!rec) return;
   for (const d of depts) {
@@ -1519,19 +1507,19 @@ async function doPush(fileId) {
     });
   }
   closeModal();
-  toast(`Pushed to ${depts.join(', ')}`, '✅');
+  toast(`Pushed to ${depts.join(', ')}`, 'â');
 }
 
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // DIRECTOR SECTIONS
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 SECTIONS.director = {
   overview: (el) => {
     el.innerHTML = `
       <div class="grid2" style="margin-bottom:20px">
         <div class="card">
           <div class="card-title">Current Phase</div>
-          <div id="cp-label-director" style="font-size:20px;font-weight:700;color:var(--gold)">Loading…</div>
+          <div id="cp-label-director" style="font-size:20px;font-weight:700;color:var(--gold)">Loadingâ¦</div>
           <div id="cp-date-director" style="font-size:12px;color:var(--muted);margin-top:4px"></div>
         </div>
         <div class="card">
@@ -1580,14 +1568,14 @@ SECTIONS.director = {
   },
 };
 
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // PRODUCER SECTIONS
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 SECTIONS.producer = {
   overview: (el) => {
     el.innerHTML = `
       <div class="grid3" style="margin-bottom:20px">
-        <div class="card"><div class="card-title">Current Phase</div><div id="cp-label-producer" style="font-size:18px;font-weight:700;color:var(--gold)">Loading…</div><div id="cp-date-producer" style="font-size:11px;color:var(--muted)"></div></div>
+        <div class="card"><div class="card-title">Current Phase</div><div id="cp-label-producer" style="font-size:18px;font-weight:700;color:var(--gold)">Loadingâ¦</div><div id="cp-date-producer" style="font-size:11px;color:var(--muted)"></div></div>
         <div class="card"><div class="card-title">Core Crew</div><div style="font-size:24px;font-weight:700">${STATE.crew.length}</div></div>
         <div class="card"><div class="card-title">Contracts</div><div style="font-size:24px;font-weight:700">${CREW_CONTRACTS.length} <span style="font-size:11px;color:var(--muted)">links ready</span></div></div>
       </div>
@@ -1602,7 +1590,7 @@ SECTIONS.producer = {
       </div>
       <div class="card" style="margin-top:16px">
         <div class="card-title">My Tasks</div>
-        <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Assigned to you by the Director — track it through To Do → In Progress → Done.</p>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Assigned to you by the Director â track it through To Do â In Progress â Done.</p>
         <div id="my-tasks-board"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
       </div>
     `;
@@ -1623,16 +1611,16 @@ SECTIONS.producer = {
   emailhub: (el) => renderEmailHub(el, 'crew', {aliases:['crew','casting'], includeCast:true}),
 };
 
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // LOCATION HUB
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 async function renderLocationsSection(el) {
   el.innerHTML = `
     <div class="section-header">
-      <div class="section-title">📍 Location Hub</div>
+      <div class="section-title">ð Location Hub</div>
       <button class="btn-sm btn-gold" onclick="showAddLocationModal()">+ Add Location</button>
     </div>
-    <div id="locations-list"><p style="color:var(--muted);font-size:13px">Loading locations…</p></div>
+    <div id="locations-list"><p style="color:var(--muted);font-size:13px">Loading locationsâ¦</p></div>
   `;
   await loadLocations();
 }
@@ -1658,8 +1646,8 @@ async function loadLocations() {
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
             <div style="flex:1;min-width:0">
               <div style="font-weight:700;font-size:14px;margin-bottom:4px">${esc(f['Location Name']||'Unnamed Location')}</div>
-              ${f['Address'] ? `<div class="file-meta" style="margin-bottom:4px">📍 ${esc(f['Address'])}</div>` : ''}
-              ${f['Contact Person'] ? `<div class="file-meta">👤 ${esc(f['Contact Person'])}${f['Phone'] ? ' · ' + esc(f['Phone']) : ''}${f['Email'] ? ' · ' + esc(f['Email']) : ''}</div>` : ''}
+              ${f['Address'] ? `<div class="file-meta" style="margin-bottom:4px">ð ${esc(f['Address'])}</div>` : ''}
+              ${f['Contact Person'] ? `<div class="file-meta">ð¤ ${esc(f['Contact Person'])}${f['Phone'] ? ' Â· ' + esc(f['Phone']) : ''}${f['Email'] ? ' Â· ' + esc(f['Email']) : ''}</div>` : ''}
               ${f['Notes'] ? `<div class="file-meta" style="margin-top:6px;font-style:italic">${esc(f['Notes'])}</div>` : ''}
             </div>
             <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">
@@ -1698,7 +1686,7 @@ function locationFormHtml(f = {}) {
         <div>
           <div class="modal-label">Status</div>
           <select id="loc-status">
-            <option value="">— Select —</option>
+            <option value="">â Select â</option>
             ${statuses.map(s => `<option value="${s}"${f['Status']===s?' selected':''}>${s}</option>`).join('')}
           </select>
         </div>
@@ -1715,7 +1703,7 @@ function locationFormHtml(f = {}) {
       </div>
       <div>
         <div class="modal-label">Notes</div>
-        <textarea id="loc-notes" rows="3" placeholder="Parking, access codes, special instructions…">${esc(f['Notes']||'')}</textarea>
+        <textarea id="loc-notes" rows="3" placeholder="Parking, access codes, special instructionsâ¦">${esc(f['Notes']||'')}</textarea>
       </div>
     </div>
   `;
@@ -1742,7 +1730,7 @@ function showAddLocationModal() {
 
 async function saveNewLocation() {
   const fields = getLocationFormValues();
-  if (!fields['Location Name']) { toast('Location name is required.','⚠️'); return; }
+  if (!fields['Location Name']) { toast('Location name is required.','â ï¸'); return; }
   Object.keys(fields).forEach(k => { if (!fields[k]) delete fields[k]; });
   try {
     const res = await fetch('/api/airtable-proxy', {
@@ -1753,14 +1741,14 @@ async function saveNewLocation() {
     const data = await res.json();
     if (data.error) throw new Error(data.error);
     closeModal();
-    toast('Location added!','📍');
+    toast('Location added!','ð');
     await loadLocations();
-  } catch(e) { toast('Failed to save location.','⚠️'); }
+  } catch(e) { toast('Failed to save location.','â ï¸'); }
 }
 
 function showEditLocationModal(recordId) {
   const r = (STATE.locations||[]).find(loc => loc.id === recordId);
-  if (!r) { toast('Location not found.','⚠️'); return; }
+  if (!r) { toast('Location not found.','â ï¸'); return; }
   showModal('Edit Location', locationFormHtml(r.fields), [
     {label:'Save Changes', cls:'btn-gold', action:`saveEditLocation('${recordId}')`},
     {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
@@ -1769,7 +1757,7 @@ function showEditLocationModal(recordId) {
 
 async function saveEditLocation(recordId) {
   const fields = getLocationFormValues();
-  if (!fields['Location Name']) { toast('Location name is required.','⚠️'); return; }
+  if (!fields['Location Name']) { toast('Location name is required.','â ï¸'); return; }
   Object.keys(fields).forEach(k => { if (!fields[k]) delete fields[k]; });
   try {
     const res = await fetch('/api/airtable-proxy', {
@@ -1780,9 +1768,9 @@ async function saveEditLocation(recordId) {
     const data = await res.json();
     if (data.error) throw new Error(data.error);
     closeModal();
-    toast('Location updated!','✅');
+    toast('Location updated!','â');
     await loadLocations();
-  } catch(e) { toast('Failed to update location.','⚠️'); }
+  } catch(e) { toast('Failed to update location.','â ï¸'); }
 }
 
 async function deleteLocation(recordId) {
@@ -1804,12 +1792,12 @@ async function confirmDeleteLocation(recordId) {
     const data = await res.json();
     if (data.error) throw new Error(data.error);
     closeModal();
-    toast('Location deleted.','🗑️');
+    toast('Location deleted.','ðï¸');
     await loadLocations();
-  } catch(e) { toast('Failed to delete location.','⚠️'); }
+  } catch(e) { toast('Failed to delete location.','â ï¸'); }
 }
 
-// My Tasks — shown on the producer's own Overview (not a separate tab).
+// My Tasks â shown on the producer's own Overview (not a separate tab).
 // Read/track-only: only the Director can add, edit, delete, or reschedule
 // from the main Task Board. Producers see just their own tasks here and can
 // move them between statuses as they work.
@@ -1855,7 +1843,7 @@ async function updateMyTaskStatus(recordId, status) {
   renderMyTasksWidget();
 }
 
-// ─── CONTRACTS HUB (scope: 'crew' for Director, 'cast' for Producer) ─────
+// âââ CONTRACTS HUB (scope: 'crew' for Director, 'cast' for Producer) âââââ
 const CONTRACTS_HUB_SCOPE = {
   crew: {
     label: 'Crew Contracts',
@@ -1893,7 +1881,7 @@ async function renderContractsHub(el, scope) {
       <div class="section-header">
         <div class="section-title">${cfg.label} Agreement Links</div>
       </div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Edit name/role below, then copy the link to send. They fill in the form and sign — it saves back here automatically.</p>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Edit name/role below, then copy the link to send. They fill in the form and sign â it saves back here automatically.</p>
       <div id="contract-edit-form" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px">
         <div class="grid2" style="gap:10px;margin-bottom:10px">
           <div><div class="modal-label">Name (override)</div><input id="ce-name" placeholder="Full name"></div>
@@ -1912,7 +1900,7 @@ async function renderContractsHub(el, scope) {
         </div>
         <div id="ce-link-out" style="margin-top:10px;font-size:11px;color:var(--muted);word-break:break-all"></div>
       </div>
-      <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">— Or send directly to ${scope==='crew'?'CORE crew':'confirmed cast'} —</div>
+      <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">â Or send directly to ${scope==='crew'?'CORE crew':'confirmed cast'} â</div>
       <div id="contract-send-list"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
     </div>
     <div class="tab-panel" id="tab-signed">
@@ -1944,7 +1932,7 @@ async function renderContractsHub(el, scope) {
       const res  = await fetch(`${API}?action=get-cast`);
       const data = await res.json();
       const cast = (data.records||[]).map(r=>({name:r.fields['Name']||'',role:r.fields['To Role']||r.fields['Role']||'',email:r.fields['Email']||''}));
-      renderContractSendList(cast, 'No confirmed cast yet — mark someone Confirmed in the Casting Database first.');
+      renderContractSendList(cast, 'No confirmed cast yet â mark someone Confirmed in the Casting Database first.');
     } catch(e) { renderContractSendList([], 'Could not load cast list.'); }
   }
 
@@ -1960,7 +1948,7 @@ function renderContractSendList(list, emptyMsg) {
     <div class="contract-row">
       <div>
         <div class="contract-row-name">${esc(c.name)}</div>
-        <div class="contract-row-sub">${esc(c.role)} · ${esc(c.email)}</div>
+        <div class="contract-row-sub">${esc(c.role)} Â· ${esc(c.email)}</div>
       </div>
       <div style="display:flex;gap:6px">
         <button class="btn-sm btn-outline" onclick="prefillContract('${esc(c.name)}','${esc(c.email)}','${esc(c.role)}')">Edit &amp; Send</button>
@@ -1994,7 +1982,7 @@ function buildContractLink() {
   const email = document.getElementById('ce-email').value.trim();
   const role  = document.getElementById('ce-role').value.trim();
   const type  = document.getElementById('ce-type')?.value || '';
-  if (!name || !email) { toast('Name and email required.','⚠️'); return; }
+  if (!name || !email) { toast('Name and email required.','â ï¸'); return; }
   const tpl = CONTRACT_TEMPLATES[type] || { extra: [] };
   const extraValues = {};
   tpl.extra.forEach(f => {
@@ -2009,7 +1997,7 @@ function copyContractLink() {
   const out = document.getElementById('ce-link-out').textContent.trim();
   if (!out) { buildContractLink(); }
   const link = document.getElementById('ce-link-out').textContent.trim();
-  if (link) { navigator.clipboard.writeText(link).then(() => toast('Link copied!','📋')); }
+  if (link) { navigator.clipboard.writeText(link).then(() => toast('Link copied!','ð')); }
 }
 
 async function loadSignedContracts(typeFilter) {
@@ -2028,7 +2016,7 @@ async function loadSignedContracts(typeFilter) {
       <div class="contract-row">
         <div>
           <div class="contract-row-name">${esc(r.fields['Name']||'Unknown')}</div>
-          <div class="contract-row-sub">${esc(r.fields['Role']||'')} ${r.fields['Contract Type']?'· '+esc(r.fields['Contract Type']):''} · Signed ${r.fields['Date Signed']||'—'}</div>
+          <div class="contract-row-sub">${esc(r.fields['Role']||'')} ${r.fields['Contract Type']?'Â· '+esc(r.fields['Contract Type']):''} Â· Signed ${r.fields['Date Signed']||'â'}</div>
         </div>
         <div style="display:flex;gap:6px;align-items:center">
           <span class="tag tag-green">Signed</span><span style="background:#f0c040;color:#333;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;margin-left:6px">&#x1F7E1; Script Pending</span>
@@ -2041,7 +2029,7 @@ async function loadSignedContracts(typeFilter) {
 
 function viewContract(recordId) {
   const r = (STATE.contracts||[]).find(c => c.id === recordId);
-  if (!r) { toast('Contract not found.','⚠️'); return; }
+  if (!r) { toast('Contract not found.','â ï¸'); return; }
   const f = r.fields;
   const sigAttachment = (f['Signature']||[])[0];
   const sigUrl = sigAttachment ? sigAttachment.url : '';
@@ -2061,7 +2049,7 @@ function viewContract(recordId) {
 
   const win = window.open('', '_blank');
   win.document.write(`
-    <html><head><title>${esc(type)} — ${esc(f['Name']||'')}</title>
+    <html><head><title>${esc(type)} â ${esc(f['Name']||'')}</title>
     <style>
       *{box-sizing:border-box}
       body{font-family:'Segoe UI',Arial,sans-serif;max-width:760px;margin:50px auto;padding:0 20px;color:#1a1a1a;line-height:1.6;background:#fff}
@@ -2095,13 +2083,13 @@ function viewContract(recordId) {
       <span class="doctype">${esc(type)}</span>
     </div>
     <h1>${esc(type)}</h1>
-    <div class="sub">BLEUSKM Studios · Denton, TX · ${esc(film)}</div>
+    <div class="sub">BLEUSKM Studios Â· Denton, TX Â· ${esc(film)}</div>
 
     <div class="partybar">
-      <div class="party-cell"><span class="party-lbl">Name</span><span class="party-val">${esc(f['Name']||'—')}</span></div>
-      <div class="party-cell"><span class="party-lbl">Role</span><span class="party-val">${esc(f['Role']||'—')}</span></div>
+      <div class="party-cell"><span class="party-lbl">Name</span><span class="party-val">${esc(f['Name']||'â')}</span></div>
+      <div class="party-cell"><span class="party-lbl">Role</span><span class="party-val">${esc(f['Role']||'â')}</span></div>
       <div class="party-cell"><span class="party-lbl">Project</span><span class="party-val">${esc(film)}</span></div>
-      <div class="party-cell"><span class="party-lbl">Date Signed</span><span class="party-val">${esc(f['Date Signed']||'—')}</span></div>
+      <div class="party-cell"><span class="party-lbl">Date Signed</span><span class="party-val">${esc(f['Date Signed']||'â')}</span></div>
     </div>
 
     ${clauseHtml || '<p style="color:#999;font-size:13px">Full clause text not available for this contract type.</p>'}
@@ -2113,7 +2101,7 @@ function viewContract(recordId) {
       <div class="sig-grid">
         <div>
           <div class="sig-img-box"><img src="https://www.bleuskm.com/contracts/zaria-signature.png" alt="Zaria signature"></div>
-          <div class="sig-name">Zaria Lashae — Founder &amp; Director, BLEUSKM Studios</div>
+          <div class="sig-name">Zaria Lashae â Founder &amp; Director, BLEUSKM Studios</div>
         </div>
         <div>
           <div class="sig-img-box">${sigUrl ? `<img src="${esc(sigUrl)}" alt="signature">` : '<span style="color:#999;font-size:11px">No signature on file</span>'}</div>
@@ -2128,7 +2116,7 @@ function viewContract(recordId) {
   win.document.close();
 }
 
-// ─── LOCATIONS ───────────────────────────────────────────────────
+// âââ LOCATIONS âââââââââââââââââââââââââââââââââââââââââââââââââââ
 async function renderLocationsSection(el) {
   el.innerHTML = `
     <div class="section-header">
@@ -2162,14 +2150,14 @@ function renderLocationCards() {
           <span class="tag ${sc}">${esc(f['Status']||'Unknown')}</span>
         </div>
         <div class="loc-detail">${esc(f['Address']||'')}</div>
-        <div class="loc-detail">Contact: ${esc(f['Contact Person']||'—')} · ${esc(f['Phone']||'')} · ${esc(f['Email']||'')}</div>
+        <div class="loc-detail">Contact: ${esc(f['Contact Person']||'â')} Â· ${esc(f['Phone']||'')} Â· ${esc(f['Email']||'')}</div>
         ${f['Notes'] ? `<div style="font-size:11px;color:var(--muted);margin-top:4px">${esc(f['Notes'])}</div>` : ''}
         <div style="margin-top:10px;display:flex;gap:6px">
           <select style="flex:1;font-size:11px" onchange="updateLocStatus('${loc.id}',this.value)">
             ${['Not Yet Contacted','Called - No Answer','Called - Maybe Follow Up','Approved','Declined'].map(s=>`<option ${f['Status']===s?'selected':''}>${s}</option>`).join('')}
           </select>
           ${f['Email']?`<a href="mailto:${esc(f['Email'])}" class="btn-sm btn-outline">Email</a>`:''}
-          <button class="btn-sm btn-outline" onclick="deleteLocation('${loc.id}')">🗑</button>
+          <button class="btn-sm btn-outline" onclick="deleteLocation('${loc.id}')">ð</button>
         </div>
       </div>
     `;
@@ -2182,10 +2170,10 @@ async function deleteLocation(recordId) {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({recordId}),
     });
-    toast('Location deleted','🗑');
+    toast('Location deleted','ð');
     STATE.locations = STATE.locations.filter(l => l.id !== recordId);
     renderLocationCards();
-  } catch(e) { toast('Failed to delete location.','❌'); }
+  } catch(e) { toast('Failed to delete location.','â'); }
 }
 
 function showAddLocation() {
@@ -2210,7 +2198,7 @@ function showAddLocation() {
 
 async function doAddLocation() {
   const name = document.getElementById('loc-name').value.trim();
-  if (!name) { toast('Location name required.','⚠️'); return; }
+  if (!name) { toast('Location name required.','â ï¸'); return; }
   try {
     await fetch(API + '?action=add-location', {
       method:'POST', headers:{'Content-Type':'application/json'},
@@ -2225,12 +2213,12 @@ async function doAddLocation() {
       }),
     });
     closeModal();
-    toast('Location added!','✅');
+    toast('Location added!','â');
     const res  = await fetch(`${API}?action=get-locations`);
     const data = await res.json();
     STATE.locations = data.records || [];
     renderLocationCards();
-  } catch(e) { toast('Failed to add location.','❌'); }
+  } catch(e) { toast('Failed to add location.','â'); }
 }
 
 async function updateLocStatus(recordId, status) {
@@ -2239,11 +2227,11 @@ async function updateLocStatus(recordId, status) {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({recordId, status, notes:''}),
     });
-    toast('Status updated','✅');
+    toast('Status updated','â');
   } catch(e) {}
 }
 
-// ─── BUDGET ──────────────────────────────────────────────────────
+// âââ BUDGET ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 async function renderBudgetSection(el) {
   el.innerHTML = `
     <div class="section-header">
@@ -2279,7 +2267,7 @@ async function loadBudget() {
       <td><input type="number" value="${alloc}" onblur="saveBudgetRow('${r.id}',this.value,null)" style="width:100px;background:transparent;border:none;color:var(--text);font-family:monospace"></td>
       <td><input type="number" value="${spent}" onblur="saveBudgetRow('${r.id}',null,this.value)" style="width:100px;background:transparent;border:none;color:var(--text);font-family:monospace"></td>
       <td style="font-family:monospace;color:${rem<0?'var(--red)':'var(--gold)'}">$${rem.toFixed(2)}</td>
-      <td><button class="btn-sm btn-outline" onclick="deleteBudgetRow('${r.id}')">🗑</button></td>
+      <td><button class="btn-sm btn-outline" onclick="deleteBudgetRow('${r.id}')">ð</button></td>
     </tr>`;
   }).join('');
 }
@@ -2294,9 +2282,9 @@ async function saveBudgetRow(recordId, allocated, spent) {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({recordId, allocated: finalAlloc, spent: finalSpent}),
     });
-    toast('Budget updated','✅');
+    toast('Budget updated','â');
     loadBudget();
-  } catch(e) { toast('Failed to update.','❌'); }
+  } catch(e) { toast('Failed to update.','â'); }
 }
 
 function addBudgetRow() {
@@ -2314,7 +2302,7 @@ function addBudgetRow() {
 
 async function saveBudgetCategory() {
   const category = document.getElementById('bg-cat').value.trim();
-  if (!category) { toast('Category name required.','⚠️'); return; }
+  if (!category) { toast('Category name required.','â ï¸'); return; }
   try {
     await fetch(API + '?action=add-budget-row', {
       method:'POST', headers:{'Content-Type':'application/json'},
@@ -2325,9 +2313,9 @@ async function saveBudgetCategory() {
       }),
     });
     closeModal();
-    toast('Category added','✅');
+    toast('Category added','â');
     loadBudget();
-  } catch(e) { toast('Failed to add category.','❌'); }
+  } catch(e) { toast('Failed to add category.','â'); }
 }
 
 async function deleteBudgetRow(recordId) {
@@ -2336,14 +2324,14 @@ async function deleteBudgetRow(recordId) {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({recordId}),
     });
-    toast('Category deleted','🗑');
+    toast('Category deleted','ð');
     loadBudget();
-  } catch(e) { toast('Failed to delete.','❌'); }
+  } catch(e) { toast('Failed to delete.','â'); }
 }
 
-// ════════════════════════════════════════════════════════════════
-// EMAIL HUB — Zoho-backed send / inbox / sent-log (mailto fallback)
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// EMAIL HUB â Zoho-backed send / inbox / sent-log (mailto fallback)
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 const MAIL_ALIASES = {
   studio:  { address:'studio@bleuskm.com',  label:'Studio (Zaria)', hub:'Studio' },
   crew:    { address:'crew@bleuskm.com',    label:'Crew',           hub:'Crew' },
@@ -2387,13 +2375,13 @@ async function sendZohoMail({fromAlias, to, bcc, subject, text, attachments}) {
   return json;
 }
 
-// ── ATTACHMENTS (file + contract link) — shared by every compose surface ────
+// ââ ATTACHMENTS (file + contract link) â shared by every compose surface ââââ
 function attachmentControlsHTML(targetId) {
   return `
     <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap">
-      <button type="button" class="btn-sm btn-outline" onclick="document.getElementById('file-${targetId}').click()">📎 Attach File</button>
+      <button type="button" class="btn-sm btn-outline" onclick="document.getElementById('file-${targetId}').click()">ð Attach File</button>
       <input type="file" id="file-${targetId}" style="display:none" onchange="handleAttachFilePick(this,'${targetId}')">
-      <button type="button" class="btn-sm btn-outline" onclick="toggleContractPanel('${targetId}')">📎 Attach Contract</button>
+      <button type="button" class="btn-sm btn-outline" onclick="toggleContractPanel('${targetId}')">ð Attach Contract</button>
     </div>
     <div id="attach-status-${targetId}" style="font-size:11px;color:var(--muted);margin-bottom:6px"></div>
     <div id="contract-panel-${targetId}" class="hidden" style="border:1px solid var(--border);padding:10px;border-radius:6px;margin-bottom:10px">
@@ -2427,19 +2415,19 @@ function insertContractLink(targetId) {
     ta.dispatchEvent(new Event('input'));
   }
   document.getElementById(`contract-panel-${targetId}`)?.classList.add('hidden');
-  toast('Contract link added to message','📎');
+  toast('Contract link added to message','ð');
 }
 
 async function handleAttachFilePick(input, targetId) {
   const file = input.files[0];
   if (!file) return;
-  if (file.size > MAX_UPLOAD_BYTES) { toast(`File too large (${(file.size/1024/1024).toFixed(1)}MB). Keep attachments under 3.5MB.`,'⚠️'); input.value=''; return; }
+  if (file.size > MAX_UPLOAD_BYTES) { toast(`File too large (${(file.size/1024/1024).toFixed(1)}MB). Keep attachments under 3.5MB.`,'â ï¸'); input.value=''; return; }
   try {
     const base64 = await fileToBase64(file);
     STATE.pendingAttachment = { filename: file.name, content: base64, contentType: file.type || 'application/octet-stream' };
     const statusEl = document.getElementById(`attach-status-${targetId}`);
-    if (statusEl) statusEl.innerHTML = `📎 ${esc(file.name)} attached &middot; <a href="javascript:void(0)" onclick="clearPendingAttachment('${targetId}')" style="color:var(--red)">remove</a>`;
-  } catch(e) { toast('Could not read file.','❌'); }
+    if (statusEl) statusEl.innerHTML = `ð ${esc(file.name)} attached &middot; <a href="javascript:void(0)" onclick="clearPendingAttachment('${targetId}')" style="color:var(--red)">remove</a>`;
+  } catch(e) { toast('Could not read file.','â'); }
 }
 
 function clearPendingAttachment(targetId) {
@@ -2485,7 +2473,7 @@ function sentLogHTML(records) {
 }
 
 function inboxHTML(messages, alias) {
-  if (messages === null) return '<p style="color:var(--muted);font-size:12px;padding:6px">Inbox isn\'t connected yet — sending still works.</p>';
+  if (messages === null) return '<p style="color:var(--muted);font-size:12px;padding:6px">Inbox isn\'t connected yet â sending still works.</p>';
   if (!messages.length) return '<p style="color:var(--muted);font-size:12px;padding:6px">No messages.</p>';
   STATE.readInboxUids = STATE.readInboxUids || new Set();
   return messages.map(m => {
@@ -2523,7 +2511,7 @@ function buildQuotedReplyBody(m) {
 }
 
 async function openInboxMessage(uid, alias) {
-  showModal('Loading…', '<p style="color:var(--muted);font-size:13px">Loading message...</p>', [
+  showModal('Loadingâ¦', '<p style="color:var(--muted);font-size:13px">Loading message...</p>', [
     {label:'Close', cls:'btn-outline', action:'closeModal()'},
   ]);
   try {
@@ -2562,12 +2550,12 @@ async function openInboxMessage(uid, alias) {
 
 function openReplyOrForward(mode) {
   const m = STATE.lastInboxMsg;
-  if (!m) { toast('Message not available.','⚠️'); return; }
+  if (!m) { toast('Message not available.','â ï¸'); return; }
   const to = mode === 'reply' ? extractEmailAddress(m.from) : '';
   const subject = withSubjectPrefix(m.subject, mode === 'reply' ? 'Re:' : 'Fwd:');
   const body = buildQuotedReplyBody(m);
   const fromAlias = m.alias || 'studio';
-  showModal(`${mode === 'reply' ? 'Reply' : 'Forward'} — from ${MAIL_ALIASES[fromAlias].address}`, `
+  showModal(`${mode === 'reply' ? 'Reply' : 'Forward'} â from ${MAIL_ALIASES[fromAlias].address}`, `
     <div class="modal-row"><div class="modal-label">To</div><input id="rf-to" value="${esc(to)}" placeholder="recipient@email.com (comma-separate for multiple)"></div>
     <div class="modal-row" style="margin-top:8px"><div class="modal-label">Subject</div><input id="rf-subject" value="${esc(subject)}"></div>
     <div class="modal-row" style="margin-top:8px"><div class="modal-label">Message</div><textarea id="rf-body" rows="10">${esc(body)}</textarea></div>
@@ -2583,16 +2571,16 @@ async function sendReplyForwardEmail(fromAlias) {
   const to      = document.getElementById('rf-to')?.value.trim();
   const subject = document.getElementById('rf-subject')?.value.trim();
   const text    = document.getElementById('rf-body')?.value.trim();
-  if (!to)   { toast('Add at least one recipient.','⚠️'); return; }
-  if (!text) { toast('Write a message first.','⚠️'); return; }
+  if (!to)   { toast('Add at least one recipient.','â ï¸'); return; }
+  if (!text) { toast('Write a message first.','â ï¸'); return; }
   const attachments = STATE.pendingAttachment ? [STATE.pendingAttachment] : undefined;
   try {
     await sendZohoMail({ fromAlias, to, subject, text, attachments });
-    toast('Email sent!','✅');
+    toast('Email sent!','â');
     STATE.pendingAttachment = null;
     navigate('emailhub');
   } catch(e) {
-    toast(`Zoho send failed (${e.message||'unknown error'}) — opening your email client instead.`,'⚠️');
+    toast(`Zoho send failed (${e.message||'unknown error'}) â opening your email client instead.`,'â ï¸');
     STATE.pendingAttachment = null;
     window.location.href = `mailto:${to}?subject=${encodeURIComponent(subject||'')}&body=${encodeURIComponent(text||'')}`;
   }
@@ -2617,7 +2605,7 @@ async function renderEmailHub(el, defaultAlias, opts) {
       ${availableAliases.map(k => `<button class="btn-sm ${k===alias?'btn-gold':'btn-outline'}" onclick="switchEmailHubAlias('${k}')">${MAIL_ALIASES[k].label}</button>`).join('')}
     </div>`}
     <div class="card" style="margin-bottom:16px">
-      <div class="card-title">Compose — from ${esc(MAIL_ALIASES[alias].address)}</div>
+      <div class="card-title">Compose â from ${esc(MAIL_ALIASES[alias].address)}</div>
       <div class="modal-label" style="margin-top:2px">Quick-Pick Recipients</div>
       <div class="contact-scroll-header"><span id="eh-contact-count">0 of 0 selected</span>
         <span><button class="btn-sm btn-outline" style="padding:2px 8px;font-size:10px" onclick="toggleAllEmailHubRecipients(true)">Select All</button>
@@ -2626,7 +2614,7 @@ async function renderEmailHub(el, defaultAlias, opts) {
       <div class="contact-scroll" id="eh-contacts" style="margin-bottom:10px"><p style="color:var(--muted);font-size:12px;padding:6px">Loading contacts...</p></div>
       <div class="modal-row"><div class="modal-label">To</div><input id="eh-to" placeholder="recipient@email.com (comma-separate for multiple)"></div>
       <div class="modal-row" style="margin-top:8px"><div class="modal-label">Subject</div><input id="eh-subject" placeholder="Subject"></div>
-      <div class="modal-row" style="margin-top:8px"><div class="modal-label">Message</div><div style="display:flex;gap:6px;margin:4px 0 6px"><button class="btn-sm" onclick="(function(){var s=document.getElementById('eh-subject');var b=document.getElementById('eh-body');s.value='Re: Your Audition — The Final Hand';b.value='Dear [Name],\n\nThank you so much for your time and your audition for The Final Hand. After careful consideration, we have decided to move in a different direction for this role.\n\nWe truly appreciate your talent and your interest in our project. We wish you nothing but the best in your career!\n\nWarm regards,\nBLEUSKM Studios Production Team';})()" title="Fill pass/rejection email">Pass/Rejection</button><button class="btn-sm" onclick="(function(){var n=document.getElementById('ol-name')?.value||'[Name]';var r=document.getElementById('ol-role')?.value||'[Role]';var s=document.getElementById('eh-subject');var b=document.getElementById('eh-body');s.value='Official Offer — The Final Hand — '+n;b.value='Dear '+n+',\n\nWe are thrilled to officially offer you the role of '+r+' in our upcoming production, The Final Hand, presented by BLEUSKM Studios.\n\nPlease review and sign the enclosed cast agreement at your earliest convenience. Once signed, you will receive the production script and further details.\n\nWe are so excited to have you on board and look forward to creating something extraordinary together.\n\nWith gratitude,\nZaria\nDirector, The Final Hand | BLEUSKM Studios';})()" title="Fill offer letter email">Offer Letter</button></div><textarea id="eh-body" rows="5" placeholder="Type your message..."></textarea></div>
+      <div class="modal-row" style="margin-top:8px"><div class="modal-label">Message</div><div style="display:flex;gap:6px;margin:4px 0 6px"><button class="btn-sm" onclick="(function(){var s=document.getElementById('eh-subject');var b=document.getElementById('eh-body');s.value='Re: Your Audition â The Final Hand';b.value='Dear [Name],\n\nThank you so much for your time and your audition for The Final Hand. After careful consideration, we have decided to move in a different direction for this role.\n\nWe truly appreciate your talent and your interest in our project. We wish you nothing but the best in your career!\n\nWarm regards,\nBLEUSKM Studios Production Team';})()" title="Fill pass/rejection email">Pass/Rejection</button><button class="btn-sm" onclick="(function(){var n=document.getElementById('ol-name')?.value||'[Name]';var r=document.getElementById('ol-role')?.value||'[Role]';var s=document.getElementById('eh-subject');var b=document.getElementById('eh-body');s.value='Official Offer â The Final Hand â '+n;b.value='Dear '+n+',\n\nWe are thrilled to officially offer you the role of '+r+' in our upcoming production, The Final Hand, presented by BLEUSKM Studios.\n\nPlease review and sign the enclosed cast agreement at your earliest convenience. Once signed, you will receive the production script and further details.\n\nWe are so excited to have you on board and look forward to creating something extraordinary together.\n\nWith gratitude,\nZaria\nDirector, The Final Hand | BLEUSKM Studios';})()" title="Fill offer letter email">Offer Letter</button></div><textarea id="eh-body" rows="5" placeholder="Type your message..."></textarea></div>
       ${attachmentControlsHTML('eh-body')}
       <button class="btn-sm btn-gold" style="margin-top:10px" onclick="sendEmailHubMessage(${locked ? `'${alias}'` : 'null'})">Send</button>
     </div>
@@ -2673,7 +2661,7 @@ async function renderEmailHub(el, defaultAlias, opts) {
         </span>
       </label>
     `).join('')
-    : '<p style="color:#888;font-size:13px;padding:4px 0">No confirmed cast yet — update Cast Status to \"Confirmed\" in Airtable.</p>';
+    : '<p style="color:#888;font-size:13px;padding:4px 0">No confirmed cast yet â update Cast Status to \"Confirmed\" in Airtable.</p>';
   }
   updateEmailHubContactCount();
 }
@@ -2704,14 +2692,14 @@ function syncEmailHubTo() {
   updateEmailHubContactCount();
 }
 
-// ── QUICK EMAIL MODAL — reusable compose-to-multiple popup, used by any
-// "Email" button anywhere in the dash (Casting Database, Crew, etc.) ────────
+// ââ QUICK EMAIL MODAL â reusable compose-to-multiple popup, used by any
+// "Email" button anywhere in the dash (Casting Database, Crew, etc.) ââââââââ
 function showQuickEmailModal(opts) {
   opts = opts || {};
   const fromAlias = opts.fromAlias || 'studio';
   const contacts = opts.contacts || [];
   const preselected = new Set(opts.preselected || []);
-  showModal(`Email — from ${MAIL_ALIASES[fromAlias].address}`, `
+  showModal(`Email â from ${MAIL_ALIASES[fromAlias].address}`, `
     <div class="contact-scroll-header"><span id="qe-count">0 of ${contacts.length} selected</span>
       <span><button class="btn-sm btn-outline" style="padding:2px 8px;font-size:10px" onclick="toggleQuickEmailRecipients(true)">Select All</button>
       <button class="btn-sm btn-outline" style="padding:2px 8px;font-size:10px" onclick="toggleQuickEmailRecipients(false)">Deselect All</button></span>
@@ -2752,16 +2740,16 @@ async function sendQuickEmail(fromAlias) {
   const checked = [...document.querySelectorAll('.qe-recipient:checked')].map(cb => cb.value);
   const subject = document.getElementById('qe-subject')?.value.trim();
   const text = document.getElementById('qe-body')?.value.trim();
-  if (!checked.length) { toast('Select at least one recipient.','⚠️'); return; }
-  if (!text) { toast('Write a message first.','⚠️'); return; }
+  if (!checked.length) { toast('Select at least one recipient.','â ï¸'); return; }
+  if (!text) { toast('Write a message first.','â ï¸'); return; }
   const attachments = STATE.pendingAttachment ? [STATE.pendingAttachment] : undefined;
   try {
     await sendZohoMail({ fromAlias, bcc: checked.join(','), subject, text, attachments });
-    toast(`Sent to ${checked.length} ${checked.length===1?'person':'people'}.`,'✅');
+    toast(`Sent to ${checked.length} ${checked.length===1?'person':'people'}.`,'â');
     STATE.pendingAttachment = null;
     closeModal();
   } catch(e) {
-    toast(`Zoho send failed (${e.message||'unknown error'}) — opening your email client instead.`,'⚠️');
+    toast(`Zoho send failed (${e.message||'unknown error'}) â opening your email client instead.`,'â ï¸');
     STATE.pendingAttachment = null;
     closeModal();
     window.location.href = `mailto:?bcc=${checked.join(',')}&subject=${encodeURIComponent(subject||'')}&body=${encodeURIComponent(text||'')}`;
@@ -2778,22 +2766,22 @@ async function sendEmailHubMessage(lockedAlias) {
   const to      = document.getElementById('eh-to')?.value.trim();
   const subject = document.getElementById('eh-subject')?.value.trim();
   const text    = document.getElementById('eh-body')?.value.trim();
-  if (!to)   { toast('Enter at least one recipient.','⚠️'); return; }
-  if (!text) { toast('Write a message first.','⚠️'); return; }
+  if (!to)   { toast('Enter at least one recipient.','â ï¸'); return; }
+  if (!text) { toast('Write a message first.','â ï¸'); return; }
   const attachments = STATE.pendingAttachment ? [STATE.pendingAttachment] : undefined;
   try {
     await sendZohoMail({ fromAlias: alias, to, subject, text, attachments });
-    toast('Email sent!','✅');
+    toast('Email sent!','â');
     STATE.pendingAttachment = null;
     navigate('emailhub');
   } catch(e) {
-    toast(`Zoho send failed (${e.message||'unknown error'}) — opening your email client instead.`,'⚠️');
+    toast(`Zoho send failed (${e.message||'unknown error'}) â opening your email client instead.`,'â ï¸');
     STATE.pendingAttachment = null;
     window.location.href = `mailto:${to}?subject=${encodeURIComponent(subject||'')}&body=${encodeURIComponent(text||'')}`;
   }
 }
 
-// ─── AVAILABILITY ────────────────────────────────────────────────
+// âââ AVAILABILITY ââââââââââââââââââââââââââââââââââââââââââââââââ
 function renderAvailabilitySection(el) {
   const contacts = (STATE.crew.length ? STATE.crew.map(r=>({
     name: r.fields['Name']||'',
@@ -2820,7 +2808,7 @@ function renderAvailabilitySection(el) {
         <button class="btn-sm btn-outline" onclick="toggleAllAvailRecipients(true)">Select All</button>
         <button class="btn-sm btn-outline" onclick="toggleAllAvailRecipients(false)">Clear All</button>
       </div>
-      <div class="modal-row"><div class="modal-label">Date Range to Check</div><input id="avail-dates" placeholder="e.g. July 5–18, 2026"></div>
+      <div class="modal-row"><div class="modal-label">Date Range to Check</div><input id="avail-dates" placeholder="e.g. July 5â18, 2026"></div>
       <div class="modal-row"><div class="modal-label">Message</div><textarea id="avail-msg" rows="3" placeholder="Hi! We're scheduling and need your availability for..."></textarea></div>
       <button class="btn-sm btn-gold" style="margin-top:8px" onclick="sendAvailRequest()">Send (from crew@bleuskm.com)</button>
     </div>
@@ -2848,22 +2836,22 @@ async function sendAvailRequest() {
   const checked = [...document.querySelectorAll('.avail-recipient:checked')].map(cb => cb.value);
   const dates   = document.getElementById('avail-dates')?.value.trim() || '';
   const msg     = document.getElementById('avail-msg')?.value.trim() || '';
-  if (!checked.length) { toast('Select at least one recipient.','⚠️'); return; }
-  const subject = `Availability Check — ${STATE.filmName || FILM}`;
+  if (!checked.length) { toast('Select at least one recipient.','â ï¸'); return; }
+  const subject = `Availability Check â ${STATE.filmName || FILM}`;
   const bodyText = (msg || 'Hi, please reply with your availability for our upcoming shoot dates. Thank you!') + (dates ? `\n\nDates we're checking: ${dates}` : '');
   try {
     await sendZohoMail({ fromAlias:'crew', bcc: checked.join(','), subject, text: bodyText });
-    toast(`Availability request sent to ${checked.length} ${checked.length===1?'person':'people'}.`,'✅');
+    toast(`Availability request sent to ${checked.length} ${checked.length===1?'person':'people'}.`,'â');
     loadSentLog('Crew').then(r => { const sl = document.getElementById('avail-sent-log'); if (sl) sl.innerHTML = sentLogHTML(r); });
   } catch(e) {
-    toast(`Zoho send failed (${e.message||'unknown error'}) — opening your email client instead.`,'⚠️');
+    toast(`Zoho send failed (${e.message||'unknown error'}) â opening your email client instead.`,'â ï¸');
     const subj = encodeURIComponent(subject);
     const body = encodeURIComponent(bodyText);
     window.location.href = `mailto:?bcc=${checked.join(',')}&subject=${subj}&body=${body}`;
   }
 }
 
-// ─── OFFER LETTERS ───────────────────────────────────────────────
+// âââ OFFER LETTERS âââââââââââââââââââââââââââââââââââââââââââââââ
 async function renderOfferLetters(el) {
   STATE.pendingAttachment = null;
   el.innerHTML = `
@@ -2872,10 +2860,7 @@ async function renderOfferLetters(el) {
       <div class="card-title">Generate Offer Letter</div>
       <div class="modal-label" style="margin-top:2px">Finalized Cast &amp; Crew</div>
       <div class="contact-scroll" id="ol-contacts" style="margin-bottom:10px"><p style="color:var(--muted);font-size:12px;padding:6px">Loading contacts...</p></div>
-      <div id="ol-contract-links" style="display:none;border:1px solid rgba(240,192,64,0.25);border-radius:8px;padding:12px;margin-bottom:12px;background:rgba(240,192,64,0.04)">
-        <div class="modal-label" style="margin-bottom:8px;color:#f0c040">📄 Contracts for <span id="ol-contract-name" style="color:#fff"></span></div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px" id="ol-contract-btns"></div>
-      </div>
+
       <div class="grid2" style="gap:10px;margin-bottom:10px">
         <div><div class="modal-label">To (Full Name)</div><input id="ol-name" placeholder="Actor / Crew name" oninput="previewOffer()"></div>
         <div><div class="modal-label">Role</div><input id="ol-role" placeholder="e.g. Lead Actor" oninput="previewOffer()"></div>
@@ -2907,7 +2892,7 @@ async function renderOfferLetters(el) {
             </span>
           </label>
         `).join('')
-        : '<p style="color:#888;font-size:13px;padding:4px 0">No confirmed cast yet — set Cast Status to &quot;Confirmed&quot; in Airtable.</p>';
+        : '<p style="color:#888;font-size:13px;padding:4px 0">No confirmed cast yet â set Cast Status to &quot;Confirmed&quot; in Airtable.</p>';
     }
     const contacts = (STATE.casting||[]).filter(c=>c.fields&&c.fields["Cast Status"]==="Confirmed").map(c=>({name:c.fields["Name"]||"",role:c.fields["Role"]||"",email:c.fields["Email"]||"",type:"cast"}));
     renderOLContacts(contacts);
@@ -2936,29 +2921,16 @@ function selectOfferContact(name, email, role) {
   if (rcpName) rcpName.value = name;
   if (rcpEmail) rcpEmail.value = email;
   if (rcpRole) rcpRole.value = role;
-  updateOLContractLinks(name);
+  if (name && email) {
+    STATE.autoContractLinks = [
+      { label: 'Cast Agreement', url: contractLink(name, email, role, 'Cast Agreement') },
+      { label: 'Talent Release', url: contractLink(name, email, role, 'Talent Release') },
+      { label: 'Actor Deal Memo', url: contractLink(name, email, role, 'Actor Deal Memo') },
+    ];
+  } else {
+    STATE.autoContractLinks = [];
+  }
   previewOffer();
-}
-
-function updateOLContractLinks(name) {
-  const panel = document.getElementById('ol-contract-links');
-  const nameSpan = document.getElementById('ol-contract-name');
-  const btns = document.getElementById('ol-contract-btns');
-  if (!panel) return;
-  if (!name) { panel.style.display = 'none'; return; }
-  const actor = CAST_DRIVE_DOCS[name];
-  const base = 'https://docs.google.com/document/d/';
-  if (nameSpan) nameSpan.textContent = name;
-  const docs = [
-    { label: '📝 Cast Agreement', id: actor ? actor.agreement : null },
-    { label: '📋 Talent Release', id: SHARED_DRIVE_DOCS ? SHARED_DRIVE_DOCS.release : null },
-    { label: '📄 Actor Deal Memo', id: SHARED_DRIVE_DOCS ? SHARED_DRIVE_DOCS.memo : null },
-  ];
-  if (btns) btns.innerHTML = docs.map(doc => doc.id
-    ? `<a href="${base}${doc.id}/edit" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(240,192,64,0.12);border:1px solid rgba(240,192,64,0.35);border-radius:6px;color:#f0c040;font-size:12px;font-weight:600;text-decoration:none">${doc.label}</a>`
-    : `<span style="color:var(--muted);font-size:12px">${doc.label} — not yet on file</span>`
-  ).join('');
-  panel.style.display = 'block';
 }
 
 function previewOffer() {
@@ -2971,7 +2943,7 @@ We are thrilled to officially offer you the role of ${role} on our production of
 
 Your talent and dedication have made you the right fit for this project, and we look forward to creating something powerful together.
 
-${custom ? custom + '\n\n' : ''}Please find your cast agreement attached. Once signed and returned, your position will be confirmed.
+${custom ? custom + '\n\n' : ''}${(STATE.autoContractLinks && STATE.autoContractLinks.length) ? 'Please review and sign your contracts using the links below:\n' + STATE.autoContractLinks.map(c => c.label + ': ' + c.url).join('\n') + '\n\nOnce all three are signed and returned, your position will be officially confirmed.' : 'Please find your cast agreement attached. Once signed and returned, your position will be confirmed.'}
 
 Shoot dates and call sheets will follow. If you have any questions, do not hesitate to reach out.
 
@@ -2987,22 +2959,22 @@ BLEUSKM Studios`;
 
 function copyOffer() {
   const text = document.getElementById('offer-preview')?.textContent;
-  if (text) navigator.clipboard.writeText(text).then(() => toast('Letter copied!','📋'));
+  if (text) navigator.clipboard.writeText(text).then(() => toast('Letter copied!','ð'));
 }
 
 async function sendOfferEmail() {
   const email = document.getElementById('ol-email')?.value.trim();
   const name  = document.getElementById('ol-name')?.value || '';
   const text  = document.getElementById('offer-preview')?.textContent || '';
-  if (!email) { toast('Enter recipient email.','⚠️'); return; }
-  const subject = `Official Offer — ${STATE.filmName} | BLEUSKM Studios`;
+  if (!email) { toast('Enter recipient email.','â ï¸'); return; }
+  const subject = `Official Offer â ${STATE.filmName} | BLEUSKM Studios`;
   const attachments = STATE.pendingAttachment ? [STATE.pendingAttachment] : undefined;
   try {
     await sendZohoMail({ fromAlias:'casting', to: email, subject, text, attachments });
-    toast(`Offer sent to ${name||email}.`,'✅');
+    toast(`Offer sent to ${name||email}.`,'â');
     STATE.pendingAttachment = null;
   } catch(e) {
-    toast(`Zoho send failed (${e.message||'unknown error'}) — opening your email client instead.`,'⚠️');
+    toast(`Zoho send failed (${e.message||'unknown error'}) â opening your email client instead.`,'â ï¸');
     STATE.pendingAttachment = null;
     const subj = encodeURIComponent(subject);
     const body = encodeURIComponent(text);
@@ -3010,10 +2982,10 @@ async function sendOfferEmail() {
   }
 }
 
-// ════════════════════════════════════════════════════════════════
-// MEETING POLLS — group-availability scheduling (table reads, crew
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// MEETING POLLS â group-availability scheduling (table reads, crew
 // meetings, DP/1st AC syncs, etc.) Pick-the-best-overlap, not 1:1 booking.
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 const POLL_BASE = 'https://bleuskm.com/poll/';
 
 async function renderMeetingPolls(el) {
@@ -3022,7 +2994,7 @@ async function renderMeetingPolls(el) {
       <div class="section-title">Meeting Polls</div>
       <button class="btn-sm btn-gold" onclick="showCreatePollModal()">+ New Poll</button>
     </div>
-    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Send a quick "what times work for you" check to any mix of crew and cast — table reads, crew meetings, DP/1st AC syncs, final prep. Everyone checks every time that works for them; see the tally below and lock in whichever has the most overlap.</p>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Send a quick "what times work for you" check to any mix of crew and cast â table reads, crew meetings, DP/1st AC syncs, final prep. Everyone checks every time that works for them; see the tally below and lock in whichever has the most overlap.</p>
     <div id="polls-list"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
   `;
   await loadPollsList();
@@ -3053,7 +3025,7 @@ function pollCardHTML(p) {
           <button class="btn-sm btn-outline" onclick="copyPollLink('${p.id}')">Copy Link</button>
           <button class="btn-sm btn-outline" onclick="togglePollResults('${p.id}')">View Results</button>
           ${!f['Final Time'] ? `<button class="btn-sm btn-outline" onclick="showLockFinalTime('${p.id}')">Lock Final Time</button>` : ''}
-          <button class="btn-sm btn-outline" onclick="deletePoll('${p.id}')">🗑</button>
+          <button class="btn-sm btn-outline" onclick="deletePoll('${p.id}')">ð</button>
         </div>
       </div>
       <div id="poll-results-${p.id}" class="hidden" style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px"></div>
@@ -3063,7 +3035,7 @@ function pollCardHTML(p) {
 
 function copyPollLink(pollId) {
   const link = `${POLL_BASE}?id=${pollId}`;
-  navigator.clipboard.writeText(link).then(() => toast('Poll link copied!','📋'));
+  navigator.clipboard.writeText(link).then(() => toast('Poll link copied!','ð'));
 }
 
 async function togglePollResults(pollId) {
@@ -3096,7 +3068,7 @@ function renderPollTally(options, responses) {
     ${sorted.map(([opt,names]) => `
       <div style="margin-bottom:8px">
         <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:600"><span>${esc(opt)}</span><span style="color:var(--gold)">${names.length}</span></div>
-        <div style="font-size:11px;color:var(--muted);margin-top:2px">${names.length?esc(names.join(', ')):'—'}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">${names.length?esc(names.join(', ')):'â'}</div>
       </div>
     `).join('')}
   `;
@@ -3147,33 +3119,33 @@ async function saveLockFinalTime(pollId) {
         const data = await res.json();
         const emails = [...new Set((data.records||[]).map(r => r.fields['Respondent Email']).filter(Boolean))];
         if (emails.length) {
-          const subject = `Final time locked — ${title}`;
+          const subject = `Final time locked â ${title}`;
           const bodyText = `Hi!\n\nThe final time for "${title}" is locked in:\n\n${finalTime}\n\n${meetLink ? `Join here: ${meetLink}\n\n` : ''}See you then!`;
           try {
             await sendZohoMail({ fromAlias, bcc: emails.join(','), subject, text: bodyText });
-            toast(`Final time locked and announced to ${emails.length} ${emails.length===1?'person':'people'}.`,'✅');
+            toast(`Final time locked and announced to ${emails.length} ${emails.length===1?'person':'people'}.`,'â');
           } catch(e) {
-            toast('Locked in — Zoho send failed, opening your email client.','⚠️');
+            toast('Locked in â Zoho send failed, opening your email client.','â ï¸');
             window.location.href = `mailto:?bcc=${emails.join(',')}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
           }
         } else {
-          toast('Final time locked in (no respondent emails to announce to).','✅');
+          toast('Final time locked in (no respondent emails to announce to).','â');
         }
-      } catch(e) { toast('Final time locked in (could not load responses to announce).','✅'); }
+      } catch(e) { toast('Final time locked in (could not load responses to announce).','â'); }
     } else {
-      toast('Final time locked in','✅');
+      toast('Final time locked in','â');
     }
     closeModal();
     navigate('polls');
-  } catch(e) { toast('Failed to lock final time.','❌'); }
+  } catch(e) { toast('Failed to lock final time.','â'); }
 }
 
 async function deletePoll(pollId) {
   try {
     await fetch(API + '?action=delete-poll', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({recordId:pollId}) });
-    toast('Poll deleted','🗑');
+    toast('Poll deleted','ð');
     loadPollsList();
-  } catch(e) { toast('Failed to delete poll.','❌'); }
+  } catch(e) { toast('Failed to delete poll.','â'); }
 }
 
 async function showCreatePollModal() {
@@ -3191,7 +3163,7 @@ async function showCreatePollModal() {
   const contacts = [...crewContacts, ...castContacts];
 
   showModal('New Meeting Poll', `
-    <div class="modal-row"><div class="modal-label">Meeting Title</div><input id="poll-title" placeholder="e.g. Table Read — Cast & Crew"></div>
+    <div class="modal-row"><div class="modal-label">Meeting Title</div><input id="poll-title" placeholder="e.g. Table Read â Cast & Crew"></div>
     <div class="modal-row"><div class="modal-label">Candidate Times (one per line)</div><textarea id="poll-options" rows="4" placeholder="July 6, 2:00pm&#10;July 7, 10:00am&#10;July 8, 4:00pm"></textarea></div>
     <div class="modal-row"><div class="modal-label">Send From</div>
       <select id="poll-from">
@@ -3238,9 +3210,9 @@ async function createAndSendPoll() {
   const optionsRaw = document.getElementById('poll-options').value.trim();
   const fromAlias  = document.getElementById('poll-from').value;
   const checked    = [...document.querySelectorAll('.poll-recipient:checked')].map(cb => cb.value);
-  if (!title)      { toast('Give the meeting a title.','⚠️'); return; }
-  if (!optionsRaw) { toast('Add at least one candidate time.','⚠️'); return; }
-  if (!checked.length) { toast('Select at least one recipient.','⚠️'); return; }
+  if (!title)      { toast('Give the meeting a title.','â ï¸'); return; }
+  if (!optionsRaw) { toast('Add at least one candidate time.','â ï¸'); return; }
+  if (!checked.length) { toast('Select at least one recipient.','â ï¸'); return; }
 
   try {
     const res = await fetch(API + '?action=create-poll', {
@@ -3252,23 +3224,23 @@ async function createAndSendPoll() {
     if (!pollId) throw new Error('Could not create poll.');
 
     const link = `${POLL_BASE}?id=${pollId}`;
-    const subject = `Quick poll — ${title}`;
+    const subject = `Quick poll â ${title}`;
     const bodyText = `Hi! We're locking in a time for "${title}". Please check every time below that works for you:\n\n${link}\n\nThanks!`;
     try {
       await sendZohoMail({ fromAlias, bcc: checked.join(','), subject, text: bodyText });
-      toast(`Poll created and sent to ${checked.length} ${checked.length===1?'person':'people'}.`,'✅');
+      toast(`Poll created and sent to ${checked.length} ${checked.length===1?'person':'people'}.`,'â');
     } catch(e) {
-      toast('Poll created — Zoho send failed, opening your email client.','⚠️');
+      toast('Poll created â Zoho send failed, opening your email client.','â ï¸');
       window.location.href = `mailto:?bcc=${checked.join(',')}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
     }
     closeModal();
     navigate('polls');
-  } catch(e) { toast('Failed to create poll.','❌'); }
+  } catch(e) { toast('Failed to create poll.','â'); }
 }
 
-// ════════════════════════════════════════════════════════════════
-// TASK BOARD — assign + track work across producers (and anyone else)
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// TASK BOARD â assign + track work across producers (and anyone else)
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 const TASK_ASSIGNEES = ['Ceion','Carmen','Fabiola','Director (Zaria)','Unassigned'];
 const TASK_STATUSES  = ['To Do','In Progress','Done'];
 
@@ -3288,7 +3260,7 @@ async function renderTaskBoard(el) {
         <button class="btn-sm btn-gold" onclick="showNewTaskModal()">+ New Task</button>
       </div>
     </div>
-    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Assign work to Ceion, Carmen, Fabiola, or yourself — grouped by person so everyone can see their own To Do, In Progress, and Done.</p>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Assign work to Ceion, Carmen, Fabiola, or yourself â grouped by person so everyone can see their own To Do, In Progress, and Done.</p>
     <div id="tb-columns">
       <p style="color:var(--muted);font-size:13px">Loading...</p>
     </div>
@@ -3311,7 +3283,7 @@ async function loadTaskBoard() {
   const cols = document.getElementById('tb-columns');
   if (!cols) return;
 
-  // Group by assignee so each person's work is its own section — never mixed
+  // Group by assignee so each person's work is its own section â never mixed
   // in with everyone else's. Keep a stable, friendly order; only show
   // "Unassigned" if there's actually an unassigned task.
   const present = new Set(tasks.map(t => t.fields['Assigned To'] || 'Unassigned'));
@@ -3360,15 +3332,15 @@ function taskCardHTML(t, opts) {
       <div style="font-size:13px;font-weight:600;color:var(--text)">${esc(f['Title']||'Untitled')}</div>
       ${f['Description'] ? `<div style="font-size:11px;color:var(--muted);margin-top:4px">${esc(f['Description'])}</div>` : ''}
       <div style="display:flex;justify-content:flex-end;align-items:center;margin-top:8px;font-size:10px;color:var(--muted)">
-        ${due ? `<span style="color:${overdue?'var(--red)':'var(--muted)'}">${overdue?'⚠ ':''}Due ${due.toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>` : ''}
+        ${due ? `<span style="color:${overdue?'var(--red)':'var(--muted)'}">${overdue?'â  ':''}Due ${due.toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>` : ''}
       </div>
       <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
         <select style="font-size:10px;flex:1" onchange="${statusFn}('${t.id}',this.value)">
           ${TASK_STATUSES.map(s=>`<option ${f['Status']===s?'selected':''}>${s}</option>`).join('')}
         </select>
         ${manage ? `
-          <button class="btn-sm btn-outline" style="padding:2px 8px;font-size:10px" onclick="showEditTaskModal('${t.id}')">✏️</button>
-          <button class="btn-sm btn-outline" style="padding:2px 8px;font-size:10px" onclick="deleteTask('${t.id}')">🗑</button>
+          <button class="btn-sm btn-outline" style="padding:2px 8px;font-size:10px" onclick="showEditTaskModal('${t.id}')">âï¸</button>
+          <button class="btn-sm btn-outline" style="padding:2px 8px;font-size:10px" onclick="deleteTask('${t.id}')">ð</button>
         ` : ''}
       </div>
     </div>
@@ -3377,7 +3349,7 @@ function taskCardHTML(t, opts) {
 
 function showEditTaskModal(recordId) {
   const t = (STATE.tasks||[]).find(x => x.id === recordId);
-  if (!t) { toast('Task not found.','❌'); return; }
+  if (!t) { toast('Task not found.','â'); return; }
   const f = t.fields;
   showModal('Edit Task', `
     <div class="modal-row"><div class="modal-label">Title</div><input id="task-edit-title" value="${esc(f['Title']||'')}"></div>
@@ -3401,16 +3373,16 @@ async function saveEditTask(recordId) {
   const description = document.getElementById('task-edit-desc')?.value.trim();
   const assignedTo = document.getElementById('task-edit-assignee')?.value;
   const dueDate = document.getElementById('task-edit-due')?.value;
-  if (!title) { toast('Give the task a title.','⚠️'); return; }
+  if (!title) { toast('Give the task a title.','â ï¸'); return; }
   try {
     await fetch(API + '?action=update-task', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ recordId, title, description, assignedTo, dueDate }),
     });
     closeModal();
-    toast('Task updated','✅');
+    toast('Task updated','â');
     loadTaskBoard();
-  } catch(e) { toast('Failed to update task.','❌'); }
+  } catch(e) { toast('Failed to update task.','â'); }
 }
 
 function showNewTaskModal() {
@@ -3436,16 +3408,16 @@ async function saveNewTask() {
   const description = document.getElementById('task-desc')?.value.trim();
   const assignedTo = document.getElementById('task-assignee')?.value;
   const dueDate = document.getElementById('task-due')?.value;
-  if (!title) { toast('Give the task a title.','⚠️'); return; }
+  if (!title) { toast('Give the task a title.','â ï¸'); return; }
   try {
     await fetch(API + '?action=create-task', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ title, description, assignedTo, dueDate, createdBy: STATE.name || DEPT_LABELS[STATE.dept] || '' }),
     });
     closeModal();
-    toast('Task created','✅');
+    toast('Task created','â');
     loadTaskBoard();
-  } catch(e) { toast('Failed to create task.','❌'); }
+  } catch(e) { toast('Failed to create task.','â'); }
 }
 
 async function updateTaskStatus(recordId, status) {
@@ -3455,7 +3427,7 @@ async function updateTaskStatus(recordId, status) {
       body: JSON.stringify({ recordId, status }),
     });
     loadTaskBoard();
-  } catch(e) { toast('Failed to update task.','❌'); }
+  } catch(e) { toast('Failed to update task.','â'); }
 }
 
 async function deleteTask(recordId) {
@@ -3464,14 +3436,14 @@ async function deleteTask(recordId) {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ recordId }),
     });
-    toast('Task deleted','🗑');
+    toast('Task deleted','ð');
     loadTaskBoard();
-  } catch(e) { toast('Failed to delete task.','❌'); }
+  } catch(e) { toast('Failed to delete task.','â'); }
 }
 
-// ════════════════════════════════════════════════════════════════
-// PUSH TO DEPARTMENT — cross-department (and cross-person) notes
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// PUSH TO DEPARTMENT â cross-department (and cross-person) notes
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 const PUSH_DEPTS = [
   {key:'director',         label:'Director'},
   {key:'producer',         label:'Producer'},
@@ -3482,7 +3454,7 @@ const PUSH_DEPTS = [
   {key:'all',              label:'Everyone'},
 ];
 
-// Excludes yourself — pushing a note to your own name doesn't make sense,
+// Excludes yourself â pushing a note to your own name doesn't make sense,
 // especially for single-person departments like Director.
 function getDeptRoster(deptKey) {
   return Object.values(LOCAL_USERS).filter(u => u.department === deptKey && u.name !== STATE.name).map(u => u.name);
@@ -3520,7 +3492,7 @@ async function sendPushNote() {
   const toPerson = document.getElementById('pn-person')?.value || '';
   const title    = document.getElementById('pn-title')?.value.trim() || 'Note';
   const content  = document.getElementById('pn-content')?.value.trim();
-  if (!content) { toast('Write a message first.','⚠️'); return; }
+  if (!content) { toast('Write a message first.','â ï¸'); return; }
   try {
     await fetch(API + '?action=push-note', {
       method:'POST', headers:{'Content-Type':'application/json'},
@@ -3532,10 +3504,10 @@ async function sendPushNote() {
     });
     closeModal();
     const toLabel = (PUSH_DEPTS.find(d=>d.key===toDept)||{}).label || toDept;
-    toast(`Note pushed to ${toPerson || toLabel}`,'✅');
+    toast(`Note pushed to ${toPerson || toLabel}`,'â');
     loadPushInbox(STATE.dept);
     loadSentNotes(STATE.dept);
-  } catch(e) { toast('Failed to push note.','❌'); }
+  } catch(e) { toast('Failed to push note.','â'); }
 }
 
 // Appends a compose + inbox card into whatever element is currently rendered.
@@ -3546,14 +3518,14 @@ async function renderPushWidget(el, deptKey) {
         <div class="card-title">Push to Department</div>
         <button class="btn-sm btn-gold" onclick="showPushNoteModal()">+ Push Note</button>
       </div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Send a quick note to any department — or to a specific person once there's more than one of them.</p>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Send a quick note to any department â or to a specific person once there's more than one of them.</p>
       <div id="push-inbox-${deptKey}"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
     </div>
     <div class="card" style="margin-top:16px">
       <div class="section-header" style="margin-bottom:8px">
         <div class="card-title">Sent by You</div>
       </div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Notes you've pushed out — click one to edit or delete it. Edits update wherever the note was sent.</p>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Notes you've pushed out â click one to edit or delete it. Edits update wherever the note was sent.</p>
       <div id="push-sent-${deptKey}"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
     </div>
   `;
@@ -3577,33 +3549,33 @@ async function loadPushInbox(deptKey) {
     elx.innerHTML = mine.length ? `<div class="note-grid">${mine.map(r => `
       <div class="note-square" style="cursor:pointer" onclick="openPushNote('${r.id}','${deptKey}')">
         <div>
-          <div class="note-meta">${esc(r.fields['From Person']||r.fields['From Department']||'')} → ${esc(r.fields['To Person'] ? r.fields['To Person'] : 'Whole Dept')}</div>
+          <div class="note-meta">${esc(r.fields['From Person']||r.fields['From Department']||'')} â ${esc(r.fields['To Person'] ? r.fields['To Person'] : 'Whole Dept')}</div>
           <div style="font-size:12px;font-weight:600;margin-bottom:4px">${esc(r.fields['Title']||'')}</div>
           <div class="note-content">${esc(r.fields['Content']||'')}</div>
         </div>
-        <button class="btn-sm btn-outline" style="margin-top:8px;align-self:flex-start" onclick="event.stopPropagation();deletePushNote('${r.id}','${deptKey}')">🗑 Delete</button>
+        <button class="btn-sm btn-outline" style="margin-top:8px;align-self:flex-start" onclick="event.stopPropagation();deletePushNote('${r.id}','${deptKey}')">ð Delete</button>
       </div>
     `).join('')}</div>` : '<p style="color:var(--muted);font-size:13px">Nothing pushed here yet.</p>';
   } catch(e) { elx.innerHTML = '<p style="color:var(--muted);font-size:13px">Could not load.</p>'; }
 }
 
-// Opens the full, untruncated note in a modal — the note-square card clamps
+// Opens the full, untruncated note in a modal â the note-square card clamps
 // content to 5 lines, so this is how the rest of a longer note gets read.
 function openPushNote(recordId, deptKey) {
   const r = _pushNoteCache[recordId];
   if (!r) return;
-  const meta = `${r.fields['From Person']||r.fields['From Department']||''} → ${r.fields['To Person'] ? r.fields['To Person'] : 'Whole Dept'}`;
+  const meta = `${r.fields['From Person']||r.fields['From Department']||''} â ${r.fields['To Person'] ? r.fields['To Person'] : 'Whole Dept'}`;
   showModal(r.fields['Title'] || 'Note', `
     <div class="note-meta" style="margin-bottom:10px">${esc(meta)}</div>
     <div style="font-size:14px;line-height:1.6;white-space:pre-wrap">${esc(r.fields['Content']||'')}</div>
   `, [
     {label:'Close', cls:'btn-outline', action:'closeModal()'},
-    {label:'🗑 Delete', cls:'btn-outline', action:`deletePushNote('${recordId}','${deptKey}');closeModal();`},
+    {label:'ð Delete', cls:'btn-outline', action:`deletePushNote('${recordId}','${deptKey}');closeModal();`},
   ]);
 }
 
 // Notes the logged-in person has sent, regardless of which department or
-// person they were sent to — so a pushed note also shows up on the
+// person they were sent to â so a pushed note also shows up on the
 // sender's own dashboard, not just the recipient's.
 async function loadSentNotes(deptKey) {
   const elx = document.getElementById(`push-sent-${deptKey}`);
@@ -3624,7 +3596,7 @@ async function loadSentNotes(deptKey) {
           <div style="font-size:12px;font-weight:600;margin-bottom:4px">${esc(r.fields['Title']||'')}</div>
           <div class="note-content">${esc(r.fields['Content']||'')}</div>
         </div>
-        <button class="btn-sm btn-outline" style="margin-top:8px;align-self:flex-start" onclick="event.stopPropagation();deletePushNote('${r.id}','${deptKey}')">🗑 Delete</button>
+        <button class="btn-sm btn-outline" style="margin-top:8px;align-self:flex-start" onclick="event.stopPropagation();deletePushNote('${r.id}','${deptKey}')">ð Delete</button>
       </div>
     `; }).join('')}</div>` : '<p style="color:var(--muted);font-size:13px">You haven\'t pushed any notes yet.</p>';
   } catch(e) { elx.innerHTML = '<p style="color:var(--muted);font-size:13px">Could not load.</p>'; }
@@ -3643,7 +3615,7 @@ function openSentNote(recordId, deptKey) {
     <div class="modal-row" style="margin-top:8px"><div class="modal-label">Message</div><textarea id="pn-edit-content" rows="5">${esc(r.fields['Content']||'')}</textarea></div>
   `, [
     {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
-    {label:'🗑 Delete', cls:'btn-outline', action:`deletePushNote('${recordId}','${deptKey}');closeModal();`},
+    {label:'ð Delete', cls:'btn-outline', action:`deletePushNote('${recordId}','${deptKey}');closeModal();`},
     {label:'Save', cls:'btn-gold', action:`saveEditedPushNote('${recordId}','${deptKey}')`},
   ]);
 }
@@ -3651,17 +3623,17 @@ function openSentNote(recordId, deptKey) {
 async function saveEditedPushNote(recordId, deptKey) {
   const title   = document.getElementById('pn-edit-title')?.value.trim() || 'Note';
   const content = document.getElementById('pn-edit-content')?.value.trim();
-  if (!content) { toast('Write a message first.','⚠️'); return; }
+  if (!content) { toast('Write a message first.','â ï¸'); return; }
   try {
     await fetch(API + '?action=update-pushed-note', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ recordId, title, content }),
     });
     closeModal();
-    toast('Note updated','✅');
+    toast('Note updated','â');
     loadSentNotes(deptKey);
     loadPushInbox(deptKey);
-  } catch(e) { toast('Failed to update note.','❌'); }
+  } catch(e) { toast('Failed to update note.','â'); }
 }
 
 async function deletePushNote(recordId, deptKey) {
@@ -3670,14 +3642,14 @@ async function deletePushNote(recordId, deptKey) {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ recordId }),
     });
-    toast('Deleted','🗑');
+    toast('Deleted','ð');
     loadPushInbox(deptKey);
-  } catch(e) { toast('Failed to delete.','❌'); }
+  } catch(e) { toast('Failed to delete.','â'); }
 }
 
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // DP SECTIONS
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 SECTIONS.dp = {
   shotlist:  (el) => renderFileSection(el, 'shotlist',   'Shot List',          '.pdf,.xlsx', 'Shot lists pushed here from Director will appear below.'),
   references:(el) => renderFileSection(el, 'references', 'References',         'image/*,.pdf'),
@@ -3689,9 +3661,9 @@ SECTIONS.dp = {
   emailhub:  (el) => renderEmailHub(el, 'crew', {aliases:['crew','casting'], includeCast:true}),
 };
 
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // AD SECTIONS
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 SECTIONS.ad = {
   schedule:   (el) => renderFileSection(el, 'schedule',   'Schedule',    '.pdf,.xlsx'),
   callsheets: (el) => renderFileSection(el, 'callsheets', 'Call Sheets', '.pdf'),
@@ -3704,9 +3676,9 @@ SECTIONS.ad = {
   emailhub:   (el) => renderEmailHub(el, 'crew', {lockAlias:true, includeCast:false}),
 };
 
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // SCRIPT SUPERVISOR SECTIONS
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 SECTIONS.scriptsupervisor = {
   script:     (el) => renderFileSection(el, 'script',    'Script',            '.pdf', 'Scripts pushed from Director appear here.'),
   scenes:     (el) => renderSceneBreakdown(el),
@@ -3740,9 +3712,9 @@ async function loadContinuity() {
     const f = r.fields;
     return `
       <div class="note-card">
-        <div class="note-meta">Scene ${esc(f['Scene']||'')} · Take ${esc(f['Take']||'')} · ${esc(f['Category']||'')} ${f['Created By']?'· '+esc(f['Created By']):''}</div>
+        <div class="note-meta">Scene ${esc(f['Scene']||'')} Â· Take ${esc(f['Take']||'')} Â· ${esc(f['Category']||'')} ${f['Created By']?'Â· '+esc(f['Created By']):''}</div>
         <div class="note-content">${esc(f['Note']||'')}</div>
-        <button class="btn-sm btn-outline" style="margin-top:8px" onclick="deleteContinuity('${r.id}')">🗑 Delete</button>
+        <button class="btn-sm btn-outline" style="margin-top:8px" onclick="deleteContinuity('${r.id}')">ð Delete</button>
       </div>
     `;
   }).join('') : '<p style="color:var(--muted);font-size:13px">No continuity notes yet.</p>';
@@ -3754,9 +3726,9 @@ async function deleteContinuity(recordId) {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({recordId}),
     });
-    toast('Note deleted','🗑');
+    toast('Note deleted','ð');
     loadContinuity();
-  } catch(e) { toast('Failed to delete.','❌'); }
+  } catch(e) { toast('Failed to delete.','â'); }
 }
 
 function addContinuityNote() {
@@ -3792,8 +3764,8 @@ async function saveContinuityNote() {
     });
     closeModal();
     navigate(STATE.section);
-    toast('Note saved','✅');
-  } catch(e) { toast('Failed to save note.','❌'); }
+    toast('Note saved','â');
+  } catch(e) { toast('Failed to save note.','â'); }
 }
 
 async function renderTakeLog(el) {
@@ -3827,8 +3799,8 @@ async function loadTakes() {
         <div class="take-cell">${esc(f['Scene']||'')}</div>
         <div class="take-cell">${esc(f['Take Number']||'')}</div>
         <div class="take-cell">${esc(f['Notes']||'')}</div>
-        <div class="take-cell">${f['Best Take'] ? '<span class="tag tag-gold">✓ Best</span>' : ''}</div>
-        <div class="take-cell"><button class="btn-sm btn-outline" onclick="deleteTake('${r.id}')">🗑</button></div>
+        <div class="take-cell">${f['Best Take'] ? '<span class="tag tag-gold">â Best</span>' : ''}</div>
+        <div class="take-cell"><button class="btn-sm btn-outline" onclick="deleteTake('${r.id}')">ð</button></div>
       </div>
     `;
   }).join('') : '<p style="padding:16px;color:var(--muted);font-size:13px">No takes logged yet.</p>';
@@ -3840,9 +3812,9 @@ async function deleteTake(recordId) {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({recordId}),
     });
-    toast('Take deleted','🗑');
+    toast('Take deleted','ð');
     loadTakes();
-  } catch(e) { toast('Failed to delete.','❌'); }
+  } catch(e) { toast('Failed to delete.','â'); }
 }
 
 function addTake() {
@@ -3872,8 +3844,8 @@ async function saveTake() {
     });
     closeModal();
     navigate('takelog');
-    toast('Take logged','✅');
-  } catch(e) { toast('Failed to log take.','❌'); }
+    toast('Take logged','â');
+  } catch(e) { toast('Failed to log take.','â'); }
 }
 
 function renderSceneBreakdown(el) {
@@ -3916,7 +3888,7 @@ async function loadScenes(allowEdit) {
       <td>${esc(f['Characters']||'')}</td>
       <td><span class="tag ${f['Day or Night']==='Day'?'tag-gold':'tag-blue'}">${esc(f['Day or Night']||'')}</span></td>
       <td>${esc(f['Key Action']||'')}</td>
-      ${allowEdit ? `<td><button class="btn-sm btn-outline" onclick="deleteScene('${r.id}',${allowEdit})">🗑</button></td>` : ''}
+      ${allowEdit ? `<td><button class="btn-sm btn-outline" onclick="deleteScene('${r.id}',${allowEdit})">ð</button></td>` : ''}
     </tr>`;
   }).join('');
 }
@@ -3927,17 +3899,17 @@ async function deleteScene(recordId, allowEdit) {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({recordId}),
     });
-    toast('Scene deleted','🗑');
+    toast('Scene deleted','ð');
     loadScenes(allowEdit);
-  } catch(e) { toast('Failed to delete scene.','❌'); }
+  } catch(e) { toast('Failed to delete scene.','â'); }
 }
 
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // SOUND SECTIONS
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 SECTIONS.sound = {
   soundnotes:  (el) => renderNotesSection(el, 'Sound', 'Sound Notes'),
-  silencecues: (el) => renderNotesSection(el, 'Sound', 'Silence Cues', 'Mark scenes that require silence — no background music, no extra noise.'),
+  silencecues: (el) => renderNotesSection(el, 'Sound', 'Silence Cues', 'Mark scenes that require silence â no background music, no extra noise.'),
   environment: (el) => renderNotesSection(el, 'Sound', 'Environment Tone', 'Describe the ambient sound texture for each location.'),
   moments:     (el) => renderKeyMoments(el),
   script:      (el) => renderFileSection(el, 'script', 'Script', '.pdf', 'Scripts pushed from Director appear here.'),
@@ -3968,7 +3940,7 @@ async function loadSoundMoments() {
     <div class="card">
       <div class="card-title">${esc(r.fields['Label']||'')}</div>
       <div style="font-size:12px;color:var(--muted)">${esc(r.fields['Note']||'')}</div>
-      <button class="btn-sm btn-outline" style="margin-top:8px" onclick="deleteSoundMoment('${r.id}')">🗑 Delete</button>
+      <button class="btn-sm btn-outline" style="margin-top:8px" onclick="deleteSoundMoment('${r.id}')">ð Delete</button>
     </div>
   `).join('') : '<p style="color:var(--muted);font-size:13px">No moments added yet.</p>';
 }
@@ -3990,9 +3962,9 @@ async function saveSoundMoment() {
       body: JSON.stringify({label: document.getElementById('sm-label').value, note: document.getElementById('sm-note').value}),
     });
     closeModal();
-    toast('Moment added','✅');
+    toast('Moment added','â');
     loadSoundMoments();
-  } catch(e) { toast('Failed to add moment.','❌'); }
+  } catch(e) { toast('Failed to add moment.','â'); }
 }
 
 async function deleteSoundMoment(recordId) {
@@ -4001,19 +3973,19 @@ async function deleteSoundMoment(recordId) {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({recordId}),
     });
-    toast('Moment deleted','🗑');
+    toast('Moment deleted','ð');
     loadSoundMoments();
-  } catch(e) { toast('Failed to delete.','❌'); }
+  } catch(e) { toast('Failed to delete.','â'); }
 }
 
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // SHARED HELPERS
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function deptOverview(deptKey) {
   return `
     <div class="card" style="margin-bottom:16px">
       <div class="card-title">Current Phase</div>
-      <div id="cp-label-${deptKey}" style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:4px">Loading…</div>
+      <div id="cp-label-${deptKey}" style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:4px">Loadingâ¦</div>
       <div id="cp-date-${deptKey}" style="font-size:11px;color:var(--muted);margin-bottom:4px"></div>
       <div id="cp-focus-${deptKey}" style="font-size:12px;color:var(--muted)"></div>
     </div>
@@ -4089,7 +4061,7 @@ function renderCrewSection(el) {
           <div class="crew-actions">
             ${c.email ? `<button class="btn-sm btn-outline" onclick="openCrewEmailModal('${esc(c.email)}')">Email</button>` : ''}
             <a href="${contractLink(c.name,c.email,c.role)}" target="_blank" class="btn-sm btn-gold">Contract</a>
-            ${canEdit && c.id ? `<button class="btn-sm btn-outline" onclick="deleteCrew('${c.id}')">🗑</button>` : ''}
+            ${canEdit && c.id ? `<button class="btn-sm btn-outline" onclick="deleteCrew('${c.id}')">ð</button>` : ''}
           </div>
         </div>
       `;
@@ -4103,7 +4075,7 @@ function showAddCrew() {
     <div class="modal-row"><div class="modal-label">Email *</div><input id="cr-email" type="email" placeholder="email@example.com"></div>
     <div class="modal-row"><div class="modal-label">Role</div><input id="cr-role" placeholder="e.g. Boom Operator"></div>
     <div class="modal-row"><div class="modal-label">Phone</div><input id="cr-phone" placeholder="(xxx) xxx-xxxx"></div>
-    <p style="font-size:11px;color:var(--muted)">This adds them as CORE crew — they'll appear across all dashboards.</p>
+    <p style="font-size:11px;color:var(--muted)">This adds them as CORE crew â they'll appear across all dashboards.</p>
   `, [
     {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
     {label:'Add Crew', cls:'btn-gold', action:'saveCrew()'},
@@ -4113,7 +4085,7 @@ function showAddCrew() {
 async function saveCrew() {
   const name  = document.getElementById('cr-name').value.trim();
   const email = document.getElementById('cr-email').value.trim();
-  if (!name || !email) { toast('Name and email required.','⚠️'); return; }
+  if (!name || !email) { toast('Name and email required.','â ï¸'); return; }
   try {
     await fetch(API + '?action=add-crew', {
       method:'POST', headers:{'Content-Type':'application/json'},
@@ -4124,10 +4096,10 @@ async function saveCrew() {
       }),
     });
     closeModal();
-    toast('Crew member added','✅');
+    toast('Crew member added','â');
     await loadData();
     navigate(STATE.section);
-  } catch(e) { toast('Failed to add crew.','❌'); }
+  } catch(e) { toast('Failed to add crew.','â'); }
 }
 
 async function deleteCrew(recordId) {
@@ -4136,27 +4108,27 @@ async function deleteCrew(recordId) {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({recordId}),
     });
-    toast('Crew member removed','🗑');
+    toast('Crew member removed','ð');
     await loadData();
     navigate(STATE.section);
-  } catch(e) { toast('Failed to remove crew.','❌'); }
+  } catch(e) { toast('Failed to remove crew.','â'); }
 }
 
-// ─── CASTING DATABASE ────────────────────────────────────────────
+// âââ CASTING DATABASE ââââââââââââââââââââââââââââââââââââââââââââ
 async function renderCastingDatabase(el) {
   el.innerHTML = `
     <div class="section-header">
-      <div class="section-title">Casting Database — Callbacks</div>
+      <div class="section-title">Casting Database â Callbacks</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn-sm btn-outline" onclick="showAddCharacterNoteModal()">+ Add Role Notes</button>
-        <button class="btn-sm btn-outline" onclick="openMissingSelfTapeReminderModal()">📨 Remind Missing Self-Tapes</button>
-        <button class="btn-sm btn-gold" onclick="sendConfirmedAvailability()">📅 Schedule Final Callback</button>
+        <button class="btn-sm btn-outline" onclick="openMissingSelfTapeReminderModal()">ð¨ Remind Missing Self-Tapes</button>
+        <button class="btn-sm btn-gold" onclick="sendConfirmedAvailability()">ð Schedule Final Callback</button>
       </div>
     </div>
-    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Grouped by character. Each role has a casting brief at the top — what to look for in self-tapes for that part — followed by everyone marked "Callback" for it. The button above emails your Calendly link (from casting@bleuskm.com) to everyone currently marked Confirmed, so they can book their final callback slot.</p>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Grouped by character. Each role has a casting brief at the top â what to look for in self-tapes for that part â followed by everyone marked "Callback" for it. The button above emails your Calendly link (from casting@bleuskm.com) to everyone currently marked Confirmed, so they can book their final callback slot.</p>
     <div id="casting-list"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
     <div class="card" style="margin-top:16px">
-      <div class="card-title">Casting — Recently Sent</div>
+      <div class="card-title">Casting â Recently Sent</div>
       <div id="casting-sent-log" style="max-height:240px;overflow-y:auto">Loading...</div>
     </div>
   `;
@@ -4166,18 +4138,18 @@ async function renderCastingDatabase(el) {
 
 async function sendConfirmedAvailability() {
   const confirmed = (STATE.casting||[]).filter(r => r.fields['Cast Status'] === 'Confirmed' && r.fields['Email']);
-  if (!confirmed.length) { toast('No one is marked Confirmed yet.','⚠️'); return; }
+  if (!confirmed.length) { toast('No one is marked Confirmed yet.','â ï¸'); return; }
   const emails = confirmed.map(r => r.fields['Email']);
-  const subject = `You're Confirmed — ${STATE.filmName || FILM} | Schedule Your Meeting`;
-  const bodyText = `Hi,\n\nCongratulations — you're confirmed for "${STATE.filmName || FILM}"!\n\n` +
+  const subject = `You're Confirmed â ${STATE.filmName || FILM} | Schedule Your Meeting`;
+  const bodyText = `Hi,\n\nCongratulations â you're confirmed for "${STATE.filmName || FILM}"!\n\n` +
     `Please use the link below to pick a date and time for a quick meeting with us:\n${CALENDLY_LINK}\n\n` +
     `We're excited to have you on board.\n\nBLEUSKM Studios`;
   try {
     await sendZohoMail({ fromAlias:'casting', bcc: emails.join(','), subject, text: bodyText });
-    toast(`Sent to ${confirmed.length} confirmed ${confirmed.length===1?'person':'people'}.`, '✅');
+    toast(`Sent to ${confirmed.length} confirmed ${confirmed.length===1?'person':'people'}.`, 'â');
     loadSentLog('Casting').then(r => { const sl = document.getElementById('casting-sent-log'); if (sl) sl.innerHTML = sentLogHTML(r); });
   } catch(e) {
-    toast(`Zoho send failed (${e.message||'unknown error'}) — opening your email client instead.`,'⚠️');
+    toast(`Zoho send failed (${e.message||'unknown error'}) â opening your email client instead.`,'â ï¸');
     const subj = encodeURIComponent(subject);
     const body = encodeURIComponent(bodyText);
     window.location.href = `mailto:?bcc=${emails.join(',')}&subject=${subj}&body=${body}`;
@@ -4200,7 +4172,7 @@ function openMissingSelfTapeReminderModal() {
     flag: r.fields['Self Tape URL'] ? '' : 'No self-tape yet',
   }));
   const missing = contacts.filter(c => c.flag).map(c => c.email);
-  if (!missing.length) { toast('Everyone here already has a self-tape on file.','✅'); return; }
+  if (!missing.length) { toast('Everyone here already has a self-tape on file.','â'); return; }
   showQuickEmailModal({ fromAlias:'casting', contacts, preselected: missing });
 }
 
@@ -4250,16 +4222,16 @@ function characterGroupHTML(character, recs) {
   const notSubmitted = recs.filter(r => !r.fields['Self Tape URL']);
   return `
     <div class="role-card">
-      <div class="card-title" style="margin-bottom:6px">🎭 ${esc(character)}</div>
+      <div class="card-title" style="margin-bottom:6px">ð­ ${esc(character)}</div>
       <div id="char-notes-list-${slug}">${notesListHTML(noteLines, 'character', character)}</div>
       <div style="display:flex;gap:8px;margin-top:6px;max-width:560px;align-items:flex-start">
         <textarea class="note-input" id="char-note-input-${slug}" rows="2" oninput="autoGrowNote(this)" placeholder="Add what we're looking for in this role..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();addCharacterNote('${esc(character)}','char-note-input-${slug}')}"></textarea>
         <button class="btn-sm btn-outline" style="flex-shrink:0" onclick="addCharacterNote('${esc(character)}','char-note-input-${slug}')">Add</button>
       </div>
       ${recs.length ? `
-        <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin:14px 0 6px">✅ Self-Tape Submitted (${submitted.length})</div>
+        <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin:14px 0 6px">â Self-Tape Submitted (${submitted.length})</div>
         ${submitted.length ? `<div class="casting-grid">${submitted.map(r => castingSubmissionCardHTML(r)).join('')}</div>` : '<p style="color:var(--muted);font-size:12px;margin:0 0 10px 0">No one yet.</p>'}
-        <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:10px 0 6px">⏳ Not Yet Submitted (${notSubmitted.length})</div>
+        <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:10px 0 6px">â³ Not Yet Submitted (${notSubmitted.length})</div>
         ${notSubmitted.length ? `<div class="casting-grid">${notSubmitted.map(r => castingSubmissionCardHTML(r)).join('')}</div>` : '<p style="color:var(--muted);font-size:12px;margin:0">Everyone has submitted.</p>'}
       ` : '<p style="color:var(--muted);font-size:12px;margin:14px 0 0">No callback candidates for this role yet.</p>'}
     </div>
@@ -4269,7 +4241,7 @@ function characterGroupHTML(character, recs) {
 function showAddCharacterNoteModal() {
   showModal('Add Casting Notes for a Role', `
     <div class="modal-row"><div class="modal-label">Character / Role Name</div><input id="new-char-name" placeholder="e.g. Marcus"></div>
-    <div class="modal-row" style="margin-top:8px"><div class="modal-label">What we're looking for</div><textarea id="new-char-note" rows="3" placeholder="e.g. Looking for quiet intensity, strong improv, comfortable with the monologue in scene 4, age 30–45..."></textarea></div>
+    <div class="modal-row" style="margin-top:8px"><div class="modal-label">What we're looking for</div><textarea id="new-char-note" rows="3" placeholder="e.g. Looking for quiet intensity, strong improv, comfortable with the monologue in scene 4, age 30â45..."></textarea></div>
   `, [
     {label:'Cancel', cls:'btn-outline', action:'closeModal()'},
     {label:'Save', cls:'btn-gold', action:'saveNewCharacterNote()'},
@@ -4279,7 +4251,7 @@ function showAddCharacterNoteModal() {
 async function saveNewCharacterNote() {
   const character = document.getElementById('new-char-name')?.value.trim();
   const note = document.getElementById('new-char-note')?.value.trim() || '';
-  if (!character) { toast('Enter a character name.','⚠️'); return; }
+  if (!character) { toast('Enter a character name.','â ï¸'); return; }
   try {
     if (note) {
       await fetch(API + '?action=add-character-note', {
@@ -4287,29 +4259,29 @@ async function saveNewCharacterNote() {
         body: JSON.stringify({ character, note, author: STATE.name || DEPT_LABELS[STATE.dept] || '' }),
       });
     } else {
-      // No note yet — still create the role so it shows up in the list right away.
+      // No note yet â still create the role so it shows up in the list right away.
       await fetch(API + '?action=save-character-note', {
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ character, note: '', updatedBy: STATE.name || DEPT_LABELS[STATE.dept] || '' }),
       });
     }
     closeModal();
-    toast('Role added','✅');
+    toast('Role added','â');
     loadCastingDb();
-  } catch(e) { toast('Failed to add role.','❌'); }
+  } catch(e) { toast('Failed to add role.','â'); }
 }
 
-// ── SHARED NOTES LIST (add / delete / edit) — used by both per-role casting
+// ââ SHARED NOTES LIST (add / delete / edit) â used by both per-role casting
 // briefs and per-candidate team notes, so notes actually show up as a real
-// list instead of disappearing back into the box you typed them in. ────────
+// list instead of disappearing back into the box you typed them in. ââââââââ
 function notesListHTML(lines, kind, id) {
   if (!lines.length) return '<div style="font-size:12px;color:var(--muted)">No notes yet.</div>';
   return lines.map((l, idx) => `
     <div class="note-line" id="note-line-${kind}-${slugify(id)}-${idx}" style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:4px">
       <div class="note-line-text" style="font-size:12px;color:var(--text);flex:1">${esc(l)}</div>
       <span style="display:flex;gap:3px;flex-shrink:0">
-        <button class="btn-sm btn-outline" style="padding:0 5px;font-size:10px;line-height:1.6" onclick="startEditNoteLine('${kind}','${esc(id)}',${idx})" title="Edit this note">✎</button>
-        <button class="btn-sm btn-outline" style="padding:0 5px;font-size:10px;line-height:1.6" onclick="deleteNoteLine('${kind}','${esc(id)}',${idx})" title="Delete this note">✕</button>
+        <button class="btn-sm btn-outline" style="padding:0 5px;font-size:10px;line-height:1.6" onclick="startEditNoteLine('${kind}','${esc(id)}',${idx})" title="Edit this note">â</button>
+        <button class="btn-sm btn-outline" style="padding:0 5px;font-size:10px;line-height:1.6" onclick="deleteNoteLine('${kind}','${esc(id)}',${idx})" title="Delete this note">â</button>
       </span>
     </div>
   `).join('');
@@ -4334,7 +4306,7 @@ function startEditNoteLine(kind, id, idx) {
 }
 
 // Lets note textareas grow with their content instead of staying a single
-// cramped line — applied on input and right after we render one.
+// cramped line â applied on input and right after we render one.
 function autoGrowNote(el) {
   if (!el) return;
   el.style.height = 'auto';
@@ -4345,7 +4317,7 @@ async function saveEditNoteLine(kind, id, idx) {
   const lineEl = document.getElementById(`note-line-${kind}-${slugify(id)}-${idx}`);
   const input = lineEl ? lineEl.querySelector('input') : null;
   const newText = input ? input.value.trim() : '';
-  if (!newText) { toast("Note can't be empty.",'⚠️'); return; }
+  if (!newText) { toast("Note can't be empty.",'â ï¸'); return; }
   const action = kind === 'character' ? 'edit-character-note-line' : 'edit-casting-note-line';
   const payload = kind === 'character'
     ? { character: id, lineIndex: idx, note: newText }
@@ -4358,9 +4330,9 @@ async function saveEditNoteLine(kind, id, idx) {
     const data = await res.json();
     const errMsg = apiErrorMessage(data, 'Save failed');
     if (errMsg) throw new Error(errMsg);
-    toast('Note updated','✅');
+    toast('Note updated','â');
     loadCastingDb();
-  } catch(e) { toast(`Failed to update note (${e.message||'error'}).`,'❌'); }
+  } catch(e) { toast(`Failed to update note (${e.message||'error'}).`,'â'); }
 }
 
 function deleteNoteLine(kind, id, idx) {
@@ -4371,7 +4343,7 @@ function deleteNoteLine(kind, id, idx) {
 async function addCharacterNote(character, inputId) {
   const input = document.getElementById(inputId);
   const note = input ? input.value.trim() : '';
-  if (!note) { toast('Write a note first.','⚠️'); return; }
+  if (!note) { toast('Write a note first.','â ï¸'); return; }
   const who = STATE.name || DEPT_LABELS[STATE.dept] || '';
   try {
     const res = await fetch(API + '?action=add-character-note', {
@@ -4381,9 +4353,9 @@ async function addCharacterNote(character, inputId) {
     const data = await res.json();
     const errMsg = apiErrorMessage(data, 'Save failed');
     if (errMsg) throw new Error(errMsg);
-    toast('Note added','✅');
+    toast('Note added','â');
     loadCastingDb();
-  } catch(e) { toast(`Failed to add note (${e.message||'error'}).`,'❌'); }
+  } catch(e) { toast(`Failed to add note (${e.message||'error'}).`,'â'); }
 }
 
 async function deleteCharacterNoteLine(character, lineIndex) {
@@ -4395,30 +4367,30 @@ async function deleteCharacterNoteLine(character, lineIndex) {
     const data = await res.json();
     const errMsg = apiErrorMessage(data, 'Delete failed');
     if (errMsg) throw new Error(errMsg);
-    toast('Note deleted','🗑');
+    toast('Note deleted','ð');
     loadCastingDb();
-  } catch(e) { toast(`Failed to delete note (${e.message||'error'}).`,'❌'); }
+  } catch(e) { toast(`Failed to delete note (${e.message||'error'}).`,'â'); }
 }
 
-// Producer callback rating scale — shown as a star's tooltip and as a label
+// Producer callback rating scale â shown as a star's tooltip and as a label
 // under the stars once a rating's been set.
 const RATING_LABELS = {
-  5: 'Callback Immediately — would hurt the film if we lost them.',
-  4: 'Strong Callback — serious contender.',
-  3: 'Maybe — good qualities but missing something.',
-  2: 'Pass — doesn\'t fit the role.',
-  1: 'Hard Pass — wrong energy entirely.',
+  5: 'Callback Immediately â would hurt the film if we lost them.',
+  4: 'Strong Callback â serious contender.',
+  3: 'Maybe â good qualities but missing something.',
+  2: 'Pass â doesn\'t fit the role.',
+  1: 'Hard Pass â wrong energy entirely.',
 };
 
 function ratingStarsHTML(recordId, rating) {
   rating = rating || 0;
   const stars = [1,2,3,4,5].map(n => `
-    <button type="button" class="rating-star ${n<=rating?'filled':''}" title="${esc(String(n))} — ${esc(RATING_LABELS[n])}" onclick="setCastingRating('${recordId}',${n===rating?0:n})">${n<=rating?'★':'☆'}</button>
+    <button type="button" class="rating-star ${n<=rating?'filled':''}" title="${esc(String(n))} â ${esc(RATING_LABELS[n])}" onclick="setCastingRating('${recordId}',${n===rating?0:n})">${n<=rating?'â':'â'}</button>
   `).join('');
   return `
     <div class="rating-stars" style="margin-top:8px">
       ${stars}
-      ${rating ? `<span class="rating-label">${esc(RATING_LABELS[rating].split(' — ')[0])}</span>` : '<span class="rating-label">Not rated</span>'}
+      ${rating ? `<span class="rating-label">${esc(RATING_LABELS[rating].split(' â ')[0])}</span>` : '<span class="rating-label">Not rated</span>'}
     </div>
   `;
 }
@@ -4430,7 +4402,7 @@ async function setCastingRating(recordId, rating) {
       body: JSON.stringify({ recordId, rating }),
     });
     loadCastingDb();
-  } catch(e) { toast('Failed to save rating.','❌'); }
+  } catch(e) { toast('Failed to save rating.','â'); }
 }
 
 function castingSubmissionCardHTML(r) {
@@ -4448,9 +4420,9 @@ function castingSubmissionCardHTML(r) {
         </div>
         <span class="tag ${castColors[castStatus]||'tag-muted'}" style="flex-shrink:0">${esc(castStatus)}</span>
       </div>
-      <div style="font-size:10px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(f['Email']||'')}${f['Phone']?' · '+esc(f['Phone']):''}</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(f['Email']||'')}${f['Phone']?' Â· '+esc(f['Phone']):''}</div>
       ${f['Self Tape URL']
-        ? `<a href="${esc(f['Self Tape URL'])}" target="_blank" class="btn-sm btn-gold" style="margin-top:10px;text-align:center">▶ Watch Self-Tape</a>`
+        ? `<a href="${esc(f['Self Tape URL'])}" target="_blank" class="btn-sm btn-gold" style="margin-top:10px;text-align:center">â¶ Watch Self-Tape</a>`
         : `<div style="font-size:11px;color:var(--muted);margin-top:10px;font-style:italic">No self-tape yet</div>`}
       ${ratingStarsHTML(r.id, f['Producer Rating'])}
       <div style="display:flex;gap:5px;margin-top:8px;flex-wrap:wrap">
@@ -4460,7 +4432,7 @@ function castingSubmissionCardHTML(r) {
         <button class="btn-sm btn-outline" style="padding:3px 7px;font-size:10px" onclick="updateCastStatus('${r.id}','Pending')">Reset</button>
       </div>
       <div class="notes-toggle" onclick="document.getElementById('${tileId}').classList.toggle('open')">
-        <span>Notes (${notesLines.length})</span><span>▾</span>
+        <span>Notes (${notesLines.length})</span><span>â¾</span>
       </div>
       <div class="notes-body" id="${tileId}">
         ${notesListHTML(notesLines, 'casting', r.id)}
@@ -4479,15 +4451,15 @@ async function updateCastStatus(recordId, castStatus) {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({recordId, castStatus}),
     });
-    toast(`Marked ${castStatus}`,'✅');
+    toast(`Marked ${castStatus}`,'â');
     loadCastingDb();
-  } catch(e) { toast('Failed to update status.','❌'); }
+  } catch(e) { toast('Failed to update status.','â'); }
 }
 
 async function addCastingNote(recordId) {
   const input = document.getElementById(`cn-input-${recordId}`);
   const note = input?.value.trim();
-  if (!note) { toast('Write a note first.','⚠️'); return; }
+  if (!note) { toast('Write a note first.','â ï¸'); return; }
   try {
     const res = await fetch(API + '?action=add-casting-note', {
       method:'POST', headers:{'Content-Type':'application/json'},
@@ -4496,9 +4468,9 @@ async function addCastingNote(recordId) {
     const data = await res.json();
     const errMsg = apiErrorMessage(data, 'Save failed');
     if (errMsg) throw new Error(errMsg);
-    toast('Note added','✅');
+    toast('Note added','â');
     loadCastingDb();
-  } catch(e) { toast(`Failed to add note (${e.message||'error'}).`,'❌'); }
+  } catch(e) { toast(`Failed to add note (${e.message||'error'}).`,'â'); }
 }
 
 async function deleteCastingNoteLine(recordId, lineIndex) {
@@ -4510,19 +4482,19 @@ async function deleteCastingNoteLine(recordId, lineIndex) {
     const data = await res.json();
     const errMsg = apiErrorMessage(data, 'Delete failed');
     if (errMsg) throw new Error(errMsg);
-    toast('Note deleted','🗑');
+    toast('Note deleted','ð');
     loadCastingDb();
-  } catch(e) { toast(`Failed to delete note (${e.message||'error'}).`,'❌'); }
+  } catch(e) { toast(`Failed to delete note (${e.message||'error'}).`,'â'); }
 }
 
-// ─── MANAGE DEPARTMENTS (Director view-as) ────────────────────────
+// âââ MANAGE DEPARTMENTS (Director view-as) ââââââââââââââââââââââââ
 function renderManageDepartments(el) {
   const depts = [
-    {key:'producer', label:'Producer', icon:'🎬'},
-    {key:'dp', label:'DP / Camera', icon:'📷'},
-    {key:'ad', label:'Assistant Director', icon:'🎭'},
-    {key:'scriptsupervisor', label:'Script Supervisor', icon:'📝'},
-    {key:'sound', label:'Sound', icon:'🎵'},
+    {key:'producer', label:'Producer', icon:'ð¬'},
+    {key:'dp', label:'DP / Camera', icon:'ð·'},
+    {key:'ad', label:'Assistant Director', icon:'ð­'},
+    {key:'scriptsupervisor', label:'Script Supervisor', icon:'ð'},
+    {key:'sound', label:'Sound', icon:'ðµ'},
   ];
   el.innerHTML = `
     <div class="section-title" style="margin-bottom:16px">Manage Departments</div>
@@ -4541,7 +4513,7 @@ function renderManageDepartments(el) {
 async function switchToDept(deptKey) {
   STATE.dept = deptKey;
   document.getElementById('sb-dept').textContent = DEPT_LABELS[deptKey];
-  document.getElementById('tb-dept').textContent = STATE.name ? `${STATE.name} · Viewing ${DEPT_LABELS[deptKey]}` : DEPT_LABELS[deptKey];
+  document.getElementById('tb-dept').textContent = STATE.name ? `${STATE.name} Â· Viewing ${DEPT_LABELS[deptKey]}` : DEPT_LABELS[deptKey];
   buildNav();
   showReturnBanner();
   await loadData();
@@ -4551,7 +4523,7 @@ async function switchToDept(deptKey) {
 async function returnToDirector() {
   STATE.dept = STATE.realDept;
   document.getElementById('sb-dept').textContent = DEPT_LABELS[STATE.dept];
-  document.getElementById('tb-dept').textContent = STATE.name ? `${STATE.name} · ${DEPT_LABELS[STATE.dept]}` : DEPT_LABELS[STATE.dept];
+  document.getElementById('tb-dept').textContent = STATE.name ? `${STATE.name} Â· ${DEPT_LABELS[STATE.dept]}` : DEPT_LABELS[STATE.dept];
   buildNav();
   document.getElementById('topbar-actions').innerHTML = '';
   await loadData();
@@ -4561,11 +4533,11 @@ async function returnToDirector() {
 function showReturnBanner() {
   document.getElementById('topbar-actions').innerHTML = `
     <span style="font-size:11px;color:var(--muted);margin-right:8px">Viewing as Director</span>
-    <button class="btn-sm btn-red" onclick="returnToDirector()">← Return to My Dashboard</button>
+    <button class="btn-sm btn-red" onclick="returnToDirector()">â Return to My Dashboard</button>
   `;
 }
 
-// ─── PRODUCTION SETTINGS ──────────────────────────────────────────
+// âââ PRODUCTION SETTINGS ââââââââââââââââââââââââââââââââââââââââââ
 function renderProductionSettings(el) {
   el.innerHTML = `
     <div class="section-title" style="margin-bottom:16px">Production Settings</div>
@@ -4582,7 +4554,7 @@ function renderProductionSettings(el) {
 
 async function saveFilmName() {
   const name = document.getElementById('set-film-name').value.trim();
-  if (!name) { toast('Film name required.','⚠️'); return; }
+  if (!name) { toast('Film name required.','â ï¸'); return; }
   try {
     await fetch(API + '?action=update-setting', {
       method:'POST', headers:{'Content-Type':'application/json'},
@@ -4590,8 +4562,8 @@ async function saveFilmName() {
     });
     STATE.filmName = name;
     document.getElementById('sb-film').textContent = name;
-    toast('Film name updated for everyone','✅');
-  } catch(e) { toast('Failed to save.','❌'); }
+    toast('Film name updated for everyone','â');
+  } catch(e) { toast('Failed to save.','â'); }
 }
 
 function renderNotesSection(el, audience, title, hint='') {
@@ -4617,9 +4589,9 @@ async function loadNotes(audience) {
     el.innerHTML = recs.length
       ? recs.map(r=>`
           <div class="note-card">
-            <div class="note-meta">${esc(r.fields['Author']||'')} · ${esc(r.fields['Title']||'')}</div>
+            <div class="note-meta">${esc(r.fields['Author']||'')} Â· ${esc(r.fields['Title']||'')}</div>
             <div class="note-content">${esc(r.fields['Note']||'')}</div>
-            <button class="btn-sm btn-outline" style="margin-top:8px" onclick="deleteNote('${r.id}','${audience}')">🗑 Delete</button>
+            <button class="btn-sm btn-outline" style="margin-top:8px" onclick="deleteNote('${r.id}','${audience}')">ð Delete</button>
           </div>`).join('')
       : '<p style="color:var(--muted);font-size:13px">No notes yet.</p>';
   } catch(e) { if(el) el.innerHTML = '<p style="color:var(--muted);font-size:13px">Could not load notes.</p>'; }
@@ -4631,9 +4603,9 @@ async function deleteNote(recordId, audience) {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({recordId}),
     });
-    toast('Note deleted','🗑');
+    toast('Note deleted','ð');
     loadNotes(audience);
-  } catch(e) { toast('Failed to delete note.','❌'); }
+  } catch(e) { toast('Failed to delete note.','â'); }
 }
 
 function showAddNote(audience, title) {
@@ -4649,16 +4621,16 @@ function showAddNote(audience, title) {
 async function doAddNote(audience) {
   const title   = document.getElementById('note-title').value.trim();
   const content = document.getElementById('note-content').value.trim();
-  if (!content) { toast('Please write a note.','⚠️'); return; }
+  if (!content) { toast('Please write a note.','â ï¸'); return; }
   try {
     await fetch(API + '?action=add-note', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({title: title||'Note', content, author: STATE.name || DEPT_LABELS[STATE.realDept] || DEPT_LABELS[STATE.dept], audience}),
     });
     closeModal();
-    toast('Note saved','✅');
+    toast('Note saved','â');
     loadNotes(audience);
-  } catch(e) { toast('Failed to save note.','❌'); }
+  } catch(e) { toast('Failed to save note.','â'); }
 }
 
 // Generic fallback section
@@ -4695,8 +4667,8 @@ async function saveScene() {
     });
     closeModal();
     navigate(STATE.section);
-    toast('Scene added','✅');
-  } catch(e) { toast('Failed to add scene.','❌'); }
+    toast('Scene added','â');
+  } catch(e) { toast('Failed to add scene.','â'); }
 }
 
 function useTemplate(typeName) {
@@ -4706,13 +4678,13 @@ function useTemplate(typeName) {
   const typeSelect = document.getElementById('ce-type');
   if (typeSelect) typeSelect.value = typeName;
   renderExtraFields();
-  toast(`Ready to send a ${typeName} — fill in name/email above`, '📋');
+  toast(`Ready to send a ${typeName} â fill in name/email above`, 'ð');
   document.getElementById('ce-name')?.focus();
 }
 
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // MODAL + TOAST HELPERS
-// ════════════════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function showModal(title, body, actions=[]) {
   document.getElementById('modal-title').textContent = title;
   document.getElementById('modal-body').innerHTML = body;
@@ -4727,7 +4699,7 @@ function closeModal() {
 }
 
 let _toastTimer;
-function toast(msg, icon='ℹ️') {
+function toast(msg, icon='â¹ï¸') {
   const el = document.getElementById('toast');
   el.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
   el.classList.remove('hidden');
@@ -4772,7 +4744,7 @@ window.navigate = function(sectionId) {
 // Re-bind
 (function reBindNav(){
   const nav = NAV[STATE.dept]||[];
-  // nav items already reference window.navigate indirectly via onclick — fine
+  // nav items already reference window.navigate indirectly via onclick â fine
 })();
 </script>
 </body>
