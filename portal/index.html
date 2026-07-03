@@ -2887,12 +2887,18 @@ async function renderOfferLetters(el) {
   const contacts = await (()=>{const cast=(STATE.casting||[]).filter(c=>c.fields&&c.fields["Cast Status"]==="Confirmed").map(c=>({name:c.fields["Name"]||"",role:c.fields["Role"]||"",email:c.fields["Email"]||"",type:"cast"}));return cast;})()// offerLetterContacts;
   const contactsEl = document.getElementById('ol-contacts');
   if (contactsEl) {
-    contactsEl.innerHTML = contacts.length ? contacts.map(c => `
-      <label class="contact-row" onclick="selectOfferContact('${esc(c.name)}','${esc(c.email)}','${esc(c.role)}')" style="cursor:pointer">
-        <span class="contact-row-name">${esc(c.name)}</span>
-        <span class="contact-row-role">${esc(c.type)} &middot; ${esc(c.role)}</span>
+    contactsEl.innerHTML = contacts.length
+    ? contacts.map((c,i) => `
+      <label style="display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:7px;cursor:pointer;margin-bottom:3px;transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="if(!this.querySelector(\\'input\\').checked)this.style.background=''">
+        <input type="checkbox" id="ol-chk-${i}" style="accent-color:#f0c040;width:16px;height:16px;min-width:16px;cursor:pointer"
+          onchange="(function(el,n,em,r){if(el.checked){document.querySelectorAll('#ol-contacts input[type=checkbox]').forEach(function(x){if(x!==el){x.checked=false;x.closest('label').style.background='';}});el.closest('label').style.background='rgba(240,192,64,0.12)';selectOfferContact(n,em,r);}else{el.closest('label').style.background='';selectOfferContact('','','');}})(this,'${esc(c.name)}','${esc(c.email)}','${esc(c.role)}')">
+        <span style="flex:1;min-width:0">
+          <span style="color:#fff;font-size:13px;font-weight:600;display:block">${esc(c.name)}</span>
+          <span style="color:#f0c040;font-size:11px">${esc(c.role) ? 'Cast &middot; ' + esc(c.role) : 'Cast'}</span>
+        </span>
       </label>
-    `).join('') : '<p style="color:var(--muted);font-size:12px;padding:6px">No contacts with emails on file yet.</p>';
+    `).join('')
+    : '<p style="color:#888;font-size:13px;padding:4px 0">No confirmed cast yet — set Cast Status to &quot;Confirmed&quot; in Airtable.</p>';
   }
 
 }
