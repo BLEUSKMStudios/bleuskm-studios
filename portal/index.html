@@ -332,14 +332,9 @@ function todayISO() {
 
 // Map dashboard contract type labels -> deployed template slug + their extra fields
 const CONTRACT_TEMPLATES = {
-  'Crew Agreement':       { slug: 'crew-agreement',       extra: [] },
-  'Contractor Agreement': { slug: 'contractor-agreement', extra: [{key:'period', label:'Contract Period'}] },
   'Cast Agreement':       { slug: 'actor-agreement',      extra: [{key:'character', label:'Character'}, {key:'shootdates', label:'Shoot Dates'}] },
   'Actor Deal Memo':      { slug: 'actor-deal-memo',      extra: [{key:'character', label:'Character'}, {key:'shootdates', label:'Shoot Dates'}] },
   'Talent Release':       { slug: 'talent-release',       extra: [{key:'filmdate', label:'Film Date'}] },
-  'Composer Agreement':   { slug: 'composer-agreement',   extra: [{key:'scope', label:'Scope of Work'}, {key:'deliverydate', label:'Delivery Date'}] },
-  'Editor Agreement':     { slug: 'editor-agreement',     extra: [{key:'scope', label:'Scope of Work'}, {key:'deliverydate', label:'Delivery Date'}] },
-  'Location Release':     { slug: 'location-release',     extra: [{key:'location', label:'Location'}, {key:'filmdate', label:'Film Date'}] },
   'Media Release (BTS)':  { slug: 'media-release-bts',    extra: [{key:'filmdate', label:'Film Date'}] },
   'Usage Rights':         { slug: 'usage-rights',         extra: [{key:'effectivedate', label:'Effective Date'}] },
 };
