@@ -1889,7 +1889,7 @@ async function confirmDeleteLocation(recordId) {
 async function renderMyTasksWidget() {
   const el = document.getElementById('my-tasks-board');
   if (!el) return;
-  // Director previewing another dept — don't leak director tasks onto crew's dashboard
+  // If director is previewing another dept, do not show director tasks there
   if (STATE.realDept && STATE.dept !== STATE.realDept) {
     el.innerHTML = '<p style="color:var(--muted);font-size:13px">Tasks assigned to this team will appear here when members log in.</p>';
     return;
