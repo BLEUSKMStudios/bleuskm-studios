@@ -602,7 +602,6 @@ const NAV = {
     {id:'continuity', icon:'🔁', label:'Continuity Notes'},
     {id:'crew',       icon:'👥', label:'Crew'},
     {id:'castingdb',  icon:'🎟', label:'Casting Database'},
-    {id:'contracts',  icon:'📋', label:'Crew Contracts Hub'},
     {id:'timeline',   icon:'📅', label:'Timeline'},
     {id:'polls',      icon:'📊', label:'Meeting Polls'},
     {id:'emailhub',   icon:'📧', label:'Email Hub'},
@@ -940,6 +939,38 @@ async function renderNotesPanel(container) {
   }
 
   function openReplyModal(parentId, subject) { openComposeModal(parentId, subject); }
+}
+
+function renderCrewWithContracts(el) {
+  window._crewSubEl = el;
+  const t = window._crewSubTab || 'list';
+  el.innerHTML = `<div style="display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid #333;">
+    <button onclick="window._crewSubTab='list';renderCrewWithContracts(window._crewSubEl)"
+      style="padding:8px 20px;border:none;cursor:pointer;font-size:.88rem;border-radius:6px 6px 0 0;
+      background:${t==='list'?'#FFD700':'#1a1a1a'};color:${t==='list'?'#111':'#888'};">👥 Crew List</button>
+    <button onclick="window._crewSubTab='contracts';renderCrewWithContracts(window._crewSubEl)"
+      style="padding:8px 20px;border:none;cursor:pointer;font-size:.88rem;border-radius:6px 6px 0 0;margin-left:4px;
+      background:${t==='contracts'?'#FFD700':'#1a1a1a'};color:${t==='contracts'?'#111':'#888'};">📋 Contracts</button>
+  </div><div id="crew-sub-body"></div>`;
+  const sub = el.querySelector('#crew-sub-body');
+  if (t === 'list') renderCrewSection(sub);
+  else renderContractsHub(sub, 'crew');
+}
+
+function renderCastingWithContracts(el) {
+  window._castSubEl = el;
+  const t = window._castSubTab || 'db';
+  el.innerHTML = `<div style="display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid #333;">
+    <button onclick="window._castSubTab='db';renderCastingWithContracts(window._castSubEl)"
+      style="padding:8px 20px;border:none;cursor:pointer;font-size:.88rem;border-radius:6px 6px 0 0;
+      background:${t==='db'?'#FFD700':'#1a1a1a'};color:${t==='db'?'#111':'#888'};">🎟 Casting Database</button>
+    <button onclick="window._castSubTab='contracts';renderCastingWithContracts(window._castSubEl)"
+      style="padding:8px 20px;border:none;cursor:pointer;font-size:.88rem;border-radius:6px 6px 0 0;margin-left:4px;
+      background:${t==='contracts'?'#FFD700':'#1a1a1a'};color:${t==='contracts'?'#111':'#888'};">📋 Contracts</button>
+  </div><div id="cast-sub-body"></div>`;
+  const sub = el.querySelector('#cast-sub-body');
+  if (t === 'db') renderCastingDatabase(sub);
+  else renderContractsHub(sub, 'cast');
 }
 
 // NAVIGATE
@@ -1430,8 +1461,8 @@ SECTIONS.director = {
   notes: (el) => renderNotesSection(el, 'Director', 'Director Notes'),
   scenes: (el) => renderScenesSection(el, true),
   continuity: (el) => renderContinuityNotes(el),
-  crew: (el) => renderCrewSection(el),
-  castingdb: (el) => renderCastingDatabase(el),
+  crew: (el) => renderCrewWithContracts(el),
+  castingdb: (el) => renderCastingWithContracts(el),
   contracts: (el) => renderContractsHub(el, 'crew'),
   timeline: (el) => renderTimeline(el, 'director'),
   polls: (el) => renderMeetingPolls(el),
