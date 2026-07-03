@@ -91,8 +91,7 @@ async function netlifyHandler(event) {
 
   // ── CONTACTS POOL (crew: SUPPORT/NOT THIS PROJECT + all casting) ──────────
 if (action === 'get-contacts-crew') {
-  const filter = encodeURIComponent(`OR(UPPER({Status})="SUPPORT",UPPER({Status})="NOT THIS PROJECT")`);
-  const data = await airtable('GET', TABLES.crew, null, `?filterByFormula=${filter}&maxRecords=200&sort[0][field]=Name&sort[0][direction]=asc`);
+  const data = await airtable('GET', TABLES.crew, null, `?maxRecords=500&sort[0][field]=Name&sort[0][direction]=asc`);
   return { statusCode: 200, headers, body: JSON.stringify(data) };
 }
 
