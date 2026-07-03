@@ -616,7 +616,6 @@ const NAV = {
     {id:'locations',   icon:'📍', label:'Location Hub'},
     {id:'crewcast',    icon:'👥', label:'Crew + Cast'},
     {id:'castingdb',   icon:'🎟', label:'Casting Database'},
-    {id:'contracts',   icon:'📋', label:'Cast Contracts Hub'},
     {id:'documents',   icon:'📁', label:'Documents'},
     {id:'budget',      icon:'💰', label:'Budget / Schedule'},
     {id:'availability',icon:'📆', label:'Availability'},
@@ -963,13 +962,29 @@ function renderCastingWithContracts(el) {
   el.innerHTML = `<div style="display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid #333;">
     <button onclick="window._castSubTab='db';renderCastingWithContracts(window._castSubEl)"
       style="padding:8px 20px;border:none;cursor:pointer;font-size:.88rem;border-radius:6px 6px 0 0;
-      background:${t==='db'?'#FFD700':'#1a1a1a'};color:${t==='db'?'#111':'#888'};">🎟 Casting Database</button>
+      background:${t==='db'?'#FFD700':'#1a1a1a'};color:${t==='db'?'#111':'#888'};">🎟 Casting</button>
     <button onclick="window._castSubTab='contracts';renderCastingWithContracts(window._castSubEl)"
       style="padding:8px 20px;border:none;cursor:pointer;font-size:.88rem;border-radius:6px 6px 0 0;margin-left:4px;
       background:${t==='contracts'?'#FFD700':'#1a1a1a'};color:${t==='contracts'?'#111':'#888'};">📋 Contracts</button>
   </div><div id="cast-sub-body"></div>`;
   const sub = el.querySelector('#cast-sub-body');
   if (t === 'db') renderCastingDatabase(sub);
+  else renderContractsHub(sub, 'cast');
+}
+
+function renderProducerCrewWithContracts(el) {
+  window._prodCrewSubEl = el;
+  const t = window._prodCrewSubTab || 'list';
+  el.innerHTML = `<div style="display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid #333;">
+    <button onclick="window._prodCrewSubTab='list';renderProducerCrewWithContracts(window._prodCrewSubEl)"
+      style="padding:8px 20px;border:none;cursor:pointer;font-size:.88rem;border-radius:6px 6px 0 0;
+      background:${t==='list'?'#FFD700':'#1a1a1a'};color:${t==='list'?'#111':'#888'};">👥 Crew + Cast</button>
+    <button onclick="window._prodCrewSubTab='contracts';renderProducerCrewWithContracts(window._prodCrewSubEl)"
+      style="padding:8px 20px;border:none;cursor:pointer;font-size:.88rem;border-radius:6px 6px 0 0;margin-left:4px;
+      background:${t==='contracts'?'#FFD700':'#1a1a1a'};color:${t==='contracts'?'#111':'#888'};">📋 Contracts</button>
+  </div><div id="prod-crew-sub-body"></div>`;
+  const sub = el.querySelector('#prod-crew-sub-body');
+  if (t === 'list') renderCrewSection(sub);
   else renderContractsHub(sub, 'cast');
 }
 
@@ -1479,7 +1494,6 @@ SECTIONS.director = {
         <button class="btn-sm btn-gold" onclick="showUploadModal('push','Push File')">Upload + Push File</button>
       </div>
     `;
-    renderPushWidget(el, 'director');
   },
 };
 
@@ -1509,15 +1523,14 @@ SECTIONS.producer = {
         <div id="my-tasks-board"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
       </div>
     `;
-    renderPushWidget(el, 'producer');
     renderCurrentPhase('producer');
     renderMyTasksWidget();
   },
   timeline: (el) => renderTimeline(el, 'producer'),
   script: (el) => renderFileSection(el, 'script', 'Script', '.pdf,.fdx,.fountain', 'Upload your script here. Use the Push button to share with any department.'),
   locations: (el) => renderLocationsSection(el),
-  crewcast: (el) => renderCrewSection(el),
-  castingdb: (el) => renderCastingDatabase(el),
+  crewcast: (el) => renderProducerCrewWithContracts(el),
+  castingdb: (el) => renderCastingWithContracts(el),
   contracts: (el) => renderContractsHub(el, 'cast'),
   documents: (el) => renderFileSection(el, 'documents', 'Documents', '*', 'Signed contracts, releases, and other documents.'),
   budget: (el) => renderBudgetSection(el),
