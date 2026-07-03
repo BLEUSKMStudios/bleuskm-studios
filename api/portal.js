@@ -25,7 +25,7 @@ const TABLES = {
   pushednotes:  'tblkr4cvu7qCbCD0e',
 };
 
-const FILES_ATTACHMENT_FIELD = 'fldlZcbMXEFM0AfQH'; // Portal Files → Attachment (multipleAttachments)
+const FILES_ATTACHMENT_FIELD = 'fldlZcbMXEFM0AfQH'; // Portal Files â Attachment (multipleAttachments)
 
 const USER_MAP = {
   // Director
@@ -71,7 +71,7 @@ async function netlifyHandler(event) {
   let body = {};
   try { body = JSON.parse(event.body || '{}'); } catch (_) {}
 
-  // ── AUTH ──────────────────────────────────────────────────────────────────
+  // ââ AUTH ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   if (action === 'auth') {
     const username = (body.username || '').toLowerCase().trim();
     const pass     = body.password || '';
@@ -82,14 +82,14 @@ async function netlifyHandler(event) {
     return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'Invalid username or password' }) };
   }
 
-  // ── CREW ──────────────────────────────────────────────────────────────────
+  // ââ CREW ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   if (action === 'get-crew') {
     const filter = `filterByFormula=UPPER({Status})="CORE"`;
     const data = await airtable('GET', TABLES.crew, null, `?${filter}&maxRecords=100`);
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-  // ── CONTACTS POOL (crew: SUPPORT/NOT THIS PROJECT + all casting) ──────────
+  // ââ CONTACTS POOL (crew: SUPPORT/NOT THIS PROJECT + all casting) ââââââââââ
 if (action === 'get-contacts-crew') {
   const data = await airtable('GET', TABLES.crew, null, `?maxRecords=500&sort[0][field]=Name&sort[0][direction]=asc`);
   return { statusCode: 200, headers, body: JSON.stringify(data) };
@@ -104,11 +104,11 @@ if (action === 'add-crew') {
     const data = await airtable('POST', TABLES.crew, {
       records: [{
         fields: {
-          'Name':  body.name  || '',
-          'Email': body.email || '',
-          'Role':  body.role  || '',
-          'City':  body.city  || '',
-          'Phone': body.phone || '',
+          'Name':  body.Name  || body.name  || '',
+          'Email': body.Email || body.email || '',
+          'Role':  body.Role  || body.role  || '',
+          'City':  body.City  || body.city  || '',
+          'Phone': body.Phone || body.phone || '',
           'Status': 'CORE',
         },
       }],
@@ -117,16 +117,40 @@ if (action === 'add-crew') {
   }
 
   if (action === 'delete-crew') {
-    const data = await airtable('DELETE', TABLES.crew, null, `?records[]=${body.recordId}`);
+    const data = await airtable('DELETE', TABLES.crew, null, `?records[]=${body.id || body.recordId}`);
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-  // ── FILES ─────────────────────────────────────────────────────────────────
+
+  // ── CONTACTS CRUD ────────────────────────────────────────────────────────
+  if (action === 'update-crew') {
+    const { id, fields } = body;
+    const data = await airtable('PATCH', TABLES.crew + '/' + id, { fields });
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  if (action === 'add-cast') {
+    const data = await airtable('POST', TABLES.casting, { records: [{ fields: body }] });
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  if (action === 'update-cast') {
+    const { id, fields } = body;
+    const data = await airtable('PATCH', TABLES.casting + '/' + id, { fields });
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  if (action === 'delete-cast') {
+    const data = await airtable('DELETE', TABLES.casting, null, `?records[]=${body.id || body.recordId}`);
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
+  // ââ FILES âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   if (action === 'get-files') {
         const dept = params.dept || '';
     let fileQuery;
     if (dept === 'Director') {
-      // Director is master — sees all files from every department
+      // Director is master â sees all files from every department
       fileQuery = '?sort[0][field]=Created&sort[0][direction]=desc';
     } else {
       const filter = encodeURIComponent(`OR({For Department}="${dept}",{For Department}="All")`);
@@ -203,7 +227,7 @@ if (action === 'add-crew') {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-  // ── NOTES ─────────────────────────────────────────────────────────────────
+  // ââ NOTES âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   if (action === 'get-notes') {
     const dept   = params.dept || '';
     const filter = encodeURIComponent(`OR({Audience}="${dept}",{Audience}="All")`);
@@ -231,7 +255,7 @@ if (action === 'add-crew') {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-  // ── LOCATIONS ─────────────────────────────────────────────────────────────
+  // ââ LOCATIONS âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   if (action === 'get-locations') {
     const data = await airtable('GET', TABLES.locations, null, '?maxRecords=100');
     return { statusCode: 200, headers, body: JSON.stringify(data) };
@@ -266,13 +290,13 @@ if (action === 'add-crew') {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-  // ── CONTRACTS ─────────────────────────────────────────────────────────────
+  // ââ CONTRACTS âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   if (action === 'get-contracts') {
     const data = await airtable('GET', TABLES.contracts, null, '?maxRecords=100&sort[0][field]=Date Signed&sort[0][direction]=desc');
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-  // ── TIMELINE ──────────────────────────────────────────────────────────────
+  // ââ TIMELINE ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   if (action === 'get-timeline') {
     const dept = params.dept || '';
     const filter = encodeURIComponent(`{Department}="${dept}"`);
@@ -320,7 +344,7 @@ if (action === 'add-crew') {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-  // ── SCENES ────────────────────────────────────────────────────────────────
+  // ââ SCENES ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   if (action === 'get-scenes') {
     const data = await airtable('GET', TABLES.scenes, null, '?maxRecords=200');
     return { statusCode: 200, headers, body: JSON.stringify(data) };
@@ -346,7 +370,7 @@ if (action === 'add-crew') {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-  // ── CONTINUITY NOTES ──────────────────────────────────────────────────────
+  // ââ CONTINUITY NOTES ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   if (action === 'get-continuity') {
     const data = await airtable('GET', TABLES.continuity, null, '?maxRecords=200&sort[0][field]=Created&sort[0][direction]=desc');
     return { statusCode: 200, headers, body: JSON.stringify(data) };
@@ -373,7 +397,7 @@ if (action === 'add-crew') {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-  // ── TAKE LOG ──────────────────────────────────────────────────────────────
+  // ââ TAKE LOG ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   if (action === 'get-takelog') {
     const data = await airtable('GET', TABLES.takelog, null, '?maxRecords=300');
     return { statusCode: 200, headers, body: JSON.stringify(data) };
@@ -398,7 +422,7 @@ if (action === 'add-crew') {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-  // ── BUDGET ────────────────────────────────────────────────────────────────
+  // ââ BUDGET ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   if (action === 'get-budget') {
     const data = await airtable('GET', TABLES.budget, null, '?maxRecords=100');
     return { statusCode: 200, headers, body: JSON.stringify(data) };
@@ -435,7 +459,7 @@ if (action === 'add-crew') {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-  // ── SOUND MOMENTS ─────────────────────────────────────────────────────────
+  // ââ SOUND MOMENTS âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   if (action === 'get-soundmoments') {
     const data = await airtable('GET', TABLES.soundmoments, null, '?maxRecords=100');
     return { statusCode: 200, headers, body: JSON.stringify(data) };
@@ -453,14 +477,14 @@ if (action === 'add-crew') {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-  // ── CONFIRMED CAST (for Producer's Cast Contracts Hub) ───────────────────
+  // ââ CONFIRMED CAST (for Producer's Cast Contracts Hub) âââââââââââââââââââ
   if (action === 'get-cast') {
     const filter = encodeURIComponent(`{Cast Status}="Confirmed"`);
     const data = await airtable('GET', TABLES.casting, null, `?filterByFormula=${filter}&maxRecords=200`);
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-  // ── CASTING DATABASE (callbacks) ─────────────────────────────────────────
+  // ââ CASTING DATABASE (callbacks) âââââââââââââââââââââââââââââââââââââââââ
   if (action === 'get-casting') {
     const filter = encodeURIComponent(`{Casting Status}="Callback"`);
     const data = await airtable('GET', TABLES.casting, null, `?filterByFormula=${filter}&maxRecords=200`);
@@ -488,7 +512,7 @@ if (action === 'add-crew') {
     const curr = await airtable('GET', TABLES.casting, null, `/${body.recordId}`);
     const existing = (curr.fields || {})['Notes'] || '';
     const stamp = new Date().toLocaleString('en-US', { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
-    const line = `[${body.author || 'Unknown'} • ${stamp}]: ${body.note || ''}`;
+    const line = `[${body.author || 'Unknown'} â¢ ${stamp}]: ${body.note || ''}`;
     const updated = existing ? `${existing}\n${line}` : line;
     const data = await airtable('PATCH', TABLES.casting, {
       records: [{ id: body.recordId, fields: { 'Notes': updated } }],
@@ -520,7 +544,7 @@ if (action === 'add-crew') {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-  // ── SETTINGS (e.g. current film name) ────────────────────────────────────
+  // ââ SETTINGS (e.g. current film name) ââââââââââââââââââââââââââââââââââââ
   if (action === 'get-settings') {
     const data = await airtable('GET', TABLES.settings, null, '?maxRecords=50');
     return { statusCode: 200, headers, body: JSON.stringify(data) };
@@ -543,7 +567,7 @@ if (action === 'add-crew') {
     }
   }
 
-  // ── MEETING POLLS (group-availability scheduling) ────────────────────────
+  // ââ MEETING POLLS (group-availability scheduling) ââââââââââââââââââââââââ
   if (action === 'create-poll') {
     const data = await airtable('POST', TABLES.polls, {
       records: [{
@@ -564,7 +588,7 @@ if (action === 'add-crew') {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-  // Public — used by the unauthenticated poll response page.
+  // Public â used by the unauthenticated poll response page.
   if (action === 'get-poll') {
     const data = await airtable('GET', TABLES.polls, null, `/${params.id}`);
     return { statusCode: 200, headers, body: JSON.stringify(data) };
@@ -585,7 +609,7 @@ if (action === 'add-crew') {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-  // Public — submitted from the poll response page.
+  // Public â submitted from the poll response page.
   if (action === 'submit-poll-response') {
     const data = await airtable('POST', TABLES.pollresponses, {
       records: [{
@@ -608,7 +632,7 @@ if (action === 'add-crew') {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-  // ── CHARACTER CASTING NOTES (per-role brief for self-tape review) ───────────
+  // ââ CHARACTER CASTING NOTES (per-role brief for self-tape review) âââââââââââ
   if (action === 'get-character-notes') {
     const data = await airtable('GET', TABLES.characternotes, null, '?maxRecords=200');
     return { statusCode: 200, headers, body: JSON.stringify(data) };
@@ -633,7 +657,7 @@ if (action === 'add-crew') {
     }
   }
 
-  // Per-role notes as an actual list — add/delete/edit individual lines, same
+  // Per-role notes as an actual list â add/delete/edit individual lines, same
   // pattern as the per-candidate Notes thread, instead of one overwritable field.
   if (action === 'add-character-note') {
     const character = (body.character || '').trim();
@@ -642,7 +666,7 @@ if (action === 'add-crew') {
     const existing = await airtable('GET', TABLES.characternotes, null, `?filterByFormula=${filter}`);
     const recs = existing.records || [];
     const stamp = new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
-    const line = `[${body.author || 'Unknown'} • ${stamp}]: ${body.note || ''}`;
+    const line = `[${body.author || 'Unknown'} â¢ ${stamp}]: ${body.note || ''}`;
     if (recs.length) {
       const prior = (recs[0].fields || {})['Casting Notes'] || '';
       const updated = prior ? `${prior}\n${line}` : line;
@@ -689,7 +713,7 @@ if (action === 'add-crew') {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-  // ── PRODUCTION TASKS (task board) ────────────────────────────────────────
+  // ââ PRODUCTION TASKS (task board) ââââââââââââââââââââââââââââââââââââââââ
   if (action === 'get-tasks') {
     const data = await airtable('GET', TABLES.tasks, null, `?sort[0][field]=Created&sort[0][direction]=desc&maxRecords=300`);
     return { statusCode: 200, headers, body: JSON.stringify(data) };
@@ -730,7 +754,7 @@ if (action === 'add-crew') {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-  // ── PUSHED NOTES (cross-department / cross-person push) ─────────────────
+  // ââ PUSHED NOTES (cross-department / cross-person push) âââââââââââââââââ
   if (action === 'push-note') {
     const data = await airtable('POST', TABLES.pushednotes, {
       records: [{
@@ -760,7 +784,7 @@ if (action === 'add-crew') {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-  // Notes the current person has sent — regardless of which department they
+  // Notes the current person has sent â regardless of which department they
   // were sent to, so a note shows up on the sender's own dashboard too.
   if (action === 'get-sent-notes') {
     const person = params.person || '';
@@ -779,7 +803,7 @@ if (action === 'add-crew') {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-// ── THREADED NOTES (per-person/dept notes with threading + read tracking) ──────────
+// ââ THREADED NOTES (per-person/dept notes with threading + read tracking) ââââââââââ
   if (action === 'get-thread-notes') {
     const login = params.login || '';
     const dept  = params.dept  || '';
@@ -832,7 +856,7 @@ if (action === 'add-crew') {
   return { statusCode: 400, headers, body: JSON.stringify({ error: 'Unknown action' }) };
 }
 
-// ── Vercel adapter ──
+// ââ Vercel adapter ââ
 module.exports = async (req, res) => {
   const event = {
     httpMethod: req.method,
