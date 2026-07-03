@@ -2032,7 +2032,7 @@ async function loadSignedContracts(typeFilter) {
           <div class="contract-row-sub">${esc(r.fields['Role']||'')} ${r.fields['Contract Type']?'· '+esc(r.fields['Contract Type']):''} · Signed ${r.fields['Date Signed']||'—'}</div>
         </div>
         <div style="display:flex;gap:6px;align-items:center">
-          <span class="tag tag-green">Signed</span>
+          <span class="tag tag-green">Signed</span><span style="background:#f0c040;color:#333;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;margin-left:6px">&#x1F7E1; Script Pending</span>
           <button class="btn-sm btn-outline" onclick="viewContract('${r.id}')">View / Print</button>
         </div>
       </div>
@@ -2627,7 +2627,7 @@ async function renderEmailHub(el, defaultAlias, opts) {
       <div class="contact-scroll" id="eh-contacts" style="margin-bottom:10px"><p style="color:var(--muted);font-size:12px;padding:6px">Loading contacts...</p></div>
       <div class="modal-row"><div class="modal-label">To</div><input id="eh-to" placeholder="recipient@email.com (comma-separate for multiple)"></div>
       <div class="modal-row" style="margin-top:8px"><div class="modal-label">Subject</div><input id="eh-subject" placeholder="Subject"></div>
-      <div class="modal-row" style="margin-top:8px"><div class="modal-label">Message</div><textarea id="eh-body" rows="5" placeholder="Type your message..."></textarea></div>
+      <div class="modal-row" style="margin-top:8px"><div class="modal-label">Message</div><div style="display:flex;gap:6px;margin:4px 0 6px"><button class="btn-sm" onclick="(function(){var s=document.getElementById('eh-subject');var b=document.getElementById('eh-body');s.value='Re: Your Audition — The Final Hand';b.value='Dear [Name],\n\nThank you so much for your time and your audition for The Final Hand. After careful consideration, we have decided to move in a different direction for this role.\n\nWe truly appreciate your talent and your interest in our project. We wish you nothing but the best in your career!\n\nWarm regards,\nBLEUSKM Studios Production Team';})()" title="Fill pass/rejection email">Pass/Rejection</button><button class="btn-sm" onclick="(function(){var n=document.getElementById('ol-name')?.value||'[Name]';var r=document.getElementById('ol-role')?.value||'[Role]';var s=document.getElementById('eh-subject');var b=document.getElementById('eh-body');s.value='Official Offer — The Final Hand — '+n;b.value='Dear '+n+',\n\nWe are thrilled to officially offer you the role of '+r+' in our upcoming production, The Final Hand, presented by BLEUSKM Studios.\n\nPlease review and sign the enclosed cast agreement at your earliest convenience. Once signed, you will receive the production script and further details.\n\nWe are so excited to have you on board and look forward to creating something extraordinary together.\n\nWith gratitude,\nZaria\nDirector, The Final Hand | BLEUSKM Studios';})()" title="Fill offer letter email">Offer Letter</button></div><textarea id="eh-body" rows="5" placeholder="Type your message..."></textarea></div>
       ${attachmentControlsHTML('eh-body')}
       <button class="btn-sm btn-gold" style="margin-top:10px" onclick="sendEmailHubMessage(${locked ? `'${alias}'` : 'null'})">Send</button>
     </div>
@@ -2856,7 +2856,7 @@ async function renderOfferLetters(el) {
     <div class="section-title" style="margin-bottom:16px">Offer Letters</div>
     <div class="card">
       <div class="card-title">Generate Offer Letter</div>
-      <div class="modal-label" style="margin-top:2px">Quick-Pick Recipient</div>
+      <div class="modal-label" style="margin-top:2px">Finalized Cast &amp; Crew</div>
       <div class="contact-scroll" id="ol-contacts" style="margin-bottom:10px"><p style="color:var(--muted);font-size:12px;padding:6px">Loading contacts...</p></div>
       <div class="grid2" style="gap:10px;margin-bottom:10px">
         <div><div class="modal-label">To (Full Name)</div><input id="ol-name" placeholder="Actor / Crew name" oninput="previewOffer()"></div>
@@ -2874,7 +2874,7 @@ async function renderOfferLetters(el) {
     </div>
   `;
   previewOffer();
-  const contacts = await getCombinedContacts(true);
+  const contacts = await (()=>{const cast=(STATE.casting||[]).filter(c=>c.fields&&c.fields["Cast Status"]==="Confirmed").map(c=>({name:c.fields["Name"]||"",role:"Cast · "+(c.fields["Role"]||""),email:c.fields["Email"]||"",type:"cast"}));const finCrew=JSON.parse(localStorage.getItem("bleuskm_finalized_crew")||"[]");return[...cast,...finCrew];})()// offerLetterContacts;
   const contactsEl = document.getElementById('ol-contacts');
   if (contactsEl) {
     contactsEl.innerHTML = contacts.length ? contacts.map(c => `
@@ -2883,6 +2883,34 @@ async function renderOfferLetters(el) {
         <span class="contact-row-role">${esc(c.type)} &middot; ${esc(c.role)}</span>
       </label>
     `).join('') : '<p style="color:var(--muted);font-size:12px;padding:6px">No contacts with emails on file yet.</p>';
+  }
+  // Director-only: finalized crew manager
+  if (STATE.realDept === 'director') {
+    var mgr = document.getElementById('ol-crew-mgr');
+    if (!mgr) {
+      var crewData = STATE.crew || [];
+      var savedCrew = JSON.parse(localStorage.getItem('bleuskm_finalized_crew') || '[]');
+      var savedEmails = savedCrew.map(function(x){return x.email;});
+      var d = document.createElement('div');
+      d.id = 'ol-crew-mgr';
+      d.style.cssText = 'margin-top:16px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:8px';
+      d.innerHTML = '<div style="font-weight:600;font-size:13px;margin-bottom:8px">&#127908; Finalize Crew for Offer Letters (Director Only)</div>'
+        + '<div id="ol-crew-pick" style="display:flex;flex-direction:column;gap:5px;max-height:180px;overflow-y:auto;margin-bottom:8px">'
+        + (crewData.length ? crewData.map(function(cr){
+            var nm=(cr.fields&&cr.fields['Name'])||cr.name||'';
+            var em=(cr.fields&&cr.fields['Email'])||cr.email||'';
+            var rl=(cr.fields&&(cr.fields['Department']||cr.fields['Role']))||'Crew';
+            var chk=savedEmails.indexOf(em)>-1?' checked':'';
+            return '<label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">'
+              +'<input type="checkbox" data-name="'+nm.replace(/"/g,'&quot;')+'" data-email="'+em.replace(/"/g,'&quot;')+'" data-role="'+rl.replace(/"/g,'&quot;')+'"'+chk+'>'
+              +'<span>'+nm+' <span style="color:var(--muted)">&middot; '+rl+'</span></span></label>';
+          }).join('') : '<p style="color:var(--muted);font-size:12px">No crew loaded yet.</p>')
+        + '</div>'
+        + '<button class="btn-sm" onclick="(function(){var boxes=document.querySelectorAll('#ol-crew-pick input[type=checkbox]:checked');var arr=Array.from(boxes).map(function(b){return{name:b.dataset.name,email:b.dataset.email,role:b.dataset.role,type:'crew'};});localStorage.setItem('bleuskm_finalized_crew',JSON.stringify(arr));renderOfferLetters();})()">Save &amp; Update Crew</button>';
+      if (contactsEl && contactsEl.parentNode) {
+        contactsEl.parentNode.insertBefore(d, contactsEl);
+      }
+    }
   }
 }
 
@@ -2906,7 +2934,7 @@ We are thrilled to officially offer you the role of ${role} on our production of
 
 Your talent and dedication have made you the right fit for this project, and we look forward to creating something powerful together.
 
-${custom ? custom + '\n\n' : ''}Please find your crew agreement attached. Once signed and returned, your position will be confirmed.
+${custom ? custom + '\n\n' : ''}Please find your cast agreement attached. Once signed and returned, your position will be confirmed.
 
 Shoot dates and call sheets will follow. If you have any questions, do not hesitate to reach out.
 
