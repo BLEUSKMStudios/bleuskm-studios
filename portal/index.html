@@ -2898,6 +2898,7 @@ async function renderOfferLetters(el) {
       <div class="grid2" style="gap:10px;margin-bottom:10px">
         <div><div class="modal-label">To (Full Name)</div><input id="ol-name" placeholder="Actor / Crew name" oninput="previewOffer()"></div>
         <div><div class="modal-label">Role</div><input id="ol-role" placeholder="e.g. Lead Actor" oninput="previewOffer()"></div>
+        <div><div class="modal-label">Shoot Dates</div><input id="ol-shootdates" placeholder="e.g. July 15, 16, 17" oninput="rebuildOfferLinks()"></div>
       </div>
       <div><div class="modal-label">Email (to send to)</div><input id="ol-email" placeholder="email@example.com" style="margin-bottom:10px"></div>
       <div><div class="modal-label">Custom Message (optional)</div><textarea id="ol-custom" rows="2" placeholder="Add any extra details..." oninput="previewOffer()"></textarea></div>
@@ -2955,14 +2956,32 @@ function selectOfferContact(name, email, role) {
   if (rcpName) rcpName.value = name;
   if (rcpEmail) rcpEmail.value = email;
   if (rcpRole) rcpRole.value = role;
+  const _sd = document.getElementById('ol-shootdates')?.value?.trim() || '';
+  const _sdExtra = _sd ? { shootdates: _sd } : undefined;
   if (name && email) {
     STATE.autoContractLinks = [
-      { label: 'Cast Agreement', url: contractLink(name, email, role, 'Cast Agreement') },
-      { label: 'Talent Release', url: contractLink(name, email, role, 'Talent Release') },
-      { label: 'Actor Deal Memo', url: contractLink(name, email, role, 'Actor Deal Memo') },
+      { label: 'Cast Agreement', url: contractLink(name, email, role, 'Cast Agreement', _sdExtra) },
+      { label: 'Talent Release', url: contractLink(name, email, role, 'Talent Release', _sdExtra) },
+      { label: 'Actor Deal Memo', url: contractLink(name, email, role, 'Actor Deal Memo', _sdExtra) },
     ];
   } else {
     STATE.autoContractLinks = [];
+  }
+  previewOffer();
+}
+
+function rebuildOfferLinks() {
+  const name = document.getElementById('ol-name')?.value?.trim() || '';
+  const email = document.getElementById('ol-email')?.value?.trim() || '';
+  const role = document.getElementById('ol-role')?.value?.trim() || '';
+  const _sd = document.getElementById('ol-shootdates')?.value?.trim() || '';
+  const _sdExtra = _sd ? { shootdates: _sd } : undefined;
+  if (name && email) {
+    STATE.autoContractLinks = [
+      { label: 'Cast Agreement', url: contractLink(name, email, role, 'Cast Agreement', _sdExtra) },
+      { label: 'Talent Release', url: contractLink(name, email, role, 'Talent Release', _sdExtra) },
+      { label: 'Actor Deal Memo', url: contractLink(name, email, role, 'Actor Deal Memo', _sdExtra) },
+    ];
   }
   previewOffer();
 }
