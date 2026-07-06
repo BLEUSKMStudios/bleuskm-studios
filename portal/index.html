@@ -600,9 +600,8 @@ const NAV = {
     {id:'shotlist',   icon:'🎥', label:'Shot List'},
     {id:'storyboard', icon:'🖼', label:'Storyboards'},
     {id:'scenes',     icon:'🎭', label:'Scene Breakdown'},
-    {id:'continuity', icon:'🔁', label:'Continuity Notes'},
     {id:'crew',       icon:'👥', label:'Crew'},
-    {id:'castingdb',  icon:'🎟', label:'Casting Database'},
+    {id:'castingdb',  icon:'🎟', label:'Casting'},
     {id:'castlinks',  icon:'🔗', label:'Cast Contract Links'},
     {id:'contacts',   icon:'📇', label:'Contacts'},
     {id:'timeline',   icon:'📅', label:'Timeline'},
@@ -618,7 +617,7 @@ const NAV = {
     {id:'timeline',    icon:'📅', label:'Timeline'},
     {id:'locations',   icon:'📍', label:'Location Hub'},
     {id:'crewcast',    icon:'👥', label:'Crew + Cast'},
-    {id:'castingdb',   icon:'🎟', label:'Casting Database'},
+    {id:'castingdb',   icon:'🎟', label:'Casting'},
     {id:'documents',   icon:'📁', label:'Documents'},
     {id:'budget',      icon:'💰', label:'Budget / Schedule'},
     {id:'availability',icon:'📆', label:'Availability'},
@@ -653,7 +652,6 @@ const NAV = {
     {id:'overview',   icon:'🎬', label:'Overview', badge:true},
     {id:'script',     icon:'📄', label:'Script'},
     {id:'scenes',     icon:'🎭', label:'Scene Breakdown'},
-    {id:'continuity', icon:'🔁', label:'Continuity Notes'},
     {id:'takelog',    icon:'🎞', label:'Take Log'},
     {id:'timeline',   icon:'📅', label:'Timeline'},
     {id:'emailhub',   icon:'📧', label:'Email Hub'},
@@ -1577,7 +1575,6 @@ SECTIONS.director = {
   storyboard: (el) => renderFileSection(el, 'storyboard', 'Storyboards', 'image/*,.pdf'),
   notes: (el) => renderNotesSection(el, 'Director', 'Director Notes'),
   scenes: (el) => renderScenesSection(el, true),
-  continuity: (el) => renderContinuityNotes(el),
   crew: (el) => renderCrewWithContracts(el),
   castingdb: (el) => renderCastingWithContracts(el),
     contacts:  (el) => renderContactsPool(el),
@@ -1910,55 +1907,11 @@ async function renderContractsHub(el, scope) {
 
   el.innerHTML = `
     <div class="tabs">
-      <div class="tab active" onclick="switchTab(this,'tab-send')">Send Contracts</div>
-      <div class="tab" onclick="switchTab(this,'tab-signed')">Signed Contracts</div>
-      <div class="tab" onclick="switchTab(this,'tab-templates')">Templates</div>
+      <div class="tab active" onclick="switchTab(this,'tab-signed')">Signed Contracts</div>
     </div>
-    <div class="tab-panel active" id="tab-send">
-      <div class="section-header">
-        <div class="section-title">${cfg.label} Agreement Links</div>
-      </div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Edit name/role below, then copy the link to send. They fill in the form and sign — it saves back here automatically.</p>
-      <div id="contract-edit-form" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px">
-        <div class="grid2" style="gap:10px;margin-bottom:10px">
-          <div><div class="modal-label">Name (override)</div><input id="ce-name" placeholder="Full name"></div>
-          <div><div class="modal-label">Role (override)</div><input id="ce-role" placeholder="Role title"></div>
-        </div>
-        <div class="modal-row"><div class="modal-label">Contract Type</div>
-          <select id="ce-type" onchange="renderExtraFields()">
-            ${cfg.types.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('')}
-          </select>
-        </div>
-        <div><div class="modal-label">Email</div><input id="ce-email" placeholder="email@example.com" style="margin-bottom:10px"></div>
-        <div id="ce-extra-fields"></div>
-        <div style="display:flex;gap:8px">
-          <button class="btn-sm btn-gold" onclick="buildContractLink()">Generate Link</button>
-          <button class="btn-sm btn-outline" onclick="copyContractLink()">Copy Link</button>
-        </div>
-        <div id="ce-link-out" style="margin-top:10px;font-size:11px;color:var(--muted);word-break:break-all"></div>
-      </div>
-      <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">— Or send directly to ${scope==='crew'?'CORE crew':'confirmed cast'} —</div>
-      <div id="contract-send-list"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
-    </div>
-    <div class="tab-panel" id="tab-signed">
+    <div class="tab-panel active" id="tab-signed">
       <div class="section-title" style="margin-bottom:16px">Signed Contracts</div>
       <div id="signed-list"><p style="color:var(--muted);font-size:13px">Loading...</p></div>
-    </div>
-    <div class="tab-panel" id="tab-templates">
-      <div class="section-title" style="margin-bottom:16px">Contract Templates</div>
-      ${cfg.groups.map(g => `
-        <div class="contract-group">
-          <div class="contract-group-title">${g.title}</div>
-          ${g.items.map(item => `
-            <div class="contract-row">
-              <div><div class="contract-row-name">${item.name}</div></div>
-              <div style="display:flex;gap:6px">
-                <button class="btn-sm btn-gold" onclick="useTemplate('${esc(item.name)}')">Use This Template</button>
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      `).join('')}
     </div>
   `;
 
@@ -3810,7 +3763,6 @@ SECTIONS.ad = {
 SECTIONS.scriptsupervisor = {
   script:     (el) => renderFileSection(el, 'script',    'Script',            '.pdf', 'Scripts pushed from Director appear here.'),
   scenes:     (el) => renderSceneBreakdown(el),
-  continuity: (el) => renderContinuityNotes(el),
   takelog:    (el) => renderTakeLog(el),
   timeline:   (el) => renderTimeline(el, 'scriptsupervisor'),
   emailhub:   (el) => renderEmailHub(el, 'crew', {lockAlias:true, includeCast:false}),
@@ -4173,7 +4125,7 @@ function renderCrewSection(el) {
 
   el.innerHTML = `
     <div class="section-header">
-      <div class="section-title">Crew + Cast</div>
+      <div class="section-title">Crew</div>
       ${canEdit ? '<button class="btn-sm btn-gold" onclick="showAddCrew()">+ Add Crew</button>' : ''}
     </div>
     ${list.map(c => {
