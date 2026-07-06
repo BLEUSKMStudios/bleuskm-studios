@@ -332,6 +332,11 @@ function todayISO() {
 
 // Map dashboard contract type labels -> deployed template slug + their extra fields
 const CONTRACT_TEMPLATES = {
+  'Crew Agreement':       { slug: 'crew-agreement',       extra: [] },
+  'Contractor Agreement': { slug: 'contractor-agreement', extra: [{key:'period', label:'Contract Period'}] },
+  'Composer Agreement':   { slug: 'composer-agreement',   extra: [{key:'scope', label:'Scope of Work'}, {key:'deliverydate', label:'Delivery Date'}] },
+  'Editor Agreement':     { slug: 'editor-agreement',     extra: [{key:'scope', label:'Scope of Work'}, {key:'deliverydate', label:'Delivery Date'}] },
+  'Location Release':     { slug: 'location-release',     extra: [{key:'location', label:'Location'}, {key:'filmdate', label:'Film Date'}] },
   'Cast Agreement':       { slug: 'actor-agreement',      extra: [{key:'character', label:'Character'}, {key:'shootdates', label:'Shoot Dates'}] },
   'Actor Deal Memo':      { slug: 'actor-deal-memo',      extra: [{key:'character', label:'Character'}, {key:'shootdates', label:'Shoot Dates'}] },
   'Talent Release':       { slug: 'talent-release',       extra: [{key:'filmdate', label:'Film Date'}] },
@@ -1880,6 +1885,8 @@ const CONTRACTS_HUB_SCOPE = {
       {name:'Editor Agreement'},
       {name:'Location Release'},
     ]
+    ,types: ['Crew Agreement','Contractor Agreement','Composer Agreement','Editor Agreement','Location Release']
+    ,groups: [{title:'Crew Contracts', items:[{name:'Crew Agreement'},{name:'Contractor Agreement'},{name:'Composer Agreement'},{name:'Editor Agreement'},{name:'Location Release'}]}]
   },
   cast: {
     label: 'Cast Contracts',
@@ -1890,6 +1897,8 @@ const CONTRACTS_HUB_SCOPE = {
       {name:'Media Release (BTS)'},
       {name:'Usage Rights'},
     ]
+    ,types: ['Cast Agreement','Actor Deal Memo','Talent Release','Media Release (BTS)','Usage Rights']
+    ,groups: [{title:'Cast Contracts', items:[{name:'Cast Agreement'},{name:'Actor Deal Memo'},{name:'Talent Release'},{name:'Media Release (BTS)'},{name:'Usage Rights'}]}]
   }
 };
 
