@@ -603,6 +603,7 @@ const NAV = {
     {id:'continuity', icon:'🔁', label:'Continuity Notes'},
     {id:'crew',       icon:'👥', label:'Crew'},
     {id:'castingdb',  icon:'🎟', label:'Casting Database'},
+    {id:'castlinks',  icon:'🔗', label:'Cast Contract Links'},
     {id:'contacts',   icon:'📇', label:'Contacts'},
     {id:'timeline',   icon:'📅', label:'Timeline'},
     {id:'polls',      icon:'📊', label:'Meeting Polls'},
@@ -1581,6 +1582,7 @@ SECTIONS.director = {
   castingdb: (el) => renderCastingWithContracts(el),
     contacts:  (el) => renderContactsPool(el),
   contracts: (el) => renderContractsHub(el, 'crew'),
+  castlinks: (el) => renderCastLinkGenerator(el),
   timeline: (el) => renderTimeline(el, 'director'),
   polls: (el) => renderMeetingPolls(el),
   emailhub: (el) => renderEmailHub(el, null),
@@ -1974,6 +1976,71 @@ async function renderContractsHub(el, scope) {
   loadSignedContracts(cfg.types);
   renderExtraFields();
 }
+
+function renderCastLinkGenerator(el) {
+  el.innerHTML = `
+    <div class="card" style="max-width:620px">
+      <div class="card-title">Cast Contract Link Generator</div>
+      <div style="color:var(--muted);font-size:13px;margin-bottom:18px">Generate pre-filled contract links for actors not yet in your system.</div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:18px">
+        <div>
+          <div class="modal-label" style="margin-bottom:4px">Actor Name</div>
+          <input id="clg-name" class="input" placeholder="Full legal name" oninput="clgUpdate()" style="width:100%;box-sizing:border-box">
+        </div>
+        <div>
+          <div class="modal-label" style="margin-bottom:4px">Character / Role</div>
+          <input id="clg-role" class="input" placeholder="e.g. Sister 1, Lead Detective" oninput="clgUpdate()" style="width:100%;box-sizing:border-box">
+        </div>
+        <div>
+          <div class="modal-label" style="margin-bottom:4px">Shoot Dates</div>
+          <input id="clg-shoot" class="input" placeholder="e.g. July 15, 16, 17" oninput="clgUpdate()" style="width:100%;box-sizing:border-box">
+        </div>
+      </div>
+      <div id="clg-links" style="display:none;flex-direction:column;gap:8px"></div>
+    </div>
+  `;
+}
+
+function clgUpdate() {
+  const name  = document.getElementById('clg-name')?.value?.trim() || '';
+  const role  = document.getElementById('clg-role')?.value?.trim() || '';
+  const shoot = document.getElementById('clg-shoot')?.value?.trim() || '';
+  const film  = STATE.filmName || '';
+  const linksEl = document.getElementById('clg-links');
+  if (!linksEl) return;
+  if (!name) { linksEl.style.display = 'none'; return; }
+
+  const base = 'https://bleuskm.com/contracts/';
+  const p = new URLSearchParams();
+  p.set('name', name);
+  if (role)  p.set('role', role);
+  if (film)  p.set('film', film);
+  if (shoot) p.set('shootdates', shoot);
+  const qs = p.toString();
+
+  const types = [
+    { label: 'Cast Agreement',  slug: 'actor-agreement' },
+    { label: 'Talent Release',  slug: 'talent-release'  },
+    { label: 'Actor Deal Memo', slug: 'actor-deal-memo' },
+  ];
+
+  linksEl.style.display = 'flex';
+  linksEl.innerHTML = types.map((t,i) => `
+    <div style="background:var(--bg2);border-radius:6px;padding:10px 12px;display:flex;align-items:center;gap:8px">
+      <span style="font-size:12px;font-weight:600;color:var(--gold);min-width:130px">${t.label}</span>
+      <input id="clg-url-${i}" value="${base}${t.slug}/?${qs}" readonly
+        style="flex:1;background:transparent;border:none;color:var(--muted);font-size:11px;font-family:monospace;outline:none;cursor:pointer"
+        onclick="this.select()">
+      <button class="btn-sm btn-outline" onclick="clgCopy(${i})">Copy</button>
+    </div>
+  `).join('');
+}
+
+function clgCopy(i) {
+  const val = document.getElementById('clg-url-' + i)?.value;
+  if (val) navigator.clipboard.writeText(val).then(() => toast('Link copied!','📋'));
+}
+
 
 function renderContractSendList(list, emptyMsg) {
   const el = document.getElementById('contract-send-list');
