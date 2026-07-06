@@ -480,7 +480,7 @@ contractType: CONTRACT_TYPE,
 name: actorName,
 email: P.email || '',
 role: P.role || '',
-film: P.film || '',
+film: (P.film||P.project) || '',
 dateSigned,
 signatureImage: sigData,
 ...extraParams()
@@ -509,7 +509,7 @@ window.scrollTo({ top: 0, behavior: 'smooth' });
 const cn = document.getElementById('confirmName');
 if (cn) cn.textContent = (actorName || P.name || '').split(' ')[0];
 const cf = document.getElementById('confirmFilm');
-if (cf) cf.textContent = P.film || 'the production';
+if (cf) cf.textContent = (P.film||P.project) || 'the production';
 const cr = document.getElementById('confirmRole');
 if (cr) cr.textContent = P.role || '';
 }
@@ -519,7 +519,7 @@ if (cr) cr.textContent = P.role || '';
 const CONTRACT_TYPE = 'actor-agreement';
 fill('pb_name', P.name);
 fill('pb_character', P.character || P.role);
-fill('pb_film', P.film);
+fill('pb_film', (P.film||P.project));
 fill('pb_shootdates', P.shootdates);
 
 const zd = document.getElementById('zariaDate');
