@@ -496,11 +496,16 @@ function updateNoteBadge() {
   });
   const badge = document.getElementById('badge-overview');
   if (badge) {
-    badge.textContent = unread.length || '';
-    badge.style.display = unread.length ? '' : 'none';
-    badge.style.background = '#FFD700';
-    badge.style.color = '#111';
-    badge.style.fontWeight = 'bold';
+    // Yellow dot = unread notes or emails; gray = all caught up
+    const emailUnread = (STATE.lastInboxList||[]).some(m => m.unread && !STATE.readInboxUids.has(m.uid));
+    const hasUnread = unread.length > 0 || emailUnread;
+    badge.style.display = '';
+    badge.style.background = hasUnread ? 'var(--gold)' : '#555';
+    badge.style.width = '9px';
+    badge.style.height = '9px';
+    badge.style.minWidth = '9px';
+    badge.style.borderRadius = '50%';
+    badge.textContent = '';
   }
 }
 
