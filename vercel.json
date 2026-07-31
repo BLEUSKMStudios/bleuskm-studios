@@ -1,4 +1,5 @@
 {
+  "cleanUrls": true,
   "rewrites": [
     { "source": "/.netlify/functions/:func", "destination": "/api/:func" }
   ]
