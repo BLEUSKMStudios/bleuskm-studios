@@ -725,20 +725,7 @@ body { background: #080808; color: #EADFCF; }
 </div>
 
 <!-- OPEN CASTINGS -->
-<div class="casting-grid-section">
-  <span class="casting-section-label">Now Casting</span>
-  <div class="casting-grid">
 
-    <!-- THE FINAL HAND — CASTING CLOSED -->
-    <div class="film-cast-card closed-card" style="opacity:0.55;filter:grayscale(0.4)" onclick="openModal('final-hand-closed')">
-      <img class="film-cast-img" src="/images/the_final_hand_poster.png" alt="The Final Hand">
-      <div class="film-cast-overlay"><span class="cast-status-badge badge-closed">Casting Closed</span></div>
-      <div class="film-cast-info">
-        <span class="film-cast-format">Short Film · Pre-Production</span>
-        <div class="film-cast-title">The Final Hand</div>
-        <span class="film-cast-action" style="color:rgba(234,223,207,0.3)">Under Review</span>
-      </div>
-    </div>
 
   </div>
 </div>
@@ -751,7 +738,7 @@ body { background: #080808; color: #EADFCF; }
   <!-- LOVE ME LIKE THIS — SOON -->
   <div class="film-cast-card closed-card" onclick="openModal('love-me-like-this')">
     <img class="film-cast-img" src="/images/love-me-like-this-poster.png" alt="Love Me Like This">
-    <div class="film-cast-overlay"><span class="cast-status-badge badge-soon">Opens Soon</span></div>
+    <div class="film-cast-overlay"><span class="cast-status-badge badge-soon">Opens September 7th</span></div>
     <div class="film-cast-info">
       <span class="film-cast-format">Short Film · Pre-Production</span>
       <div class="film-cast-title">Love Me Like This</div>
@@ -834,7 +821,24 @@ body { background: #080808; color: #EADFCF; }
 <!-- NEWSLETTER -->
 <div class="newsletter-section">
   <div class="newsletter-copy">
-    <h2>Stay in the Loop</h2>
+    <h2>
+<!-- THE FINAL HAND — IN DEVELOPMENT -->
+<div class="casting-grid-section">
+  <span class="casting-section-label">In Development</span>
+  <div class="casting-grid">
+    <div class="film-cast-card closed-card" style="opacity:0.55;filter:grayscale(0.4)" onclick="openModal('final-hand-closed')">
+      <img class="film-cast-img" src="/images/the_final_hand_poster.png" alt="The Final Hand">
+      <div class="film-cast-overlay"><span class="cast-status-badge badge-closed">In Development</span></div>
+      <div class="film-cast-info">
+        <span class="film-cast-format">Short Film · In Development</span>
+        <div class="film-cast-title">The Final Hand</div>
+        <span class="film-cast-action" style="color:rgba(234,223,207,0.3)">Principal Photography Begins Aug 2nd</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+Stay in the Loop</h2>
     <p>Subscribe to receive casting call announcements, production updates, and BLEUSKM news directly to your inbox. Be the first to know when submissions open.</p>
   </div>
   <div>
@@ -1197,7 +1201,7 @@ body { background: #080808; color: #EADFCF; }
       <button class="modal-tab" onclick="switchTab('love-me-like-this', 'subscribe')">Stay Updated</button>
     </div>
     <div class="modal-tab-content active" id="love-me-like-this-info">
-      <span class="cast-status-badge badge-soon" style="margin-bottom:20px;display:inline-block">Casting Opens Soon</span>
+      <span class="cast-status-badge badge-soon" style="margin-bottom:20px;display:inline-block">Opens September 7th</span>
       <div class="modal-film-title">Love Me Like This</div>
       <div class="modal-film-meta">Short Film · Pre-Production · Director: Zaria Lashae</div>
       <p class="modal-logline">Over the course of one night, a man set on making a woman fall in love with him connects with someone who isn't looking for anything, and through a series of intimate questions, they discover something real that isn't meant to last.</p>
