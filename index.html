@@ -11,10 +11,10 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--gold:#DAAF37;--gold-dim:rgba(218,175,55,0.5);--cream:#EADFCF;--dark:#080808;--red:#950606}
-body{background:var(--dark);color:var(--cream);font-family:'Red Hat Display',sans-serif;overflow-x:hidden}
+body{background:var(--dark);color:var(--cream);font-family:'Red Hat Display',sans-serif;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
 
 /* NAV */
-.navbar{background:rgba(8,8,8,0.92)!important;backdrop-filter:blur(12px);border-bottom:1px solid rgba(218,175,55,0.08)}
+.navbar{background:rgba(8,8,8,0.92)!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(218,175,55,0.08)}
 .navbar-brand span{font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold)}
 .nav-link{font-family:'League Spartan',sans-serif;font-weight:600;font-size:0.65rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(234,223,207,0.5)!important;transition:color 0.2s;padding:0.5rem 1rem!important}
 .nav-link:hover,.nav-link.active{color:var(--gold)!important}
@@ -97,6 +97,8 @@ body{background:var(--dark);color:var(--cream);font-family:'Red Hat Display',san
 
 @media(max-width:1100px){.project-rail{grid-template-columns:repeat(3,1fr);gap:20px}.statement-section{grid-template-columns:1fr;gap:50px}.statement-links{border-left:none;padding-left:0;border-top:1px solid rgba(218,175,55,0.12);padding-top:40px}}
 @media(max-width:768px){.hero-content{padding:0 24px 80px}.more-section,.crew-banner{padding:60px 24px}.project-rail{grid-template-columns:repeat(2,1fr)}.footer-grid{grid-template-columns:1fr 1fr}.hero-counter{left:24px}.statement-section{padding:70px 24px}}
+@media(max-width:480px){.project-rail{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr}.hero-content{padding:0 20px 60px;padding-bottom:calc(60px + env(safe-area-inset-bottom))}.more-section{padding:50px 20px}.statement-section{padding:50px 20px}.crew-banner{padding:40px 20px}.site-footer-full{padding:40px 20px 20px}.hero-counter{left:20px;bottom:calc(28px + env(safe-area-inset-bottom))}.hero-wrapper .carousel-control-prev,.hero-wrapper .carousel-control-next{bottom:calc(18px + env(safe-area-inset-bottom))}}
+@supports(padding:max(0px)){.navbar{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}}
 </style>
   <style>
     a, a:link, a:visited, a:hover, a:active { text-decoration: none !important; }
@@ -142,6 +144,7 @@ body{background:var(--dark);color:var(--cream);font-family:'Red Hat Display',san
           </video>
           <div class="hero-overlay"></div>
           <div class="hero-content">
+            <p class="hero-tag">Now In Post-Production</p>
             <h1 class="hero-title">THE FINAL<br>HAND</h1>
             <p class="hero-sub">During a game of blackjack, a gambler attempts to outplay a man named High John the Conqueror.</p>
             <a href="/films/the-final-hand" class="hero-casting-btn">EXPLORE THE FILM &rarr;</a>
@@ -465,6 +468,12 @@ document.addEventListener('click', function(e) {
   }
 });
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { var p = document.getElementById('channelsPopup'); if (p && p.style.display === 'flex') toggleChannels(); } });
+
+/* iOS video autoplay fallback */
+document.querySelectorAll('video[autoplay]').forEach(function(v){
+  var p = v.play();
+  if(p !== undefined){ p.catch(function(){ v.setAttribute('controls',''); }); }
+});
 </script>
 
 </body>

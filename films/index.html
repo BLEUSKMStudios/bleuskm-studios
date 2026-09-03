@@ -12,13 +12,13 @@
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{--gold:#DAAF37;--gold-dim:rgba(218,175,55,0.5);--cream:#EADFCF;--dark:#080808;--red:#950606}
-    body{background:var(--dark);color:var(--cream);font-family:'Red Hat Display',sans-serif;overflow-x:hidden}
+    body{background:var(--dark);color:var(--cream);font-family:'Red Hat Display',sans-serif;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
     a,a:link,a:visited,a:hover,a:active{text-decoration:none!important}
     a{color:inherit}
     a:hover{color:#DAAF37}
 
     /* NAV */
-    .navbar{background:rgba(8,8,8,0.92)!important;backdrop-filter:blur(12px);border-bottom:1px solid rgba(218,175,55,0.08)}
+    .navbar{background:rgba(8,8,8,0.92)!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(218,175,55,0.08)}
     .navbar-brand span{font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold)}
     .nav-link{font-family:'League Spartan',sans-serif;font-weight:600;font-size:0.65rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(234,223,207,0.5)!important;transition:color 0.2s;padding:0.5rem 1rem!important}
     .nav-link:hover,.nav-link.active{color:var(--gold)!important}
@@ -82,6 +82,14 @@
       .film-title{font-size:2.2rem}
       .film-info-col{padding:36px 24px}
     }
+    @media(max-width:480px){
+      .footer-grid{grid-template-columns:1fr}
+      .films-header{padding-left:20px;padding-right:20px}
+      .films-body{padding-left:20px;padding-right:20px;padding-bottom:60px}
+      .future-section{padding:40px 20px}
+      .site-footer-full{padding:40px 20px 20px}
+    }
+    @supports(padding:max(0px)){.navbar{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}}
   </style>
 </head>
 <body>

@@ -23,12 +23,12 @@
       --amber:rgba(160,100,40,0.6);
     }
     html{scroll-behavior:smooth}
-    body{background:var(--dark);color:var(--cream);font-family:'Red Hat Display',sans-serif;overflow-x:hidden}
+    body{background:var(--dark);color:var(--cream);font-family:'Red Hat Display',sans-serif;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
     a,a:link,a:visited,a:hover,a:active{text-decoration:none!important}
     a{color:inherit}
 
     /* NAV */
-    .navbar{background:rgba(8,8,8,0.92)!important;backdrop-filter:blur(12px);border-bottom:1px solid rgba(218,175,55,0.08);z-index:200}
+    .navbar{background:rgba(8,8,8,0.92)!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(218,175,55,0.08);z-index:200}
     .navbar-brand span{font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold)}
     .nav-link{font-family:'League Spartan',sans-serif;font-weight:600;font-size:0.65rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(234,223,207,0.5)!important;transition:color 0.2s;padding:0.5rem 1rem!important}
     .nav-link:hover,.nav-link.active{color:var(--gold)!important}
@@ -214,6 +214,12 @@
       .end-title{font-size:2.8rem}
       .film-end{padding:80px 24px}
     }
+    @media(max-width:480px){
+      .hero-content{padding:0 20px calc(60px + env(safe-area-inset-bottom))}
+      .hero-title{font-size:2.8rem}
+      .site-footer-full{padding:40px 20px calc(20px + env(safe-area-inset-bottom))}
+    }
+    @supports(padding:max(0px)){.navbar{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}}
   </style>
 </head>
 <body>
@@ -356,7 +362,7 @@
 
   <!-- ── DAY 2 ── -->
   <div class="gallery-day">
-    <span class="gallery-day-label">Day 1</span>
+    <span class="gallery-day-label">Day 2</span>
 
     <!-- Row 1: 2 portrait -->
     <div class="gallery-grid g-2col" style="margin-bottom:12px">
@@ -364,7 +370,7 @@
         <img src="/images/final-hand-bts/photo-1.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
         <div class="gal-overlay">
           <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
-            <p class="gal-caption" style="margin:0">Pictured: Weiwyn Badal + Alexandria Woods|The Sisters</p>
+            <p class="gal-caption" style="margin:0">Pictured:</p>
             <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
           </div>
         </div>
@@ -373,7 +379,7 @@
         <img src="/images/final-hand-bts/photo-2.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
         <div class="gal-overlay">
           <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
-            <p class="gal-caption" style="margin:0">Pictured: Zaria Lashae|Director - Dion Monroe Sherrod|The Player</p>
+            <p class="gal-caption" style="margin:0">Pictured:</p>
             <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
           </div>
         </div>
@@ -386,7 +392,7 @@
         <img src="/images/final-hand-bts/photo-3.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
         <div class="gal-overlay">
           <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
-            <p class="gal-caption" style="margin:0">Pictured: Joshua Sweet|Director of Photography + Brooklyn Rogers|MUA</p>
+            <p class="gal-caption" style="margin:0">Pictured:</p>
             <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
           </div>
         </div>
@@ -399,17 +405,25 @@
         <img src="/images/final-hand-bts/photo-4.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
         <div class="gal-overlay">
           <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
-            <p class="gal-caption" style="margin:0">Pictured: Dion Monroe Sherrod|The Player + Sophia Alba|2nd Assistant Camera</p>
+            <p class="gal-caption" style="margin:0">Pictured:</p>
             <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
           </div>
         </div>
       </div>
+      <div class="gal-item square" data-index="4" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-5.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
+        <div class="gal-overlay">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
+            <p class="gal-caption" style="margin:0">Pictured:</p>
+            <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          </div>
+        </div>
       </div>
       <div class="gal-item square" data-index="5" onclick="openLightbox(this)">
         <img src="/images/final-hand-bts/photo-6.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
         <div class="gal-overlay">
           <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
-            <p class="gal-caption" style="margin:0">Pictured: Joshua Fresquez|Sound</p>
+            <p class="gal-caption" style="margin:0">Pictured:</p>
             <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
           </div>
         </div>
@@ -422,7 +436,7 @@
         <img src="/images/final-hand-bts/photo-7.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
         <div class="gal-overlay">
           <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
-            <p class="gal-caption" style="margin:0">Pictured: Dion Monroe Sherrod|The Player + Brooklyn Rogers|MUA</p>
+            <p class="gal-caption" style="margin:0">Pictured:</p>
             <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
           </div>
         </div>
@@ -431,7 +445,7 @@
         <img src="/images/final-hand-bts/photo-8.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
         <div class="gal-overlay">
           <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
-            <p class="gal-caption" style="margin:0">Pictured: Dion Monroe Sherrod|The Player</p>
+            <p class="gal-caption" style="margin:0">Pictured:</p>
             <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
           </div>
         </div>
@@ -444,7 +458,7 @@
         <img src="/images/final-hand-bts/photo-9.jpg" alt="Behind the scenes" loading="lazy">
         <div class="gal-overlay">
           <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
-            <p class="gal-caption" style="margin:0">Pictured: Joshua Sweet|DP + Kaden Ahmad| PA + Arnezz Archie|1st AC/Grip</p>
+            <p class="gal-caption" style="margin:0">Pictured:</p>
             <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
           </div>
         </div>
@@ -453,7 +467,7 @@
         <img src="/images/final-hand-bts/photo-10.jpg" alt="Behind the scenes" loading="lazy">
         <div class="gal-overlay">
           <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
-            <p class="gal-caption" style="margin:0">Pictured: Ashia Monae|1st AD + Zaria Lashae|Director + Brooklyn Rogers|MUA</p>
+            <p class="gal-caption" style="margin:0">Pictured:</p>
             <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
           </div>
         </div>
@@ -462,11 +476,26 @@
         <img src="/images/final-hand-bts/photo-11.jpg" alt="Behind the scenes" loading="lazy">
         <div class="gal-overlay">
           <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
+            <p class="gal-caption" style="margin:0">Pictured:</p>
             <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Row 6: 1 landscape -->
+    <div class="gallery-grid g-1col">
+      <div class="gal-item landscape" data-index="11" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-12.jpg" alt="Behind the scenes" loading="lazy">
+        <div class="gal-overlay">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
+            <p class="gal-caption" style="margin:0">Pictured:</p>
+            <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- GALLERY CREDIT LINE -->
   <div style="margin-top:40px;padding-top:28px;border-top:1px solid rgba(218,175,55,0.07)">
