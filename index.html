@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -25,6 +25,7 @@ body{background:var(--dark);color:var(--cream);font-family:'Red Hat Display',san
 .hero-slide{position:relative;height:100%;width:100%}
 .hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;transform:scale(1.05);transition:transform 8s ease}
 .carousel-item.active .hero-img{transform:scale(1)}
+.hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,8,8,0.96) 0%,rgba(8,8,8,0.4) 40%,rgba(8,8,8,0.1) 70%,rgba(8,8,8,0.35) 100%),linear-gradient(to right,rgba(8,8,8,0.75) 0%,transparent 65%);z-index:1}
 .hero-content{position:absolute;bottom:0;left:0;right:0;z-index:2;padding:0 60px 90px;max-width:720px}
 .hero-tag{font-family:'League Spartan',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;opacity:0;transform:translateY(10px);transition:opacity 0.6s 0.2s ease,transform 0.6s 0.2s ease}
@@ -136,13 +137,15 @@ body{background:var(--dark);color:var(--cream);font-family:'Red Hat Display',san
 
       <div class="carousel-item active">
         <div class="hero-slide">
-          <img src="/images/7[1].png" class="hero-img" alt="The Final Hand">
+          <video class="hero-video" autoplay muted loop playsinline poster="/images/the-final-hand-poster-6.png">
+            <source src="/films/the-final-hand/bts-edit.mp4" type="video/mp4">
+          </video>
           <div class="hero-overlay"></div>
           <div class="hero-content">
-            <p class="hero-tag">Pre-Production · Casting Closed</p>
+            <p class="hero-tag">Now In Post-Production</p>
             <h1 class="hero-title">THE FINAL<br>HAND</h1>
-            <p class="hero-sub">Fate. Control. Power. A psychological short where every card played reveals what's already been decided.</p>
-            <a href="/final-hand-submissions-closed.html" class="hero-casting-btn" style="background:rgba(218,175,55,0.15);color:#DAAF37;border:1px solid rgba(218,175,55,0.4)">CASTING CLOSED — UPDATE →</a>
+            <p class="hero-sub">During a game of blackjack, a gambler attempts to outplay a man named High John the Conqueror.</p>
+            <a href="/films/the-final-hand" class="hero-casting-btn">EXPLORE THE FILM &rarr;</a>
           </div>
         </div>
       </div>
