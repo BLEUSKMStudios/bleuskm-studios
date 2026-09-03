@@ -200,7 +200,7 @@
       .credits-grid{grid-template-columns:1fr}
       .credits-dept:nth-child(odd){padding-right:0;border-right:none}
       .credits-dept:nth-child(even){padding-left:0}
-      .video-credits{grid-template-columns:1fr 1fr}
+      .video-credits{grid-template-columns:1fr}
       .back-to-films{padding:60px 28px 0}
     }
     @media(max-width:640px){
@@ -247,7 +247,7 @@
 ════════════════════════════════════════════════════════════ -->
 <section class="hero">
   <div class="hero-bg">
-    <img src="/images/7[1].png" class="hero-poster" alt="The Final Hand Official Poster">
+    <img src="/images/the-final-hand-poster-6.png" class="hero-poster" alt="The Final Hand Official Poster">
     <div class="hero-grain"></div>
     <div class="hero-vignette"></div>
   </div>
@@ -277,8 +277,7 @@
     <div class="film-synopsis-meta">
       <div class="meta-row">
         <span class="meta-label">Genre</span>
-        <!-- EDIT: Replace placeholder below with actual genre -->
-        <span class="meta-val meta-placeholder" style="color:rgba(234,223,207,0.2);font-style:italic">— To be updated</span>
+        <span class="meta-val">Afrosurreal Psychological Drama</span>
       </div>
       <div class="meta-row">
         <span class="meta-label">Format</span>
@@ -290,21 +289,18 @@
       </div>
       <div class="meta-row">
         <span class="meta-label">Year</span>
-        <!-- EDIT: Replace with production/release year -->
-        <span class="meta-val meta-placeholder" style="color:rgba(234,223,207,0.2);font-style:italic">— To be updated</span>
+        <span class="meta-val">2026</span>
       </div>
       <div class="meta-row">
-        <span class="meta-label">Written & Directed by</span>
+        <span class="meta-label">Written &amp; Directed by</span>
         <span class="meta-val">Zaria Lashae</span>
       </div>
     </div>
   </div>
   <div class="film-synopsis-right">
-    <!-- EDIT: Replace the placeholder <p> below with the official synopsis -->
     <p class="synopsis-placeholder">
-      [ Official synopsis to be added. Replace this block with the film's synopsis when ready. Describe the world, the central tension, and what makes this story distinctly BLEUSKM. ]
+      During a game of blackjack, a gambler attempts to outplay a man named High John the Conqueror, only to realize too late that truth and trick share the same breath. The game is testing something deeper than skill&hellip;and in return it teaches that true power cannot be learned through observation alone.
     </p>
-    <p class="synopsis-edit-note">— Placeholder. Replace with official synopsis before launch.</p>
   </div>
 </section>
 
@@ -325,7 +321,7 @@
       controls
       playsinline
       preload="metadata"
-      poster="/images/the-final-hand-poster-7.png"
+      poster="/images/the-final-hand-poster-6.png"
       style="width:100%;max-height:80vh;object-fit:contain;background:#000;display:block"
     >
       <source src="/films/the-final-hand/bts-edit.mp4" type="video/mp4">
@@ -335,22 +331,15 @@
   </div>
   <p class="video-fullscreen-hint">Use fullscreen for optimal viewing · Landscape recommended</p>
 
-  <!-- VIDEO CREDITS — edit or hide fields as needed -->
-  <div class="video-credits">
+  <!-- VIDEO CREDITS -->
+  <div class="video-credits" style="grid-template-columns:1fr 1fr">
     <div class="video-credit-item">
-      <span class="vc-label">Edited by</span>
-      <!-- EDIT: Replace with editor name or remove this block -->
-      <span class="vc-placeholder">— To be credited</span>
+      <span class="vc-label">Edit / Colorgrade by</span>
+      <span class="vc-val">Arnezz Archie &mdash; AMAVisualss</span>
     </div>
     <div class="video-credit-item">
       <span class="vc-label">Footage by</span>
-      <!-- EDIT: Replace with cinematographer/footage credit -->
-      <span class="vc-placeholder">— To be credited</span>
-    </div>
-    <div class="video-credit-item">
-      <span class="vc-label">Additional Credits</span>
-      <!-- EDIT: Add any additional credits here -->
-      <span class="vc-placeholder">— To be credited</span>
+      <span class="vc-val">Joshua Sweet &mdash; SweetNUgly Productions</span>
     </div>
   </div>
 </section>
@@ -365,24 +354,28 @@
     <h2 class="section-heading">Behind the Film</h2>
   </div>
 
-  <!-- ── DAY I ── -->
+  <!-- ── DAY 2 ── -->
   <div class="gallery-day">
-    <span class="gallery-day-label">Day I</span>
+    <span class="gallery-day-label">Day 2</span>
 
-    <!-- Row 1: large portrait + portrait -->
+    <!-- Row 1: 2 portrait -->
     <div class="gallery-grid g-2col" style="margin-bottom:12px">
       <div class="gal-item portrait" data-index="0" onclick="openLightbox(this)">
         <img src="/images/final-hand-bts/photo-1.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
         <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Describe this photo --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
+            <p class="gal-caption" style="margin:0">Pictured:</p>
+            <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          </div>
         </div>
       </div>
       <div class="gal-item portrait" data-index="1" onclick="openLightbox(this)">
         <img src="/images/final-hand-bts/photo-2.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
         <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Add caption --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
+            <p class="gal-caption" style="margin:0">Pictured:</p>
+            <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          </div>
         </div>
       </div>
     </div>
@@ -392,230 +385,116 @@
       <div class="gal-item landscape" data-index="2" onclick="openLightbox(this)">
         <img src="/images/final-hand-bts/photo-3.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
         <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Add caption --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
+            <p class="gal-caption" style="margin:0">Pictured:</p>
+            <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Row 3: 3 col -->
-    <div class="gallery-grid g-3col-even">
+    <div class="gallery-grid g-3col-even" style="margin-bottom:12px">
       <div class="gal-item square" data-index="3" onclick="openLightbox(this)">
         <img src="/images/final-hand-bts/photo-4.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
         <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Pictured: [Name] --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
+            <p class="gal-caption" style="margin:0">Pictured:</p>
+            <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          </div>
         </div>
       </div>
       <div class="gal-item square" data-index="4" onclick="openLightbox(this)">
         <img src="/images/final-hand-bts/photo-5.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
         <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Add caption --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
+            <p class="gal-caption" style="margin:0">Pictured:</p>
+            <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          </div>
         </div>
       </div>
       <div class="gal-item square" data-index="5" onclick="openLightbox(this)">
         <img src="/images/final-hand-bts/photo-6.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
         <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Add caption --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
+            <p class="gal-caption" style="margin:0">Pictured:</p>
+            <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- ── DAY II ── -->
-  <div class="gallery-day">
-    <span class="gallery-day-label">Day II</span>
-
-    <!-- Row 1: wide + portrait -->
+    <!-- Row 4: wide + portrait -->
     <div class="gallery-grid g-2col-wide" style="margin-bottom:12px">
       <div class="gal-item landscape" data-index="6" onclick="openLightbox(this)">
         <img src="/images/final-hand-bts/photo-7.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
         <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Add caption --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
+            <p class="gal-caption" style="margin:0">Pictured:</p>
+            <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          </div>
         </div>
       </div>
       <div class="gal-item portrait" data-index="7" onclick="openLightbox(this)">
         <img src="/images/final-hand-bts/photo-8.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
         <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Pictured: [Name] --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
+            <p class="gal-caption" style="margin:0">Pictured:</p>
+            <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Row 2: 3 col -->
+    <!-- Row 5: 3 portrait -->
     <div class="gallery-grid g-3col" style="margin-bottom:12px">
       <div class="gal-item portrait" data-index="8" onclick="openLightbox(this)">
         <img src="/images/final-hand-bts/photo-9.jpg" alt="Behind the scenes" loading="lazy">
         <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Add caption --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
+            <p class="gal-caption" style="margin:0">Pictured:</p>
+            <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          </div>
         </div>
       </div>
       <div class="gal-item portrait" data-index="9" onclick="openLightbox(this)">
         <img src="/images/final-hand-bts/photo-10.jpg" alt="Behind the scenes" loading="lazy">
         <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Pictured: [Name] --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
+            <p class="gal-caption" style="margin:0">Pictured:</p>
+            <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          </div>
         </div>
       </div>
       <div class="gal-item portrait" data-index="10" onclick="openLightbox(this)">
         <img src="/images/final-hand-bts/photo-11.jpg" alt="Behind the scenes" loading="lazy">
         <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Add caption --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
+            <p class="gal-caption" style="margin:0">Pictured:</p>
+            <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Row 3: 2 col landscape -->
+    <!-- Row 6: 2 landscape -->
     <div class="gallery-grid g-2col">
       <div class="gal-item landscape" data-index="11" onclick="openLightbox(this)">
         <img src="/images/final-hand-bts/photo-12.jpg" alt="Behind the scenes" loading="lazy">
         <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Add caption --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
+            <p class="gal-caption" style="margin:0">Pictured:</p>
+            <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          </div>
         </div>
       </div>
       <div class="gal-item landscape" data-index="12" onclick="openLightbox(this)">
         <img src="/images/final-hand-bts/photo-13.jpg" alt="Behind the scenes" loading="lazy">
         <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Add caption --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── DAY III ── -->
-  <div class="gallery-day">
-    <span class="gallery-day-label">Day III</span>
-
-    <!-- Row 1: portrait + 2 square -->
-    <div class="gallery-grid g-3col-even" style="margin-bottom:12px">
-      <div class="gal-item tall" data-index="13" onclick="openLightbox(this)">
-        <img src="/images/final-hand-bts/photo-14.jpg" alt="Behind the scenes" loading="lazy">
-        <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Pictured: [Name] --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
-        </div>
-      </div>
-      <div class="gal-item tall" data-index="14" onclick="openLightbox(this)">
-        <img src="/images/final-hand-bts/photo-15.jpg" alt="Behind the scenes" loading="lazy">
-        <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Add caption --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
-        </div>
-      </div>
-      <div class="gal-item tall" data-index="15" onclick="openLightbox(this)">
-        <img src="/images/final-hand-bts/photo-16.jpg" alt="Behind the scenes" loading="lazy">
-        <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Pictured: [Name] --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Row 2: wide -->
-    <div class="gallery-grid g-1col" style="margin-bottom:12px">
-      <div class="gal-item landscape" data-index="16" onclick="openLightbox(this)">
-        <img src="/images/final-hand-bts/photo-17.jpg" alt="Behind the scenes" loading="lazy">
-        <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Add caption --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Remaining photos: 2-col grid -->
-    <div class="gallery-grid g-2col" style="margin-bottom:12px">
-      <div class="gal-item portrait" data-index="17" onclick="openLightbox(this)">
-        <img src="/images/final-hand-bts/photo-18.jpg" alt="Behind the scenes" loading="lazy">
-        <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Add caption --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
-        </div>
-      </div>
-      <div class="gal-item portrait" data-index="18" onclick="openLightbox(this)">
-        <img src="/images/final-hand-bts/photo-19.jpg" alt="Behind the scenes" loading="lazy">
-        <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Pictured: [Name] --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
-        </div>
-      </div>
-    </div>
-    <div class="gallery-grid g-3col-even" style="margin-bottom:12px">
-      <div class="gal-item square" data-index="19" onclick="openLightbox(this)">
-        <img src="/images/final-hand-bts/photo-20.jpg" alt="Behind the scenes" loading="lazy">
-        <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Add caption --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
-        </div>
-      </div>
-      <div class="gal-item square" data-index="20" onclick="openLightbox(this)">
-        <img src="/images/final-hand-bts/photo-21.jpg" alt="Behind the scenes" loading="lazy">
-        <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Add caption --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
-        </div>
-      </div>
-      <div class="gal-item square" data-index="21" onclick="openLightbox(this)">
-        <img src="/images/final-hand-bts/photo-22.jpg" alt="Behind the scenes" loading="lazy">
-        <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Add caption --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
-        </div>
-      </div>
-    </div>
-    <div class="gallery-grid g-2col">
-      <div class="gal-item landscape" data-index="22" onclick="openLightbox(this)">
-        <img src="/images/final-hand-bts/photo-23.jpg" alt="Behind the scenes" loading="lazy">
-        <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Add caption --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
-        </div>
-      </div>
-      <div class="gal-item landscape" data-index="23" onclick="openLightbox(this)">
-        <img src="/images/final-hand-bts/photo-24.jpg" alt="Behind the scenes" loading="lazy">
-        <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Add caption --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
-        </div>
-      </div>
-    </div>
-    <!-- Photos 25-28 -->
-    <div class="gallery-grid g-3col-even" style="margin-top:12px">
-      <div class="gal-item portrait" data-index="24" onclick="openLightbox(this)">
-        <img src="/images/final-hand-bts/photo-25.jpg" alt="Behind the scenes" loading="lazy">
-        <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Pictured: [Name] --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
-        </div>
-      </div>
-      <div class="gal-item portrait" data-index="25" onclick="openLightbox(this)">
-        <img src="/images/final-hand-bts/photo-26.jpg" alt="Behind the scenes" loading="lazy">
-        <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Add caption --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
-        </div>
-      </div>
-      <div class="gal-item portrait" data-index="26" onclick="openLightbox(this)">
-        <img src="/images/final-hand-bts/photo-27.jpg" alt="Behind the scenes" loading="lazy">
-        <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Add caption --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
-        </div>
-      </div>
-    </div>
-    <div class="gallery-grid g-1col" style="margin-top:12px">
-      <div class="gal-item landscape" data-index="27" onclick="openLightbox(this)">
-        <img src="/images/final-hand-bts/photo-28.jpg" alt="Behind the scenes" loading="lazy">
-        <div class="gal-overlay">
-          <p class="gal-caption"><!-- EDIT: Add caption --></p>
-          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;width:100%">
+            <p class="gal-caption" style="margin:0">Pictured:</p>
+            <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+          </div>
         </div>
       </div>
     </div>
@@ -649,29 +528,18 @@
   <h2 class="section-heading">Cast</h2>
 
   <div class="cast-grid">
-    <!-- CAST MEMBER 1 — EDIT: Fill in actor and character name -->
     <div class="cast-member">
       <span class="cast-role">Lead</span>
-      <!-- Optionally add: <img src="/images/cast/actor-name.jpg" class="cast-image" alt="Actor Name"> -->
-      <span class="cast-actor"><!-- EDIT: Actor Name --><span class="cast-placeholder">— To be credited</span></span>
-      <span class="cast-character"><!-- EDIT: Character Name --></span>
+      <span class="cast-actor">Dion Monroe Sherrod</span>
     </div>
-
-    <!-- CAST MEMBER 2 -->
     <div class="cast-member">
       <span class="cast-role">Supporting</span>
-      <span class="cast-actor"><span class="cast-placeholder">— To be credited</span></span>
-      <span class="cast-character"></span>
+      <span class="cast-actor">Simon Griffieth Jr</span>
     </div>
-
-    <!-- CAST MEMBER 3 -->
     <div class="cast-member">
       <span class="cast-role">Supporting</span>
-      <span class="cast-actor"><span class="cast-placeholder">— To be credited</span></span>
-      <span class="cast-character"></span>
+      <span class="cast-actor">Robert Honingsfield</span>
     </div>
-
-    <!-- ADD MORE CAST: Copy and paste a <div class="cast-member"> block above and fill in the details -->
   </div>
 </section>
 
