@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Final Hand — BLEUSKM Studios</title>
+  <meta name="description" content="The Final Hand. A Film by Zaria Lashae. Coming Soon. A BLEUSKM Studios Film.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;800;900&family=Red+Hat+Display:wght@300;400;500;600;700&family=Kalnia:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/bleuskm-logo.png">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --gold:#DAAF37;
+      --gold-dim:rgba(218,175,55,0.45);
+      --gold-faint:rgba(218,175,55,0.08);
+      --cream:#EADFCF;
+      --cream-dim:rgba(234,223,207,0.5);
+      --cream-faint:rgba(234,223,207,0.25);
+      --dark:#080808;
+      --dark2:#0b0b0b;
+      --amber:rgba(160,100,40,0.6);
+    }
+    html{scroll-behavior:smooth}
+    body{background:var(--dark);color:var(--cream);font-family:'Red Hat Display',sans-serif;overflow-x:hidden}
+    a,a:link,a:visited,a:hover,a:active{text-decoration:none!important}
+    a{color:inherit}
+
+    /* NAV */
+    .navbar{background:rgba(8,8,8,0.92)!important;backdrop-filter:blur(12px);border-bottom:1px solid rgba(218,175,55,0.08);z-index:200}
+    .navbar-brand span{font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold)}
+    .nav-link{font-family:'League Spartan',sans-serif;font-weight:600;font-size:0.65rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(234,223,207,0.5)!important;transition:color 0.2s;padding:0.5rem 1rem!important}
+    .nav-link:hover,.nav-link.active{color:var(--gold)!important}
+
+    /* ─── 1. HERO ─── */
+    .hero{position:relative;min-height:100vh;display:flex;align-items:flex-end;overflow:hidden;background:var(--dark)}
+    .hero-bg{position:absolute;inset:0;z-index:0}
+    .hero-poster{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;filter:brightness(0.55) saturate(0.8)}
+    .hero-grain{position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.045'/%3E%3C/svg%3E");opacity:0.6;pointer-events:none}
+    .hero-vignette{position:absolute;inset:0;background:radial-gradient(ellipse at center, transparent 30%, rgba(8,8,8,0.7) 100%),linear-gradient(to top, rgba(8,8,8,1) 0%, rgba(8,8,8,0.5) 40%, transparent 75%),linear-gradient(to right, rgba(8,8,8,0.4) 0%, transparent 60%);z-index:1}
+    .hero-content{position:relative;z-index:2;padding:0 80px 100px;max-width:900px}
+    .hero-eyebrow{font-family:'League Spartan',sans-serif;font-size:0.55rem;font-weight:700;letter-spacing:6px;text-transform:uppercase;color:var(--gold-dim);display:block;margin-bottom:20px}
+    .hero-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(4rem,9vw,9rem);letter-spacing:4px;text-transform:uppercase;color:var(--cream);line-height:0.88;margin-bottom:24px}
+    .hero-director{font-family:'Red Hat Display',sans-serif;font-size:0.82rem;font-weight:300;letter-spacing:4px;text-transform:uppercase;color:rgba(234,223,207,0.45);margin-bottom:12px}
+    .hero-status{font-family:'League Spartan',sans-serif;font-size:0.58rem;font-weight:900;letter-spacing:5px;text-transform:uppercase;color:var(--gold);opacity:0.7}
+    .hero-scroll{position:absolute;bottom:32px;right:60px;z-index:2;display:flex;flex-direction:column;align-items:center;gap:10px;opacity:0.3}
+    .hero-scroll span{font-family:'League Spartan',sans-serif;font-size:0.45rem;letter-spacing:4px;text-transform:uppercase;color:var(--cream);writing-mode:vertical-rl}
+    .hero-scroll-line{width:1px;height:60px;background:linear-gradient(to bottom,rgba(218,175,55,0.4),transparent);animation:scrollPulse 2s ease infinite}
+    @keyframes scrollPulse{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+    /* ─── SECTION SHARED STYLES ─── */
+    .section-rule{width:50px;height:1px;background:rgba(218,175,55,0.3);margin-bottom:32px}
+    .section-eyebrow{font-family:'League Spartan',sans-serif;font-size:0.52rem;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:var(--gold-dim);display:block;margin-bottom:12px}
+    .section-heading{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(1.4rem,2.8vw,2.2rem);letter-spacing:5px;text-transform:uppercase;color:var(--cream);margin-bottom:0}
+
+    /* ─── 2. THE FILM ─── */
+    .film-synopsis{padding:100px 80px;display:grid;grid-template-columns:1fr 1.6fr;gap:100px;align-items:start;border-bottom:1px solid var(--gold-faint)}
+    .film-synopsis-left{}
+    .film-synopsis-meta{margin-top:48px;display:flex;flex-direction:column;gap:0}
+    .meta-row{display:flex;align-items:baseline;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(218,175,55,0.06)}
+    .meta-label{font-family:'League Spartan',sans-serif;font-size:0.5rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:rgba(218,175,55,0.35)}
+    .meta-val{font-size:0.82rem;color:rgba(234,223,207,0.55);letter-spacing:0.5px}
+    .film-synopsis-right{}
+    .synopsis-placeholder{font-family:'Kalnia',serif;font-size:clamp(1.05rem,1.8vw,1.3rem);line-height:1.75;color:rgba(234,223,207,0.65);font-weight:400;font-style:italic;border-left:2px solid rgba(218,175,55,0.15);padding-left:32px}
+    .synopsis-edit-note{margin-top:20px;font-size:0.72rem;color:rgba(234,223,207,0.18);letter-spacing:1px;font-style:normal}
+
+    /* ─── 3. VIDEO / INSIDE THE FILM ─── */
+    .film-video-section{padding:100px 80px;background:#060606;border-bottom:1px solid var(--gold-faint)}
+    .video-header{margin-bottom:56px}
+    .video-subtitle{font-size:0.82rem;color:var(--cream-faint);margin-top:12px;letter-spacing:0.5px;max-width:480px}
+    .video-wrapper{position:relative;width:100%;background:#000;overflow:hidden}
+    /* Landscape: 16:9 default, toggles via JS */
+    .video-wrapper video{width:100%;display:block;max-height:80vh;object-fit:contain;background:#000}
+    .video-fullscreen-hint{margin-top:14px;font-family:'League Spartan',sans-serif;font-size:0.48rem;letter-spacing:3px;text-transform:uppercase;color:rgba(218,175,55,0.3);text-align:right}
+    .video-credits{margin-top:56px;display:grid;grid-template-columns:repeat(3,1fr);gap:40px;border-top:1px solid rgba(218,175,55,0.07);padding-top:40px}
+    .video-credit-item{}
+    .vc-label{font-family:'League Spartan',sans-serif;font-size:0.48rem;letter-spacing:4px;text-transform:uppercase;color:rgba(218,175,55,0.3);display:block;margin-bottom:6px}
+    .vc-val{font-size:0.8rem;color:rgba(234,223,207,0.4);letter-spacing:0.5px}
+    .vc-placeholder{font-size:0.75rem;color:rgba(234,223,207,0.18);font-style:italic}
+
+    /* ─── 4. BEHIND THE FILM / GALLERY ─── */
+    .film-gallery-section{padding:100px 80px;border-bottom:1px solid var(--gold-faint)}
+    .gallery-header{margin-bottom:60px}
+    .gallery-day{margin-bottom:70px}
+    .gallery-day-label{font-family:'League Spartan',sans-serif;font-size:0.52rem;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:rgba(218,175,55,0.25);margin-bottom:28px;display:block}
+    /* Editorial grid: mixed sizes */
+    .gallery-grid{display:grid;gap:12px}
+    .gallery-grid.g-2col{grid-template-columns:1fr 1fr}
+    .gallery-grid.g-3col{grid-template-columns:1.4fr 1fr 1fr}
+    .gallery-grid.g-2col-wide{grid-template-columns:1.8fr 1fr}
+    .gallery-grid.g-1col{grid-template-columns:1fr}
+    .gallery-grid.g-3col-even{grid-template-columns:1fr 1fr 1fr}
+    .gal-item{position:relative;overflow:hidden;cursor:pointer;background:#0a0a0a}
+    .gal-item img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.82) saturate(0.85);transition:filter 0.5s ease,transform 0.6s ease;aspect-ratio:inherit}
+    .gal-item:hover img{filter:brightness(0.97) saturate(1.0);transform:scale(1.04)}
+    .gal-item.portrait{aspect-ratio:3/4}
+    .gal-item.landscape{aspect-ratio:16/10}
+    .gal-item.square{aspect-ratio:1/1}
+    .gal-item.tall{aspect-ratio:2/3}
+    .gal-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,8,8,0.85) 0%,transparent 45%);opacity:0;transition:opacity 0.35s ease;z-index:2;padding:20px;display:flex;flex-direction:column;justify-content:flex-end}
+    .gal-item:hover .gal-overlay{opacity:1}
+    .gal-caption{font-size:0.72rem;color:rgba(234,223,207,0.7);letter-spacing:0.5px;margin-bottom:4px}
+    .gal-credit-small{font-family:'League Spartan',sans-serif;font-size:0.45rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold-dim)}
+    /* Caption input area for each photo */
+    .gal-meta{padding:10px 0;border-bottom:1px solid rgba(218,175,55,0.05)}
+    .gal-meta-pictured{font-size:0.72rem;color:rgba(234,223,207,0.3);margin-bottom:2px}
+    .gal-meta-photo-by{font-family:'League Spartan',sans-serif;font-size:0.45rem;letter-spacing:3px;text-transform:uppercase;color:rgba(218,175,55,0.22)}
+
+    /* LIGHTBOX */
+    .lightbox{display:none;position:fixed;inset:0;background:rgba(8,8,8,0.97);z-index:9000;align-items:center;justify-content:center;padding:20px}
+    .lightbox.open{display:flex}
+    .lightbox-inner{position:relative;max-width:90vw;max-height:90vh;display:flex;flex-direction:column;align-items:center}
+    .lightbox-img{max-width:100%;max-height:82vh;object-fit:contain;display:block}
+    .lightbox-close{position:absolute;top:-40px;right:0;background:none;border:none;color:rgba(234,223,207,0.5);font-family:'League Spartan',sans-serif;font-size:0.6rem;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:color 0.2s;padding:4px 0}
+    .lightbox-close:hover{color:var(--gold)}
+    .lightbox-caption{margin-top:16px;font-size:0.78rem;color:rgba(234,223,207,0.4);text-align:center;max-width:600px}
+    .lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);display:flex;justify-content:space-between;width:calc(100% + 100px);left:-50px;pointer-events:none}
+    .lb-btn{pointer-events:all;background:none;border:none;color:rgba(234,223,207,0.3);font-size:1.6rem;cursor:pointer;padding:10px;transition:color 0.2s;line-height:1}
+    .lb-btn:hover{color:var(--gold)}
+
+    /* ─── 5. CAST ─── */
+    .film-cast-section{padding:100px 80px;border-bottom:1px solid var(--gold-faint)}
+    .cast-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:56px;border:1px solid rgba(218,175,55,0.07)}
+    .cast-member{padding:48px 40px;border:1px solid rgba(218,175,55,0.05);background:#0a0a0a;transition:background 0.3s}
+    .cast-member:hover{background:#0e0e0e}
+    .cast-role{font-family:'League Spartan',sans-serif;font-size:0.48rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:rgba(218,175,55,0.3);display:block;margin-bottom:16px}
+    .cast-actor{font-family:'League Spartan',sans-serif;font-weight:900;font-size:1.1rem;letter-spacing:2px;text-transform:uppercase;color:var(--cream);display:block;margin-bottom:6px}
+    .cast-character{font-size:0.78rem;color:rgba(234,223,207,0.35);letter-spacing:0.5px}
+    .cast-placeholder{font-size:0.75rem;color:rgba(234,223,207,0.18);font-style:italic}
+    .cast-image{width:60px;height:60px;object-fit:cover;border-radius:50%;margin-bottom:20px;filter:brightness(0.8) saturate(0.7);border:1px solid rgba(218,175,55,0.12)}
+
+    /* ─── 6. DIRECTOR STATEMENT ─── */
+    .director-section{padding:100px 80px;background:#060606;border-bottom:1px solid var(--gold-faint)}
+    .director-layout{display:grid;grid-template-columns:1fr 2fr;gap:100px;align-items:start}
+    .director-left{}
+    .director-name{font-family:'League Spartan',sans-serif;font-weight:900;font-size:1.1rem;letter-spacing:3px;text-transform:uppercase;color:var(--cream);display:block;margin-top:32px}
+    .director-title-role{font-family:'League Spartan',sans-serif;font-size:0.48rem;letter-spacing:4px;text-transform:uppercase;color:rgba(218,175,55,0.35);display:block;margin-top:6px}
+    .director-right{}
+    .statement-text{font-family:'Kalnia',serif;font-size:clamp(1.05rem,1.8vw,1.3rem);line-height:1.8;color:rgba(234,223,207,0.62);font-weight:400}
+    .statement-placeholder{font-style:italic;color:rgba(234,223,207,0.22);font-size:0.88rem;line-height:1.7;border-left:2px solid rgba(218,175,55,0.1);padding-left:28px}
+    .statement-edit-note{margin-top:16px;font-size:0.7rem;color:rgba(234,223,207,0.14);letter-spacing:0.5px}
+
+    /* ─── 7. CREDITS ─── */
+    .film-credits-section{padding:100px 80px;border-bottom:1px solid var(--gold-faint)}
+    .credits-heading-row{display:flex;align-items:baseline;gap:24px;margin-bottom:60px}
+    .credits-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid rgba(218,175,55,0.07)}
+    .credits-dept{padding:40px 0;border-bottom:1px solid rgba(218,175,55,0.06);break-inside:avoid}
+    .credits-dept:nth-child(odd){padding-right:60px;border-right:1px solid rgba(218,175,55,0.05)}
+    .credits-dept:nth-child(even){padding-left:60px}
+    .dept-label{font-family:'League Spartan',sans-serif;font-size:0.48rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:rgba(218,175,55,0.3);display:block;margin-bottom:20px}
+    .credit-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px;gap:20px}
+    .credit-role{font-size:0.75rem;color:rgba(234,223,207,0.3);letter-spacing:0.3px;flex-shrink:0}
+    .credit-name{font-family:'League Spartan',sans-serif;font-size:0.78rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(234,223,207,0.55);text-align:right}
+    .credit-placeholder{font-size:0.72rem;color:rgba(234,223,207,0.18);font-style:italic;text-align:right}
+
+    /* ─── 8. END CARD ─── */
+    .film-end{min-height:80vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 40px;background:var(--dark);position:relative;overflow:hidden}
+    .film-end::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center, rgba(218,175,55,0.04) 0%, transparent 65%);pointer-events:none}
+    .end-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(3rem,7vw,7rem);letter-spacing:5px;text-transform:uppercase;color:var(--cream);line-height:0.88;margin-bottom:32px;position:relative;z-index:1}
+    .end-coming{font-family:'League Spartan',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:8px;text-transform:uppercase;color:var(--gold);opacity:0.7;margin-bottom:48px;position:relative;z-index:1}
+    .end-studio{font-family:'League Spartan',sans-serif;font-size:0.52rem;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:rgba(234,223,207,0.2);position:relative;z-index:1;margin-bottom:64px}
+    .end-rule{width:40px;height:1px;background:rgba(218,175,55,0.2);margin:0 auto 48px;position:relative;z-index:1}
+    .end-actions{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;position:relative;z-index:1}
+    /* Future buttons — hidden until links are added. Remove 'end-btn-hidden' class to activate */
+    .end-btn{display:inline-block;background:transparent;border:1px solid rgba(218,175,55,0.2);color:rgba(234,223,207,0.3);font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.62rem;letter-spacing:3px;text-transform:uppercase;padding:14px 30px;pointer-events:none;cursor:default;opacity:0.4;transition:all 0.3s}
+    .end-btn.active{color:var(--cream);border-color:rgba(218,175,55,0.4);pointer-events:all;cursor:pointer;opacity:1}
+    .end-btn.active:hover{background:var(--gold);color:#0b0b0b;border-color:var(--gold)}
+
+    /* FOOTER */
+    .site-footer-full{background:#040404;border-top:1px solid rgba(218,175,55,0.1);padding:50px 60px 30px}
+    .footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+    .footer-brand img{height:32px;margin-bottom:14px}
+    .footer-brand p{font-size:0.78rem;color:rgba(234,223,207,0.35);line-height:1.6;max-width:220px}
+    .footer-col h4{font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.65rem;letter-spacing:3px;text-transform:uppercase;color:rgba(218,175,55,0.5);margin-bottom:16px}
+    .footer-col a{display:block;font-size:0.8rem;color:rgba(234,223,207,0.45);text-decoration:none;margin-bottom:10px;transition:color 0.2s}
+    .footer-col a:hover{color:var(--gold)}
+    .footer-bottom{border-top:1px solid rgba(218,175,55,0.08);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+    .footer-bottom p{font-size:0.72rem;color:rgba(234,223,207,0.2)}
+    .footer-bottom a{font-size:0.72rem;color:rgba(234,223,207,0.2);text-decoration:none;margin-left:20px;transition:color 0.2s}
+    .footer-bottom a:hover{color:rgba(218,175,55,0.5)}
+
+    /* BACK LINK */
+    .back-to-films{display:inline-flex;align-items:center;gap:8px;font-family:'League Spartan',sans-serif;font-size:0.52rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(218,175,55,0.4);padding:80px 80px 0;transition:color 0.2s}
+    .back-to-films:hover{color:var(--gold)}
+
+    /* RESPONSIVE */
+    @media(max-width:1100px){
+      .film-synopsis,.film-video-section,.film-gallery-section,.film-cast-section,.director-section,.film-credits-section{padding-left:40px;padding-right:40px}
+      .director-layout{grid-template-columns:1fr 1.5fr;gap:60px}
+      .cast-grid{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:900px){
+      .hero-content{padding:0 40px 80px}
+      .film-synopsis{grid-template-columns:1fr;gap:48px}
+      .film-synopsis,.film-video-section,.film-gallery-section,.film-cast-section,.director-section,.film-credits-section{padding-left:28px;padding-right:28px;padding-top:70px;padding-bottom:70px}
+      .gallery-grid.g-3col,.gallery-grid.g-3col-even{grid-template-columns:1fr 1fr}
+      .gallery-grid.g-2col-wide{grid-template-columns:1fr 1fr}
+      .director-layout{grid-template-columns:1fr;gap:40px}
+      .credits-grid{grid-template-columns:1fr}
+      .credits-dept:nth-child(odd){padding-right:0;border-right:none}
+      .credits-dept:nth-child(even){padding-left:0}
+      .video-credits{grid-template-columns:1fr 1fr}
+      .back-to-films{padding:60px 28px 0}
+    }
+    @media(max-width:640px){
+      .hero-content{padding:0 24px 70px}
+      .hero-title{font-size:3.5rem}
+      .film-synopsis,.film-video-section,.film-gallery-section,.film-cast-section,.director-section,.film-credits-section{padding-left:20px;padding-right:20px}
+      .cast-grid{grid-template-columns:1fr}
+      .gallery-grid.g-3col,.gallery-grid.g-3col-even,.gallery-grid.g-2col,.gallery-grid.g-2col-wide,.gallery-grid.g-3col{grid-template-columns:1fr}
+      .video-credits{grid-template-columns:1fr}
+      .back-to-films{padding:50px 20px 0}
+      .end-title{font-size:2.8rem}
+      .film-end{padding:80px 24px}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar navbar-expand-md navbar-dark fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand brand-logo" href="/" style="display:flex;align-items:center;gap:10px">
+      <img src="/images/bleuskm-logo.png" alt="BLEUSKM Logo" style="height:32px;width:auto;">
+      <span>BLEUSKM Studios</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="/my-productions">Productions</a></li>
+        <li class="nav-item"><a class="nav-link" href="/visuals">Visuals</a></li>
+        <li class="nav-item"><a class="nav-link" href="/echos">Echos</a></li>
+        <li class="nav-item"><a class="nav-link" href="/casting">Casting</a></li>
+        <li class="nav-item"><a class="nav-link active" href="/films">Films</a></li>
+        <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════
+     1. HERO
+════════════════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-bg">
+    <img src="/images/the-final-hand-poster-7.png" class="hero-poster" alt="The Final Hand Official Poster">
+    <div class="hero-grain"></div>
+    <div class="hero-vignette"></div>
+  </div>
+  <div class="hero-content">
+    <span class="hero-eyebrow">A BLEUSKM Studios Film</span>
+    <h1 class="hero-title">The<br>Final<br>Hand</h1>
+    <p class="hero-director">A Film by Zaria Lashae</p>
+    <p class="hero-status">Coming Soon</p>
+  </div>
+  <div class="hero-scroll">
+    <div class="hero-scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- BACK LINK -->
+<a href="/films" class="back-to-films">← Back to Films</a>
+
+<!-- ═══════════════════════════════════════════════════════════
+     2. THE FILM — Synopsis & Meta
+════════════════════════════════════════════════════════════ -->
+<section class="film-synopsis" id="the-film">
+  <div class="film-synopsis-left">
+    <div class="section-rule"></div>
+    <span class="section-eyebrow">BLEUSKM Studios</span>
+    <h2 class="section-heading">The Film</h2>
+    <div class="film-synopsis-meta">
+      <div class="meta-row">
+        <span class="meta-label">Genre</span>
+        <!-- EDIT: Replace placeholder below with actual genre -->
+        <span class="meta-val meta-placeholder" style="color:rgba(234,223,207,0.2);font-style:italic">— To be updated</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-label">Format</span>
+        <span class="meta-val">Short Film</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-label">Status</span>
+        <span class="meta-val">Coming Soon</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-label">Year</span>
+        <!-- EDIT: Replace with production/release year -->
+        <span class="meta-val meta-placeholder" style="color:rgba(234,223,207,0.2);font-style:italic">— To be updated</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-label">Written & Directed by</span>
+        <span class="meta-val">Zaria Lashae</span>
+      </div>
+    </div>
+  </div>
+  <div class="film-synopsis-right">
+    <!-- EDIT: Replace the placeholder <p> below with the official synopsis -->
+    <p class="synopsis-placeholder">
+      [ Official synopsis to be added. Replace this block with the film's synopsis when ready. Describe the world, the central tension, and what makes this story distinctly BLEUSKM. ]
+    </p>
+    <p class="synopsis-edit-note">— Placeholder. Replace with official synopsis before launch.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     3. INSIDE THE FINAL HAND — Video
+════════════════════════════════════════════════════════════ -->
+<section class="film-video-section" id="inside">
+  <div class="video-header">
+    <div class="section-rule"></div>
+    <span class="section-eyebrow">Behind the Making</span>
+    <h2 class="section-heading">Inside The Final Hand</h2>
+    <p class="video-subtitle">A glimpse behind the making of The Final Hand.</p>
+  </div>
+
+  <div class="video-wrapper" id="videoWrapper">
+    <video
+      id="btsVideo"
+      controls
+      playsinline
+      preload="metadata"
+      poster="/images/the-final-hand-poster-7.png"
+      style="width:100%;max-height:80vh;object-fit:contain;background:#000;display:block"
+    >
+      <source src="/films/the-final-hand/bts-edit.mp4" type="video/mp4">
+      <source src="/films/the-final-hand/bts-edit.mov" type="video/quicktime">
+      Your browser does not support the video element.
+    </video>
+  </div>
+  <p class="video-fullscreen-hint">Use fullscreen for optimal viewing · Landscape recommended</p>
+
+  <!-- VIDEO CREDITS — edit or hide fields as needed -->
+  <div class="video-credits">
+    <div class="video-credit-item">
+      <span class="vc-label">Edited by</span>
+      <!-- EDIT: Replace with editor name or remove this block -->
+      <span class="vc-placeholder">— To be credited</span>
+    </div>
+    <div class="video-credit-item">
+      <span class="vc-label">Footage by</span>
+      <!-- EDIT: Replace with cinematographer/footage credit -->
+      <span class="vc-placeholder">— To be credited</span>
+    </div>
+    <div class="video-credit-item">
+      <span class="vc-label">Additional Credits</span>
+      <!-- EDIT: Add any additional credits here -->
+      <span class="vc-placeholder">— To be credited</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     4. BEHIND THE FILM — Photography Gallery
+════════════════════════════════════════════════════════════ -->
+<section class="film-gallery-section" id="behind">
+  <div class="gallery-header">
+    <div class="section-rule"></div>
+    <span class="section-eyebrow">Production Photography</span>
+    <h2 class="section-heading">Behind the Film</h2>
+  </div>
+
+  <!-- ── DAY I ── -->
+  <div class="gallery-day">
+    <span class="gallery-day-label">Day I</span>
+
+    <!-- Row 1: large portrait + portrait -->
+    <div class="gallery-grid g-2col" style="margin-bottom:12px">
+      <div class="gal-item portrait" data-index="0" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-1.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Describe this photo --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+      <div class="gal-item portrait" data-index="1" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-2.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Add caption --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2: wide landscape -->
+    <div class="gallery-grid g-1col" style="margin-bottom:12px">
+      <div class="gal-item landscape" data-index="2" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-3.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Add caption --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 3: 3 col -->
+    <div class="gallery-grid g-3col-even">
+      <div class="gal-item square" data-index="3" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-4.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Pictured: [Name] --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+      <div class="gal-item square" data-index="4" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-5.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Add caption --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+      <div class="gal-item square" data-index="5" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-6.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Add caption --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DAY II ── -->
+  <div class="gallery-day">
+    <span class="gallery-day-label">Day II</span>
+
+    <!-- Row 1: wide + portrait -->
+    <div class="gallery-grid g-2col-wide" style="margin-bottom:12px">
+      <div class="gal-item landscape" data-index="6" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-7.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Add caption --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+      <div class="gal-item portrait" data-index="7" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-8.jpg" alt="Behind the scenes — The Final Hand" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Pictured: [Name] --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2: 3 col -->
+    <div class="gallery-grid g-3col" style="margin-bottom:12px">
+      <div class="gal-item portrait" data-index="8" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-9.jpg" alt="Behind the scenes" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Add caption --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+      <div class="gal-item portrait" data-index="9" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-10.jpg" alt="Behind the scenes" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Pictured: [Name] --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+      <div class="gal-item portrait" data-index="10" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-11.jpg" alt="Behind the scenes" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Add caption --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 3: 2 col landscape -->
+    <div class="gallery-grid g-2col">
+      <div class="gal-item landscape" data-index="11" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-12.jpg" alt="Behind the scenes" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Add caption --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+      <div class="gal-item landscape" data-index="12" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-13.jpg" alt="Behind the scenes" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Add caption --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DAY III ── -->
+  <div class="gallery-day">
+    <span class="gallery-day-label">Day III</span>
+
+    <!-- Row 1: portrait + 2 square -->
+    <div class="gallery-grid g-3col-even" style="margin-bottom:12px">
+      <div class="gal-item tall" data-index="13" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-14.jpg" alt="Behind the scenes" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Pictured: [Name] --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+      <div class="gal-item tall" data-index="14" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-15.jpg" alt="Behind the scenes" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Add caption --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+      <div class="gal-item tall" data-index="15" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-16.jpg" alt="Behind the scenes" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Pictured: [Name] --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2: wide -->
+    <div class="gallery-grid g-1col" style="margin-bottom:12px">
+      <div class="gal-item landscape" data-index="16" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-17.jpg" alt="Behind the scenes" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Add caption --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Remaining photos: 2-col grid -->
+    <div class="gallery-grid g-2col" style="margin-bottom:12px">
+      <div class="gal-item portrait" data-index="17" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-18.jpg" alt="Behind the scenes" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Add caption --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+      <div class="gal-item portrait" data-index="18" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-19.jpg" alt="Behind the scenes" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Pictured: [Name] --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+    </div>
+    <div class="gallery-grid g-3col-even" style="margin-bottom:12px">
+      <div class="gal-item square" data-index="19" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-20.jpg" alt="Behind the scenes" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Add caption --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+      <div class="gal-item square" data-index="20" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-21.jpg" alt="Behind the scenes" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Add caption --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+      <div class="gal-item square" data-index="21" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-22.jpg" alt="Behind the scenes" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Add caption --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+    </div>
+    <div class="gallery-grid g-2col">
+      <div class="gal-item landscape" data-index="22" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-23.jpg" alt="Behind the scenes" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Add caption --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+      <div class="gal-item landscape" data-index="23" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-24.jpg" alt="Behind the scenes" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Add caption --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+    </div>
+    <!-- Photos 25-28 -->
+    <div class="gallery-grid g-3col-even" style="margin-top:12px">
+      <div class="gal-item portrait" data-index="24" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-25.jpg" alt="Behind the scenes" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Pictured: [Name] --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+      <div class="gal-item portrait" data-index="25" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-26.jpg" alt="Behind the scenes" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Add caption --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+      <div class="gal-item portrait" data-index="26" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-27.jpg" alt="Behind the scenes" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Add caption --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+    </div>
+    <div class="gallery-grid g-1col" style="margin-top:12px">
+      <div class="gal-item landscape" data-index="27" onclick="openLightbox(this)">
+        <img src="/images/final-hand-bts/photo-28.jpg" alt="Behind the scenes" loading="lazy">
+        <div class="gal-overlay">
+          <p class="gal-caption"><!-- EDIT: Add caption --></p>
+          <span class="gal-credit-small">Photography by Pedro Lama Colon</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GALLERY CREDIT LINE -->
+  <div style="margin-top:40px;padding-top:28px;border-top:1px solid rgba(218,175,55,0.07)">
+    <span style="font-family:'League Spartan',sans-serif;font-size:0.48rem;letter-spacing:4px;text-transform:uppercase;color:rgba(218,175,55,0.28)">Behind-the-Scenes Photography by Pedro Lama Colon</span>
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightboxOnBackdrop(event)">
+  <div class="lightbox-inner">
+    <button class="lightbox-close" onclick="closeLightbox()">Close ✕</button>
+    <div class="lightbox-nav">
+      <button class="lb-btn" onclick="lbNav(-1)">‹</button>
+      <button class="lb-btn" onclick="lbNav(1)">›</button>
+    </div>
+    <img class="lightbox-img" id="lightboxImg" src="" alt="">
+    <p class="lightbox-caption" id="lightboxCaption"></p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     5. CAST
+════════════════════════════════════════════════════════════ -->
+<section class="film-cast-section" id="cast">
+  <div class="section-rule"></div>
+  <span class="section-eyebrow">Principal Cast</span>
+  <h2 class="section-heading">Cast</h2>
+
+  <div class="cast-grid">
+    <!-- CAST MEMBER 1 — EDIT: Fill in actor and character name -->
+    <div class="cast-member">
+      <span class="cast-role">Lead</span>
+      <!-- Optionally add: <img src="/images/cast/actor-name.jpg" class="cast-image" alt="Actor Name"> -->
+      <span class="cast-actor"><!-- EDIT: Actor Name --><span class="cast-placeholder">— To be credited</span></span>
+      <span class="cast-character"><!-- EDIT: Character Name --></span>
+    </div>
+
+    <!-- CAST MEMBER 2 -->
+    <div class="cast-member">
+      <span class="cast-role">Supporting</span>
+      <span class="cast-actor"><span class="cast-placeholder">— To be credited</span></span>
+      <span class="cast-character"></span>
+    </div>
+
+    <!-- CAST MEMBER 3 -->
+    <div class="cast-member">
+      <span class="cast-role">Supporting</span>
+      <span class="cast-actor"><span class="cast-placeholder">— To be credited</span></span>
+      <span class="cast-character"></span>
+    </div>
+
+    <!-- ADD MORE CAST: Copy and paste a <div class="cast-member"> block above and fill in the details -->
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     6. FROM THE DIRECTOR
+════════════════════════════════════════════════════════════ -->
+<section class="director-section" id="director">
+  <div class="director-layout">
+    <div class="director-left">
+      <div class="section-rule"></div>
+      <span class="section-eyebrow">A Note</span>
+      <h2 class="section-heading">From the Director</h2>
+      <span class="director-name">Zaria Lashae</span>
+      <span class="director-title-role">Writer · Director · Producer</span>
+    </div>
+    <div class="director-right" style="padding-top:20px">
+      <!-- EDIT: Replace the placeholder paragraph below with Zaria's director's statement -->
+      <p class="statement-placeholder">
+        [ Director's statement to be added. This space is reserved for a short note from Zaria Lashae — a reflection on why this story needed to be told, what drove the creative vision, or what she hopes audiences take from the film. Replace this block with her statement when ready. ]
+      </p>
+      <p class="statement-edit-note">— Placeholder. Replace with Zaria's statement before launch.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     7. THE PEOPLE BEHIND THE HAND — Production Credits
+════════════════════════════════════════════════════════════ -->
+<section class="film-credits-section" id="credits">
+  <div class="section-rule"></div>
+  <span class="section-eyebrow">Full Production Credits</span>
+  <h2 class="section-heading">The People Behind the Hand</h2>
+
+  <div class="credits-grid" style="margin-top:60px">
+
+    <!-- Written & Directed -->
+    <div class="credits-dept">
+      <span class="dept-label">Written & Directed by</span>
+      <div class="credit-row">
+        <span class="credit-role">Writer · Director</span>
+        <span class="credit-name">Zaria Lashae</span>
+      </div>
+    </div>
+
+    <!-- Produced by -->
+    <div class="credits-dept">
+      <span class="dept-label">Produced by</span>
+      <div class="credit-row">
+        <span class="credit-role">Producer</span>
+        <!-- EDIT: Add producer name -->
+        <span class="credit-placeholder">— To be credited</span>
+      </div>
+    </div>
+
+    <!-- Camera / DOP -->
+    <div class="credits-dept">
+      <span class="dept-label">Director of Photography</span>
+      <div class="credit-row">
+        <span class="credit-role">DP / Cinematographer</span>
+        <!-- EDIT: Add DP name -->
+        <span class="credit-placeholder">— To be credited</span>
+      </div>
+    </div>
+
+    <!-- AD -->
+    <div class="credits-dept">
+      <span class="dept-label">Assistant Director</span>
+      <div class="credit-row">
+        <span class="credit-role">1st AD</span>
+        <!-- EDIT: Add AD name -->
+        <span class="credit-placeholder">— To be credited</span>
+      </div>
+    </div>
+
+    <!-- Script -->
+    <div class="credits-dept">
+      <span class="dept-label">Script</span>
+      <div class="credit-row">
+        <span class="credit-role">Script Supervisor</span>
+        <!-- EDIT: Add name -->
+        <span class="credit-placeholder">— To be credited</span>
+      </div>
+    </div>
+
+    <!-- Sound -->
+    <div class="credits-dept">
+      <span class="dept-label">Production Sound</span>
+      <div class="credit-row">
+        <span class="credit-role">Sound Recordist</span>
+        <!-- EDIT: Add name -->
+        <span class="credit-placeholder">— To be credited</span>
+      </div>
+    </div>
+
+    <!-- Lighting -->
+    <div class="credits-dept">
+      <span class="dept-label">Lighting</span>
+      <div class="credit-row">
+        <span class="credit-role">Gaffer</span>
+        <!-- EDIT: Add name -->
+        <span class="credit-placeholder">— To be credited</span>
+      </div>
+      <div class="credit-row">
+        <span class="credit-role">Grip</span>
+        <!-- EDIT: Add name -->
+        <span class="credit-placeholder">— To be credited</span>
+      </div>
+    </div>
+
+    <!-- Production Design -->
+    <div class="credits-dept">
+      <span class="dept-label">Production Design</span>
+      <div class="credit-row">
+        <span class="credit-role">Production Designer</span>
+        <!-- EDIT: Add name -->
+        <span class="credit-placeholder">— To be credited</span>
+      </div>
+    </div>
+
+    <!-- Makeup / Hair -->
+    <div class="credits-dept">
+      <span class="dept-label">Makeup & Hair</span>
+      <div class="credit-row">
+        <span class="credit-role">Makeup Artist</span>
+        <!-- EDIT: Add name -->
+        <span class="credit-placeholder">— To be credited</span>
+      </div>
+    </div>
+
+    <!-- Post Production -->
+    <div class="credits-dept">
+      <span class="dept-label">Post Production</span>
+      <div class="credit-row">
+        <span class="credit-role">Editor</span>
+        <!-- EDIT: Add name -->
+        <span class="credit-placeholder">— To be credited</span>
+      </div>
+      <div class="credit-row">
+        <span class="credit-role">Color</span>
+        <!-- EDIT: Add name -->
+        <span class="credit-placeholder">— To be credited</span>
+      </div>
+    </div>
+
+    <!-- BTS Photography -->
+    <div class="credits-dept">
+      <span class="dept-label">Behind-the-Scenes Photography</span>
+      <div class="credit-row">
+        <span class="credit-role">Photographer</span>
+        <span class="credit-name">Pedro Lama Colon</span>
+      </div>
+    </div>
+
+    <!-- BTS Video -->
+    <div class="credits-dept">
+      <span class="dept-label">Behind-the-Scenes Video</span>
+      <div class="credit-row">
+        <span class="credit-role">BTS Videographer</span>
+        <!-- EDIT: Add name, or remove this block if same as DP -->
+        <span class="credit-placeholder">— To be credited</span>
+      </div>
+    </div>
+
+    <!-- Cast block -->
+    <div class="credits-dept" style="grid-column:1/-1">
+      <span class="dept-label">Cast</span>
+      <!-- EDIT: Add each cast member. Copy the credit-row for additional entries -->
+      <div class="credit-row">
+        <span class="credit-role">Principal Cast</span>
+        <span class="credit-placeholder">— To be credited</span>
+      </div>
+    </div>
+
+    <!-- Additional Crew -->
+    <div class="credits-dept" style="grid-column:1/-1">
+      <span class="dept-label">Additional Crew</span>
+      <!-- EDIT: Add additional crew members here. Copy credit-row blocks as needed -->
+      <div class="credit-row">
+        <span class="credit-role">Production Assistant</span>
+        <span class="credit-placeholder">— To be credited</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     8. END CARD
+════════════════════════════════════════════════════════════ -->
+<section class="film-end" id="end">
+  <h2 class="end-title">The Final<br>Hand</h2>
+  <p class="end-coming">Coming Soon</p>
+  <div class="end-rule"></div>
+  <p class="end-studio">A BLEUSKM Studios Film</p>
+
+  <!-- FUTURE BUTTONS — Add class "active" and an href when links are ready -->
+  <!-- To activate: remove the style="display:none" and add class="end-btn active" href="..." -->
+  <div class="end-actions" style="display:none" id="endActions">
+    <a class="end-btn" href="#" id="btnTrailer">Watch Trailer</a>
+    <a class="end-btn" href="#" id="btnScreenings">Screenings</a>
+    <a class="end-btn" href="#" id="btnPress">Press Kit</a>
+    <a class="end-btn" href="#" id="btnWatch">Watch Film</a>
+  </div>
+  <!-- NOTE: Remove style="display:none" from #endActions when at least one button is active -->
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer-full">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <img src="/images/bleuskm-logo.png" alt="BLEUSKM Logo" style="height:32px;width:auto;">
+      <p>A film and visual production house building worlds grounded in Black imagination, history, and cultural memory.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Navigate</h4>
+      <a href="/">Home</a><a href="/about">About</a><a href="/my-productions">Productions</a><a href="/films">Films</a><a href="/visuals">Visuals</a>
+    </div>
+    <div class="footer-col">
+      <h4>The Final Hand</h4>
+      <a href="#the-film">The Film</a><a href="#inside">Inside the Film</a><a href="#behind">Behind the Film</a><a href="#cast">Cast</a><a href="#credits">Credits</a>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Use</a><a href="/contact">Contact Us</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 BLEUSKM Studios. All rights reserved.</p>
+    <div><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/films">Films</a><a href="/contact">Contact</a></div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ── LANDSCAPE VIDEO ──────────────────────────────────────────
+// Force fullscreen in landscape on mobile when video plays
+var vid = document.getElementById('btsVideo');
+if(vid){
+  vid.addEventListener('play', function(){
+    if(window.innerWidth < 900 && vid.requestFullscreen){
+      vid.requestFullscreen().catch(function(){});
+    }
+  });
+}
+
+// Screen orientation lock when fullscreen on mobile
+document.addEventListener('fullscreenchange', function(){
+  if(document.fullscreenElement && screen.orientation && screen.orientation.lock){
+    screen.orientation.lock('landscape').catch(function(){});
+  }
+});
+
+// ── LIGHTBOX ─────────────────────────────────────────────────
+var galleryItems = Array.from(document.querySelectorAll('.gal-item'));
+var currentLbIndex = 0;
+
+function openLightbox(el){
+  var idx = parseInt(el.getAttribute('data-index'));
+  currentLbIndex = idx;
+  showLightboxFrame(idx);
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function showLightboxFrame(idx){
+  var items = galleryItems;
+  if(idx < 0 || idx >= items.length) return;
+  var item = items[idx];
+  var img = item.querySelector('img');
+  var captionEl = item.querySelector('.gal-caption');
+  var creditEl = item.querySelector('.gal-credit-small');
+  document.getElementById('lightboxImg').src = img.src;
+  document.getElementById('lightboxImg').alt = img.alt;
+  var cap = '';
+  if(captionEl && captionEl.textContent.trim()) cap += captionEl.textContent.trim() + ' ';
+  if(creditEl && creditEl.textContent.trim()) cap += '· ' + creditEl.textContent.trim();
+  document.getElementById('lightboxCaption').textContent = cap;
+  currentLbIndex = idx;
+}
+
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeLightboxOnBackdrop(e){
+  if(e.target === document.getElementById('lightbox')) closeLightbox();
+}
+
+function lbNav(dir){
+  var next = currentLbIndex + dir;
+  if(next < 0) next = galleryItems.length - 1;
+  if(next >= galleryItems.length) next = 0;
+  showLightboxFrame(next);
+}
+
+document.addEventListener('keydown', function(e){
+  var lb = document.getElementById('lightbox');
+  if(!lb.classList.contains('open')) return;
+  if(e.key === 'Escape') closeLightbox();
+  if(e.key === 'ArrowLeft') lbNav(-1);
+  if(e.key === 'ArrowRight') lbNav(1);
+});
+</script>
+</body>
+</html>

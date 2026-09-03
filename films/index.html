@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Films — BLEUSKM Studios</title>
+  <meta name="description" content="The official filmography of BLEUSKM Studios. Psychological short films and features grounded in Black imagination.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;800;900&family=Red+Hat+Display:wght@300;400;500;600;700&family=Kalnia:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/bleuskm-logo.png">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--gold:#DAAF37;--gold-dim:rgba(218,175,55,0.5);--cream:#EADFCF;--dark:#080808;--red:#950606}
+    body{background:var(--dark);color:var(--cream);font-family:'Red Hat Display',sans-serif;overflow-x:hidden}
+    a,a:link,a:visited,a:hover,a:active{text-decoration:none!important}
+    a{color:inherit}
+    a:hover{color:#DAAF37}
+
+    /* NAV */
+    .navbar{background:rgba(8,8,8,0.92)!important;backdrop-filter:blur(12px);border-bottom:1px solid rgba(218,175,55,0.08)}
+    .navbar-brand span{font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold)}
+    .nav-link{font-family:'League Spartan',sans-serif;font-weight:600;font-size:0.65rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(234,223,207,0.5)!important;transition:color 0.2s;padding:0.5rem 1rem!important}
+    .nav-link:hover,.nav-link.active{color:var(--gold)!important}
+
+    /* PAGE HEADER */
+    .films-header{padding:160px 60px 80px;background:var(--dark);position:relative;overflow:hidden}
+    .films-header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 60% 0%, rgba(218,175,55,0.04) 0%, transparent 65%);pointer-events:none}
+    .films-eyebrow{font-family:'League Spartan',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:var(--gold-dim);display:block;margin-bottom:14px}
+    .films-page-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(2.8rem,6vw,5.5rem);letter-spacing:6px;text-transform:uppercase;color:var(--cream);line-height:0.92;margin-bottom:24px}
+    .films-page-sub{font-size:0.88rem;color:rgba(234,223,207,0.35);max-width:480px;line-height:1.7;letter-spacing:0.5px}
+    .films-header-rule{width:60px;height:1px;background:rgba(218,175,55,0.3);margin-top:40px}
+
+    /* FILM FEATURE — large cinematic card */
+    .films-body{padding:0 60px 120px;background:var(--dark)}
+    .film-feature{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid rgba(218,175,55,0.1);background:#0b0b0b;position:relative;overflow:hidden;transition:box-shadow 0.4s ease}
+    .film-feature:hover{box-shadow:0 32px 80px rgba(0,0,0,0.7)}
+    .film-feature::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%, rgba(218,175,55,0.03) 0%, transparent 60%);pointer-events:none;z-index:1}
+    .film-poster-col{position:relative;overflow:hidden}
+    .film-poster-img{width:100%;height:100%;min-height:620px;object-fit:cover;object-position:center top;display:block;filter:brightness(0.88) saturate(0.9);transition:filter 0.6s ease,transform 0.6s ease}
+    .film-feature:hover .film-poster-img{filter:brightness(0.96) saturate(1.0);transform:scale(1.02)}
+    .film-poster-overlay{position:absolute;inset:0;background:linear-gradient(to right, transparent 70%, #0b0b0b 100%);z-index:2}
+    .film-info-col{padding:70px 60px 70px 50px;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:2}
+    .film-num{font-family:'League Spartan',sans-serif;font-size:0.52rem;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:rgba(218,175,55,0.25);margin-bottom:24px}
+    .film-tag{font-family:'League Spartan',sans-serif;font-size:0.55rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--gold);display:inline-block;border:1px solid rgba(218,175,55,0.25);padding:4px 12px;margin-bottom:28px}
+    .film-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(2.4rem,4vw,3.8rem);letter-spacing:4px;text-transform:uppercase;color:var(--cream);line-height:0.92;margin-bottom:16px}
+    .film-director{font-family:'League Spartan',sans-serif;font-size:0.58rem;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:rgba(234,223,207,0.35);margin-bottom:32px}
+    .film-status{font-family:'League Spartan',sans-serif;font-size:0.55rem;font-weight:900;letter-spacing:4px;text-transform:uppercase;color:rgba(218,175,55,0.55);margin-bottom:48px}
+    .film-rule{width:40px;height:1px;background:rgba(218,175,55,0.2);margin-bottom:48px}
+    .film-explore-btn{display:inline-block;background:transparent;color:var(--cream);border:1px solid rgba(234,223,207,0.25);font-family:'League Spartan',sans-serif;font-weight:900;font-size:0.65rem;letter-spacing:3.5px;text-transform:uppercase;padding:16px 36px;transition:background 0.3s,color 0.3s,border-color 0.3s;align-self:flex-start}
+    .film-explore-btn:hover{background:var(--gold);color:#0b0b0b;border-color:var(--gold);color:#0b0b0b!important}
+
+    /* FUTURE FILMS PLACEHOLDER */
+    .future-section{padding:80px 60px;border-top:1px solid rgba(218,175,55,0.06)}
+    .future-label{font-family:'League Spartan',sans-serif;font-size:0.55rem;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:rgba(218,175,55,0.2);text-align:center;display:block;margin-bottom:14px}
+    .future-text{font-size:0.8rem;color:rgba(234,223,207,0.15);text-align:center;letter-spacing:1px}
+
+    /* FOOTER */
+    .site-footer-full{background:#040404;border-top:1px solid rgba(218,175,55,0.1);padding:50px 60px 30px}
+    .footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+    .footer-brand img{height:32px;margin-bottom:14px}
+    .footer-brand p{font-size:0.78rem;color:rgba(234,223,207,0.35);line-height:1.6;max-width:220px}
+    .footer-col h4{font-family:'League Spartan',sans-serif;font-weight:700;font-size:0.65rem;letter-spacing:3px;text-transform:uppercase;color:rgba(218,175,55,0.5);margin-bottom:16px}
+    .footer-col a{display:block;font-size:0.8rem;color:rgba(234,223,207,0.45);text-decoration:none;margin-bottom:10px;transition:color 0.2s}
+    .footer-col a:hover{color:var(--gold)}
+    .footer-bottom{border-top:1px solid rgba(218,175,55,0.08);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+    .footer-bottom p{font-size:0.72rem;color:rgba(234,223,207,0.2)}
+    .footer-bottom a{font-size:0.72rem;color:rgba(234,223,207,0.2);text-decoration:none;margin-left:20px;transition:color 0.2s}
+    .footer-bottom a:hover{color:rgba(218,175,55,0.5)}
+
+    @media(max-width:900px){
+      .film-feature{grid-template-columns:1fr}
+      .film-poster-img{min-height:480px}
+      .film-poster-overlay{background:linear-gradient(to top, #0b0b0b 15%, transparent 60%)}
+      .film-info-col{padding:50px 36px}
+      .films-header,.films-body{padding-left:24px;padding-right:24px}
+      .future-section{padding:60px 24px}
+    }
+    @media(max-width:600px){
+      .films-header{padding-top:120px;padding-bottom:50px}
+      .film-poster-img{min-height:360px}
+      .film-title{font-size:2.2rem}
+      .film-info-col{padding:36px 24px}
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand brand-logo" href="/" style="display:flex;align-items:center;gap:10px">
+      <img src="/images/bleuskm-logo.png" alt="BLEUSKM Logo" style="height:32px;width:auto;">
+      <span>BLEUSKM Studios</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="/my-productions">Productions</a></li>
+        <li class="nav-item"><a class="nav-link" href="/visuals">Visuals</a></li>
+        <li class="nav-item"><a class="nav-link" href="/echos">Echos</a></li>
+        <li class="nav-item"><a class="nav-link" href="/casting">Casting</a></li>
+        <li class="nav-item"><a class="nav-link active" href="/films">Films</a></li>
+        <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<header class="films-header">
+  <span class="films-eyebrow">BLEUSKM Studios</span>
+  <h1 class="films-page-title">Films</h1>
+  <p class="films-page-sub">The official filmography. Each film is a document — built in Black imagination, grounded in psychological truth.</p>
+  <div class="films-header-rule"></div>
+</header>
+
+<!-- FILMS BODY -->
+<main class="films-body">
+
+  <!-- FILM 01 — THE FINAL HAND -->
+  <article class="film-feature">
+    <div class="film-poster-col">
+      <img src="/images/the-final-hand-poster-7.png" class="film-poster-img" alt="The Final Hand — Official Poster">
+      <div class="film-poster-overlay"></div>
+    </div>
+    <div class="film-info-col">
+      <span class="film-num">001</span>
+      <span class="film-tag">Short Film</span>
+      <h2 class="film-title">The Final<br>Hand</h2>
+      <p class="film-director">A Film by Zaria Lashae</p>
+      <div class="film-rule"></div>
+      <p class="film-status">Coming Soon</p>
+      <a href="/films/the-final-hand" class="film-explore-btn">Explore the Film →</a>
+    </div>
+  </article>
+
+  <!-- FUTURE FILMS — placeholder -->
+  <div class="future-section">
+    <span class="future-label">More Films Coming</span>
+    <p class="future-text">Additional BLEUSKM films will be added as they enter production.</p>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer-full">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <img src="/images/bleuskm-logo.png" alt="BLEUSKM Logo" style="height:32px;width:auto;">
+      <p>A film and visual production house building worlds grounded in Black imagination, history, and cultural memory.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Navigate</h4>
+      <a href="/">Home</a><a href="/about">About</a><a href="/my-productions">Productions</a><a href="/films">Films</a><a href="/visuals">Visuals</a>
+    </div>
+    <div class="footer-col">
+      <h4>Work With Us</h4>
+      <a href="/contact">Project Inquiry</a><a href="/casting">Apply to Casting</a><a href="/crew-application">Join the Crew</a>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Use</a><a href="/contact">Contact Us</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 BLEUSKM Studios. All rights reserved.</p>
+    <div><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/casting">Casting</a><a href="/contact">Contact</a></div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
