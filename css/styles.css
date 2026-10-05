@@ -1212,3 +1212,111 @@ img {
   .shop-grid { grid-template-columns: 1fr !important; }
   .pill { font-size: 0.7rem !important; padding: 0.3rem 0.6rem !important; }
 }
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE CONSISTENCY — one gutter, tighter rhythm, even cards
+   Loaded last; "html body" prefix outranks the per-page
+   mobile overrides in each page's own <style> block.
+   ══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  :root { --m-gutter: 20px; --m-section: 44px; }
+
+  /* ── HOME ── */
+  html body .hero-wrapper .hero-content {
+    left: 0 !important;
+    right: 0 !important;
+    padding: 0 var(--m-gutter) calc(64px + env(safe-area-inset-bottom)) !important;
+  }
+  html body .hero-counter { left: var(--m-gutter) !important; }
+  html body .more-section,
+  html body .statement-section { padding: var(--m-section) var(--m-gutter) !important; }
+  html body .section-sub { margin-bottom: 24px !important; }
+
+  /* ── PROJECT GRIDS (home + productions) ── */
+  html body .project-rail {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    align-items: stretch !important;
+    padding: 0 !important;
+  }
+  html body .project-rail > .project-card {
+    display: flex !important;
+    flex-direction: column !important;
+    border-radius: 6px;
+  }
+  html body .project-rail .thumb-img {
+    height: auto !important;
+    aspect-ratio: 4 / 5 !important;
+    border-radius: 0 !important;
+  }
+  html body .project-rail .project-info { padding: 10px 12px 12px !important; flex: 1 1 auto; }
+  html body .project-rail .project-name { font-size: 0.78rem !important; line-height: 1.2 !important; }
+  /* odd card out spans the full row instead of sitting alone */
+  html body .project-rail > .project-card:last-child:nth-child(odd) { grid-column: 1 / -1 !important; }
+  html body .project-rail > .project-card:last-child:nth-child(odd) .thumb-img { aspect-ratio: 16 / 9 !important; }
+
+  /* ── PRODUCTIONS PAGE ── */
+  html body .prod-hero { padding: 32px var(--m-gutter) 28px !important; }
+  html body.productions-page h1 { padding-left: 0 !important; font-size: 2.2rem !important; }
+  html body .prod-hero-sub { margin: 0 !important; }
+  html body .horizontal-scroll { padding-left: var(--m-gutter) !important; padding-right: var(--m-gutter) !important; }
+  html body #productions-nav { padding: 0 10px !important; }
+  html body .prod-tab { padding: 12px 10px !important; }
+  html body .section-intro { padding: 24px var(--m-gutter) 16px !important; }
+  html body.productions-page .project-rail { padding: 0 var(--m-gutter) 56px !important; }
+  html body.productions-page .project-rail .thumb-img { aspect-ratio: 16 / 10 !important; }
+  html body.productions-page .project-rail .project-year { font-size: 0.55rem !important; }
+  html body .project-rail .card-action-btn {
+    margin-top: auto !important;
+    min-height: 40px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.55rem !important;
+    line-height: 1.3 !important;
+  }
+
+  /* ── FILMS PAGE ── */
+  html body .films-header { padding: 36px var(--m-gutter) 28px !important; }
+  html body .films-page-title { margin-bottom: 14px !important; }
+  html body .films-header-rule { margin-top: 24px !important; }
+  html body .films-body { padding: 0 var(--m-gutter) var(--m-section) !important; }
+  html body .film-poster-img { height: 240px !important; min-height: 0 !important; object-position: center 20% !important; }
+  html body .film-info-col { padding: 22px 20px 26px !important; }
+  html body .film-num { margin-bottom: 12px !important; }
+  html body .film-tag { margin-bottom: 16px !important; align-self: flex-start; }
+  html body .film-title { font-size: 1.8rem !important; margin-bottom: 10px !important; }
+  html body .film-director { margin-bottom: 18px !important; }
+  html body .film-rule { margin-bottom: 18px !important; }
+  html body .film-status { margin-bottom: 22px !important; }
+  html body .film-explore-btn { align-self: stretch !important; text-align: center; padding: 14px 20px !important; }
+  html body .future-section { padding: var(--m-section) 0 !important; }
+
+  /* ── FOOTER ── */
+  html body .site-footer-full { padding: 36px var(--m-gutter) calc(72px + env(safe-area-inset-bottom)) !important; } /* room for the Channels pill */
+  html body .footer-grid { grid-template-columns: 1fr 1fr !important; gap: 28px 20px !important; }
+  html body .footer-brand { grid-column: 1 / -1; }
+  html body .footer-brand p { max-width: none !important; }
+
+  /* ── CHANNELS TAB — small pill in the corner, off the content ── */
+  html body #channelsBtn {
+    top: auto !important;
+    bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+    right: 12px !important;
+    transform: none !important;
+    width: auto !important;
+    padding: 8px 12px !important;
+    border: 1px solid rgba(218,175,55,0.35) !important;
+    border-radius: 999px !important;
+  }
+  html body #channelsBtn > span {
+    writing-mode: horizontal-tb !important;
+    font-size: 0.5rem !important;
+    letter-spacing: 2px !important;
+  }
+}
+
+/* Tablet: stacked film card keeps a sensible poster height */
+@media (min-width: 769px) and (max-width: 900px) {
+  html body .film-poster-img { height: 380px !important; min-height: 0 !important; object-position: center 20% !important; }
+}
