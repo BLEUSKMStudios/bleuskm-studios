@@ -27,22 +27,45 @@ const TABLES = {
 
 const FILES_ATTACHMENT_FIELD = 'fldlZcbMXEFM0AfQH'; // Portal Files â Attachment (multipleAttachments)
 
+const crypto = require('crypto');
 const USER_MAP = {
-  // Director
-  'zaria':     { password: 'bleuskm2026', department: 'director',        name: 'Zaria' },
-  // Producers
-  'cscott':    { password: 'bleuskmcrew', department: 'producer',        name: 'Ceion' },
-  'creeves':   { password: 'bleuskmcrew', department: 'producer',        name: 'Carmen' },
-  'ftorres':   { password: 'bleuskmcrew', department: 'producer',        name: 'Fabiola' },
-  // DP
-  'ookezie':   { password: 'bleuskmcam',  department: 'dp',              name: 'Obi' },
-  // AD
-  'rgalindo':  { password: 'bleuskm2026', department: 'ad',              name: 'Regan' },
-  // Script Supervisor
-  'ckudulis':  { password: 'bleuscript',  department: 'scriptsupervisor', name: 'Catherine' },
-  // Sound
-  'sound':     { password: 'sound2026',   department: 'sound',           name: 'Sound' },
+  zaria: { department: 'director', name: 'Zaria' },
+  cscott: { department: 'producer', name: 'Ceion' },
+  creeves: { department: 'producer', name: 'Carmen' },
+  ftorres: { department: 'producer', name: 'Fabiola' },
+  ookezie: { department: 'dp', name: 'Obi' },
+  rgalindo: { department: 'ad', name: 'Regan' },
+  ckudulis: { department: 'scriptsupervisor', name: 'Catherine' },
+  sound: { department: 'sound', name: 'Sound' }
 };
+const COOKIE = 'bleuskm_portal_session';
+const SESSION_SECONDS = 8 * 60 * 60;
+function equal(a, b) {
+  const x = Buffer.from(String(a)); const y = Buffer.from(String(b));
+  return x.length === y.length && crypto.timingSafeEqual(x, y);
+}
+function signature(data) {
+  return crypto.createHmac('sha256', process.env.PORTAL_SESSION_SECRET).update(data).digest('hex');
+}
+function createSession(username) {
+  const data = Buffer.from(JSON.stringify({ u: username, exp: Date.now() + SESSION_SECONDS * 1000 })).toString('base64url');
+  return data + '.' + signature(data);
+}
+function verifySession(headers) {
+  if (!process.env.PORTAL_SESSION_SECRET) return null;
+  const cookies = String(headers.cookie || '').split(';').map(x => x.trim());
+  const cookie = cookies.find(x => x.startsWith(COOKIE + '='));
+  if (!cookie) return null;
+  const value = cookie.slice(COOKIE.length + 1);
+  const dot = value.lastIndexOf('.');
+  if (dot < 0) return null;
+  const data = value.slice(0, dot);
+  if (!equal(value.slice(dot + 1), signature(data))) return null;
+  try {
+    const payload = JSON.parse(Buffer.from(data, 'base64url').toString());
+    return payload.exp > Date.now() && USER_MAP[payload.u] ? { username: payload.u, ...USER_MAP[payload.u] } : null;
+  } catch (_) { return null; }
+}
 
 async function airtable(method, tableId, body = null, params = '') {
   const url = `https://api.airtable.com/v0/${BASE_ID}/${tableId}${params}`;
@@ -58,29 +81,45 @@ async function airtable(method, tableId, body = null, params = '') {
 }
 
 async function netlifyHandler(event) {
+  const requestHeaders = event.headers || {};
+  const origin = String(requestHeaders.origin || '');
+  const host = String(requestHeaders.host || '');
+  const originMatchesHost = !origin || (() => {
+    try { return new URL(origin).host === host; } catch (_) { return false; }
+  })();
   const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json',
+    'Cache-Control': 'no-store',
+    'Vary': 'Origin'
   };
-
-  if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers, body: '' };
-
+  const reject = (statusCode, error) => ({ statusCode, headers, body: JSON.stringify({ ok: false, error }) });
+  if (event.httpMethod === 'OPTIONS') return reject(403, 'not_allowed');
+  if (!originMatchesHost) return reject(403, 'origin_not_allowed');
   const params = event.queryStringParameters || {};
   const action = params.action || '';
   let body = {};
-  try { body = JSON.parse(event.body || '{}'); } catch (_) {}
+  try { body = JSON.parse(event.body || '{}'); } catch (_) { return reject(400, 'invalid_json'); }
 
-  // ââ AUTH ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   if (action === 'auth') {
-    const username = (body.username || '').toLowerCase().trim();
-    const pass     = body.password || '';
-    const user     = USER_MAP[username];
-    if (user && user.password === pass) {
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, department: user.department, username, name: user.name }) };
-    }
-    return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'Invalid username or password' }) };
+    if (event.httpMethod !== 'POST') return reject(405, 'method_not_allowed');
+    if (!process.env.PORTAL_SESSION_SECRET) return reject(503, 'portal_auth_not_configured');
+    const username = String(body.username || '').toLowerCase().trim();
+    const password = String(body.password || '');
+    const user = USER_MAP[username];
+    const expected = process.env['PORTAL_PASSWORD_' + username.toUpperCase()];
+    if (!user || !expected || !equal(password, expected)) return reject(401, 'invalid_credentials');
+    return {
+      statusCode: 200,
+      headers: { ...headers, 'Set-Cookie': COOKIE + '=' + createSession(username) + '; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=' + SESSION_SECONDS },
+      body: JSON.stringify({ ok: true, department: user.department, username, name: user.name })
+    };
   }
+  if (action === 'logout') {
+    return { statusCode: 200, headers: { ...headers, 'Set-Cookie': COOKIE + '=; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=0' }, body: JSON.stringify({ ok: true }) };
+  }
+  const session = verifySession(requestHeaders);
+  if (!session) return reject(401, 'authentication_required');
+  if (!['GET', 'POST'].includes(event.httpMethod)) return reject(405, 'method_not_allowed');
 
   // ââ CREW ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   if (action === 'get-crew') {
