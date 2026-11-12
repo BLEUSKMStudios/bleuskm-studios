@@ -191,7 +191,12 @@ async function brevo(ctx, path, payload) {
     headers: { 'api-key': ctx.brevoKey, 'Content-Type': 'application/json', accept: 'application/json' },
     body: JSON.stringify(payload)
   });
-  if (!res.ok && res.status !== 204) throw new Error('brevo_' + path.replace(/\W+/g, '_') + '_' + res.status);
+  if (!res.ok && res.status !== 204) {
+    const data = await res.json().catch(() => ({}));
+    const code = String(data.code || '').slice(0, 100).replace(/[^a-zA-Z0-9_.-]/g, '');
+    const message = String(data.message || '').slice(0, 240).replace(/[\r\n]/g, ' ');
+    throw new Error('brevo_' + path.replace(/\W+/g, '_') + '_' + res.status + ' code=' + code + ' message=' + message);
+  }
 }
 
 function pick(map, fields) {
