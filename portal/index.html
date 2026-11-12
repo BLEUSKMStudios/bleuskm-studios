@@ -517,19 +517,6 @@ let STATE = { dept: null, realDept: null, section: null, files: [], notes: [], l
 // ════════════════════════════════════════════════════════════════
 // AUTH
 // ════════════════════════════════════════════════════════════════
-// Local user map (fallback when Netlify function unreachable)
-const LOCAL_USERS = {
-  'zaria':     { password: 'bleuskm2026', department: 'director',        name: 'Zaria' },
-  'cscott':    { password: 'bleuskmcrew', department: 'producer',        name: 'Ceion' },
-  'creeves':   { password: 'bleuskmcrew', department: 'producer',        name: 'Carmen' },
-  'ftorres':   { password: 'bleuskmcrew', department: 'producer',        name: 'Fabiola' },
-  'ftorres':   { password: 'bleuskmcrew', department: 'producer',        name: 'Fabiola' },
-  'ookezie':   { password: 'bleuskmcam',  department: 'dp',              name: 'Obi' },
-  'rgalindo':  { password: 'bleuskm2026', department: 'ad',              name: 'Regan' },
-  'ckudulis':  { password: 'bleuscript',  department: 'scriptsupervisor', name: 'Catherine' },
-  'sound':     { password: 'sound2026',   department: 'sound',           name: 'Sound' },
-};
-
 async function doLogin() {
   const username = (document.getElementById('login-user').value || '').toLowerCase().trim();
   const pass     = document.getElementById('login-pass').value;
@@ -549,7 +536,7 @@ async function doLogin() {
       STATE.dept     = json.department;
       STATE.realDept = json.department;
       STATE.username = username;
-      STATE.name     = json.name || (LOCAL_USERS[username] && LOCAL_USERS[username].name) || '';
+      STATE.name     = json.name || '';
       sessionStorage.setItem('portal_dept', json.department);
       sessionStorage.setItem('portal_user', username);
       sessionStorage.setItem('portal_name', STATE.name);
@@ -558,20 +545,7 @@ async function doLogin() {
       err.textContent = 'Incorrect username or password.';
     }
   } catch(e) {
-    // Fallback: local check
-    const user = LOCAL_USERS[username];
-    if (user && user.password === pass) {
-      STATE.dept     = user.department;
-      STATE.realDept = user.department;
-      STATE.username = username;
-      STATE.name     = user.name || '';
-      sessionStorage.setItem('portal_dept', user.department);
-      sessionStorage.setItem('portal_user', username);
-      sessionStorage.setItem('portal_name', STATE.name);
-      startApp();
-    } else {
-      err.textContent = 'Incorrect username or password.';
-    }
+    err.textContent = 'Unable to reach the login server. Please try again.';
   }
 }
 
@@ -579,6 +553,7 @@ document.getElementById('login-pass').addEventListener('keydown', e => { if(e.ke
 document.getElementById('login-user').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('login-pass').focus(); });
 
 function doLogout() {
+  fetch(API + '?action=logout', { method: 'POST', headers: {'Content-Type':'application/json'}, body: '{}' }).catch(() => {});
   sessionStorage.removeItem('portal_dept');
   sessionStorage.removeItem('portal_user');
   sessionStorage.removeItem('portal_name');
@@ -587,13 +562,7 @@ function doLogout() {
   document.getElementById('login-screen').classList.remove('hidden');
 }
 
-// Auto-restore session
-(function() {
-  const savedDept = sessionStorage.getItem('portal_dept');
-  const savedUser = sessionStorage.getItem('portal_user');
-  const savedName = sessionStorage.getItem('portal_name');
-  if (savedDept) { STATE.dept = savedDept; STATE.realDept = savedDept; STATE.username = savedUser || ''; STATE.name = savedName || ''; setTimeout(startApp, 0); }
-})();
+// Reauthentication is required after each page reload until server sessions are enabled.
 
 // ════════════════════════════════════════════════════════════════
 // NAVIGATION CONFIG
