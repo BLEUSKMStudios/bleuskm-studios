@@ -553,6 +553,7 @@ document.getElementById('login-pass').addEventListener('keydown', e => { if(e.ke
 document.getElementById('login-user').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('login-pass').focus(); });
 
 function doLogout() {
+  fetch(API + '?action=logout', { method: 'POST', headers: {'Content-Type':'application/json'}, body: '{}' }).catch(() => {});
   sessionStorage.removeItem('portal_dept');
   sessionStorage.removeItem('portal_user');
   sessionStorage.removeItem('portal_name');
