@@ -236,6 +236,17 @@ async function processSubmission(input, opts = {}) {
     token: env('AIRTABLE_FORMS_TOKEN') || env('AIRTABLE_TOKEN'),
     brevoKey: env('BREVO_KEY')
   };
+  // Diagnostics only: never print the credential, any substring of it, or its hash.
+  // Run on actual submissions so this describes the deployed function's environment.
+  const rawBrevoKey = process.env.BREVO_KEY;
+  console.info('[form-submit] brevo_key_diagnostic', JSON.stringify({
+    present: typeof rawBrevoKey === 'string' && rawBrevoKey.length > 0,
+    trimmedLength: ctx.brevoKey.length,
+    hasLeadingOrTrailingWhitespace: typeof rawBrevoKey === 'string' && rawBrevoKey !== rawBrevoKey.trim(),
+    looksLikeBrevoV3Key: ctx.brevoKey.startsWith('xkeysib-'),
+    hasSurroundingQuotes: /^['"]|['"]$/.test(ctx.brevoKey),
+    hasHeaderPrefix: /^api-key\s*:/i.test(ctx.brevoKey)
+  }));
   if (!ctx.base || !ctx.token) return { status: 500, body: { ok: false, error: 'server_not_configured' } };
 
   // 1) Main record, unless an identical one was just created (double click, retry, refresh).
