@@ -1,3 +1,4 @@
+const { requirePortalSession } = require('./_lib/portal-session');
 async function netlifyHandler(event) {
   if (event.httpMethod === 'OPTIONS') {
     return {
@@ -95,6 +96,8 @@ Do it fully. Make smart assumptions. Deliver. Be her Vix.`;
 
 // ── Vercel adapter ──
 module.exports = async (req, res) => {
+  // /dashboard AI Studio: signed-in leads only (was open to anyone).
+  if (!requirePortalSession(req, res, ['director', 'producer'])) return;
   const event = {
     httpMethod: req.method,
     queryStringParameters: req.query || {},
