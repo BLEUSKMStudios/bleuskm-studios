@@ -1,3 +1,4 @@
+const { requirePortalSession } = require('./_lib/portal-session');
 // IMPORTANT: this function uses raw TLS sockets (tls.connect) to talk to Zoho's
 // SMTP server directly. Do NOT deploy as an Edge Function — it requires the
 // Node.js serverless runtime (which is Vercel's default for files in /api).
@@ -171,6 +172,8 @@ async function netlifyHandler(event) {
 
 // ── Vercel adapter ──
 module.exports = async (req, res) => {
+  // Not called by any page; locked to portal users.
+  if (!requirePortalSession(req, res)) return;
   const event = {
     httpMethod: req.method,
     queryStringParameters: req.query || {},

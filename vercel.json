@@ -1,6 +1,28 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/.netlify/functions/:func", "destination": "/api/:func" }
+    {
+      "source": "/.netlify/functions/:func",
+      "destination": "/api/:func"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        }
+      ]
+    }
   ]
 }
