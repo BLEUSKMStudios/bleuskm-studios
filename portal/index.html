@@ -302,26 +302,9 @@ const CONTRACT_BASE = 'https://bleuskm.com/crew/contract/';
 const FILM = 'The Final Hand';
 const CALENDLY_LINK = 'https://calendly.com/studio-bleuskm/30min';
 
-// Crew contract links (from existing crew)
-const CREW_CONTRACTS = [
-  {name:'Rachel Fornero',role:'Production Assistant (PA)',email:'rafo.email@gmail.com'},
-  {name:'Zee Abracosa',role:'Production Designer / Set Dresser',email:'zeeabracosa.work@gmail.com'},
-  {name:'Joshua Sweet',role:'AC / Camera Support',email:'joshua.snup@gmail.com'},
-  {name:'Nick Montopoli',role:'Composer',email:'nick.montopoli@gmail.com'},
-  {name:'Justice Rivera',role:'BTS',email:'Justice.jr1414@gmail.com'},
-  {name:'Sophia Alba',role:'Graphic Design / Poster Creation',email:'sophiaalba807@gmail.com'},
-  {name:'Hailey Trifiro',role:'Makeup',email:'htrifiro@icloud.com'},
-  {name:'Catherine Kudulis',role:'Production Assistant (PA)',email:'cat.kudulis@gmail.com'},
-  {name:'Danielle Hani',role:'Composer',email:'danielleh3164@gmail.com'},
-  {name:'Arquemond Sierra',role:'Post Production, Sound Mixer',email:'arquemond@gmail.com'},
-  {name:'Fabiola Torres',role:'Producer',email:'cgstudios.co@gmail.com'},
-  {name:'Toby Dull',role:'Editor',email:'tobydull21@gmail.com'},
-  {name:'Obi Okezie',role:'Cinematographer (Director of Photography)',email:'obi@everythingisplural.com'},
-  {name:'Regan Galindo',role:'Assistant Director',email:'2014regan1@gmail.com'},
-  {name:'Nathan Lowenstein',role:'Boom Operator',email:'nathanlowenstein03@gmail.com'},
-  {name:'Carmen Reeves & Ceion Scott',role:'Producer',email:'productionsgirlsnightout@gmail.com'},
-  {name:'Cole Harvey',role:'Boom Operator',email:'tcharvey@icloud.com'},
-];
+// Crew contract links now come only from the signed-in Crew list (Airtable),
+// so no names or emails are published in this page's source.
+const CREW_CONTRACTS = [];
 
 function todayISO() {
   const d = new Date();
@@ -1581,7 +1564,7 @@ SECTIONS.producer = {
       <div class="grid3" style="margin-bottom:20px">
         <div class="card"><div class="card-title">Current Phase</div><div id="cp-label-producer" style="font-size:18px;font-weight:700;color:var(--gold)">Loading…</div><div id="cp-date-producer" style="font-size:11px;color:var(--muted)"></div></div>
         <div class="card"><div class="card-title">Core Crew</div><div style="font-size:24px;font-weight:700">${STATE.crew.length}</div></div>
-        <div class="card"><div class="card-title">Contracts</div><div style="font-size:24px;font-weight:700">${CREW_CONTRACTS.length} <span style="font-size:11px;color:var(--muted)">links ready</span></div></div>
+        <div class="card"><div class="card-title">Contracts</div><div style="font-size:24px;font-weight:700">${(STATE.crew||[]).length || CREW_CONTRACTS.length} <span style="font-size:11px;color:var(--muted)">links ready</span></div></div>
       </div>
       <div class="card">
         <div class="card-title">Quick Actions</div>

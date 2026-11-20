@@ -1,3 +1,4 @@
+const { verifySession, sameOrigin, isRecordId } = require('./_lib/portal-session');
 const tableCache = new Map();
 const inFlight = new Map();
 let airtableQueue = Promise.resolve();
@@ -125,15 +126,51 @@ function clearTableCache(base, table) {
   tableCache.delete(cacheKey(base, table));
 }
 
+// Access policy. This proxy used to accept any table and method from anyone.
+// It now requires a signed-in portal session (same cookie as /portal), is
+// same-origin only, and is limited to the tables and methods its two callers
+// use: the portal Location Hub and the /dashboard intake views.
+const ALL_ROLES = ["director", "producer", "dp", "ad", "scriptsupervisor", "sound"];
+const LEADS = ["director", "producer"];
+const TABLE_POLICY = {
+  // Portal Location Hub (portal/index.html)
+  "portal locations": { roles: ALL_ROLES, methods: ["GET", "POST", "PATCH", "DELETE"] },
+  // /dashboard (dashboard/app.js) — website intake tables, read-only except casting status
+  "tbllgmxulnb9ebfxh": { roles: LEADS, methods: ["GET", "PATCH"], patchFields: ["Casting Status"] }, // Casting Submissions
+  "tblwfk7tmofhgiia5": { roles: LEADS, methods: ["GET"] }, // Project Inquiries
+  "tblsmb3y7vrvjbonx": { roles: LEADS, methods: ["GET"] }, // Newsletter
+  "tblcr7cg3wugorlwo": { roles: LEADS, methods: ["GET"] }  // Crew applications
+};
+
+function denied(event) {
+  const session = verifySession(event.headers || {});
+  if (!session) return [401, "authentication_required"];
+  if (!sameOrigin(event.headers || {})) return [403, "origin_not_allowed"];
+  let payload = {};
+  if (event.httpMethod !== "GET") {
+    try { payload = JSON.parse(event.body || "{}"); } catch (_) { return [400, "invalid_json"]; }
+  }
+  const table = event.httpMethod === "GET" ? event.queryStringParameters?.table : payload.table;
+  const policy = TABLE_POLICY[String(table || "").toLowerCase()];
+  if (!policy || !policy.roles.includes(session.department)) return [403, "table_not_allowed"];
+  if (!policy.methods.includes(event.httpMethod)) return [405, "method_not_allowed"];
+  if ((event.httpMethod === "PATCH" || event.httpMethod === "DELETE") && !isRecordId(payload.id)) return [400, "invalid_record_id"];
+  if (policy.patchFields && event.httpMethod === "PATCH") {
+    const keys = Object.keys(payload.fields || {});
+    if (!keys.length || keys.some(k => !policy.patchFields.includes(k))) return [403, "field_not_allowed"];
+  }
+  return null;
+}
+
 async function netlifyHandler(event) {
   const headers = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type",
-    "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    "Cache-Control": "no-store"
   };
 
-  if (event.httpMethod === "OPTIONS") return { statusCode: 200, headers, body: "" };
+  if (event.httpMethod === "OPTIONS") return { statusCode: 403, headers, body: JSON.stringify({ error: "not_allowed" }) };
+  const refusal = denied(event);
+  if (refusal) return { statusCode: refusal[0], headers, body: JSON.stringify({ error: refusal[1] }) };
 
   const defaultBase = process.env.AIRTABLE_BASE;
   const token = process.env.AIRTABLE_TOKEN;
@@ -191,7 +228,7 @@ async function netlifyHandler(event) {
 
     return { statusCode: 405, headers, body: JSON.stringify({ error: "Method not allowed" }) };
   } catch (error) {
-    return { statusCode: 500, headers, body: JSON.stringify({ error: error.message }) };
+    return { statusCode: 500, headers, body: JSON.stringify({ error: "server_error" }) };
   }
 }
 

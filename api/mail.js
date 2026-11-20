@@ -1,3 +1,4 @@
+const { requirePortalSession } = require('./_lib/portal-session');
 // api/mail.js — Zoho-backed send / inbox / sent-log for BLEUSKM Production Portal
 // Aliases crew@bleuskm.com and casting@bleuskm.com both deliver into the studio@bleuskm.com mailbox.
 
@@ -136,6 +137,8 @@ async function fetchMessageBody(uid) {
 }
 
 module.exports = async (req, res) => {
+  // Email Hub: portal users only (was open to anyone).
+  if (!requirePortalSession(req, res)) return;
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') { res.status(200).send(''); return; }

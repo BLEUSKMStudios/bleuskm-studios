@@ -27,47 +27,24 @@ const TABLES = {
 
 const FILES_ATTACHMENT_FIELD = 'fldlZcbMXEFM0AfQH'; // Portal Files â Attachment (multipleAttachments)
 
-const crypto = require('crypto');
-const USER_MAP = {
-  zaria: { department: 'director', name: 'Zaria' },
-  cscott: { department: 'producer', name: 'Ceion' },
-  creeves: { department: 'producer', name: 'Carmen' },
-  ftorres: { department: 'producer', name: 'Fabiola' },
-  ookezie: { department: 'dp', name: 'Obi' },
-  rgalindo: { department: 'ad', name: 'Regan' },
-  ckudulis: { department: 'scriptsupervisor', name: 'Catherine' },
-  sound: { department: 'sound', name: 'Sound' }
-};
-const COOKIE = 'bleuskm_portal_session';
-const SESSION_SECONDS = 8 * 60 * 60;
-function equal(a, b) {
-  const x = Buffer.from(String(a)); const y = Buffer.from(String(b));
-  return x.length === y.length && crypto.timingSafeEqual(x, y);
-}
-function signature(data) {
-  return crypto.createHmac('sha256', process.env.PORTAL_SESSION_SECRET).update(data).digest('hex');
-}
-function createSession(username) {
-  const data = Buffer.from(JSON.stringify({ u: username, exp: Date.now() + SESSION_SECONDS * 1000 })).toString('base64url');
-  return data + '.' + signature(data);
-}
-function verifySession(headers) {
-  if (!process.env.PORTAL_SESSION_SECRET) return null;
-  const cookies = String(headers.cookie || '').split(';').map(x => x.trim());
-  const cookie = cookies.find(x => x.startsWith(COOKIE + '='));
-  if (!cookie) return null;
-  const value = cookie.slice(COOKIE.length + 1);
-  const dot = value.lastIndexOf('.');
-  if (dot < 0) return null;
-  const data = value.slice(0, dot);
-  if (!equal(value.slice(dot + 1), signature(data))) return null;
-  try {
-    const payload = JSON.parse(Buffer.from(data, 'base64url').toString());
-    return payload.exp > Date.now() && USER_MAP[payload.u] ? { username: payload.u, ...USER_MAP[payload.u] } : null;
-  } catch (_) { return null; }
+const {
+  USER_MAP, DEPT_LABELS, COOKIE, SESSION_SECONDS,
+  equal, createSession, verifySession, isRecordId, formulaText
+} = require('./_lib/portal-session');
+
+// Rejects record IDs that are not plain Airtable IDs, so request values can
+// never add extra query parameters or path segments to an Airtable URL.
+function assertSafeAirtablePath(tableId, params) {
+  const parts = String(tableId).split('/');
+  if (parts.length > 2 || (parts[1] !== undefined && !isRecordId(parts[1]))) throw new Error('invalid_record_id');
+  const p = String(params || '');
+  if (p.startsWith('/')) { if (!isRecordId(p.slice(1))) throw new Error('invalid_record_id'); return; }
+  // Every delete in this file removes exactly one record: "?records[]=<id>".
+  if (p.includes('records[]') && !/^\?records\[\]=rec[A-Za-z0-9]{14}$/.test(p)) throw new Error('invalid_record_id');
 }
 
 async function airtable(method, tableId, body = null, params = '') {
+  assertSafeAirtablePath(tableId, params);
   const url = `https://api.airtable.com/v0/${BASE_ID}/${tableId}${params}`;
   const res = await fetch(url, {
     method,
@@ -117,9 +94,58 @@ async function netlifyHandler(event) {
   if (action === 'logout') {
     return { statusCode: 200, headers: { ...headers, 'Set-Cookie': COOKIE + '=; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=0' }, body: JSON.stringify({ ok: true }) };
   }
+  // Public poll actions for the /poll response page (crew without portal
+  // logins). They were blocked by the Nov 12 session gate; inputs are now
+  // validated and only the one poll's public fields are returned.
+  if (action === 'get-poll') {
+    if (!isRecordId(params.id)) return reject(400, 'invalid_poll_id');
+    const poll = await airtable('GET', TABLES.polls, null, `/${params.id}`);
+    if (!poll || !poll.id) return reject(404, 'poll_not_found');
+    const f = poll.fields || {};
+    return { statusCode: 200, headers, body: JSON.stringify({ id: poll.id, fields: {
+      'Title': f['Title'] || '', 'Options': f['Options'] || '', 'Status': f['Status'] || '', 'Final Time': f['Final Time'] || ''
+    } }) };
+  }
+  if (action === 'submit-poll-response') {
+    if (event.httpMethod !== 'POST') return reject(405, 'method_not_allowed');
+    if (!isRecordId(body.pollId)) return reject(400, 'invalid_poll_id');
+    const poll = await airtable('GET', TABLES.polls, null, `/${body.pollId}`);
+    if (!poll || !poll.id) return reject(404, 'poll_not_found');
+    const cap = (v, n) => String(v == null ? '' : v).slice(0, n);
+    const options = Array.isArray(body.selectedOptions) ? body.selectedOptions.slice(0, 50).map(o => cap(o, 200)) : [];
+    const data = await airtable('POST', TABLES.pollresponses, {
+      records: [{
+        fields: {
+          'Respondent Name':  cap(body.name, 200),
+          'Poll Id':          poll.id,
+          'Respondent Email': cap(body.email, 200),
+          'Respondent Role':  cap(body.role, 200),
+          'Selected Options': options.join('\n'),
+          'Submitted':        new Date().toISOString(),
+        },
+      }],
+    });
+    if (!data || data.error) return reject(502, 'submission_failed');
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
+  }
+
   const session = verifySession(requestHeaders);
   if (!session) return reject(401, 'authentication_required');
   if (!['GET', 'POST'].includes(event.httpMethod)) return reject(405, 'method_not_allowed');
+
+  // Server-side scoping. Query values are escaped before they reach Airtable
+  // formulas, identity comes from the session rather than the request, and
+  // non-director accounts only receive their own department's views.
+  const isDirector = session.department === 'director';
+  const ownLabel = DEPT_LABELS[session.department] || '';
+  for (const k of Object.keys(params)) params[k] = formulaText(params[k]);
+  if (!isDirector && ['get-files', 'get-timeline'].includes(action)) params.dept = formulaText(ownLabel);
+  if (!isDirector && ['get-pushed-notes', 'get-thread-notes'].includes(action)) params.dept = formulaText(session.department);
+  if (action === 'get-thread-notes') params.login = formulaText(session.username);
+  if (action === 'get-sent-notes') params.person = formulaText(session.name);
+  if (action === 'mark-note-read') body.login = session.username;
+  if (['delete-crew', 'delete-cast'].includes(action) && !['director', 'producer'].includes(session.department)) return reject(403, 'not_permitted');
+  if (action === 'update-setting' && !isDirector) return reject(403, 'not_permitted');
 
   // ââ CREW ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   if (action === 'get-crew') {
@@ -590,7 +616,7 @@ if (action === 'add-crew') {
   }
 
   if (action === 'update-setting') {
-    const filter = encodeURIComponent(`{Setting Name}="${body.name}"`);
+    const filter = encodeURIComponent(`{Setting Name}="${formulaText(body.name)}"`);
     const existing = await airtable('GET', TABLES.settings, null, `?filterByFormula=${filter}`);
     const recs = existing.records || [];
     if (recs.length) {
@@ -627,11 +653,6 @@ if (action === 'add-crew') {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-  // Public â used by the unauthenticated poll response page.
-  if (action === 'get-poll') {
-    const data = await airtable('GET', TABLES.polls, null, `/${params.id}`);
-    return { statusCode: 200, headers, body: JSON.stringify(data) };
-  }
 
   if (action === 'update-poll') {
     const fields = {};
@@ -648,25 +669,9 @@ if (action === 'add-crew') {
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
 
-  // Public â submitted from the poll response page.
-  if (action === 'submit-poll-response') {
-    const data = await airtable('POST', TABLES.pollresponses, {
-      records: [{
-        fields: {
-          'Respondent Name':  body.name || '',
-          'Poll Id':          body.pollId || '',
-          'Respondent Email': body.email || '',
-          'Respondent Role':  body.role || '',
-          'Selected Options': (body.selectedOptions || []).join('\n'),
-          'Submitted':        new Date().toISOString(),
-        },
-      }],
-    });
-    return { statusCode: 200, headers, body: JSON.stringify(data) };
-  }
 
   if (action === 'get-poll-results') {
-    const filter = encodeURIComponent(`{Poll Id}="${params.pollId || body.pollId || ''}"`);
+    const filter = encodeURIComponent(`{Poll Id}="${params.pollId || formulaText(body.pollId) || ''}"`);
     const data = await airtable('GET', TABLES.pollresponses, null, `?filterByFormula=${filter}`);
     return { statusCode: 200, headers, body: JSON.stringify(data) };
   }
@@ -903,7 +908,13 @@ module.exports = async (req, res) => {
     headers: req.headers || {},
     body: typeof req.body === 'string' ? req.body : JSON.stringify(req.body || {}),
   };
-  const result = await netlifyHandler(event);
+  let result;
+  try {
+    result = await netlifyHandler(event);
+  } catch (err) {
+    const invalid = err && err.message === 'invalid_record_id';
+    result = { statusCode: invalid ? 400 : 500, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }, body: JSON.stringify({ ok: false, error: invalid ? 'invalid_record_id' : 'server_error' }) };
+  }
   const { statusCode = 200, headers = {}, body = '', isBase64Encoded } = result || {};
   Object.entries(headers).forEach(([k, v]) => { try { res.setHeader(k, v); } catch (e) {} });
   if (isBase64Encoded) {
