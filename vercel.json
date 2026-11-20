@@ -1,5 +1,18 @@
 {
   "cleanUrls": true,
+  "ignoreCommand": "[ -n \"$VERCEL_GIT_PREVIOUS_SHA\" ] && git diff --quiet \"$VERCEL_GIT_PREVIOUS_SHA\" HEAD -- . ':(exclude)studio' ':(exclude).github'",
+  "redirects": [
+    {
+      "source": "/studio",
+      "destination": "https://studio.bleuskm.com/",
+      "permanent": false
+    },
+    {
+      "source": "/studio/:path*",
+      "destination": "https://studio.bleuskm.com/",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
       "source": "/.netlify/functions/:func",

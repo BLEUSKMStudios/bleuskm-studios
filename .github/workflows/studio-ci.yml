@@ -1,0 +1,40 @@
+# Studio OS checks. Runs only when the hub, this workflow, or the website's
+# vercel.json changes; the public website itself has no CI and is not touched.
+name: Studio OS CI
+
+on:
+  pull_request:
+    paths:
+      - "studio/**"
+      - "vercel.json"
+      - ".github/workflows/studio-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "studio/**"
+      - "vercel.json"
+      - ".github/workflows/studio-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  studio:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: studio
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: studio/package-lock.json
+      - run: npm ci
+      - name: Website isolation (redirect affects no existing route)
+        run: npm run check:website-isolation
+      - run: npm run typecheck
+      - run: npm run build
