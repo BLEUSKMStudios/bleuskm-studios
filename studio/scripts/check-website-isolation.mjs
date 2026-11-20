@@ -33,8 +33,14 @@ for (const r of studioRedirects) {
 }
 
 // 1. Hub paths are caught.
-for (const p of ["/studio", "/studio/", "/studio/package.json", "/studio/app/page.tsx", "/studio/scripts/check-website-isolation.mjs"]) {
+for (const p of ["/studio", "/studio/package.json", "/studio/app/page.tsx", "/studio/scripts/check-website-isolation.mjs"]) {
   caught(p) ? pass(`redirected: ${p}`) : fail(`not redirected: ${p}`);
+}
+
+// "/studio/" (trailing slash) is not matched by Vercel, which answers 404 as
+// long as there is no studio/index.html for the website to serve. Keep it so.
+for (const name of ["index.html", "index.htm"]) {
+  try { statSync(join(root, "studio", name)); fail(`studio/${name} would be served at bleuskm.com/studio/`); } catch { pass(`no studio/${name}`); }
 }
 
 // 2. No existing website route is caught.
