@@ -14,15 +14,58 @@ type Status = {
   anon_table_privileges: number;
 };
 
-async function loadStatus(): Promise<{ status?: Status; problem?: string }> {
+type Check = { label: string; ok: boolean | null; note: string };
+
+// Checks that each configured credential is accepted, without ever showing a value.
+async function loadStatus(): Promise<{ status?: Status; problem?: string; checks: Check[] }> {
+  const checks: Check[] = [];
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const publishable = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+  // Publishable key: ask Supabase Auth for its public settings.
+  if (url && publishable) {
+    try {
+      const res = await fetch(`${url}/auth/v1/settings`, { headers: { apikey: publishable }, cache: "no-store" });
+      if (res.ok) {
+        const body = (await res.json()) as { disable_signup?: boolean };
+        checks.push({ label: "Project address and publishable key", ok: true, note: "Accepted by Supabase." });
+        checks.push({
+          label: "Public sign-up switched off",
+          ok: body.disable_signup === true,
+          note: body.disable_signup === true ? "Nobody can create an account." : "Sign-up is open. Switch it off in Supabase.",
+        });
+      } else {
+        checks.push({ label: "Project address and publishable key", ok: false, note: `Rejected (HTTP ${res.status}).` });
+      }
+    } catch {
+      checks.push({ label: "Project address and publishable key", ok: false, note: "Supabase could not be reached." });
+    }
+  } else {
+    checks.push({ label: "Project address and publishable key", ok: false, note: "Not configured for this deployment." });
+  }
+
+  // Secret key: call the server-only status function.
   const admin = createAdminClient();
-  if (!admin) return { problem: "The database credentials are not configured for this deployment yet." };
+  if (!admin) {
+    checks.push({ label: "Secret key (server only)", ok: false, note: "Not configured for this deployment." });
+    return { checks, problem: "The database credentials are not configured for this deployment yet." };
+  }
   try {
     const { data, error } = await admin.rpc("system_status");
-    if (error) return { problem: "The database answered with an error. The schema may not be applied yet." };
-    return { status: data as Status };
+    if (!error) {
+      checks.push({ label: "Secret key (server only)", ok: true, note: "Accepted by Supabase." });
+      return { checks, status: data as Status };
+    }
+    // PGRST202: the key was accepted but the function does not exist yet.
+    if (error.code === "PGRST202" || error.code === "42883") {
+      checks.push({ label: "Secret key (server only)", ok: true, note: "Accepted by Supabase." });
+      return { checks, problem: "Connected. The Studio OS database schema has not been applied to this project yet." };
+    }
+    checks.push({ label: "Secret key (server only)", ok: false, note: "Rejected by Supabase." });
+    return { checks, problem: "The database answered with an error." };
   } catch {
-    return { problem: "The database could not be reached." };
+    checks.push({ label: "Secret key (server only)", ok: false, note: "Supabase could not be reached." });
+    return { checks, problem: "The database could not be reached." };
   }
 }
 
@@ -30,7 +73,7 @@ const cell: React.CSSProperties = { padding: "6px 10px", borderBottom: "1px soli
 const ok = (v: boolean) => <span style={{ color: v ? "#7bd88f" : "#ff6b6b", fontWeight: 600 }}>{v ? "Yes" : "No"}</span>;
 
 export default async function StatusPage() {
-  const { status, problem } = await loadStatus();
+  const { status, problem, checks } = await loadStatus();
   const allLocked = status ? status.tables.every((t) => t.rls && t.policies > 0) && status.anon_table_privileges === 0 : false;
 
   return (
@@ -39,8 +82,20 @@ export default async function StatusPage() {
       <h1 style={{ fontWeight: 900, margin: "8px 0 4px" }}>System status</h1>
       <p style={{ color: "var(--muted)", marginTop: 0 }}>Database and permission rules (Phase 1, step 1B). No personal data is shown.</p>
 
+      <h2 style={{ fontSize: 18 }}>Credentials</h2>
+      <div style={{ overflowX: "auto" }}>
+        <table style={{ borderCollapse: "collapse", width: "100%", fontSize: 14 }}>
+          <thead><tr><th style={cell}>Check</th><th style={cell}>Passed</th><th style={cell}>Detail</th></tr></thead>
+          <tbody>
+            {checks.map((c) => (
+              <tr key={c.label}><td style={cell}>{c.label}</td><td style={cell}>{ok(c.ok === true)}</td><td style={cell}>{c.note}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
       {problem && (
-        <p style={{ background: "var(--surface)", borderLeft: "4px solid #ff6b6b", padding: "12px 14px" }}>{problem}</p>
+        <p style={{ background: "var(--surface)", borderLeft: `4px solid ${problem.startsWith("Connected.") ? "var(--gold)" : "#ff6b6b"}`, padding: "12px 14px" }}>{problem}</p>
       )}
 
       {status && (
