@@ -9,8 +9,29 @@ here is served by bleuskm.com: the website's `vercel.json` redirects `/studio` a
 
 ## Status
 
-Phase 1, step 1A: application and deployment skeleton only. There is no sign-in,
-database or data yet. Those arrive in later steps, each approved separately.
+- Step 1A: separate application and isolated deployment.
+- Step 1B: database schema, Row Level Security and server-side permission checks
+  (`supabase/migrations`, `lib/permissions.ts`), with automated tests. There is
+  no sign-in, dashboard or imported data yet.
+
+## Database and permissions
+
+- **Migrations** live in `supabase/migrations` and are the only way the schema changes.
+- **Rule:** the owner has full access. Everyone else needs a grant of View or Edit
+  for a section, either on one production or at Studio level. No grant means no
+  access. Deactivated users and sections switched off on a production deny access.
+  Departments never grant access.
+- **Enforcement:** Row Level Security on every table (`private.has_access`), the
+  `check_access` / `check_access_for` database functions, and `lib/permissions.ts`
+  for server code (fails closed). Future section tables get the same rules with
+  `select private.apply_section_rls('public.<table>', '<section>')`.
+- **Tests:** `supabase/tests/database/*.test.sql` (pgTAP) run against a throwaway
+  Supabase Postgres in CI (`supabase/scripts/test-database.sh`); `npm test` runs the
+  server permission unit tests.
+- **Staging:** `.github/workflows/studio-db-staging.yml` applies migrations to the
+  Supabase project only after the tests pass and the owner approves the run in the
+  protected `supabase-staging` environment. Credentials are never committed.
+- **Status page:** `/status` on the Preview shows schema facts and counts only.
 
 ## Deployment isolation
 
