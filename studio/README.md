@@ -29,6 +29,13 @@ that compares the commit with the branch's last deployment
 existing website route and that the website's other settings are unchanged.
 CI runs it on every pull request that touches `studio/` or `vercel.json`.
 
+## Vercel project setup
+
+The hub's Vercel project is `bleuskm-studio-os`: Framework Preset **Next.js**,
+Root Directory **`studio`** (set under Settings → Build and Deployment, because
+the import screen only lists folders that already exist on `main`). It has no
+custom domain yet; studio.bleuskm.com is added only at launch, with approval.
+
 ## Local development
 
 ```bash
