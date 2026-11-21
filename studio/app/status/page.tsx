@@ -69,11 +69,39 @@ async function loadStatus(): Promise<{ status?: Status; problem?: string; checks
   }
 }
 
+type Probe = { target: string; denied: boolean; detail: string };
+
+// Live test: ask the Data API for each table and server function exactly as a
+// signed-out visitor would (publishable key only). Every request must be refused.
+async function probeSignedOut(tables: string[]): Promise<Probe[]> {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  if (!url || !key) return [];
+  const headers = { apikey: key, "Content-Type": "application/json" };
+  const requests: { target: string; run: () => Promise<Response> }[] = [
+    ...tables.map((t) => ({ target: `Read ${t}`, run: () => fetch(`${url}/rest/v1/${t}?select=*&limit=1`, { headers, cache: "no-store" }) })),
+    { target: "Add a production", run: () => fetch(`${url}/rest/v1/productions`, { method: "POST", headers, body: JSON.stringify({ slug: "probe", title: "Probe", type: "film" }), cache: "no-store" }) },
+    { target: "Give itself access", run: () => fetch(`${url}/rest/v1/access_grants`, { method: "POST", headers, body: JSON.stringify({ section_key: "casting", level: "edit" }), cache: "no-store" }) },
+    ...["check_access_for", "system_status"].map((f) => ({ target: `Call ${f}`, run: () => fetch(`${url}/rest/v1/rpc/${f}`, { method: "POST", headers, body: "{}", cache: "no-store" }) })),
+  ];
+  return Promise.all(
+    requests.map(async ({ target, run }) => {
+      try {
+        const res = await run();
+        return { target, denied: !res.ok, detail: res.ok ? `Allowed (HTTP ${res.status})` : `Refused (HTTP ${res.status})` };
+      } catch {
+        return { target, denied: false, detail: "Could not test" };
+      }
+    }),
+  );
+}
+
 const cell: React.CSSProperties = { padding: "6px 10px", borderBottom: "1px solid #2a2a2a", textAlign: "left" };
 const ok = (v: boolean) => <span style={{ color: v ? "#7bd88f" : "#ff6b6b", fontWeight: 600 }}>{v ? "Yes" : "No"}</span>;
 
 export default async function StatusPage() {
   const { status, problem, checks } = await loadStatus();
+  const probes = status ? await probeSignedOut(status.tables.map((t) => t.name)) : [];
   const allLocked = status ? status.tables.every((t) => t.rls && t.policies > 0) && status.anon_table_privileges === 0 : false;
 
   return (
@@ -129,6 +157,21 @@ export default async function StatusPage() {
               <tbody>
                 {status.sections.map((s) => (
                   <tr key={s.key}><td style={cell}>{s.label}</td><td style={cell}>{ok(s.grantable)}</td><td style={cell}>{ok(s.studio)}</td><td style={cell}>{ok(s.production)}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <h2 style={{ fontSize: 18 }}>Live test as a signed-out visitor</h2>
+          <p style={{ color: "var(--muted)", marginTop: 0 }}>
+            {probes.every((p) => p.denied) ? `All ${probes.length} requests were refused.` : "Warning: at least one request was allowed."}
+          </p>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ borderCollapse: "collapse", width: "100%", fontSize: 14 }}>
+              <thead><tr><th style={cell}>Attempt</th><th style={cell}>Refused</th><th style={cell}>Result</th></tr></thead>
+              <tbody>
+                {probes.map((p) => (
+                  <tr key={p.target}><td style={cell}>{p.target}</td><td style={cell}>{ok(p.denied)}</td><td style={cell}>{p.detail}</td></tr>
                 ))}
               </tbody>
             </table>
