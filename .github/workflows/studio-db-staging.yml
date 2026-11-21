@@ -1,0 +1,84 @@
+# Applies Studio OS database migrations to the Supabase STAGING project.
+#
+# Runs when migration files change on main or the Studio OS development
+# branch. On the development branch the deploy job runs only for a commit whose
+# message contains [db-staging], so nothing is attempted before the protected
+# environment exists. The permission tests must pass first, and the deploy job then waits
+# in the protected "supabase-staging" environment until Zaria approves it
+# (GitHub: "Review deployments"). The database password lives only in that
+# environment and are released only after approval.
+name: Studio OS database (staging)
+
+on:
+  push:
+    branches:
+      - main
+      - claude/project-thread-75yn22
+    paths:
+      - "studio/supabase/migrations/**"
+      - ".github/workflows/studio-db-staging.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supabase-staging
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Database permission tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install psql and pg_prove
+        run: sudo apt-get update -q && sudo apt-get install -y -q postgresql-client libtap-parser-sourcehandler-pgtap-perl
+      - name: Start a throwaway database (random password per run)
+        run: studio/supabase/scripts/start-test-database.sh
+      - name: Apply migrations and run the pgTAP tests
+        run: studio/supabase/scripts/test-database.sh
+
+  deploy:
+    name: Apply migrations to staging (needs approval)
+    needs: test
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.ref == 'refs/heads/main' ||
+      contains(github.event.head_commit.message, '[db-staging]')
+    runs-on: ubuntu-latest
+    environment: supabase-staging
+    defaults:
+      run:
+        working-directory: studio
+    env:
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      SUPABASE_PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF }}
+      # Supabase's IPv4 session pooler for this project's region (West US,
+      # Oregon). Not secret: it is shown in the dashboard under Connect.
+      SUPABASE_POOLER_HOST: aws-1-us-west-2.pooler.supabase.com
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.122.1
+      - name: Check the environment is configured
+        run: |
+          for v in SUPABASE_DB_PASSWORD SUPABASE_PROJECT_REF; do
+            if [ -z "${!v}" ]; then echo "::error::$v is not set in the supabase-staging environment"; exit 1; fi
+          done
+      # Connects straight to the staging database with its password, so no
+      # Supabase account token is needed. The URL is masked in the logs.
+      - name: Build the database connection
+        run: |
+          pw=$(python3 -c 'import os,urllib.parse;print(urllib.parse.quote(os.environ["SUPABASE_DB_PASSWORD"],safe=""))')
+          url="postgresql://postgres.${SUPABASE_PROJECT_REF}:${pw}@${SUPABASE_POOLER_HOST}:5432/postgres?sslmode=require"
+          echo "::add-mask::$pw"
+          echo "::add-mask::$url"
+          echo "STAGING_DB_URL=$url" >> "$GITHUB_ENV"
+      - name: Show pending migrations
+        run: supabase migration list --db-url "$STAGING_DB_URL"
+      - name: Apply migrations
+        run: supabase db push --yes --db-url "$STAGING_DB_URL"
+      - name: Show applied migrations
+        run: supabase migration list --db-url "$STAGING_DB_URL"

@@ -1,0 +1,57 @@
+# Studio OS checks. Runs only when the hub, this workflow, or the website's
+# vercel.json changes; the public website itself has no CI and is not touched.
+name: Studio OS CI
+
+on:
+  pull_request:
+    paths:
+      - "studio/**"
+      - "vercel.json"
+      - ".github/workflows/studio-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "studio/**"
+      - "vercel.json"
+      - ".github/workflows/studio-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  studio:
+    name: App build and checks
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: studio
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: studio/package-lock.json
+      - run: npm ci
+      - name: Website isolation (redirect affects no existing route)
+        run: npm run check:website-isolation
+      - run: npm run typecheck
+      - name: Server permission checks (unit tests)
+        run: npm test
+      - run: npm run build
+
+  database:
+    name: Database permission tests
+    runs-on: ubuntu-latest
+    # A throwaway Supabase Postgres database, created and deleted for this run.
+    # It never touches the real Supabase project and needs no credentials.
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install psql and pg_prove
+        run: sudo apt-get update -q && sudo apt-get install -y -q postgresql-client libtap-parser-sourcehandler-pgtap-perl
+      - name: Start a throwaway database (random password per run)
+        run: studio/supabase/scripts/start-test-database.sh
+      - name: Apply migrations and run the pgTAP tests
+        run: studio/supabase/scripts/test-database.sh
