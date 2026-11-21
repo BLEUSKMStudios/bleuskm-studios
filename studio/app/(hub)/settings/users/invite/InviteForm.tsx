@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { invitePerson } from "./actions";
+import { invitePerson } from "@/lib/hub/user-actions";
 import { SubmitButton } from "@/components/SubmitButton";
 
 export function InviteForm() {

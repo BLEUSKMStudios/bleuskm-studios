@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { decide, type Decision } from "./decide.ts";
@@ -10,7 +11,7 @@ export type Me = { id: string; email: string; fullName: string; isOwner: boolean
  * Checks the session with Supabase (never trusting the browser alone) and
  * returns the facts the access rules need.
  */
-export async function loadSession() {
+export const loadSession = cache(async function loadSession() {
   const supabase = await createServerSupabase();
   const { data: userData } = await supabase.auth.getUser();
   const user = userData.user;
@@ -32,7 +33,7 @@ export async function loadSession() {
     ? { id: profile.id, email: profile.email, fullName: profile.full_name, isOwner: profile.is_owner }
     : null;
   return { supabase, me, decision };
-}
+});
 
 /** Use at the top of every hub page. Sends anyone not fully signed in to the right step. */
 export async function requireSignedIn(): Promise<Me> {

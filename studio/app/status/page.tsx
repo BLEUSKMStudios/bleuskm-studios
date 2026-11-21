@@ -1,3 +1,4 @@
+import { requireOwner } from "@/lib/auth/session";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 // Step 1B review page: proves the Preview reaches the database and shows how
@@ -100,6 +101,7 @@ const cell: React.CSSProperties = { padding: "6px 10px", borderBottom: "1px soli
 const ok = (v: boolean) => <span style={{ color: v ? "#7bd88f" : "#ff6b6b", fontWeight: 600 }}>{v ? "Yes" : "No"}</span>;
 
 export default async function StatusPage() {
+  await requireOwner(); // owner only since step 1D
   const { status, problem, checks } = await loadStatus();
   const probes = status ? await probeSignedOut(status.tables.map((t) => t.name)) : [];
   const allLocked = status ? status.tables.every((t) => t.rls && t.policies > 0) && status.anon_table_privileges === 0 : false;

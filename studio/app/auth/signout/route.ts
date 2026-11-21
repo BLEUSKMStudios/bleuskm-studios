@@ -3,7 +3,10 @@ import { createServerSupabase } from "@/lib/supabase/server";
 
 async function signOut(request: NextRequest) {
   const supabase = await createServerSupabase();
-  await supabase.auth.signOut();
+  // A banned (deactivated) account can't sign out on the server, so clear
+  // this browser's session cookies in that case too.
+  const { error } = await supabase.auth.signOut();
+  if (error) await supabase.auth.signOut({ scope: "local" });
   const to = request.nextUrl.clone();
   to.pathname = "/login";
   to.search = "";
