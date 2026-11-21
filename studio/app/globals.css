@@ -15,3 +15,21 @@ body {
   color: var(--text);
   -webkit-font-smoothing: antialiased;
 }
+
+/* Sign-in screens */
+.auth-wrap { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; }
+.auth-card { width: 100%; max-width: 400px; background: var(--surface); padding: 28px 24px; border-top: 3px solid var(--gold); }
+.eyebrow { color: var(--gold); letter-spacing: 0.3em; font-size: 12px; font-weight: 600; margin: 0; }
+.auth-card h1 { font-weight: 900; font-size: 28px; margin: 8px 0 4px; }
+.auth-card p.lead { color: var(--muted); margin: 0 0 20px; }
+.field { display: block; margin-bottom: 14px; }
+.field span { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.field input { width: 100%; padding: 11px 12px; font: inherit; font-size: 16px; color: var(--text); background: #0f0f0f; border: 1px solid #333; border-radius: 4px; }
+.field input:focus { outline: 2px solid var(--gold); outline-offset: 1px; border-color: transparent; }
+.btn { display: inline-block; width: 100%; padding: 12px 16px; font: inherit; font-weight: 600; color: #111; background: var(--gold); border: 0; border-radius: 4px; cursor: pointer; text-align: center; text-decoration: none; }
+.btn:disabled { opacity: 0.6; cursor: wait; }
+.btn-quiet { background: transparent; color: var(--text); border: 1px solid #444; }
+.msg { padding: 10px 12px; margin: 0 0 14px; font-size: 14px; background: #1d1d1d; border-left: 3px solid var(--gold); }
+.msg.error { border-left-color: #ff6b6b; }
+.small { font-size: 13px; color: var(--muted); }
+.small a, .link { color: var(--gold); }

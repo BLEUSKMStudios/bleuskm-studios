@@ -61,19 +61,20 @@ grant execute on all functions in schema tests to authenticated, anon;
 --   B  crew member                   …b1
 --   D  deactivated crew member       …d1
 --   N  active user with no grants    …e1
-insert into auth.users (id, email, aud, role) values
-  ('00000000-0000-0000-0000-0000000000a0', 'owner@test.local', 'authenticated', 'authenticated'),
-  ('00000000-0000-0000-0000-0000000000a1', 'a@test.local',     'authenticated', 'authenticated'),
-  ('00000000-0000-0000-0000-0000000000b1', 'b@test.local',     'authenticated', 'authenticated'),
-  ('00000000-0000-0000-0000-0000000000d1', 'd@test.local',     'authenticated', 'authenticated'),
-  ('00000000-0000-0000-0000-0000000000e1', 'n@test.local',     'authenticated', 'authenticated');
+-- Accounts are created the way Supabase Auth creates them; the sign-in
+-- migration then creates each profile automatically. The test owner email
+-- stands in for studio@bleuskm.com (rolled back with the test).
+update private.app_settings set value = 'owner@test.local' where key = 'owner_email';
 
-insert into public.profiles (id, email, full_name, is_owner, status, deactivated_at) values
-  ('00000000-0000-0000-0000-0000000000a0', 'owner@test.local', 'Test Owner', true,  'active', null),
-  ('00000000-0000-0000-0000-0000000000a1', 'a@test.local',     'User A',     false, 'active', null),
-  ('00000000-0000-0000-0000-0000000000b1', 'b@test.local',     'User B',     false, 'active', null),
-  ('00000000-0000-0000-0000-0000000000d1', 'd@test.local',     'User D',     false, 'deactivated', now()),
-  ('00000000-0000-0000-0000-0000000000e1', 'n@test.local',     'User N',     false, 'active', null);
+insert into auth.users (id, email, aud, role, raw_user_meta_data) values
+  ('00000000-0000-0000-0000-0000000000a0', 'owner@test.local', 'authenticated', 'authenticated', '{"full_name": "Test Owner"}'),
+  ('00000000-0000-0000-0000-0000000000a1', 'a@test.local',     'authenticated', 'authenticated', '{"full_name": "User A"}'),
+  ('00000000-0000-0000-0000-0000000000b1', 'b@test.local',     'authenticated', 'authenticated', '{"full_name": "User B"}'),
+  ('00000000-0000-0000-0000-0000000000d1', 'd@test.local',     'authenticated', 'authenticated', '{"full_name": "User D"}'),
+  ('00000000-0000-0000-0000-0000000000e1', 'n@test.local',     'authenticated', 'authenticated', '{"full_name": "User N"}');
+
+update public.profiles set status = 'deactivated', deactivated_at = now()
+where id = '00000000-0000-0000-0000-0000000000d1';
 
 -- Two productions.
 insert into public.productions (id, slug, title, type) values
