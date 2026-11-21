@@ -47,28 +47,11 @@ jobs:
     runs-on: ubuntu-latest
     # A throwaway Supabase Postgres database, created and deleted for this run.
     # It never touches the real Supabase project and needs no credentials.
-    services:
-      postgres:
-        image: supabase/postgres:17.6.1.054
-        env:
-          # Throwaway database for this run only; the value is generated per run.
-          POSTGRES_PASSWORD: ci-${{ github.run_id }}-${{ github.run_attempt }}
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres -h localhost"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 30
-    env:
-      PGHOST: localhost
-      PGPORT: 5432
-      PGUSER: postgres
-      PGPASSWORD: ci-${{ github.run_id }}-${{ github.run_attempt }}
-      PGDATABASE: postgres
     steps:
       - uses: actions/checkout@v4
       - name: Install psql and pg_prove
         run: sudo apt-get update -q && sudo apt-get install -y -q postgresql-client libtap-parser-sourcehandler-pgtap-perl
+      - name: Start a throwaway database (random password per run)
+        run: studio/supabase/scripts/start-test-database.sh
       - name: Apply migrations and run the pgTAP tests
         run: studio/supabase/scripts/test-database.sh
