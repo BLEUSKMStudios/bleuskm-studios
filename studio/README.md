@@ -11,8 +11,16 @@ here is served by bleuskm.com: the website's `vercel.json` redirects `/studio` a
 
 - Step 1A: separate application and isolated deployment.
 - Step 1B: database schema, Row Level Security and server-side permission checks
-  (`supabase/migrations`, `lib/permissions.ts`), with automated tests. There is
-  no sign-in, dashboard or imported data yet.
+  (`supabase/migrations`, `lib/permissions.ts`), with automated tests.
+- Steps 1C/1D: sign-in with two-step verification, hub layout, productions, User Access.
+- Casting (`/casting`, `/productions/<slug>/casting`): casting calls and roles,
+  applicants from the public website (files in the private `casting-materials`
+  bucket), review statuses, ratings, notes, callbacks/auditions, email templates
+  and emails sent from casting@bleuskm.com through Brevo (`BREVO_KEY`).
+  The website reads open calls and submits through three public database
+  functions (`casting_public_call`, `casting_apply`, `casting_attach_files`);
+  see `../shared/casting-apply.js`. Early-access codes let invited groups apply
+  before a call's public opening time.
 
 ## Database and permissions
 

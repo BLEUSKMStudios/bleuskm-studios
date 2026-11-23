@@ -136,3 +136,21 @@ ul.plain li { padding: 6px 0; border-bottom: 1px solid #222; }
   .page-head h1 { font-size: 26px; }
   .form-grid { grid-template-columns: 1fr; }
 }
+
+/* Casting */
+.field textarea { width: 100%; padding: 11px 12px; font: inherit; font-size: 16px; color: var(--text); background: #0f0f0f; border: 1px solid #333; border-radius: 4px; resize: vertical; }
+.field textarea:focus, .field select:focus { outline: 2px solid var(--gold); outline-offset: 1px; border-color: transparent; }
+details > summary { cursor: pointer; padding: 4px 0; }
+details[open] > summary { margin-bottom: 12px; }
+.facts { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 0 0 12px; }
+.facts dt { color: var(--muted); font-size: 13px; }
+.facts dd { margin: 0; overflow-wrap: anywhere; }
+.preview { background: #f6f3ee; color: #1a1a1a; padding: 14px 16px; border-top: 3px solid var(--gold); border-radius: 4px; }
+.preview .small { color: #777; margin: 0 0 6px; }
+.tag-call-open { background: #1d2a1d; color: #9fd49f; }
+.tag-call-draft { background: #2a2414; color: var(--gold); }
+.tag-call-closed { background: #2a1d1d; color: #e0a5a5; }
+.tag-app-submitted { background: #2a2414; color: var(--gold); }
+.tag-app-shortlisted, .tag-app-callback, .tag-app-audition, .tag-app-offered { background: #1d2430; color: #9fbce0; }
+.tag-app-cast { background: #1d2a1d; color: #9fd49f; }
+.tag-app-not_selected, .tag-app-withdrawn { background: #2a1d1d; color: #e0a5a5; }
