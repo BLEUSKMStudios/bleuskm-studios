@@ -1193,7 +1193,7 @@ Stay in the Loop</h2>
 </div>
 
 <!-- LOVE ME LIKE THIS MODAL -->
-<div class="modal-overlay" id="modal-love-me-like-this">
+<div class="modal-overlay" id="modal-love-me-like-this" data-casting-call="love-me-like-this" data-crew-call="love-me-like-this-crew">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('love-me-like-this')">&times;</button>
     <div class="modal-tabs">
@@ -1207,7 +1207,7 @@ Stay in the Loop</h2>
       <p class="modal-logline">Over the course of one night, a man set on making a woman fall in love with him connects with someone who isn't looking for anything, and through a series of intimate questions, they discover something real that isn't meant to last.</p>
       <span class="modal-roles-title">Roles Currently Casting</span>
       <div class="role-row">
-        <div class="role-name">Sosa<span class="role-type">Male Lead · Black American Male · 20–27</span></div>
+        <div class="role-name">Sosa<span class="role-type">Male Lead · Black American Male · 19–26</span></div>
         <div class="role-summary">The emotional driver of the film. Sosa is intentional, grounded, and quietly persistent. He knows what he wants the moment he sees it — and he does not hide it.</div>
         <button class="breakdown-toggle" onclick="toggleBreakdown(this)">
           Character Breakdown <span class="toggle-arrow">▾</span>
@@ -1217,7 +1217,7 @@ Stay in the Loop</h2>
           <p>Sosa does not play games or hide behind detachment. He listens closely, observes deeply, and shows care through presence rather than performance. His vulnerability is direct but controlled, never forced. He is not chasing recklessly — he is choosing, and standing in that choice.</p>
           <span class="bd-label">Seeking</span>
           <ul>
-            <li>Black American male, 20–27</li>
+            <li>Black American male, playing age 19–26</li>
             <li>Natural, grounded on-camera presence</li>
             <li>Carries emotional weight without overplaying it — warmth and steadiness are key</li>
             <li>Subtle confidence and emotional clarity</li>
@@ -1227,7 +1227,7 @@ Stay in the Loop</h2>
         </div>
       </div>
       <div class="role-row">
-        <div class="role-name">Alanna<span class="role-type">Female Lead · Black American Female · 20–27</span></div>
+        <div class="role-name">Alanna<span class="role-type">Female Lead · Black American Female · 19–26</span></div>
         <div class="role-summary">The emotional center of the film. Alanna is perceptive, self-aware, and secure in her direction. She is not looking for love — nor is she avoiding it. She simply is not building her life around it.</div>
         <button class="breakdown-toggle" onclick="toggleBreakdown(this)">
           Character Breakdown <span class="toggle-arrow">▾</span>
@@ -1237,7 +1237,7 @@ Stay in the Loop</h2>
           <p>Alanna engages with Sosa openly and is intrigued by him, but remains grounded in her reality and future. She holds space without fully stepping into it — warm but measured. Present in the moment, yet never losing sight of the bigger picture.</p>
           <span class="bd-label">Seeking</span>
           <ul>
-            <li>Black American female, 20–27</li>
+            <li>Black American female, playing age 19–26</li>
             <li>Confident, composed, and expressive without being performative</li>
             <li>Conveys intelligence and emotional depth in subtle ways</li>
             <li>Emotional intelligence and natural ease on camera</li>
@@ -1259,6 +1259,9 @@ Stay in the Loop</h2>
                 <option value="">Select role</option>
                 <option>Sosa (Male Lead)</option>
                 <option>Alanna (Female Lead)</option>
+                <option>Sosa's Friend #1 (Speaking)</option>
+                <option>Sosa's Friend #2 (Background)</option>
+                <option>Sosa's Friend #3 (Background)</option>
               </select>
             </div>
           <div class="form-field"><label>Full Name *</label><input type="text" name="name" placeholder="Your full name" required></div>
@@ -1593,5 +1596,7 @@ document.addEventListener('click', function(e) {
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { var p = document.getElementById('channelsPopup'); if (p && p.style.display === 'flex') toggleChannels(); } });
 </script>
 
+<script src="/shared/casting-config.js"></script>
+<script src="/shared/casting-apply.js"></script>
 </body>
 </html>

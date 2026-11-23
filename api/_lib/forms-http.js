@@ -34,7 +34,10 @@ async function handle(event) {
   const h = event.headers || {};
   const origin = h.origin || '';
   const origins = allowedOrigins();
-  const originOk = origins.includes(origin);
+  // Vercel Preview builds also accept forms from their own address, so a branch
+  // Preview can be tested end to end. Production only ever uses the list above.
+  const previewSameOrigin = process.env.VERCEL_ENV === 'preview' && !!h.host && origin === 'https://' + h.host;
+  const originOk = origins.includes(origin) || previewSameOrigin;
   const cors = {
     'Access-Control-Allow-Origin': originOk ? origin : origins[0],
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
