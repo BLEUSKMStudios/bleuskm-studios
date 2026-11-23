@@ -397,7 +397,8 @@
         if (title) title.insertAdjacentHTML('afterend', roles.map(roleHtml).join(''));
       }
       if (!open) {
-        if (badge && !call.open) badge.textContent = call.opens_at && new Date(call.opens_at) > new Date() ? 'Casting Opens ' + fmt(call.opens_at) : 'Submissions Closed';
+        if (badge && !call.open) badge.textContent = call.access_opens_at ? 'Early Access Opens ' + fmt(call.access_opens_at)
+          : call.opens_at && new Date(call.opens_at) > new Date() ? 'Casting Opens ' + fmt(call.opens_at) : 'Submissions Closed';
         return; // keep the "notify me" form
       }
       if (badge) { badge.textContent = (call.early_access ? 'Early Access' : 'Now Casting') + (call.deadline ? ' · Closes ' + fmt(call.deadline) : ''); badge.className = 'cast-status-badge badge-open'; }
