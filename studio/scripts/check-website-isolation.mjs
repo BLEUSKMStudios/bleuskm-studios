@@ -87,7 +87,10 @@ if (before) {
     JSON.stringify(before[key]) === JSON.stringify(config[key]) ? pass(`unchanged: ${key}`) : fail(`changed: ${key}`);
   }
   const keptRedirects = (config.redirects || []).filter((r) => !r.source.startsWith("/studio"));
-  JSON.stringify(before.redirects || []) === JSON.stringify(keptRedirects) ? pass("unchanged: existing redirects") : fail("existing redirects changed");
+  // Compare like with like: main may already carry the /studio redirects (once
+  // they are merged), so leave them out of both sides.
+  const beforeKept = (before.redirects || []).filter((r) => !r.source.startsWith("/studio"));
+  JSON.stringify(beforeKept) === JSON.stringify(keptRedirects) ? pass("unchanged: existing redirects") : fail("existing redirects changed");
   const added = Object.keys(config).filter((k) => !(k in before));
   const allowed = ["ignoreCommand", "redirects"];
   added.every((k) => allowed.includes(k)) ? pass(`only added: ${added.join(", ")}`) : fail(`unexpected new settings: ${added.join(", ")}`);
