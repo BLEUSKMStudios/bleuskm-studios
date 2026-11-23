@@ -137,11 +137,12 @@
   }
 
   // ── Film crew application (goes to the existing Crew applications pipeline) ──
-  // The positions offered come from the film's popup: data-crew-roles="Role A|Role B".
-  // No positions listed means no crew tab, so the general /crew-application stays the only way in.
-  var CREW_ROLES = [];
-
-  function crewHtml(call) {
+  // The film's crew positions are a second Studio OS call, named on the popup with
+  // data-crew-call="<key>": each position is a role there, so crew applicants are
+  // tracked per position in Studio OS and still reach the existing Crew applications
+  // table in Airtable. No open crew call means no crew tab, and the general
+  // /crew-application page is not affected either way.
+  function crewHtml(call, crewRoles) {
     var f = function (label, inner) { return '<div class="form-field"><label>' + label + '</label>' + inner + '</div>'; };
     var film = esc(call.film || call.title);
     return '<div class="casting-form">' +
@@ -156,7 +157,7 @@
           f('Phone', '<input type="tel" name="phone" maxlength="40">') +
           f('City *', '<input type="text" name="city" maxlength="200" placeholder="City, State" required>') +
         '</div>' +
-        f('Role *', '<select name="role" required><option value="">Select a role</option>' + CREW_ROLES.map(function (r) { return '<option>' + esc(r) + '</option>'; }).join('') + '</select>') +
+        f('Position *', '<select name="role" required><option value="">Select a position</option>' + crewRoles.map(function (r) { return '<option value="' + esc(r.id) + '">' + esc(r.name) + '</option>'; }).join('') + '</select>') +
         f('Resume / Portfolio Link *', '<input type="url" name="resume" maxlength="1000" placeholder="Link to your resume, portfolio, or IMDb" required>') +
         f('Reel / Work Samples', '<input type="url" name="reel" maxlength="1000" placeholder="Vimeo, YouTube, or Google Drive link">') +
         f('Gear', '<input type="text" name="gear" maxlength="5000" placeholder="Equipment you own (optional)">') +
@@ -171,7 +172,7 @@
     '</div>';
   }
 
-  function wireCrew(box, call) {
+  function wireCrew(box, call, crewCall) {
     var form = box.querySelector('form');
     var err = box.querySelector('.casting-error');
     var btn = form.querySelector('button[type="submit"]');
@@ -186,29 +187,49 @@
       if (!val('name')) return show(ERRORS.name_required);
       if (!/^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(val('email'))) return show(ERRORS.invalid_email);
       if (!val('city')) return show('Please enter your city.');
-      if (!val('role')) return show('Please choose a role.');
+      if (!val('role')) return show('Please choose a position.');
       if (!/^https?:\/\/\S+$/i.test(val('resume'))) return show('Please add a link to your resume or portfolio (starting with https://).');
       if (val('reel') && !/^https?:\/\/\S+$/i.test(val('reel'))) return show(ERRORS.invalid_links);
       if (!val('availability')) return show('Please tell us your availability.');
       busy = true; btn.disabled = true; btn.textContent = 'Submitting…';
       var nl = form.querySelector('[name="newsletter"]');
-      var id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + Math.random();
-      fetch('/api/form-submit', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ form: 'crew', newsletter: !!(nl && nl.checked), submissionId: id, fields: {
-          Name: val('name'), Email: val('email'), Phone: val('phone'), City: val('city'), Role: val('role'),
-          'Resume / Portfolio Link': val('resume'), 'Reel / Work Samples': val('reel'), 'Gear List': val('gear'),
-          Availability: val('availability'), 'Film Interest': call.film || call.title
-        } })
-      }).then(function (r) { return r.json().then(function (j) { if (!r.ok || !j.ok) throw new Error('failed'); }); })
-        .then(function () { form.style.display = 'none'; box.querySelector('.form-success').style.display = 'block'; })
-        .catch(function () { busy = false; btn.disabled = false; btn.textContent = 'Submit Crew Application'; show('Submission failed. Please try again, or email crew@bleuskm.com.'); });
+      var sel = form.querySelector('[name="role"]');
+      var position = sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].text : '';
+      rpc('casting_apply', { p: { call: crewCall.slug, role_id: val('role'), access: ACCESS || null,
+        full_name: val('name'), email: val('email'), phone: val('phone'), location: val('city'),
+        availability: val('availability'), about: val('gear') ? 'Gear: ' + val('gear') : '',
+        links: [{ kind: 'resume', url: val('resume'), label: 'Resume / Portfolio' }, { kind: 'reel', url: val('reel'), label: 'Reel / Work Samples' }]
+      } }).then(function (res) {
+        if (!res || !res.ok) { var e = new Error('apply'); e.code = res && res.error; throw e; }
+        // Existing crew pipeline: Airtable Crew applications + Brevo confirmation from crew@.
+        var id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + Math.random();
+        return fetch('/api/form-submit', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ form: 'crew', newsletter: !!(nl && nl.checked), submissionId: id, fields: {
+            Name: val('name'), Email: val('email'), Phone: val('phone'), City: val('city'), Role: position,
+            'Resume / Portfolio Link': val('resume'), 'Reel / Work Samples': val('reel'), 'Gear List': val('gear'),
+            Availability: val('availability'), 'Film Interest': call.film || call.title
+          } })
+        }).catch(function () { /* saved in Studio OS; Airtable copy is best effort */ });
+      }).then(function () { form.style.display = 'none'; box.querySelector('.form-success').style.display = 'block'; })
+        .catch(function (e) {
+          busy = false; btn.disabled = false; btn.textContent = 'Submit Crew Application';
+          var m = ERRORS[e && e.code] || 'Submission failed. Please try again, or email crew@bleuskm.com.';
+          show(m.replace('casting@bleuskm.com', 'crew@bleuskm.com').replace('this role', 'this position').replace('another role', 'another position'));
+        });
     });
   }
 
   function addCrewTab(modal, key, call) {
-    CREW_ROLES = String(modal.getAttribute('data-crew-roles') || '').split('|').map(function (r) { return r.trim(); }).filter(Boolean);
-    if (!CREW_ROLES.length) return;
+    var crewKey = modal.getAttribute('data-crew-call');
+    if (!crewKey) return;
+    rpc('casting_public_call', { p_slug: crewKey, p_access: ACCESS || null }).then(function (crewCall) {
+      var crewRoles = ((crewCall && crewCall.found && crewCall.open && crewCall.roles) || []).filter(function (r) { return r.open; });
+      if (crewRoles.length) buildCrewTab(modal, key, call, crewCall, crewRoles);
+    }).catch(function () { /* no crew tab */ });
+  }
+
+  function buildCrewTab(modal, key, call, crewCall, crewRoles) {
     var tabsBar = modal.querySelector('.modal-tabs');
     var second = modal.querySelector('[id$="-subscribe"]');
     if (!tabsBar || !second || modal.querySelector('#' + key + '-crew')) return;
@@ -217,9 +238,9 @@
     tabsBar.appendChild(btn);
     var pane = document.createElement('div');
     pane.className = 'modal-tab-content'; pane.id = key + '-crew';
-    pane.innerHTML = crewHtml(call);
+    pane.innerHTML = crewHtml(call, crewRoles);
     second.parentNode.insertBefore(pane, second.nextSibling);
-    wireCrew(pane, call);
+    wireCrew(pane, call, crewCall);
     var tabs = [].slice.call(modal.querySelectorAll('.modal-tab'));
     var panes = [modal.querySelector('[id$="-info"]'), second, pane];
     tabs.forEach(function (t, i) {
