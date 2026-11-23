@@ -140,10 +140,26 @@ export function escapeHtml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
+/**
+ * A crew call is one whose public address ends in "-crew" (e.g. love-me-like-this-crew).
+ * Emails to its applicants come from crew@, everything else from casting@.
+ */
+export function isCrewCall(publicSlug: string | null | undefined): boolean {
+  return /-crew$/.test(publicSlug ?? "");
+}
+
+export const CASTING_FROM = "casting@bleuskm.com";
+export const CREW_FROM = "crew@bleuskm.com";
+
+/** The address an applicant's emails are sent from, by their call. */
+export function senderEmailFor(publicSlug: string | null | undefined): string {
+  return isCrewCall(publicSlug) ? CREW_FROM : CASTING_FROM;
+}
+
 /** Plain email text -> simple branded HTML (paragraphs and line breaks only). */
-export function emailHtml(body: string): string {
+export function emailHtml(body: string, from: string = CASTING_FROM): string {
   const paras = body.trim().split(/\n{2,}/).map((p) => `<p style="margin:0 0 16px">${escapeHtml(p).replace(/\n/g, "<br>")}</p>`);
-  return `<!doctype html><html><body style="margin:0;background:#f6f3ee"><div style="max-width:600px;margin:0 auto;padding:32px 24px;font-family:Helvetica,Arial,sans-serif;font-size:16px;line-height:1.55;color:#1a1a1a;background:#ffffff;border-top:4px solid #DAAF37">${paras.join("")}<p style="margin:24px 0 0;font-size:12px;color:#888">BLEUSKM Studios · casting@bleuskm.com</p></div></body></html>`;
+  return `<!doctype html><html><body style="margin:0;background:#f6f3ee"><div style="max-width:600px;margin:0 auto;padding:32px 24px;font-family:Helvetica,Arial,sans-serif;font-size:16px;line-height:1.55;color:#1a1a1a;background:#ffffff;border-top:4px solid #DAAF37">${paras.join("")}<p style="margin:24px 0 0;font-size:12px;color:#888">BLEUSKM Studios · ${escapeHtml(from)}</p></div></body></html>`;
 }
 
 /** Safe web link or null. */

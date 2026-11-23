@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { cleanUrl, emailHtml, fillTemplate, firstName, formatStudioTime, isoToStudioLocal, missingFields, studioLocalToIso } from "./casting-core.ts";
+import { cleanUrl, emailHtml, fillTemplate, firstName, formatStudioTime, isCrewCall, isoToStudioLocal, missingFields, senderEmailFor, studioLocalToIso } from "./casting-core.ts";
 
 test("Central time input converts to UTC across standard and daylight time", () => {
   assert.equal(studioLocalToIso("2026-11-30T23:59"), "2026-12-01T05:59:00.000Z"); // CST, UTC-6
@@ -38,4 +38,15 @@ test("Only web links are accepted", () => {
   assert.equal(cleanUrl("https://vimeo.com/1"), "https://vimeo.com/1");
   assert.equal(cleanUrl("javascript:alert(1)"), null);
   assert.equal(cleanUrl("  "), null);
+});
+
+test("crew calls send from crew@, everything else from casting@", () => {
+  assert.equal(isCrewCall("love-me-like-this-crew"), true);
+  assert.equal(isCrewCall("love-me-like-this"), false);
+  assert.equal(isCrewCall("crewless-film"), false);
+  assert.equal(isCrewCall(null), false);
+  assert.equal(senderEmailFor("love-me-like-this-crew"), "crew@bleuskm.com");
+  assert.equal(senderEmailFor("love-me-like-this"), "casting@bleuskm.com");
+  assert.match(emailHtml("Hi", "crew@bleuskm.com"), /crew@bleuskm\.com/);
+  assert.match(emailHtml("Hi"), /casting@bleuskm\.com/);
 });

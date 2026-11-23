@@ -7,7 +7,7 @@ import { isUuid } from "@/lib/sections";
 import { dbCheck } from "./data.ts";
 import {
   APP_STATUSES, CALL_STATUSES, ROLE_STATUSES, SESSION_KINDS, SESSION_STATUSES, SESSION_KIND_LABEL,
-  cleanUrl, fillTemplate, firstName, formatStudioTime, isOneOf, studioLocalToIso, type TemplateVars,
+  CASTING_FROM, CREW_FROM, cleanUrl, fillTemplate, firstName, formatStudioTime, isCrewCall, isOneOf, studioLocalToIso, type TemplateVars,
 } from "./casting-core.ts";
 import { slugify } from "./labels.ts";
 import { sendCastingEmail } from "./brevo.ts";
@@ -300,13 +300,14 @@ export async function sendEmails(_: ActionState, form: FormData): Promise<Action
     supabase.from("casting_applications").select(APP_COLS).in("id", ids).eq("production_id", productionId),
     supabase.from("productions").select("title").eq("id", productionId).maybeSingle(),
     supabase.from("casting_roles").select("id, name").eq("production_id", productionId),
-    supabase.from("casting_calls").select("id, deadline").eq("production_id", productionId),
+    supabase.from("casting_calls").select("id, deadline, public_slug").eq("production_id", productionId),
   ]);
   const ctx: Ctx = {
     film: (prod?.title as string) ?? "",
     roles: new Map((roles ?? []).map((r) => [r.id as string, r.name as string])),
     deadlines: new Map((calls ?? []).map((c) => [c.id as string, c.deadline as string | null])),
   };
+  const crewCalls = new Set((calls ?? []).filter((c) => isCrewCall(c.public_slug as string)).map((c) => c.id as string));
 
   let sent = 0;
   const failed: string[] = [];
@@ -314,7 +315,7 @@ export async function sendEmails(_: ActionState, form: FormData): Promise<Action
     const vars = await varsFor(a, ctx);
     const s = fillTemplate(subject, vars).replace(/\s+/g, " ").trim();
     const b = fillTemplate(body, vars);
-    const r = await sendCastingEmail({ email: a.email, name: a.full_name }, s, b);
+    const r = await sendCastingEmail({ email: a.email, name: a.full_name }, s, b, crewCalls.has(a.call_id));
     await supabase.from("casting_messages").insert({
       application_id: a.id, production_id: productionId, template_id: template, to_email: a.email,
       subject: s, body: b, status: r.ok ? "sent" : "failed",
@@ -329,5 +330,6 @@ export async function sendEmails(_: ActionState, form: FormData): Promise<Action
   }
   revalidatePath("/productions", "layout");
   if (failed.length) return { error: `Sent ${sent}. Not sent: ${failed.slice(0, 5).join("; ")}${failed.length > 5 ? "…" : ""}` };
-  return { done: `Sent ${sent} email${sent === 1 ? "" : "s"} from casting@bleuskm.com.` };
+  const froms = [...new Set(((apps ?? []) as Application[]).map((a) => (crewCalls.has(a.call_id) ? CREW_FROM : CASTING_FROM)))];
+  return { done: `Sent ${sent} email${sent === 1 ? "" : "s"} from ${froms.join(" and ")}.` };
 }

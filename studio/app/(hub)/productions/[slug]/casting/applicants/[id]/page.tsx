@@ -10,7 +10,7 @@ import {
 } from "@/lib/hub/casting-data";
 import {
   APP_STATUSES, APP_STATUS_LABEL, MATERIAL_LABEL, SESSION_KINDS, SESSION_KIND_LABEL, SESSION_STATUSES, SESSION_STATUS_LABEL,
-  firstName, formatStudioTime, isoToStudioLocal, type TemplateVars,
+  firstName, formatStudioTime, isoToStudioLocal, senderEmailFor, type TemplateVars,
 } from "@/lib/hub/casting-core";
 import { brevoConfigured } from "@/lib/hub/brevo";
 import { isUuid } from "@/lib/sections";
@@ -179,7 +179,7 @@ export default async function ApplicantPage({ params }: { params: Promise<{ slug
       <section className="panel">
         <h2>Email</h2>
         {canEdit && (brevoConfigured() ? (
-          <EmailComposer action={sendEmails} templates={templates} vars={vars} applicationId={a.id} productionId={p.id} statusLabels={APP_STATUS_LABEL} />
+          <EmailComposer action={sendEmails} templates={templates} vars={vars} applicationId={a.id} productionId={p.id} statusLabels={APP_STATUS_LABEL} from={senderEmailFor(call?.public_slug)} />
         ) : <p className="msg error">Sending is switched off until BREVO_KEY is added to the hub&apos;s Vercel project.</p>)}
         <h2 style={{ marginTop: 18 }}>Sent</h2>
         {messages.length === 0 && <p className="small">No emails sent from Studio OS yet. (The automatic “submission received” email is sent by the website.)</p>}

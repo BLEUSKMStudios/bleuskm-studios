@@ -168,7 +168,7 @@ function BulkEmail({ productionId, templates }: { productionId: string; template
         </select>
       </label>
       <label className="small"><input type="checkbox" name="apply_status" defaultChecked /> Also move each person to the template's status</label>
-      <p className="small">Each email is personalised (first name, role, film, their next session) and sent from casting@bleuskm.com. Edit wording under Email templates.</p>
+      <p className="small">Each email is personalised (first name, role, film, their next session) and sent from casting@bleuskm.com, or crew@bleuskm.com for crew applicants. Edit wording under Email templates.</p>
       <div><Submit busy="Sending…">Send emails</Submit></div>
     </HubForm>
   );

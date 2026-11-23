@@ -1,9 +1,13 @@
 import "server-only";
 
-import { emailHtml } from "./casting-core.ts";
+import { CASTING_FROM, CREW_FROM, emailHtml } from "./casting-core.ts";
 
-/** Casting emails always come from the casting alias, and replies go back to it. */
-export const CASTING_SENDER = { email: "casting@bleuskm.com", name: "BLEUSKM Studios Casting" };
+/**
+ * Casting emails come from casting@ and crew-call emails from crew@ (both verified
+ * Brevo senders). Replies go back to the same alias.
+ */
+export const CASTING_SENDER = { email: CASTING_FROM, name: "BLEUSKM Studios Casting" };
+export const CREW_SENDER = { email: CREW_FROM, name: "BLEUSKM Studios Crew" };
 
 export function brevoConfigured(): boolean {
   return !!(process.env.BREVO_KEY ?? "").trim();
@@ -12,7 +16,8 @@ export function brevoConfigured(): boolean {
 export type SendResult = { ok: true; id: string | null } | { ok: false; error: string };
 
 /** Sends one transactional email through Brevo. Never logs the key or the message body. */
-export async function sendCastingEmail(to: { email: string; name: string }, subject: string, body: string): Promise<SendResult> {
+export async function sendCastingEmail(to: { email: string; name: string }, subject: string, body: string, crew = false): Promise<SendResult> {
+  const sender = crew ? CREW_SENDER : CASTING_SENDER;
   const key = (process.env.BREVO_KEY ?? "").trim();
   if (!key) return { ok: false, error: "Email is not set up yet (BREVO_KEY missing in the hub's Vercel project)." };
   try {
@@ -22,13 +27,13 @@ export async function sendCastingEmail(to: { email: string; name: string }, subj
       method: "POST",
       headers: { "api-key": key, "Content-Type": "application/json", accept: "application/json" },
       body: JSON.stringify({
-        sender: CASTING_SENDER,
-        replyTo: CASTING_SENDER,
+        sender,
+        replyTo: sender,
         to: [{ email: to.email, name: to.name || to.email }],
         subject,
         textContent: body,
-        htmlContent: emailHtml(body),
-        tags: ["studio-os-casting"],
+        htmlContent: emailHtml(body, sender.email),
+        tags: [crew ? "studio-os-crew" : "studio-os-casting"],
       }),
       signal: AbortSignal.timeout(15000),
     });

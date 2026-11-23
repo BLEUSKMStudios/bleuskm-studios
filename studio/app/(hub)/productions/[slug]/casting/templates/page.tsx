@@ -16,7 +16,7 @@ export default async function Templates({ params }: { params: Promise<{ slug: st
     <>
       <PageHead title="Casting email templates" lead={<Link className="link" href={`/productions/${p.slug}/casting`}>{p.title} · Casting</Link>} />
       <p className="msg">
-        Emails go from casting@bleuskm.com and replies come back there. Placeholders: {TEMPLATE_FIELDS.map((f) => `{{${f}}}`).join(", ")}.
+        Emails go from casting@bleuskm.com (crew@bleuskm.com for crew calls) and replies come back there. Placeholders: {TEMPLATE_FIELDS.map((f) => `{{${f}}}`).join(", ")}.
         {!brevoConfigured() && " Sending is switched off until BREVO_KEY is added to the hub's Vercel project."}
       </p>
       {templates.length === 0 && <p className="small">The standard templates appear when the first casting call is created.</p>}

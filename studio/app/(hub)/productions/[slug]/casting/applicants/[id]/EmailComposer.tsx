@@ -8,13 +8,14 @@ type T = { id: string; name: string; subject: string; body: string; sets_status:
 type State = { error?: string; done?: string } | undefined;
 
 /** Pick a template, edit it for this person, preview it filled in, and send. */
-export function EmailComposer({ action, templates, vars, applicationId, productionId, statusLabels }: {
+export function EmailComposer({ action, templates, vars, applicationId, productionId, statusLabels, from }: {
   action: (s: State, f: FormData) => Promise<State>;
   templates: T[];
   vars: TemplateVars;
   applicationId: string;
   productionId: string;
   statusLabels: Record<string, string>;
+  from: string;
 }) {
   const [tid, setTid] = useState("");
   const [subject, setSubject] = useState("");
@@ -49,7 +50,7 @@ export function EmailComposer({ action, templates, vars, applicationId, producti
           <div style={{ whiteSpace: "pre-wrap" }}>{fillTemplate(body, vars)}</div>
         </div>
       )}
-      <div><Submit busy="Sending…">Send from casting@bleuskm.com</Submit></div>
+      <div><Submit busy="Sending…">Send from {from}</Submit></div>
     </HubForm>
   );
 }
