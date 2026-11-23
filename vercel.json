@@ -1,5 +1,18 @@
 {
   "cleanUrls": true,
+  "ignoreCommand": "P=\"$VERCEL_GIT_PREVIOUS_SHA\"; [ -n \"$P\" ] || exit 1; git cat-file -e \"$P^{commit}\" 2>/dev/null || git fetch --quiet --depth=500 origin \"$P\" 2>/dev/null || exit 1; git diff --quiet \"$P\" HEAD -- . ':(exclude)studio' ':(exclude).github'",
+  "redirects": [
+    {
+      "source": "/studio",
+      "destination": "https://bleuskm-studio-os.vercel.app/",
+      "permanent": false
+    },
+    {
+      "source": "/studio/:path*",
+      "destination": "https://bleuskm-studio-os.vercel.app/",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
       "source": "/.netlify/functions/:func",
