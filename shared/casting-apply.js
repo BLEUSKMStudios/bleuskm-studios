@@ -292,7 +292,7 @@
     }).catch(function () { return null; });
   }
 
-  function mirrorToAirtable(call, role, v, links, newsletter) {
+  function mirrorToAirtable(call, role, v, links, newsletter, kinds) {
     // Existing website flow: Airtable Casting Submissions + Brevo confirmation from casting@.
     if (typeof fetch !== 'function') return Promise.resolve();
     var id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + Math.random();
@@ -303,7 +303,9 @@
         fields: {
           Name: v.full_name, Email: v.email, Phone: v.phone, Age: v.age, Location: v.location,
           Film: call.film || call.title, Role: role, 'Reel/Portfolio Link': links.reel || links.portfolio || '',
-          Headshot: links.headshot || '', About: v.about
+          Headshot: links.headshot || '',
+          // Uploaded files live privately in Studio OS; note them so the Airtable row says where they are.
+          About: (kinds && kinds.length) ? String(v.about || '').slice(0, 4800) + '\n\n[Files uploaded to Studio OS: ' + kinds.join(', ') + ']' : v.about
         }
       })
     }).catch(function () { /* Studio OS already has the application */ });
@@ -353,11 +355,11 @@
           return chain.then(function (done) { n++; return upload(res.upload_prefix, item, n).then(function (u) { if (u) done.push(u); return done; }); });
         }, Promise.resolve([])).then(function (uploaded) {
           return rpc('casting_attach_files', { p_id: res.id, p_token: res.upload_token, p_files: uploaded }).then(function () {
-            return { uploaded: uploaded.length, wanted: files.length };
+            return { uploaded: uploaded.length, wanted: files.length, kinds: uploaded.map(function (u) { return u.kind === 'other' ? 'additional file' : u.kind; }) };
           });
         });
       }).then(function (r) {
-        return mirrorToAirtable(call, roleName, v, links, nl && nl.checked).then(function () { return r; });
+        return mirrorToAirtable(call, roleName, v, links, nl && nl.checked, r.kinds).then(function () { return r; });
       }).then(function (r) {
         form.style.display = 'none';
         var ok = box.querySelector('.form-success');
