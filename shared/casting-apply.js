@@ -137,8 +137,9 @@
   }
 
   // ── Film crew application (goes to the existing Crew applications pipeline) ──
-  var CREW_ROLES = ['Producer', 'Cinematographer (Director of Photography)', 'Sound Mixer / Boom Operator',
-    'Production Assistant (PA)', 'Makeup', 'Production Designer / Set Dresser', 'Composer', 'Editor'];
+  // The positions offered come from the film's popup: data-crew-roles="Role A|Role B".
+  // No positions listed means no crew tab, so the general /crew-application stays the only way in.
+  var CREW_ROLES = [];
 
   function crewHtml(call) {
     var f = function (label, inner) { return '<div class="form-field"><label>' + label + '</label>' + inner + '</div>'; };
@@ -206,6 +207,8 @@
   }
 
   function addCrewTab(modal, key, call) {
+    CREW_ROLES = String(modal.getAttribute('data-crew-roles') || '').split('|').map(function (r) { return r.trim(); }).filter(Boolean);
+    if (!CREW_ROLES.length) return;
     var tabsBar = modal.querySelector('.modal-tabs');
     var second = modal.querySelector('[id$="-subscribe"]');
     if (!tabsBar || !second || modal.querySelector('#' + key + '-crew')) return;
@@ -364,7 +367,7 @@
         if (title) title.insertAdjacentHTML('afterend', roles.map(roleHtml).join(''));
       }
       if (!open) {
-        if (badge && !call.open) badge.textContent = 'Submissions Closed';
+        if (badge && !call.open) badge.textContent = call.opens_at && new Date(call.opens_at) > new Date() ? 'Casting Opens ' + fmt(call.opens_at) : 'Submissions Closed';
         return; // keep the "notify me" form
       }
       if (badge) { badge.textContent = (call.early_access ? 'Early Access' : 'Now Casting') + (call.deadline ? ' · Closes ' + fmt(call.deadline) : ''); badge.className = 'cast-status-badge badge-open'; }
