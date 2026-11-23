@@ -29,7 +29,8 @@ const caught = (path) => matchers.some((re) => re.test(path));
 
 for (const r of studioRedirects) {
   if (r.permanent !== false) fail(`${r.source} must be a temporary redirect`);
-  if (!r.destination.startsWith("https://studio.bleuskm.com/")) fail(`${r.source} points somewhere unexpected: ${r.destination}`);
+  // studio.bleuskm.com once that domain is attached to the hub project; until then the hub's Vercel address.
+  if (!["https://studio.bleuskm.com/", "https://bleuskm-studio-os.vercel.app/"].some((d) => r.destination.startsWith(d))) fail(`${r.source} points somewhere unexpected: ${r.destination}`);
 }
 
 // 1. Hub paths are caught.

@@ -4,12 +4,12 @@
   "redirects": [
     {
       "source": "/studio",
-      "destination": "https://studio.bleuskm.com/",
+      "destination": "https://bleuskm-studio-os.vercel.app/",
       "permanent": false
     },
     {
       "source": "/studio/:path*",
-      "destination": "https://studio.bleuskm.com/",
+      "destination": "https://bleuskm-studio-os.vercel.app/",
       "permanent": false
     }
   ],
