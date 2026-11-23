@@ -1,5 +1,7 @@
 "use server";
 
+import { writeBlockReason } from "./env.ts";
+
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { requireSignedIn, loadSession } from "@/lib/auth/session";
@@ -39,6 +41,7 @@ const NO_EDIT: ActionState = { error: "You need Edit access to Casting on this p
 // Casting calls
 // ---------------------------------------------------------------------------
 export async function saveCall(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   const productionId = text(form.get("production_id"));
   if (!(await canEdit(productionId))) return NO_EDIT;
   const id = text(form.get("id"));
@@ -80,6 +83,7 @@ export async function saveCall(_: ActionState, form: FormData): Promise<ActionSt
 // Roles
 // ---------------------------------------------------------------------------
 export async function saveRole(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   const productionId = text(form.get("production_id"));
   if (!(await canEdit(productionId))) return NO_EDIT;
   const id = text(form.get("id"));
@@ -117,6 +121,7 @@ export async function saveRole(_: ActionState, form: FormData): Promise<ActionSt
 }
 
 export async function deleteRole(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   const productionId = text(form.get("production_id"));
   if (!(await canEdit(productionId))) return NO_EDIT;
   const id = text(form.get("id"));
@@ -138,6 +143,7 @@ async function applicationProduction(id: string): Promise<string | null> {
 }
 
 export async function updateApplication(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   const id = text(form.get("id"));
   const productionId = await applicationProduction(id);
   if (!productionId || !(await canEdit(productionId))) return NO_EDIT;
@@ -153,6 +159,7 @@ export async function updateApplication(_: ActionState, form: FormData): Promise
 }
 
 export async function bulkUpdate(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   const productionId = text(form.get("production_id"));
   if (!(await canEdit(productionId))) return NO_EDIT;
   const ids = form.getAll("ids").map(text).filter(isUuid).slice(0, 500);
@@ -167,6 +174,7 @@ export async function bulkUpdate(_: ActionState, form: FormData): Promise<Action
 }
 
 export async function addNote(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   const id = text(form.get("application_id"));
   const productionId = await applicationProduction(id);
   if (!productionId || !(await canEdit(productionId))) return NO_EDIT;
@@ -179,6 +187,7 @@ export async function addNote(_: ActionState, form: FormData): Promise<ActionSta
 }
 
 export async function deleteNote(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   const productionId = text(form.get("production_id"));
   if (!(await canEdit(productionId))) return NO_EDIT;
   const id = text(form.get("id"));
@@ -190,6 +199,7 @@ export async function deleteNote(_: ActionState, form: FormData): Promise<Action
 }
 
 export async function saveSession(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   const applicationId = text(form.get("application_id"));
   const productionId = await applicationProduction(applicationId);
   if (!productionId || !(await canEdit(productionId))) return NO_EDIT;
@@ -225,6 +235,7 @@ export async function saveSession(_: ActionState, form: FormData): Promise<Actio
 // Email templates
 // ---------------------------------------------------------------------------
 export async function saveTemplate(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   const productionId = text(form.get("production_id"));
   if (!(await canEdit(productionId))) return NO_EDIT;
   const id = text(form.get("id"));
@@ -272,6 +283,7 @@ async function varsFor(a: Application, ctx: Ctx): Promise<TemplateVars> {
 }
 
 export async function sendEmails(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   const productionId = text(form.get("production_id"));
   if (!(await canEdit(productionId))) return NO_EDIT;
   const ids = form.getAll("ids").map(text).filter(isUuid).slice(0, 100);

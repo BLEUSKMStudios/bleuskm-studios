@@ -1,10 +1,15 @@
-// netlify/functions/contract-submit.js
+// api/contract-submit.js
 // Handles submissions from ALL contract templates (crew, cast, talent, composer,
 // editor, contractor, location, media release, usage rights).
 // Backward compatible with the original signatureUrl-based payload.
+//
+// Signatures drawn on the page arrive as a base64 PNG/JPEG. They are uploaded
+// straight into the Contracts record's Signature attachment field with
+// Airtable's upload API (no Cloudinary). If that upload fails, the signature
+// is attached to the backup email instead, so it is never lost.
 
-const CLOUDINARY_CLOUD = 'df2x5q7zw';
-const CLOUDINARY_PRESET = 'bleuskm_signatures';
+const SIGNATURE_FIELD = 'Signature';
+const MAX_SIGNATURE_BYTES = 5 * 1024 * 1024; // Airtable's upload limit
 
 // Maps the CONTRACT_TYPE slug each template hardcodes -> friendly label
 // stored in the Airtable "Contract Type" single-select field.
@@ -67,16 +72,11 @@ if (!signatureUrl && !signatureImage) {
 return { statusCode: 400, headers, body: JSON.stringify({ error: "Signature is required" }) };
 }
 
-// ââ Resolve signature to a hosted URL (upload to Cloudinary if we only got base64) ââ
-let finalSignatureUrl = signatureUrl || "";
-if (!finalSignatureUrl && signatureImage) {
-try {
-finalSignatureUrl = await uploadSignatureToCloudinary(signatureImage);
-} catch (e) {
-console.log("Cloudinary upload failed:", e.message);
-await sendContractBackupEmail(brevoKey, { name, email, role, contractType, dateSigned, signatureUrl: "(upload failed)", airtableError: `Cloudinary upload failed: ${e.message}` });
-return { statusCode: 200, headers, body: JSON.stringify({ success: true, queued: true, message: "Contract received. Signature upload failed, so a backup copy was sent to BLEUSKM." }) };
-}
+// Legacy path: an already-hosted image URL. New path: a drawn signature.
+const finalSignatureUrl = signatureUrl || "";
+const signature = !finalSignatureUrl && signatureImage ? parseSignature(signatureImage) : null;
+if (!finalSignatureUrl && !signature) {
+return { statusCode: 400, headers, body: JSON.stringify({ error: "Signature image is invalid or too large" }) };
 }
 
 const contractTypeLabel = SLUG_TO_LABEL[contractType] || (contractType || "Crew Agreement");
@@ -94,12 +94,12 @@ const contractFields = {
 "Name": name || "(not provided)",
 "Email": email || "",
 "Role": role || "",
-"Signature": [{ url: finalSignatureUrl }],
 "Date Signed": dateSigned || new Date().toISOString().split("T")[0],
 "Contract Status": "Signed",
 "Contract Type": contractTypeLabel,
 };
 if (extraDetails) contractFields["Extra Details"] = extraDetails;
+if (finalSignatureUrl) contractFields[SIGNATURE_FIELD] = [{ url: finalSignatureUrl }];
 
 const contractRes = await airtableFetch(contractUrl, token, {
 method: "POST",
@@ -109,7 +109,7 @@ body: JSON.stringify({ fields: contractFields, typecast: true })
 
 const contractData = await contractRes.json();
 if (!contractRes.ok) {
-await sendContractBackupEmail(brevoKey, { name, email, role, contractType: contractTypeLabel, signatureUrl: finalSignatureUrl, dateSigned, extraDetails, airtableError: contractData?.error?.message || `Airtable ${contractRes.status}` });
+await sendContractBackupEmail(brevoKey, { name, email, role, contractType: contractTypeLabel, signatureUrl: finalSignatureUrl, signature, dateSigned, extraDetails, airtableError: contractData?.error?.message || `Airtable ${contractRes.status}` });
 return {
 statusCode: 200,
 headers,
@@ -120,6 +120,16 @@ airtableStatus: contractRes.status,
 message: "Contract received. Airtable is temporarily busy, so a backup copy was sent to BLEUSKM."
 })
 };
+}
+
+// Drawn signature: upload it into the record just created.
+if (signature) {
+try {
+await uploadSignatureToAirtable(base, token, contractData.id, signature);
+} catch (e) {
+console.log("Signature upload to Airtable failed:", e.message);
+await sendContractBackupEmail(brevoKey, { name, email, role, contractType: contractTypeLabel, signature, dateSigned, extraDetails, airtableError: `The contract was saved in Airtable (record ${contractData.id}), but its signature image could not be attached: ${e.message}. The signature is attached to this email.` });
+}
 }
 
 // ââ Crew-specific follow-up: mark Contract Status + send department guide ââ
@@ -215,7 +225,7 @@ message: guideSent ? "Contract saved and department guide sent automatically." :
 })
 };
 } catch (err) {
-await sendContractBackupEmail(brevoKey, { name, email, role, contractType: contractTypeLabel, signatureUrl: finalSignatureUrl, dateSigned, extraDetails, airtableError: err.message });
+await sendContractBackupEmail(brevoKey, { name, email, role, contractType: contractTypeLabel, signatureUrl: finalSignatureUrl, signature, dateSigned, extraDetails, airtableError: err.message });
 return { statusCode: 200, headers, body: JSON.stringify({ success: true, queued: true, message: "Contract received. A backup copy was sent to BLEUSKM." }) };
 }
 }
@@ -238,18 +248,30 @@ res.status(statusCode).send(body);
 }
 };
 
-// ââ Upload a base64 data URI signature to Cloudinary, return the secure URL ââ
-async function uploadSignatureToCloudinary(dataUri) {
-const form = new FormData();
-form.append('file', dataUri);
-form.append('upload_preset', CLOUDINARY_PRESET);
-const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {
-method: 'POST',
-body: form,
+// Drawn signatures: only a PNG or JPEG data URI up to Airtable's 5 MB upload limit.
+function parseSignature(dataUri) {
+const m = /^data:image\/(png|jpeg);base64,([A-Za-z0-9+/]+={0,2})$/.exec(String(dataUri || "").trim());
+if (!m) return null;
+const bytes = Math.floor((m[2].length * 3) / 4);
+if (!bytes || bytes > MAX_SIGNATURE_BYTES) return null;
+const ext = m[1] === "png" ? "png" : "jpg";
+return { contentType: `image/${m[1]}`, base64: m[2], filename: `signature-${Date.now()}.${ext}` };
+}
+
+// Airtable's upload API puts the file straight into the record's attachment field.
+async function uploadSignatureToAirtable(base, token, recordId, signature) {
+if (!/^rec[A-Za-z0-9]{14}$/.test(String(recordId || ""))) throw new Error("No record id");
+const url = `https://content.airtable.com/v0/${base}/${recordId}/${encodeURIComponent(SIGNATURE_FIELD)}/uploadAttachment`;
+const res = await airtableFetch(url, token, {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ contentType: signature.contentType, file: signature.base64, filename: signature.filename })
 });
-const data = await res.json();
-if (!data.secure_url) throw new Error(data?.error?.message || 'No secure_url returned');
-return data.secure_url;
+if (!res.ok) {
+let detail = "";
+try { detail = (await res.json())?.error?.message || ""; } catch (_) {}
+throw new Error(detail || `Airtable upload ${res.status}`);
+}
 }
 
 function sleep(ms) {
@@ -281,7 +303,7 @@ const textContent = [
 `Role: ${contract.role || ""}`,
 `Contract Type: ${contract.contractType || ""}`,
 `Date Signed: ${contract.dateSigned || new Date().toISOString().split("T")[0]}`,
-`Signature URL: ${contract.signatureUrl || ""}`,
+contract.signature ? "Signature: attached to this email" : `Signature URL: ${contract.signatureUrl || ""}`,
 contract.extraDetails ? `Extra Details:\n${contract.extraDetails}` : "",
 `Error: ${contract.airtableError}`,
 "",
@@ -295,7 +317,8 @@ body: JSON.stringify({
 sender: { email: "studio@bleuskm.com", name: "BLEUSKM Studios" },
 to: [{ email: "studio@bleuskm.com", name: "Zaria" }],
 subject: `BACKUP CONTRACT SIGNATURE - ${contract.name || "(unknown)"}`,
-textContent
+textContent,
+...(contract.signature ? { attachment: [{ content: contract.signature.base64, name: contract.signature.filename }] } : {})
 })
 });
 return true;

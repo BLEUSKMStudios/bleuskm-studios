@@ -83,7 +83,7 @@ export default async function ProductionSettings({ params }: { params: Promise<{
         </div>
       </section>
       <section className="panel">
-        <h2>Departments</h2>
+        <h2>Team roles (labels only)</h2>
         <p className="small">Labels for organizing work inside this production. They never decide who can see what.</p>
         {(departments ?? []).length > 0 && (
           <ul className="plain">

@@ -1,5 +1,7 @@
 "use server";
 
+import { writeBlockReason } from "./env.ts";
+
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { requireOwner, loadSession } from "@/lib/auth/session";
@@ -29,6 +31,7 @@ function readDetails(form: FormData): { error: string } | { title: string; type:
 }
 
 export async function createProduction(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   const me = await requireOwner(); // checked on every post: a form can be sent from anywhere
   const details = readDetails(form);
   if ("error" in details) return details;
@@ -47,6 +50,7 @@ export async function createProduction(_: ActionState, form: FormData): Promise<
 }
 
 export async function updateProduction(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   await requireOwner();
   const id = text(form.get("id"));
   if (!isUuid(id)) return { error: "Unknown production." };
@@ -60,6 +64,7 @@ export async function updateProduction(_: ActionState, form: FormData): Promise<
 }
 
 export async function setStageStatus(form: FormData): Promise<void> {
+  if (writeBlockReason()) return;
   await requireOwner();
   const id = text(form.get("stage_id"));
   const status = text(form.get("status"));
@@ -70,6 +75,7 @@ export async function setStageStatus(form: FormData): Promise<void> {
 }
 
 export async function setSectionEnabled(form: FormData): Promise<void> {
+  if (writeBlockReason()) return;
   await requireOwner();
   const productionId = text(form.get("production_id"));
   const section = text(form.get("section_key"));
@@ -81,6 +87,7 @@ export async function setSectionEnabled(form: FormData): Promise<void> {
 }
 
 export async function addDepartment(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   await requireOwner();
   const productionId = text(form.get("production_id"));
   const name = text(form.get("name"));
@@ -95,6 +102,7 @@ export async function addDepartment(_: ActionState, form: FormData): Promise<Act
 }
 
 export async function removeDepartment(form: FormData): Promise<void> {
+  if (writeBlockReason()) return;
   await requireOwner();
   const id = text(form.get("department_id"));
   if (!isUuid(id)) return;

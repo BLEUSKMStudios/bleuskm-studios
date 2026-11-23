@@ -49,3 +49,54 @@ export async function sendCastingEmail(to: { email: string; name: string }, subj
     return { ok: false, error: "Brevo could not be reached. Try again." };
   }
 }
+
+// ---------------------------------------------------------------------------
+// Read-only views for Communications. Nothing here creates contacts, lists,
+// templates or campaigns, so nothing can be duplicated.
+// ---------------------------------------------------------------------------
+export type BrevoRead<T> = { ok: true; data: T } | { ok: false; error: string };
+
+async function brevoGet<T>(path: string): Promise<BrevoRead<T>> {
+  const key = (process.env.BREVO_KEY ?? "").trim();
+  if (!key) return { ok: false, error: "Brevo isn't connected (BREVO_KEY is missing in the hub's Vercel project)." };
+  try {
+    const base = (process.env.BREVO_API_URL_FOR_TESTS ?? "").trim() || "https://api.brevo.com/v3";
+    const res = await fetch(`${base}${path}`, {
+      headers: { "api-key": key, accept: "application/json" },
+      signal: AbortSignal.timeout(15000),
+      next: { revalidate: 300 },
+    });
+    if (!res.ok) {
+      console.error(`[brevo] read ${path.split("?")[0]} failed: ${res.status}`);
+      return { ok: false, error: `Brevo answered ${res.status}. The key may not allow this.` };
+    }
+    return { ok: true, data: (await res.json()) as T };
+  } catch {
+    return { ok: false, error: "Brevo could not be reached." };
+  }
+}
+
+export type BrevoTemplate = { id: number; name: string; subject: string; isActive: boolean; modifiedAt?: string; sender?: { email?: string } };
+export function brevoTemplates() {
+  return brevoGet<{ templates?: BrevoTemplate[]; count?: number }>("/smtp/templates?limit=50&offset=0&sort=desc");
+}
+
+export type BrevoCampaign = {
+  id: number; name: string; subject?: string; status: string; sentDate?: string; scheduledAt?: string;
+  sender?: { email?: string };
+  statistics?: { globalStats?: { sent?: number; delivered?: number; uniqueViews?: number; uniqueClicks?: number; unsubscriptions?: number } };
+};
+export function brevoCampaigns() {
+  return brevoGet<{ campaigns?: BrevoCampaign[]; count?: number }>("/emailCampaigns?limit=20&offset=0&sort=desc&statistics=globalStats");
+}
+
+export type BrevoList = { id: number; name: string; uniqueSubscribers?: number; totalSubscribers?: number; totalBlacklisted?: number };
+export function brevoLists() {
+  return brevoGet<{ lists?: BrevoList[]; count?: number }>("/contacts/lists?limit=50&offset=0&sort=desc");
+}
+
+export type BrevoEvent = { email: string; date: string; subject?: string; event: string; templateId?: number; tag?: string };
+/** Recent delivery events (sent, delivered, opened, bounced …) for transactional email. */
+export function brevoEvents(days = 7) {
+  return brevoGet<{ events?: BrevoEvent[] }>(`/smtp/statistics/events?limit=50&days=${days}&sort=desc`);
+}

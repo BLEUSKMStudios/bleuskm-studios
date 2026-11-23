@@ -128,18 +128,13 @@ function clearTableCache(base, table) {
 
 // Access policy. This proxy used to accept any table and method from anyone.
 // It now requires a signed-in portal session (same cookie as /portal), is
-// same-origin only, and is limited to the tables and methods its two callers
-// use: the portal Location Hub and the /dashboard intake views.
+// same-origin only, and is limited to the one table its remaining caller
+// uses: the portal Location Hub. (The /dashboard intake views were removed
+// with the legacy dashboard; Studio OS reads those tables itself.)
 const ALL_ROLES = ["director", "producer", "dp", "ad", "scriptsupervisor", "sound"];
-const LEADS = ["director", "producer"];
 const TABLE_POLICY = {
   // Portal Location Hub (portal/index.html)
-  "portal locations": { roles: ALL_ROLES, methods: ["GET", "POST", "PATCH", "DELETE"] },
-  // /dashboard (dashboard/app.js) — website intake tables, read-only except casting status
-  "tbllgmxulnb9ebfxh": { roles: LEADS, methods: ["GET", "PATCH"], patchFields: ["Casting Status"] }, // Casting Submissions
-  "tblwfk7tmofhgiia5": { roles: LEADS, methods: ["GET"] }, // Project Inquiries
-  "tblsmb3y7vrvjbonx": { roles: LEADS, methods: ["GET"] }, // Newsletter
-  "tblcr7cg3wugorlwo": { roles: LEADS, methods: ["GET"] }  // Crew applications
+  "portal locations": { roles: ALL_ROLES, methods: ["GET", "POST", "PATCH", "DELETE"] }
 };
 
 function denied(event) {

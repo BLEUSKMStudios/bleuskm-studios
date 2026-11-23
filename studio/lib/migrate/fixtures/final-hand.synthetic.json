@@ -1,0 +1,40 @@
+{
+  "crew": [
+    { "id": "recCREW0000000001", "createdTime": "2026-05-01T10:00:00.000Z", "fields": { "Name": "Test Person One", "Status": "CORE", "Role": "Gaffer", "Email": "One@Example.test", "Phone": "555-0100", "Preferred role by Director": ["Gaffer"], "Gear List": "Lights", "Resume / Portfolio Link": "https://example.test/one" } },
+    { "id": "recCREW0000000002", "createdTime": "2026-05-01T10:00:00.000Z", "fields": { "Name": "Test Person Two", "Status": "SUPPORT", "Email": "two@example.test" } },
+    { "id": "recCREW0000000003", "createdTime": "2026-05-01T10:00:00.000Z", "fields": { "Name": "Not On This", "Status": "NOT THIS PROJECT", "Email": "three@example.test" } },
+    { "id": "recCREW0000000004", "createdTime": "2026-05-01T10:00:00.000Z", "fields": { "Status": "CORE" } }
+  ],
+  "timeline": [
+    { "id": "recTIME0000000001", "fields": { "Phase": "Table read", "Start Date": "2026-06-01", "End Date": "2026-05-01", "Status": "Complete", "Sort Inde": 1 } },
+    { "id": "recTIME0000000002", "fields": { "Phase": "Shoot window", "Start Date": "2026-07-01", "End Date": "2026-07-05", "Status": "Active", "Description": "It's on" } }
+  ],
+  "contracts": [
+    { "id": "recCONT0000000001", "fields": { "Name": "Test Person One", "Contract Type": "Crew Deal Memo", "Contract Status": "Signed", "Email": "one@example.test", "Date Signed": "2026-06-10", "Linked Crew": ["recCREW0000000001"], "Signature": [{ "filename": "sig.png" }] } },
+    { "id": "recCONT0000000002", "fields": { "Name": "Extra", "Contract Type": "Talent Release", "Contract Status": "Sent" } }
+  ],
+  "files": [
+    { "id": "recFILE0000000001", "createdTime": "2026-04-01T00:00:00.000Z", "fields": { "Name": "TFH Script v3", "For Department": ["All"] } },
+    { "id": "recFILE0000000002", "fields": { "Name": "Call list", "File URL": "https://drive.example.test/" } }
+  ],
+  "locations": [ { "id": "recLOCA0000000001", "fields": { "Location Name": "Test Diner", "Status": "Approved", "Email": "diner@example.test" } } ],
+  "tasks": [
+    { "id": "recTASK0000000001", "fields": { "Title": "Book diner", "Status": "In Progress", "Assigned To": "Unassigned", "Due Date": "2026-06-20" } },
+    { "id": "recTASK0000000002", "fields": { "Title": "Order gels", "Status": "Done" } }
+  ],
+  "portalNotes": [ { "id": "recNOTE0000000001", "createdTime": "2026-06-01T00:00:00.000Z", "fields": { "Title": "Welcome", "Note": "Hello", "Status": "Active" } } ],
+  "pushedNotes": [
+    { "id": "recPUSH0000000002", "fields": { "Title": "Re: Gear", "Content": "Reply", "Parent ID": "recPUSH0000000001" } },
+    { "id": "recPUSH0000000001", "fields": { "Title": "Gear", "Content": "Original", "To Department": "Camera" } }
+  ],
+  "sound": [ { "id": "recSOUN0000000001", "fields": { "Label": "Door slam", "Note": "Scene 4" } } ],
+  "characterNotes": [ { "id": "recCHAR0000000001", "fields": { "Character": "Lead", "Casting Notes": "Warm" } } ],
+  "sentEmails": [ { "id": "recMAIL0000000001", "fields": { "From Address": "films@example.test", "To": "one@example.test", "Subject": "Call time", "Body": "7am", "Status": "Sent", "Sent At": "2026-06-02T12:00:00.000Z" } } ],
+  "casting": [
+    { "id": "recCAST0000000001", "createdTime": "2026-03-01T00:00:00.000Z", "fields": { "Film": "The Final Hand", "Role": "Lead", "Name": "Actor A", "Email": "a@example.test", "Age": 30, "Cast Status": "Confirmed", "Headshot": "https://example.test/a.jpg", "Producer Rating": 5 } },
+    { "id": "recCAST0000000002", "createdTime": "2026-03-01T00:00:00.000Z", "fields": { "Film": "The Final Hand", "Role": "Lead", "Name": "Actor B", "Email": "b@example.test", "Casting Status": "Callback" } },
+    { "id": "recCAST0000000003", "fields": { "Film": "The Final Hand", "Role": "Lead", "Name": "Actor B again", "Email": "B@example.test" } },
+    { "id": "recCAST0000000004", "fields": { "Film": "The Final Hand", "Role": "Dealer", "Name": "No Email" } },
+    { "id": "recCAST0000000005", "fields": { "Film": "Another Film", "Role": "Lead", "Name": "Other", "Email": "o@example.test" } }
+  ]
+}

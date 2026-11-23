@@ -1,4 +1,4 @@
-import { GRANTABLE_SECTIONS, STUDIO_SECTIONS, isUuid, type AccessLevel, type SectionKey } from "../sections.ts";
+import { GRANTABLE_SECTIONS, STUDIO_ONLY_SECTIONS, STUDIO_SECTIONS, isUuid, type AccessLevel, type SectionKey } from "../sections.ts";
 
 /** One saved permission: production null = Studio level. */
 export type Grant = { id?: string; production_id: string | null; section_key: string; level: AccessLevel };
@@ -7,7 +7,7 @@ export type Level = AccessLevel | "none";
 /** Main-menu areas that can be granted, in menu order. */
 export const MAIN_AREAS: readonly SectionKey[] = STUDIO_SECTIONS;
 /** Sections that live inside a production's workspace. */
-export const PRODUCTION_SECTIONS: readonly SectionKey[] = GRANTABLE_SECTIONS;
+export const PRODUCTION_SECTIONS: readonly SectionKey[] = GRANTABLE_SECTIONS.filter((s) => !STUDIO_ONLY_SECTIONS.includes(s));
 
 export type MenuItem = { key: string; href: string };
 
@@ -47,7 +47,9 @@ export function cellName(scope: string | null, section: string): string {
 /** True when this section can be granted in this scope. */
 export function cellApplies(scope: string | null, section: string): boolean {
   if (!(GRANTABLE_SECTIONS as readonly string[]).includes(section)) return false;
-  return scope === null ? (STUDIO_SECTIONS as readonly string[]).includes(section) : true;
+  return scope === null
+    ? (STUDIO_SECTIONS as readonly string[]).includes(section)
+    : !(STUDIO_ONLY_SECTIONS as readonly string[]).includes(section);
 }
 
 /**

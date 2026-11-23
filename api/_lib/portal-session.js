@@ -49,8 +49,18 @@ function headerValue(headers, name) {
   return String(headers[name] || headers[name.toLowerCase()] || headers[name.charAt(0).toUpperCase() + name.slice(1)] || '');
 }
 
+// The Final Hand portal is being retired into Studio OS. Once its migration
+// is validated, the owner sets PORTAL_RETIRED=1 on the website's Vercel
+// project: every portal session stops working and the portal APIs answer 410.
+// Nothing is deleted; unsetting it brings the portal back.
+const STUDIO_OS_URL = 'https://bleuskm-studio-os.vercel.app/';
+function portalRetired() {
+  return String(process.env.PORTAL_RETIRED || '').trim() === '1';
+}
+
 // Returns { username, department, name } or null.
 function verifySession(headers) {
+  if (portalRetired()) return null;
   if (!process.env.PORTAL_SESSION_SECRET) return null;
   const cookies = headerValue(headers, 'cookie').split(';').map(x => x.trim());
   const cookie = cookies.find(x => x.startsWith(COOKIE + '='));
@@ -95,6 +105,7 @@ function requirePortalSession(req, res, departments = ALL_DEPARTMENTS) {
     res.status(status).send(JSON.stringify({ ok: false, error }));
     return null;
   };
+  if (portalRetired()) return fail(410, 'portal_retired');
   if (req.method === 'OPTIONS') return fail(403, 'not_allowed');
   if (!sameOrigin(headers)) return fail(403, 'origin_not_allowed');
   const session = verifySession(headers);
@@ -106,5 +117,5 @@ function requirePortalSession(req, res, departments = ALL_DEPARTMENTS) {
 module.exports = {
   USER_MAP, DEPT_LABELS, ALL_DEPARTMENTS, COOKIE, SESSION_SECONDS,
   equal, createSession, verifySession, sameOrigin, isRecordId, formulaText,
-  requirePortalSession
+  requirePortalSession, portalRetired, STUDIO_OS_URL
 };

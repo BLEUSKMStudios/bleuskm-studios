@@ -66,10 +66,26 @@ for (const file of walk(root)) {
   const api = url.match(/^\/api\/([^/_][^/]*)\.js$/);
   if (api) { routes.add(`/api/${api[1]}`); routes.add(`/.netlify/functions/${api[1]}`); }
 }
-for (const m of readFileSync(join(root, "netlify.toml"), "utf8").matchAll(/(?:from|to)\s*=\s*"([^"]+)"/g)) routes.add(m[1]);
+// netlify.toml was removed with the obsolete Netlify setup; read it if present.
+try {
+  for (const m of readFileSync(join(root, "netlify.toml"), "utf8").matchAll(/(?:from|to)\s*=\s*"([^"]+)"/g)) routes.add(m[1]);
+} catch { /* no netlify.toml */ }
 for (const line of readFileSync(join(root, "_headers"), "utf8").split("\n")) if (line.startsWith("/")) routes.add(line.trim());
 // Near misses that must keep working (or keep 404ing) exactly as before.
 for (const p of ["/studios", "/studio-os", "/studio.html", "/studiox", "/films/studio", "/portal", "/dashboard"]) routes.add(p);
+
+// The legacy /dashboard (removed) now sends people to the hub. Approved by the
+// owner (Nov 23 reorganization). It may catch only /dashboard paths.
+const RETIRED = ["/dashboard"];
+const retiredRedirects = (config.redirects || []).filter((r) => RETIRED.some((p) => r.source === p || r.source.startsWith(`${p}/`)));
+for (const r of retiredRedirects) {
+  if (r.permanent !== false) fail(`${r.source} must be a temporary redirect`);
+  if (!["https://studio.bleuskm.com/", "https://bleuskm-studio-os.vercel.app/"].some((d) => r.destination.startsWith(d))) fail(`${r.source} points somewhere unexpected: ${r.destination}`);
+}
+const retiredMatchers = retiredRedirects.map((r) => pathToRegexp(r.source));
+const liveRoutes = [...routes].filter((p) => !RETIRED.some((x) => p === x || p.startsWith(`${x}/`)));
+const retiredHits = liveRoutes.filter((p) => retiredMatchers.some((re) => re.test(p)));
+retiredHits.length ? fail(`routes caught by the /dashboard redirect: ${retiredHits.join(", ")}`) : pass("the /dashboard redirect catches only /dashboard");
 
 const hits = [...routes].filter(caught);
 hits.length ? fail(`existing routes caught by the redirect: ${hits.join(", ")}`) : pass(`none of ${routes.size} existing website routes is affected`);
@@ -86,10 +102,11 @@ if (before) {
     if (key === "redirects") continue;
     JSON.stringify(before[key]) === JSON.stringify(config[key]) ? pass(`unchanged: ${key}`) : fail(`changed: ${key}`);
   }
-  const keptRedirects = (config.redirects || []).filter((r) => !r.source.startsWith("/studio"));
+  const ours = (r) => r.source.startsWith("/studio") || RETIRED.some((p) => r.source === p || r.source.startsWith(`${p}/`));
+  const keptRedirects = (config.redirects || []).filter((r) => !ours(r));
   // Compare like with like: main may already carry the /studio redirects (once
   // they are merged), so leave them out of both sides.
-  const beforeKept = (before.redirects || []).filter((r) => !r.source.startsWith("/studio"));
+  const beforeKept = (before.redirects || []).filter((r) => !ours(r));
   JSON.stringify(beforeKept) === JSON.stringify(keptRedirects) ? pass("unchanged: existing redirects") : fail("existing redirects changed");
   const added = Object.keys(config).filter((k) => !(k in before));
   const allowed = ["ignoreCommand", "redirects"];

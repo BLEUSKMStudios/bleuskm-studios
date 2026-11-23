@@ -4,6 +4,7 @@ import { loadSession } from "@/lib/auth/session";
 import { isOwnerHere } from "@/lib/hub/owner";
 import { listPeople } from "@/lib/hub/people";
 import { assertUuid } from "@/lib/hub/data";
+import { STUDIO_ONLY_SECTIONS } from "@/lib/sections";
 import { PRODUCTION_SECTIONS, MAIN_AREAS, cellName, type Grant } from "@/lib/hub/access";
 import { SECTION_LABEL, STATUS_LABEL, type ProductionStatus } from "@/lib/hub/labels";
 import { copyAccess, resendInvite, sendReset, setActive } from "@/lib/hub/user-actions";
@@ -39,7 +40,7 @@ export default async function PersonPage({ params }: { params: Promise<{ id: str
       disabled: (sections ?? []).filter((s) => s.production_id === p.id).map((s) => s.section_key as string),
     })),
   ];
-  const cols = PRODUCTION_SECTIONS.map((k) => ({ key: k, label: SECTION_LABEL[k] }));
+  const cols = [...PRODUCTION_SECTIONS, ...STUDIO_ONLY_SECTIONS].map((k) => ({ key: k, label: SECTION_LABEL[k] }));
   const others = people.filter((p) => !p.is_owner && p.id !== id).map((p) => ({ id: p.id, name: p.full_name }));
   const active = person.status === "active";
 
@@ -69,7 +70,7 @@ export default async function PersonPage({ params }: { params: Promise<{ id: str
           Choose what {person.full_name} can open. Studio level covers studio-wide records in the main areas ({MAIN_AREAS.map((k) => SECTION_LABEL[k]).join(", ")}).
           Each production row covers that production only. Edit includes View. Studio Overview and Productions show only the productions they have access to.
         </p>
-        <AccessGrid userId={id} rows={rows} cols={cols} studioCols={[...MAIN_AREAS]} initial={initial} />
+        <AccessGrid userId={id} rows={rows} cols={cols} studioCols={[...MAIN_AREAS]} studioOnly={[...STUDIO_ONLY_SECTIONS]} initial={initial} />
       </section>
       {others.length > 0 && (
         <section className="panel">

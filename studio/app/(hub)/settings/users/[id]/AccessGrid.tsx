@@ -9,11 +9,12 @@ type Level = "none" | "view" | "edit";
 
 const cell = (scope: string | null, section: string) => `cell:${scope ?? "studio"}:${section}`;
 
-export function AccessGrid({ userId, rows, cols, studioCols, initial }: {
+export function AccessGrid({ userId, rows, cols, studioCols, studioOnly = [], initial }: {
   userId: string;
   rows: Row[];
   cols: Col[];
   studioCols: string[];
+  studioOnly?: string[];
   initial: Record<string, Level>;
 }) {
   const [values, setValues] = useState<Record<string, Level>>(initial);
@@ -21,7 +22,7 @@ export function AccessGrid({ userId, rows, cols, studioCols, initial }: {
   const savedKey = JSON.stringify(initial);
   useEffect(() => setValues(JSON.parse(savedKey)), [savedKey]);
   const [state, action, pending] = useActionState(saveGrid, undefined);
-  const applies = (scope: string | null, section: string) => scope !== null || studioCols.includes(section);
+  const applies = (scope: string | null, section: string) => (scope !== null ? !studioOnly.includes(section) : studioCols.includes(section));
   const changed = useMemo(() => Object.keys({ ...initial, ...values }).filter((k) => (initial[k] ?? "none") !== (values[k] ?? "none")).length, [initial, values]);
   const setRow = (scope: string | null, level: Level) =>
     setValues((v) => {
@@ -47,7 +48,7 @@ export function AccessGrid({ userId, rows, cols, studioCols, initial }: {
               <tr key={r.scope ?? "studio"}>
                 <th scope="row">{r.title}{r.note && <span className="small block">{r.note}</span>}</th>
                 {cols.map((c) => {
-                  if (!applies(r.scope, c.key)) return <td key={c.key} className="na" title="Not used at Studio level">—</td>;
+                  if (!applies(r.scope, c.key)) return <td key={c.key} className="na" title={r.scope === null ? "Not used at Studio level" : "Studio level only"}>—</td>;
                   const name = cell(r.scope, c.key);
                   const v = values[name] ?? "none";
                   const off = r.disabled.includes(c.key);

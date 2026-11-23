@@ -12,6 +12,10 @@ export const GRANTABLE_SECTIONS = [
   "budget",
   "set_records",
   "tasks",
+  "development",
+  "post",
+  "distribution",
+  "contacts",
 ] as const;
 
 export type SectionKey = (typeof GRANTABLE_SECTIONS)[number];
@@ -25,7 +29,12 @@ export const STUDIO_SECTIONS: readonly SectionKey[] = [
   "locations",
   "documents",
   "communications",
+  "development",
+  "contacts",
 ];
+
+/** Sections that exist only at Studio level (never per production). */
+export const STUDIO_ONLY_SECTIONS: readonly SectionKey[] = ["contacts"];
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

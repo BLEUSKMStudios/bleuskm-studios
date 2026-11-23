@@ -39,10 +39,10 @@ select is(
      and has_schema_privilege('anon', oid, 'USAGE')),
   0::bigint, 'Signed-out visitors cannot use the private permission schema');
 
-select is((select count(*) from public.sections), 13::bigint, '13 sections are defined');
-select is((select count(*) from public.sections where grantable), 10::bigint, '10 sections are grantable');
-select is((select count(*) from public.production_sections where production_id = :P1), 10::bigint,
-  'A new production starts with all 10 production sections');
+select is((select count(*) from public.sections), 17::bigint, '17 sections are defined (13 + 4 Studio OS modules)');
+select is((select count(*) from public.sections where grantable), 14::bigint, '14 sections are grantable');
+select is((select count(*) from public.production_sections where production_id = :P1), 13::bigint,
+  'A new production starts with all 13 production sections');
 select is((select count(*) from public.production_stages where production_id = :P1), 7::bigint,
   'A new production starts with all 7 lifecycle stages');
 
