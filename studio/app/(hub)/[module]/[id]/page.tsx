@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { hubContext } from "@/lib/hub/data";
 import { getRecord, listModule } from "@/lib/hub/module-data";
 import { moduleByKey, optionLabel } from "@/lib/hub/modules";
+import { listHrefForModule, workspaceByKey } from "@/lib/hub/workspaces";
 import { writeBlockReason } from "@/lib/hub/env";
 import { formatDay } from "@/lib/hub/dates";
 import { NoAccess, PageHead } from "@/components/hub/Page";
@@ -10,10 +11,12 @@ import { RecordForm } from "@/components/hub/RecordForm";
 import { ModuleTable } from "@/components/hub/ModuleTable";
 import { ActionForm } from "@/components/hub/ActionForm";
 import { deleteModuleRecord } from "@/lib/hub/module-actions";
+import { ScriptPanels } from "@/components/hub/ScriptPanels";
 
 // One record: its details, the edit form (with Edit access) and any child list.
 export default async function RecordPage({ params }: { params: Promise<{ module: string; id: string }> }) {
   const { module, id } = await params;
+  if (module === "crew") redirect(`/crew-roster/${encodeURIComponent(id)}`); // the crew module became the Crew workspace
   const def = moduleByKey(module);
   if (!def) notFound();
   const row = await getRecord(def, id);
@@ -25,13 +28,14 @@ export default async function RecordPage({ params }: { params: Promise<{ module:
   const title = String(row[def.titleField] ?? def.singular);
   const childDef = def.child ? moduleByKey(def.child.module) : undefined;
   const children = childDef && def.child ? await listModule(childDef, undefined, { field: def.child.parentField, id: row.id }) : null;
-  const back = production ? `/productions/${production.slug}/${def.key}` : `/${def.key}`;
+  const back = production && !def.hidden ? `/productions/${production.slug}/${def.key}` : listHrefForModule(def.key);
+  const backLabel = workspaceByKey(def.key)?.title ?? def.title;
 
   return (
     <>
       <PageHead
         title={title}
-        lead={<><Link className="link" href={back}>{def.title}</Link>{production ? <> · <Link className="link" href={`/productions/${production.slug}`}>{production.title}</Link></> : def.studioLevel !== "never" ? " · Studio-wide" : null}</>}
+        lead={<><Link className="link" href={back}>{backLabel}</Link>{production ? <> · <Link className="link" href={`/productions/${production.slug}`}>{production.title}</Link></> : def.studioLevel !== "never" ? " · Studio-wide" : null}</>}
       />
       {row.source ? <p className="msg">Imported from the Final Hand portal (Airtable). The original record is kept in Airtable.</p> : null}
 
@@ -59,6 +63,8 @@ export default async function RecordPage({ params }: { params: Promise<{ module:
           </dl>
         </section>
       )}
+
+      {def.key === "scripts" && <ScriptPanels row={row} canEdit={canEdit} blocked={blocked} />}
 
       {childDef && children && (
         <section className="panel">

@@ -25,6 +25,8 @@ export type Field = {
   help?: string;
   /** Default for new records. */
   initial?: string;
+  /** Shown, never edited in the form (e.g. a stored file's name). */
+  readOnly?: boolean;
 };
 
 export type ModuleGroup = "development" | "preproduction" | "production" | "post" | "distribution" | "operations";
@@ -74,18 +76,20 @@ export const MODULES: readonly ModuleDef[] = [
   // -------------------------------------------------------------------------
   {
     key: "scripts", table: "scripts", section: "script_breakdown", group: "development",
-    title: "Scripts & Treatments", singular: "script or treatment",
-    lead: "Every draft, treatment and outline, with its version and where the file lives.",
-    studioLevel: "never", titleField: "title", orderBy: { column: "draft_date", ascending: false },
+    title: "Scripts & Treatments", singular: "script or document",
+    lead: "The library of screenplays and development documents: every draft and revision, its file (PDF or Fountain) or Drive link, and the projects it belongs to. Writing happens in Fountainhead.",
+    studioLevel: "never", titleField: "title", orderBy: { column: "draft_date", ascending: false, nullsFirst: false },
     fields: [
       { name: "title", label: "Title", type: "text", required: true, max: 200, list: true },
-      { name: "kind", label: "Type", type: "select", list: true, initial: "script",
-        options: opts(["script", "Script"], ["treatment", "Treatment"], ["outline", "Outline"], ["pitch", "Pitch"], ["breakdown", "Breakdown"], ["shot_list", "Shot list"], ["other", "Other"]) },
-      { name: "version", label: "Version", type: "text", max: 40, list: true },
-      { name: "draft_date", label: "Draft date", type: "date", list: true },
+      { name: "kind", label: "Document type", type: "select", list: true, initial: "script",
+        options: opts(["script", "Screenplay"], ["treatment", "Treatment"], ["outline", "Outline"], ["synopsis", "Synopsis"], ["beat_sheet", "Beat sheet"],
+          ["pitch", "Pitch"], ["series_bible", "Series bible"], ["lookbook", "Lookbook"], ["breakdown", "Breakdown"], ["shot_list", "Shot list"], ["other", "Other"]) },
+      { name: "version", label: "Draft / version", type: "text", max: 40, list: true, help: "e.g. First draft, v3, Locked shooting script" },
+      { name: "draft_date", label: "Revision date", type: "date", list: true },
       { name: "status", label: "Status", type: "select", list: true, initial: "draft",
         options: opts(["draft", "Draft"], ["in_review", "In review"], ["locked", "Locked"], ["archived", "Archived"]) },
-      { name: "drive_url", label: "Google Drive link", type: "url", max: 1000, wide: true },
+      { name: "file_name", label: "File", type: "text", list: true, readOnly: true },
+      { name: "drive_url", label: "External link (Google Drive or other)", type: "url", max: 1000, wide: true },
       NOTES,
     ],
   },
@@ -106,18 +110,20 @@ export const MODULES: readonly ModuleDef[] = [
   // Pre-Production
   // -------------------------------------------------------------------------
   {
-    key: "crew", table: "production_team", section: "crew", group: "preproduction",
-    title: "Crew", singular: "team member",
-    lead: "Who is on each production, in what position, and where they stand.",
-    studioLevel: "never", titleField: "full_name", orderBy: { column: "full_name", ascending: true },
+    key: "crew-roster", table: "production_team", section: "crew", group: "preproduction",
+    title: "Crew roster", singular: "crew member", hidden: true,
+    lead: "Who is on each production's crew, by department and position.",
+    studioLevel: "never", titleField: "full_name", orderBy: { column: "department", ascending: true, nullsFirst: false },
+    fixed: { team: "crew" },
     fields: [
       { name: "full_name", label: "Name", type: "text", required: true, max: 200, list: true },
+      { name: "department", label: "Department", type: "text", max: 120, list: true, help: "e.g. Camera, Sound, Grip & Electric. A label only: departments never decide access." },
       { name: "position", label: "Position", type: "text", required: true, max: 200, list: true },
-      { name: "team", label: "Team", type: "select", list: true, initial: "crew",
-        options: opts(["crew", "Crew"], ["cast", "Cast"], ["producer", "Producer"], ["other", "Other"]) },
-      { name: "department", label: "Department (label only)", type: "text", max: 120, help: "For sorting only. Departments never decide access." },
-      { name: "status", label: "Status", type: "select", list: true, initial: "confirmed",
+      { name: "status", label: "Confirmation", type: "select", list: true, initial: "offered",
         options: opts(["prospect", "Prospect"], ["offered", "Offered"], ["confirmed", "Confirmed"], ["wrapped", "Wrapped"], ["released", "Released"]) },
+      { name: "onboarding", label: "Onboarding", type: "select", list: true, initial: "not_started",
+        options: opts(["not_started", "Not started"], ["paperwork_sent", "Agreement sent"], ["paperwork_signed", "Agreement signed"], ["guide_sent", "Guide sent"], ["complete", "Complete"]) },
+      { name: "availability", label: "Availability", type: "textarea", max: 1000 },
       { name: "email", label: "Email", type: "email", max: 254 },
       { name: "phone", label: "Phone", type: "phone", max: 40 },
       { name: "notes", label: "Notes", type: "textarea", max: 5000, wide: true },
@@ -180,11 +186,45 @@ export const MODULES: readonly ModuleDef[] = [
       { name: "details", label: "Details", type: "textarea", max: 10000, wide: true },
     ],
   },
+  {
+    key: "crew-guides", table: "documents", section: "documents", group: "preproduction",
+    title: "Department guides", singular: "department guide", hidden: true,
+    lead: "Department guides sent to crew (stored in Documents).",
+    studioLevel: "allowed", titleField: "title", orderBy: { column: "title", ascending: true },
+    fixed: { category: "guide" },
+    fields: [
+      { name: "title", label: "Title", type: "text", required: true, max: 200, list: true },
+      { name: "contract_type", label: "Department", type: "text", max: 120, list: true },
+      { name: "status", label: "Status", type: "select", list: true, initial: "filed",
+        options: opts(["draft", "Draft"], ["sent", "Sent"], ["signed", "Signed"], ["filed", "Filed"], ["expired", "Expired"], ["void", "Void"]) },
+      { name: "drive_url", label: "Google Drive link", type: "url", max: 1000, wide: true, list: true },
+      { name: "details", label: "Details", type: "textarea", max: 10000, wide: true },
+    ],
+  },
+  {
+    key: "crew-agreements", table: "documents", section: "documents", group: "preproduction",
+    title: "Agreements", singular: "agreement", hidden: true,
+    lead: "Crew agreements and deal memos and where each one stands (stored in Documents).",
+    studioLevel: "allowed", titleField: "title", orderBy: { column: "created_at", ascending: false },
+    fixed: { category: "contract" },
+    fields: [
+      { name: "title", label: "Title", type: "text", required: true, max: 200, list: true },
+      { name: "contract_type", label: "Agreement type", type: "text", max: 120, list: true },
+      { name: "status", label: "Status", type: "select", list: true, initial: "draft",
+        options: opts(["draft", "Draft"], ["sent", "Sent"], ["signed", "Signed"], ["filed", "Filed"], ["expired", "Expired"], ["void", "Void"]) },
+      { name: "signer_name", label: "Signer", type: "text", max: 200, list: true },
+      { name: "signer_email", label: "Signer email", type: "email", max: 254 },
+      { name: "signer_role", label: "Signer role", type: "text", max: 200 },
+      { name: "signed_on", label: "Signed on", type: "date", list: true },
+      { name: "drive_url", label: "Google Drive link", type: "url", max: 1000, wide: true },
+      { name: "details", label: "Details", type: "textarea", max: 10000, wide: true },
+    ],
+  },
   // -------------------------------------------------------------------------
   // Production
   // -------------------------------------------------------------------------
   {
-    key: "call-sheets", table: "call_sheets", section: "scheduling", group: "production",
+    key: "call-sheets", table: "call_sheets", section: "scheduling", group: "production", hidden: true,
     title: "Call Sheets", singular: "call sheet",
     lead: "One sheet per shoot day: general call, location, safety details and everyone's call time.",
     studioLevel: "never", titleField: "title", orderBy: { column: "shoot_date", ascending: true },
@@ -217,9 +257,9 @@ export const MODULES: readonly ModuleDef[] = [
     ],
   },
   {
-    key: "shoot-schedule", table: "schedule_events", section: "scheduling", group: "production",
+    key: "shoot-schedule", table: "schedule_events", section: "scheduling", group: "production", hidden: true,
     title: "Shoot Schedules", singular: "shoot day",
-    lead: "The shoot days for each production. These also appear in Scheduling.",
+    lead: "The shoot days for each production. They also appear on the master calendar.",
     studioLevel: "never", titleField: "title", orderBy: { column: "starts_on", ascending: true, nullsFirst: false },
     fixed: { kind: "shoot_day" },
     fields: [
@@ -269,7 +309,7 @@ export const MODULES: readonly ModuleDef[] = [
   // Post-Production
   // -------------------------------------------------------------------------
   {
-    key: "editing", table: "edit_milestones", section: "post", group: "post",
+    key: "editing", table: "edit_milestones", section: "post", group: "post", hidden: true,
     title: "Editing Progress", singular: "edit milestone",
     lead: "From assembly to final: each cut, its status and the review link.",
     studioLevel: "never", titleField: "title", orderBy: { column: "due_on", ascending: true, nullsFirst: false },
@@ -288,7 +328,7 @@ export const MODULES: readonly ModuleDef[] = [
     ],
   },
   {
-    key: "deliverables", table: "deliverables", section: "post", group: "post",
+    key: "deliverables", table: "deliverables", section: "post", group: "post", hidden: true,
     title: "Deliverables", singular: "deliverable",
     lead: "Masters, subtitles, artwork and paperwork owed to festivals, platforms and partners.",
     studioLevel: "never", titleField: "name", orderBy: { column: "due_on", ascending: true, nullsFirst: false },
@@ -311,7 +351,7 @@ export const MODULES: readonly ModuleDef[] = [
   // Distribution
   // -------------------------------------------------------------------------
   {
-    key: "festivals", table: "festival_submissions", section: "distribution", group: "distribution",
+    key: "festivals", table: "festival_submissions", section: "distribution", group: "distribution", hidden: true,
     title: "Festivals", singular: "festival",
     lead: "Festival strategy: deadlines, submissions and results.",
     studioLevel: "never", titleField: "festival", orderBy: { column: "deadline", ascending: true, nullsFirst: false },
@@ -331,7 +371,7 @@ export const MODULES: readonly ModuleDef[] = [
     ],
   },
   {
-    key: "releases", table: "releases", section: "distribution", group: "distribution",
+    key: "releases", table: "releases", section: "distribution", group: "distribution", hidden: true,
     title: "Releases", singular: "release",
     lead: "Premieres, screenings and online releases.",
     studioLevel: "never", titleField: "title", orderBy: { column: "release_on", ascending: true, nullsFirst: false },
@@ -403,6 +443,7 @@ export type Parsed = { ok: true; values: Record<string, string | number | null> 
 export function parseFields(def: ModuleDef, get: (name: string) => unknown): Parsed {
   const values: Record<string, string | number | null> = {};
   for (const f of def.fields) {
+    if (f.readOnly) continue;
     const raw = get(f.name);
     const s = typeof raw === "string" ? raw.trim() : "";
     if (!s) {
@@ -455,4 +496,21 @@ export function checkScope(def: ModuleDef, productionId: string | null): string 
   if (def.studioLevel === "only" && productionId !== null) return "These records are studio-wide and can't belong to a production.";
   if (def.studioLevel === "never" && productionId === null) return "Choose a production.";
   return null;
+}
+
+// ---------------------------------------------------------------------------
+// Load errors
+// ---------------------------------------------------------------------------
+/**
+ * Why a list didn't load: "setup" when the table isn't in the database yet
+ * (its migration hasn't been applied), "failed" for anything else.
+ */
+export type LoadError = null | "setup" | "failed";
+export function loadError(error: { code?: string } | null): LoadError {
+  if (!error) return null;
+  return isMissingTable(error.code) ? "setup" : "failed";
+}
+/** PostgREST answers PGRST205 (or PGRST200/42P01) for a table it doesn't know. */
+export function isMissingTable(code: string | undefined): boolean {
+  return code === "PGRST205" || code === "42P01" || code === "PGRST200" || code === "42703";
 }

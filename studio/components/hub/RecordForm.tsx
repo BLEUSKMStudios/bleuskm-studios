@@ -62,7 +62,7 @@ export function RecordForm({
           </select>
         </label>
       )}
-      {fields.map((f) => (
+      {fields.filter((f) => !f.readOnly).map((f) => (
         <label key={f.name} className={`field${f.wide || f.type === "textarea" ? " wide" : ""}`}>
           <span>{f.label}{f.required && <em className="req" aria-hidden="true"> *</em>}</span>
           <Input f={f} value={val(f)} />

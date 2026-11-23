@@ -14,14 +14,20 @@ const form = (v: Record<string, string>) => (k: string) => v[k];
 // ---------------------------------------------------------------------------
 // Modules match the database
 // ---------------------------------------------------------------------------
-const SQL = readFileSync(new URL("../../supabase/migrations/20261124090000_studio_modules.sql", import.meta.url), "utf8");
+const migration = (f: string) => readFileSync(new URL(`../../supabase/migrations/${f}`, import.meta.url), "utf8");
+const SQL = migration("20261124090000_studio_modules.sql");
+// Later migrations extend those tables with `alter table … add column` / `add constraint … check`.
+const LATER = migration("20261124100000_workspaces.sql").replace(/^\s*--.*$/gm, "");
 function tableBlock(table: string): string {
   const start = SQL.indexOf(`create table public.${table} (`);
   assert.ok(start >= 0, `migration creates public.${table}`);
-  return SQL.slice(start, SQL.indexOf("\n);", start));
+  const alters = LATER.split(/;\s*\n/).filter((st) => new RegExp(`^alter table public\\.${table}\\s`).test(st.trimStart()))
+    .map((st) => st.replace(/add column\s+/g, "\n  ").replace(/add constraint \w+ check \((\w+) in \(/g, "\n  $1 text check ($1 in ("));
+  return [SQL.slice(start, SQL.indexOf("\n);", start)), ...alters].join("\n");
 }
 function checkValues(block: string, column: string): string[] | null {
-  const m = new RegExp(`\\n\\s+${column}\\s[^\\n]*check \\(${column} in \\(([^)]*)\\)\\)`).exec(block);
+  const all = [...block.matchAll(new RegExp(`\\n\\s+${column}\\s[^\\n]*?(?:\\n\\s*)?check \\(${column} in \\(([^)]*)\\)\\)`, "g"))];
+  const m = all.at(-1); // the most recent definition wins
   return m ? [...m[1].matchAll(/'([^']+)'/g)].map((x) => x[1]) : null;
 }
 
@@ -124,7 +130,11 @@ test("nav: every nav section is a real section", () => {
 test("nav: groupForPath picks the right group", () => {
   assert.equal(groupForPath("/"), "dashboard");
   assert.equal(groupForPath("/casting/abc"), "preproduction");
-  assert.equal(groupForPath("/call-sheets"), "production");
+  assert.equal(groupForPath("/call-sheets"), "preproduction", "moved into Scheduling");
+  assert.equal(groupForPath("/scheduling?tab=calendar"), "preproduction");
+  assert.equal(groupForPath("/editing"), "post");
+  assert.equal(groupForPath("/festivals"), "distribution");
+  assert.equal(groupForPath("/administration"), "operations");
   assert.equal(groupForPath("/settings/users/1"), "operations");
   assert.equal(groupForPath("/nowhere"), null);
 });

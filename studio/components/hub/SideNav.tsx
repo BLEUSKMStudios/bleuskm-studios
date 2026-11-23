@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { groupForPath, type NavGroup } from "@/lib/hub/nav";
+import { groupForPath, NAV_ALIASES, type NavGroup } from "@/lib/hub/nav";
 
 const KEY = "studio-os-nav";
 
@@ -27,9 +27,11 @@ export function SideNav({ groups }: { groups: NavGroup[] }) {
     setOpen(next);
     try { window.localStorage.setItem(KEY, JSON.stringify(next)); } catch { /* private mode: not remembered */ }
   };
+  const alias = Object.keys(NAV_ALIASES).find((a) => path === a || path.startsWith(`${a}/`));
+  const here = alias ? NAV_ALIASES[alias] : path;
   const active = (href: string) => {
     if (href.includes("#")) return false;
-    return href === "/" ? path === "/" : path === href || path.startsWith(`${href}/`);
+    return href === "/" ? here === "/" : here === href || here.startsWith(`${href}/`);
   };
   return (
     <nav className="hub-nav" aria-label="Main">

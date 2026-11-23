@@ -22,7 +22,7 @@ export default async function Dashboard() {
   let activity: { id: number; at: string; text: string }[] = [];
   if (me.isOwner) {
     for (const i of integrations()) {
-      if (!i.configured) alerts.push({ tone: "warn", text: `${i.name} isn't connected yet (missing ${i.missing.join(", ")}).`, href: "/administration" });
+      if (!i.configured) alerts.push({ tone: "warn", text: `${i.name} isn't connected yet (missing ${i.missing.join(", ")}).`, href: "/settings" });
     }
     const { supabase } = await loadSession();
     const [{ data: log }, { data: people }] = await Promise.all([

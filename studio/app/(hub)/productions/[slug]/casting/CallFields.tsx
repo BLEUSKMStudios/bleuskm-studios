@@ -14,7 +14,17 @@ export function CallFields({ c, productionId, defaultSlug, returnTo }: { c?: Cas
           {CALL_STATUSES.map((s) => <option key={s} value={s}>{CALL_STATUS_LABEL[s]}</option>)}
         </select>
       </label>
-      <label className="field"><span>Website address key</span><input name="public_slug" maxLength={60} defaultValue={c?.public_slug ?? defaultSlug} /></label>
+      {c ? (
+        <p className="field small">This is a {/-crew$/.test(c.public_slug) ? "crew" : "cast"} call (crew calls have a website key ending in “-crew”). It is listed under Applications → {/-crew$/.test(c.public_slug) ? "Crew" : "Cast"} applications.</p>
+      ) : (
+        <label className="field"><span>Call type</span>
+          <select name="call_kind" defaultValue="cast">
+            <option value="cast">Cast (actors)</option>
+            <option value="crew">Crew</option>
+          </select>
+        </label>
+      )}
+      <label className="field"><span>Website address key{c ? "" : " (crew calls get “-crew” added)"}</span><input name="public_slug" maxLength={60} defaultValue={c?.public_slug ?? defaultSlug} /></label>
       <label className="field"><span>Opens (Central time, optional)</span><input type="datetime-local" name="opens_at" defaultValue={isoToStudioLocal(c?.opens_at)} /></label>
       <label className="field"><span>Submission deadline (Central time)</span><input type="datetime-local" name="deadline" defaultValue={isoToStudioLocal(c?.deadline)} /></label>
       <label className="field wide"><span>Early-access codes (optional, comma separated, e.g. TFH-FAMILY, LMLT-FIRST). Before the opening time, only people with a code link can apply.</span><input name="early_access_codes" maxLength={500} defaultValue={(c?.early_access_codes ?? []).join(", ")} /></label>

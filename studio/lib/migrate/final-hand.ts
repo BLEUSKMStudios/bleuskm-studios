@@ -38,6 +38,8 @@ export type TableKey = keyof typeof TABLES;
 
 export const PRODUCTION = { slug: "the-final-hand", title: "The Final Hand" } as const;
 export const CASTING_ARCHIVE_SLUG = "the-final-hand-casting-archive";
+/** Crew calls end in "-crew" (that is how Studio OS tells them apart and emails them from crew@). */
+export const CREW_ARCHIVE_SLUG = "the-final-hand-archive-crew";
 const FILM = "The Final Hand";
 
 // ---------------------------------------------------------------------------
@@ -360,15 +362,13 @@ export function buildPlan(t: Tables, copied: CopiedFiles = {}): Plan {
       const noteText = joinLines(s(f.Notes, 4000), redirect && `Callback/redirect: ${redirect}`, s(f["To Role"]) && `Moved to role: ${s(f["To Role"])}`,
         s(f["Email Sent"]) && `Email: ${s(f["Email Sent"])}`, s(f["Future Role"]) && `Future role: ${s(f["Future Role"])}`,
         f["Casting Directory"] === true && "In the casting directory", `Imported from Airtable (Casting Submissions, record ${r.id}).`);
-      const parts = [
-        `with app as (insert into public.casting_applications (call_id, role_id, production_id, full_name, email, phone, age, location, about, source, status, rating, submitted_at)`,
-        `  values (${lit(CALL)}, ${lit(ROLE)}, ${lit(PROD)}, ${lit(name)}, ${lit(mail)}, ${lit(phone(f.Phone))}, ${lit(num(f.Age) !== null && num(f.Age)! >= 0 && num(f.Age)! <= 120 ? Math.round(num(f.Age)!) : null)}, ${lit(s(f.Location, 200))}, ${lit(s(f.About, 5000))}, 'airtable', ${lit(status)}, ${lit(rating && rating >= 1 && rating <= 5 ? Math.round(rating) : null)}, ${lit(ts(r.createdTime) ?? ts(f["Created Time"]) ?? raw("now()"))})`,
-        `  on conflict (role_id, email) do nothing returning id, production_id)`,
-      ];
-      const tail: string[] = [];
-      if (mats.length) tail.push(`m as (insert into public.casting_materials (production_id, application_id, kind, url) ${mats.join(" union all ")})`);
-      tail.push(`n as (insert into public.casting_notes (production_id, application_id, body) select app.production_id, app.id, ${lit(noteText ?? "Imported from Airtable.")} from app)`);
-      out.push(`${parts.join("\n")}${tail.length ? ",\n" + tail.join(",\n") : ""}\nselect 1;`);
+      out.push(applicationSql({
+        call: CALL, role: ROLE, recordId: r.id, name, email: mail, phone: phone(f.Phone),
+        age: num(f.Age) !== null && num(f.Age)! >= 0 && num(f.Age)! <= 120 ? Math.round(num(f.Age)!) : null,
+        location: s(f.Location, 200), about: s(f.About, 5000), availability: null, status,
+        rating: rating && rating >= 1 && rating <= 5 ? Math.round(rating) : null,
+        submittedAt: ts(r.createdTime) ?? ts(f["Created Time"]), mats, note: noteText ?? "Imported from Airtable.",
+      }));
       count("casting_applications");
       if (status === "cast") {
         out.push(upsert("production_team", {
@@ -380,7 +380,69 @@ export function buildPlan(t: Tables, copied: CopiedFiles = {}): Plan {
     }
   }
 
+  // Crew applications for The Final Hand (the portal's crew decisions) -> a
+  // closed crew archive call. Applications without a Final Hand decision are
+  // the general crew pool: they stay in Airtable and are counted as skipped.
+  const crewApps = (t.crew ?? []).filter((r) => !!s(r.fields.Status) || r.fields["For the final Hand"] === true);
+  const generalPool = (t.crew ?? []).length - crewApps.length;
+  if (generalPool > 0) skipped["crew applications: general pool, not tied to a production"] = generalPool;
+  if (crewApps.length) {
+    const CALL = raw(`(select id from public.casting_calls where public_slug = ${lit(CREW_ARCHIVE_SLUG)})`);
+    out.push(`insert into public.casting_calls (production_id, public_slug, title, summary, status) values (${lit(PROD)}, ${lit(CREW_ARCHIVE_SLUG)}, 'The Final Hand: crew applications (imported)', 'Imported from the Final Hand portal. Closed: not shown on the website.', 'closed') on conflict (public_slug) do nothing;`);
+    const position = (f: Record<string, unknown>) => (first(f["Preferred role by Director"]) ?? s(f.Role, 120) ?? "Crew").slice(0, 120);
+    const positions = [...new Set(crewApps.map((r) => position(r.fields)))];
+    positions.forEach((name, i) => {
+      out.push(`insert into public.casting_roles (call_id, production_id, name, status, sort) values (${lit(CALL)}, ${lit(PROD)}, ${lit(name)}, 'closed', ${i}) on conflict (call_id, name) do nothing;`);
+    });
+    count("casting_calls");
+    counts.crew_positions = positions.length;
+    const seen = new Set<string>();
+    for (const r of crewApps) {
+      const f = r.fields;
+      const mail = email(f.Email);
+      const name = s(f.Name, 200);
+      const pos = position(f);
+      if (!mail || !name) { skip("crew applications: missing name or email"); continue; }
+      if (seen.has(`${pos}|${mail}`)) { skip("crew applications: duplicate person for the same position"); continue; }
+      seen.add(`${pos}|${mail}`);
+      const st = s(f.Status);
+      const status = st === "CORE" ? "cast" : st === "SUPPORT" ? "shortlisted" : st === "NOT THIS PROJECT" ? "not_selected" : "submitted";
+      const ROLE = raw(`(select id from public.casting_roles where call_id = ${CALL.sql} and name = ${lit(pos)})`);
+      const links: [string, string | null][] = [["portfolio", url(f["Resume / Portfolio Link"])], ["reel", url(f["Reel / Work Samples"])]];
+      const mats = links.filter(([, u]) => u).map(([k, u]) => `select app.production_id, app.id, ${lit(k)}::public.casting_material_kind, ${lit(u)} from app`);
+      out.push(applicationSql({
+        call: CALL, role: ROLE, recordId: r.id, name, email: mail, phone: phone(f.Phone), age: null,
+        location: s(f.City, 200), about: s(f["Gear List"], 3000) && `Gear: ${s(f["Gear List"], 3000)}`, availability: s(f.Availability, 1000),
+        status, rating: null, submittedAt: ts(r.createdTime), mats,
+        note: joinLines(st && `Portal status: ${st}`, s(f.Role) && `Applied as: ${s(f.Role)}`, s(f.Notes, 4000), `Imported from Airtable (Crew applications, record ${r.id}).`)!,
+      }));
+      count("crew_applications");
+    }
+  }
+
   return { sql: out.join("\n"), counts, skipped, empty };
+}
+
+/**
+ * One imported application, plus its links and note the first time only.
+ * Never a duplicate: skipped when the Airtable record was imported before
+ * (source_record_id) or the same person already applied for that role.
+ */
+function applicationSql(a: {
+  call: Sql; role: Sql; recordId: string; name: string; email: string; phone: string | null; age: number | null;
+  location: string | null; about: string | null; availability: string | null; status: string; rating: number | null;
+  submittedAt: string | null; mats: string[]; note: string;
+}): string {
+  const parts = [
+    `with app as (insert into public.casting_applications (call_id, role_id, production_id, full_name, email, phone, age, location, about, availability, source, source_record_id, status, rating, submitted_at)`,
+    `  select ${lit(a.call)}, ${lit(a.role)}, ${lit(PROD)}, ${lit(a.name)}, ${lit(a.email)}, ${lit(a.phone)}, ${lit(a.age)}, ${lit(a.location)}, ${lit(a.about)}, ${lit(a.availability)}, 'airtable', ${lit(a.recordId)}, ${lit(a.status)}, ${lit(a.rating)}, ${lit(a.submittedAt ?? raw("now()"))}`,
+    `  where not exists (select 1 from public.casting_applications where source_record_id = ${lit(a.recordId)})`,
+    `  on conflict do nothing returning id, production_id)`,
+  ];
+  const tail: string[] = [];
+  if (a.mats.length) tail.push(`m as (insert into public.casting_materials (production_id, application_id, kind, url) ${a.mats.join(" union all ")})`);
+  tail.push(`n as (insert into public.casting_notes (production_id, application_id, body) select app.production_id, app.id, ${lit(a.note)} from app)`);
+  return `${parts.join("\n")},\n${tail.join(",\n")}\nselect 1;`;
 }
 
 /**
@@ -399,6 +461,7 @@ export function buildValidation(plan: Plan): string {
     ["production_notes", `source like 'airtable:%'`, "production_notes"],
     ["comm_messages", `source = ${lit(src("sentEmails"))}`, "comm_messages"],
     ["casting_applications", `source = 'airtable' and call_id = (select id from public.casting_calls where public_slug = ${lit(CASTING_ARCHIVE_SLUG)})`, "casting_applications"],
+    ["casting_applications", `source = 'airtable' and call_id = (select id from public.casting_calls where public_slug = ${lit(CREW_ARCHIVE_SLUG)})`, "crew_applications"],
   ];
   const lines = checks.map(([table, where, key]) => {
     const want = plan.counts[key] ?? 0;

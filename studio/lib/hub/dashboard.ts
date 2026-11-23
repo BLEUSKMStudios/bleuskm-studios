@@ -26,7 +26,7 @@ export async function upcomingDeadlines(): Promise<Deadline[]> {
   const today = studioToday();
   const from = addDays(today, -OVERDUE_DAYS);
   const to = addDays(today, AHEAD_DAYS);
-  const sources = MODULES.filter((m) => m.dueField && !m.hidden);
+  const sources = MODULES.filter((m) => m.dueField);
   const results = await Promise.all(
     sources.map(async (def) => {
       const cols = ["id", "production_id", def.titleField, def.dueField!, ...(def.doneWhen ? [def.doneWhen.column] : [])];

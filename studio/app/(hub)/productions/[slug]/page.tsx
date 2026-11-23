@@ -7,6 +7,10 @@ import { countModule } from "@/lib/hub/module-data";
 import { LEVEL_LABEL, STAGES, STAGE_LABEL, STAGE_STATUS_LABEL, STATUS_LABEL, TYPE_LABEL, type Stage, type StageStatus } from "@/lib/hub/labels";
 import { NoAccess, PageHead } from "@/components/hub/Page";
 
+// The module cards on a production's page, in lifecycle order.
+const CARD_MODULES = ["scripts", "resources", "crew-roster", "locations", "scheduling", "documents",
+  "shoot-schedule", "call-sheets", "tracking", "editing", "deliverables", "festivals", "releases"];
+
 const GROUPS: { key: ModuleGroup; label: string }[] = [
   { key: "development", label: "Development" },
   { key: "preproduction", label: "Pre-Production" },
@@ -30,7 +34,7 @@ export default async function ProductionHome({ params }: { params: Promise<{ slu
   const open = (section: string) => enabled.has(section) && (me.isOwner || levelIn(grants, p.id, section) !== "none");
 
   type Card = { key: string; title: string; href: string; section: string; count: number | null; lead: string };
-  const modules = MODULES.filter((m) => m.studioLevel !== "only" && !m.hidden && open(m.section));
+  const modules = CARD_MODULES.map((k) => MODULES.find((m) => m.key === k)!).filter((m) => m && open(m.section));
   const counts = await Promise.all(modules.map((m) => countModule(m, p.id)));
   const cards = new Map<ModuleGroup, Card[]>();
   modules.forEach((m, i) => {

@@ -82,3 +82,35 @@ export async function castingAccess(slug: string) {
   const [canView, canEdit] = await Promise.all([dbCheck(p.id, "casting", "view"), dbCheck(p.id, "casting", "edit")]);
   return { p, canView, canEdit } as const;
 }
+
+export type CallKind = "cast" | "crew";
+
+/**
+ * Casting data across every production this person can see (Row Level
+ * Security filters each query), for the Applications, Casting and Crew
+ * workspaces. A call is a crew call when its website key ends in "-crew".
+ */
+export async function castingOverview() {
+  const { supabase } = await loadSession();
+  const [calls, roles, apps, sessions, messages, templates] = await Promise.all([
+    supabase.from("casting_calls").select(CALL_COLS).order("created_at").limit(500),
+    supabase.from("casting_roles").select(ROLE_COLS).order("sort").order("name").limit(2000),
+    supabase.from("casting_applications").select(APP_COLS).order("submitted_at", { ascending: false }).limit(5000),
+    supabase.from("casting_sessions").select(`${SESSION_COLS}, production_id`).order("starts_at", { ascending: true, nullsFirst: false }).limit(2000),
+    supabase.from("casting_messages").select(`${MESSAGE_COLS}, production_id`).order("sent_at", { ascending: false }).limit(200),
+    supabase.from("casting_templates").select(TEMPLATE_COLS).order("sort").limit(500),
+  ]);
+  const failed = [calls, roles, apps].some((r) => r.error);
+  const c = (calls.data ?? []) as CastingCall[];
+  const kindOfCall = new Map(c.map((x) => [x.id, (/-crew$/.test(x.public_slug) ? "crew" : "cast") as CallKind]));
+  return {
+    failed,
+    calls: c,
+    roles: (roles.data ?? []) as CastingRole[],
+    apps: (apps.data ?? []) as Application[],
+    sessions: (sessions.data ?? []) as (Session & { production_id: string })[],
+    messages: (messages.data ?? []) as (Message & { production_id: string })[],
+    templates: (templates.data ?? []) as Template[],
+    kindOfCall,
+  };
+}

@@ -11,17 +11,17 @@ export type NavItem = {
   /** Permission section. null = everyone signed in. */
   section: string | null;
   ownerOnly?: boolean;
+  /** Further sections that also open this item (any one is enough). */
+  alsoSections?: readonly string[];
 };
 export type NavGroup = { key: string; label: string; items: NavItem[] };
 
 export const NAV: readonly NavGroup[] = [
   {
+    // Active productions, deadlines, notifications and recent activity are
+    // sections of the overview page, so the overview is the only link.
     key: "dashboard", label: "Dashboard", items: [
       { key: "overview", label: "Studio overview", href: "/", section: null },
-      { key: "active", label: "Active productions", href: "/#productions", section: null },
-      { key: "deadlines", label: "Upcoming deadlines", href: "/#deadlines", section: null },
-      { key: "notifications", label: "Notifications", href: "/#notifications", section: null },
-      { key: "activity", label: "Recent activity", href: "/#activity", section: null, ownerOnly: true },
     ],
   },
   {
@@ -33,6 +33,8 @@ export const NAV: readonly NavGroup[] = [
   },
   {
     key: "preproduction", label: "Pre-Production", items: [
+      // Applications are shown to anyone with Casting or Crew access (see navFor).
+      { key: "applications", label: "Applications", href: "/applications", section: "casting" }, // applications are read under Casting access (crew too)
       { key: "casting", label: "Casting", href: "/casting", section: "casting" },
       { key: "crew", label: "Crew", href: "/crew", section: "crew" },
       { key: "locations", label: "Locations", href: "/locations", section: "locations" },
@@ -42,32 +44,39 @@ export const NAV: readonly NavGroup[] = [
   },
   {
     key: "production", label: "Production", items: [
-      { key: "call-sheets", label: "Call Sheets", href: "/call-sheets", section: "scheduling" },
-      { key: "shoot-schedule", label: "Shoot Schedules", href: "/shoot-schedule", section: "scheduling" },
       { key: "tracking", label: "Production Tracking", href: "/tracking", section: "tasks" },
     ],
   },
   {
     key: "post", label: "Post-Production", items: [
-      { key: "editing", label: "Editing Progress", href: "/editing", section: "post" },
-      { key: "deliverables", label: "Deliverables", href: "/deliverables", section: "post" },
+      { key: "post", label: "Editing & Deliverables", href: "/post", section: "post" },
     ],
   },
   {
     key: "distribution", label: "Distribution", items: [
-      { key: "festivals", label: "Festivals", href: "/festivals", section: "distribution" },
-      { key: "releases", label: "Releases", href: "/releases", section: "distribution" },
+      { key: "distribution", label: "Festivals & Releases", href: "/distribution", section: "distribution" },
     ],
   },
   {
     key: "operations", label: "Studio Operations", items: [
       { key: "communications", label: "Communications", href: "/communications", section: "communications" },
       { key: "contacts", label: "Contacts", href: "/contacts", section: "contacts" },
-      { key: "administration", label: "Administration", href: "/administration", section: null, ownerOnly: true },
-      { key: "settings", label: "Settings", href: "/settings", section: null, ownerOnly: true },
+      { key: "settings", label: "Settings & Administration", href: "/settings", section: null, ownerOnly: true },
     ],
   },
 ];
+
+/** Pages that live inside another menu entry (internal tabs), for highlighting it. */
+export const NAV_ALIASES: Record<string, string> = {
+  "/shoot-schedule": "/scheduling",
+  "/call-sheets": "/scheduling",
+  "/editing": "/post",
+  "/deliverables": "/post",
+  "/festivals": "/distribution",
+  "/releases": "/distribution",
+  "/notes": "/tracking",
+  "/administration": "/settings",
+};
 
 /** True when this person holds any grant on the section (any production or Studio level). */
 export function holdsSection(grants: readonly Grant[], section: string): boolean {
@@ -81,14 +90,16 @@ export function navFor(isOwner: boolean, grants: readonly Grant[]): NavGroup[] {
     items: g.items.filter((i) => {
       if (i.ownerOnly) return isOwner;
       if (i.section === null) return true;
-      return isOwner || holdsSection(grants, i.section);
+      return isOwner || [i.section, ...(i.alsoSections ?? [])].some((s) => holdsSection(grants, s));
     }),
   })).filter((g) => g.items.length > 0);
 }
 
 /** The group a path belongs to (for opening it by default). */
 export function groupForPath(path: string): string | null {
-  const clean = path.split("#")[0] || "/";
+  const raw = path.split("#")[0].split("?")[0] || "/";
+  const alias = Object.keys(NAV_ALIASES).find((a) => raw === a || raw.startsWith(`${a}/`));
+  const clean = alias ? NAV_ALIASES[alias] + raw.slice(alias.length) : raw;
   let best: { group: string; len: number } | null = null;
   for (const g of NAV) {
     for (const i of g.items) {

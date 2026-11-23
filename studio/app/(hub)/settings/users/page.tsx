@@ -11,7 +11,7 @@ export default async function UsersPage() {
   const people = await listPeople();
   return (
     <>
-      <PageHead title="User Access" lead={<><Link className="link" href="/settings">Settings</Link> · Everyone who can sign in to the hub</>}>
+      <PageHead title="User Access" lead={<><Link className="link" href="/settings">Settings &amp; Administration</Link> · Everyone who can sign in to the hub</>}>
         <Link className="btn btn-inline" href="/settings/users/invite">Invite someone</Link>
       </PageHead>
       <section className="panel">

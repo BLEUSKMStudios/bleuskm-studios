@@ -46,7 +46,15 @@ export async function saveCall(_: ActionState, form: FormData): Promise<ActionSt
   if (!(await canEdit(productionId))) return NO_EDIT;
   const id = text(form.get("id"));
   const title = text(form.get("title"));
-  const slug = slugify(text(form.get("public_slug")) || title);
+  let slug = slugify(text(form.get("public_slug")) || title);
+  // New calls: the type is part of the website key (crew calls end in "-crew"),
+  // which is also how crew applicants get their emails from crew@.
+  if (!text(form.get("id"))) {
+    const kind = text(form.get("call_kind")) || "cast";
+    if (kind !== "cast" && kind !== "crew") return { error: "Choose a call type." };
+    if (kind === "crew" && !/-crew$/.test(slug)) slug = `${slug}-crew`.replace(/^-/, "");
+    if (kind === "cast" && /-crew$/.test(slug)) return { error: "Cast call website keys can't end in “-crew” (that marks a crew call)." };
+  }
   const status = text(form.get("status")) || "draft";
   const opensRaw = text(form.get("opens_at"));
   const deadlineRaw = text(form.get("deadline"));

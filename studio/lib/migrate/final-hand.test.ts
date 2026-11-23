@@ -53,7 +53,19 @@ test("plan: every import upserts on its source id", () => {
 });
 test("plan: the archive casting call is closed and applications never overwrite", () => {
   assert.match(plan.sql, /'closed'\) on conflict \(public_slug\) do nothing/);
-  assert.match(plan.sql, /on conflict \(role_id, email\) do nothing returning id/);
+  assert.match(plan.sql, /on conflict do nothing returning id/);
+});
+test("plan: historical applications dedupe on the Airtable record id", () => {
+  for (const id of ["recCAST0000000001", "recCREW0000000001", "recCREW0000000002", "recCREW0000000003"]) {
+    assert.match(plan.sql, new RegExp(`where not exists \\(select 1 from public\\.casting_applications where source_record_id = '${id}'\\)`));
+  }
+  assert.doesNotMatch(plan.sql, /recCREW0000000005'\)/, "general-pool crew are not tied to a production");
+});
+test("plan: crew applications go to a closed crew archive call", () => {
+  assert.equal(plan.counts.crew_applications, 3);
+  assert.equal(plan.skipped["crew applications: missing name or email"], 1);
+  assert.equal(plan.skipped["crew applications: general pool, not tied to a production"], 1);
+  assert.match(plan.sql, /'the-final-hand-archive-crew'/);
 });
 test("plan: a reply note is written after its parent", () => {
   assert.ok(plan.sql.indexOf("'Gear'") < plan.sql.indexOf("'Re: Gear'"));
