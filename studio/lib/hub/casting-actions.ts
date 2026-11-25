@@ -234,7 +234,7 @@ export async function saveSession(_: ActionState, form: FormData): Promise<Actio
   // Scheduling a callback or audition moves the applicant along, unless they're further already.
   if (!id && (kind === "callback" || kind === "audition")) {
     await supabase.from("casting_applications").update({ status: kind }).eq("id", applicationId)
-      .in("status", ["submitted", "reviewing", "shortlisted", "on_hold", ...(kind === "audition" ? ["callback"] : [])]);
+      .in("status", ["submitted", "reviewing", "shortlisted", "selftape_invited", "selftape_received", "on_hold", ...(kind === "audition" ? ["callback"] : [])]);
   }
   return done(id ? "Session updated." : `${SESSION_KIND_LABEL[kind]} added.`);
 }

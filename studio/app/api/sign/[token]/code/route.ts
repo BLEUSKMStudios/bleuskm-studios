@@ -25,7 +25,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tok
     body: `Hi ${firstName(r.signer_name)},\n\nYour one-time code to sign your agreement with BLEUSKM Studios is:\n\n${c.code}\n\nIt works for ${OTP_MINUTES} minutes. If you didn't ask for it, you can ignore this email; nobody can sign without it.\n\nBLEUSKM Studios`,
     idempotencyKey: `contract-code:${c.id}`, contactId: r.contact_id, productionId: r.production_id, section: "documents",
     templateKey: "contract_code", related: { table: "contract_requests", id: r.id }, activityKind: "contract.code_sent",
-    activitySummary: `Signing code emailed to ${r.signer_email}`,
+    activitySummary: `Signing code emailed to ${r.signer_email}`, redact: [c.code],
   });
   if (sent.status !== "sent") {
     await admin.from("contract_otps").delete().eq("id", c.id);

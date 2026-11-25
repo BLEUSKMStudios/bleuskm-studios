@@ -30,6 +30,8 @@ export type SendInput = {
   related?: { table: string; id: string } | null;
   sentByName?: string | null;
   activityKind?: string;
+  /** Secrets (one-time codes) sent to the person but never kept in the log staff can read. */
+  redact?: string[];
   activitySummary?: string;
   unsubscribeUrl?: string | null;
   tags?: string[];
@@ -57,6 +59,7 @@ export async function sendTransactional(admin: SupabaseClient, input: SendInput)
   }
   const html = toHtml(input.body, { from: identity?.address ?? "", preview: input.previewText, unsubscribeUrl: input.unsubscribeUrl });
 
+  const scrub = (v: string) => (input.redact ?? []).filter((x) => x.length >= 4).reduce((a, x) => a.split(x).join("••••••"), v);
   // 1. Claim the idempotency key.
   const row = {
     production_id: input.productionId ?? null,
@@ -64,9 +67,9 @@ export async function sendTransactional(admin: SupabaseClient, input: SendInput)
     channel: "brevo",
     from_address: identity?.address ?? null,
     to_addresses: email,
-    subject: input.subject.slice(0, 500),
-    body: input.body.slice(0, 100000),
-    html: html.slice(0, 200000),
+    subject: scrub(input.subject).slice(0, 500),
+    body: scrub(input.body).slice(0, 100000),
+    html: scrub(html).slice(0, 200000),
     status: "queued",
     sent_by_name: input.sentByName ?? null,
     contact_id: input.contactId ?? null,
