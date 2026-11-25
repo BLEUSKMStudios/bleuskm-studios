@@ -568,6 +568,8 @@ revoke all on function private.film_audience(text, uuid) from public;
 alter table public.casting_applications
   add column contact_id uuid references public.contacts (id) on delete set null;
 create index casting_applications_contact_idx on public.casting_applications (contact_id);
+-- Hub users read applications column by column (the upload token stays hidden).
+grant select (contact_id) on public.casting_applications to authenticated;
 
 -- Runs after the live website's insert. Any problem here is swallowed and
 -- recorded, so an application is never lost because of the contact layer.
