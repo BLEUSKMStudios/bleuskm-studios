@@ -3,7 +3,7 @@
 begin;
 \ir 00_helpers.sql
 
-select plan(34);
+select plan(40);
 
 \set O  '''00000000-0000-0000-0000-0000000000a0'''
 \set A  '''00000000-0000-0000-0000-0000000000a1'''
@@ -136,6 +136,35 @@ insert into public.comm_messages (direction, channel, subject, status, idempoten
 select throws_ok($$insert into public.comm_messages (direction, channel, subject, status, idempotency_key)
   values ('outbound', 'brevo', 'Hi', 'queued', 'confirm:casting:abc')$$, '23505', null,
   'A second send with the same key is refused by the database');
+
+
+-- Staff can't subscribe someone to marketing without recording the consent.
+select tests.sign_in(:O);
+set local role authenticated;
+select throws_ok($$insert into public.contact_subscriptions (contact_id, audience_id)
+  select (select id from public.contacts where email = 'client@example.com'), id from public.audiences where key = 'newsletter'$$,
+  '23514', null, 'A marketing subscription needs a recorded consent');
+select lives_ok($$insert into public.contact_subscriptions (contact_id, audience_id, consent_source, consent_text)
+  select (select id from public.contacts where email = 'client@example.com'), id, 'Signed paper form', 'Yes to news'
+  from public.audiences where key = 'newsletter'$$,
+  'With the consent recorded, the owner can subscribe someone');
+
+-- Merging duplicates (owner only).
+reset role;
+insert into public.contacts (full_name, email) values ('Dupe Person', 'dupe@example.com');
+select tests.sign_in(:A);
+set local role authenticated;
+select throws_ok(format('select public.merge_contacts(%L, %L)', (select id from public.contacts where email = 'dupe@example.com'),
+  (select id from public.contacts where email = 'sub@example.com')), '42501', null, 'Only the owner can merge contacts');
+select tests.sign_in(:O);
+select lives_ok(format('select public.merge_contacts(%L, %L)', (select id from public.contacts where email = 'sub@example.com'),
+  (select id from public.contacts where email = 'client@example.com')), 'The owner merges a duplicate');
+reset role;
+select is((select count(*) from public.intake_submissions s join public.contacts c on c.id = s.contact_id
+  where c.email = 'client@example.com'), 3::bigint, 'The duplicate''s submissions move to the kept contact');
+select is((select s.status from public.contact_subscriptions s join public.audiences a on a.id = s.audience_id
+  join public.contacts c on c.id = s.contact_id where a.key = 'newsletter' and c.email = 'client@example.com'), 'unsubscribed',
+  'An unsubscribe on the duplicate wins after the merge');
 
 select * from finish();
 rollback;

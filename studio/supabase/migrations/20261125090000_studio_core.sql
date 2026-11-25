@@ -108,7 +108,8 @@ create policy activity_select on public.activity for select to authenticated
 
 create function private.log_activity(
   p_section text, p_production uuid, p_contact uuid, p_kind text, p_summary text,
-  p_subject_table text default null, p_subject_id uuid default null, p_details jsonb default '{}'
+  p_subject_table text default null, p_subject_id uuid default null, p_details jsonb default '{}',
+  p_at timestamptz default null
 )
 returns uuid
 language plpgsql
@@ -120,10 +121,10 @@ declare
   v_actor uuid := auth.uid();
 begin
   insert into public.activity (production_id, section, contact_id, kind, summary, subject_table, subject_id,
-                               details, actor_id, actor_name)
+                               details, actor_id, actor_name, occurred_at)
   values (p_production, p_section, p_contact, p_kind, left(p_summary, 500), p_subject_table, p_subject_id,
           coalesce(p_details, '{}'), v_actor,
-          (select full_name from public.profiles where id = v_actor))
+          (select full_name from public.profiles where id = v_actor), coalesce(p_at, now()))
   returning id into v_id;
   if p_contact is not null then
     update public.contacts set last_activity_at = now() where id = p_contact;
@@ -210,6 +211,12 @@ begin
      and coalesce(new.consented_at, '-infinity') <= coalesce(old.unsubscribed_at, '-infinity')
      and current_user not in ('postgres', 'service_role', 'supabase_admin') then
     raise exception 'This person unsubscribed. They have to opt in again themselves.'
+      using errcode = 'check_violation';
+  end if;
+  -- Marketing needs a recorded opt-in: where and how the person agreed.
+  if new.status = 'subscribed' and nullif(btrim(coalesce(new.consent_source, '')), '') is null
+     and (select marketing from public.audiences where id = new.audience_id) then
+    raise exception 'Record where and how this person agreed before subscribing them.'
       using errcode = 'check_violation';
   end if;
   if new.status = 'unsubscribed' and new.unsubscribed_at is null then new.unsubscribed_at := now(); end if;
@@ -410,6 +417,9 @@ declare
   v_csource  text := left(coalesce(v_consent ->> 'source', 'bleuskm.com'), 200);
   v_existing uuid;
   v_summary  text;
+  -- Imports of older records keep their original time.
+  v_origin   text := case when p ->> 'origin' = 'import' then 'import' else 'website' end;
+  v_at       timestamptz := case when p ->> 'origin' = 'import' then coalesce((p ->> 'received_at')::timestamptz, now()) else now() end;
 begin
   if v_kind is null or v_key is null or length(v_key) < 8 then
     raise exception 'kind and submission_key are required' using errcode = 'check_violation';
@@ -448,10 +458,11 @@ begin
                                       p ->> 'phone', p ->> 'city', p ->> 'website');
 
   insert into public.intake_submissions (production_id, section, kind, submission_key, contact_id, email,
-    full_name, film_title, payload, consent, subject_table, subject_id, confirmation, status, processed_at)
+    full_name, film_title, payload, consent, subject_table, subject_id, confirmation, status, origin, received_at, processed_at)
   values (v_prod, v_section, v_kind, v_key, v_contact, nullif(v_email, ''), left(p ->> 'name', 200), v_film,
     coalesce(p -> 'payload', '{}'), v_consent, p ->> 'subject_table', (p ->> 'subject_id')::uuid,
-    coalesce(p ->> 'confirmation', 'none'), case when v_contact is null then 'failed' else 'processed' end, now())
+    case when v_origin = 'import' then 'none' else coalesce(p ->> 'confirmation', 'none') end,
+    case when v_contact is null then 'failed' else 'processed' end, v_origin, v_at, now())
   returning id into v_sub;
 
   if v_contact is null then
@@ -463,12 +474,12 @@ begin
   if v_kind = 'newsletter' or coalesce((v_consent ->> 'newsletter')::boolean, false) then
     select id into v_aud from public.audiences where key = 'newsletter';
     perform private.subscribe(v_contact, v_aud, v_csource,
-      coalesce(nullif(v_ctext, ''), 'Signed up for the BLEUSKM Studios newsletter on bleuskm.com.'));
+      coalesce(nullif(v_ctext, ''), 'Signed up for the BLEUSKM Studios newsletter on bleuskm.com.'), v_at);
   end if;
   if v_film is not null and (v_kind = 'film_notify' or coalesce((v_consent ->> 'film_updates')::boolean, false)) then
     v_aud := private.film_audience(v_film, v_prod);
     perform private.subscribe(v_contact, v_aud, v_csource,
-      coalesce(nullif(v_ctext, ''), 'Signed up for updates on ' || v_film || ' on bleuskm.com.'));
+      coalesce(nullif(v_ctext, ''), 'Signed up for updates on ' || v_film || ' on bleuskm.com.'), v_at);
   end if;
   -- Operational audiences (no marketing consent implied).
   if v_kind in ('casting', 'crew', 'inquiry', 'client_inquiry') then
@@ -490,26 +501,31 @@ begin
     when 'contract' then 'Signed a contract on the website'
     else 'Sent a website form' end;
   perform private.log_activity(v_section, v_prod, v_contact, 'intake.' || v_kind, v_summary,
-                               'intake_submissions', v_sub, jsonb_build_object('film', v_film));
+                               'intake_submissions', v_sub, jsonb_build_object('film', v_film, 'origin', v_origin), v_at);
 
   return jsonb_build_object('submission_id', v_sub, 'contact_id', v_contact, 'duplicate', false);
 end;
 $$;
 
-create function private.subscribe(p_contact uuid, p_audience uuid, p_source text, p_text text)
+create function private.subscribe(p_contact uuid, p_audience uuid, p_source text, p_text text, p_at timestamptz default null)
 returns void
 language plpgsql
 security definer
 set search_path = ''
 as $$
+declare
+  v_at timestamptz := coalesce(p_at, now());
 begin
-  -- A fresh opt-in on the website re-subscribes someone who left earlier:
-  -- the new consent is recorded with its own time and wording.
+  -- A fresh opt-in re-subscribes someone who left earlier, recorded with its
+  -- own time and wording. An older (imported) opt-in never undoes a later
+  -- unsubscribe.
   insert into public.contact_subscriptions (contact_id, audience_id, status, consent_source, consent_text, consented_at)
-  values (p_contact, p_audience, 'subscribed', p_source, p_text, now())
+  values (p_contact, p_audience, 'subscribed', p_source, p_text, v_at)
   on conflict (contact_id, audience_id) do update
     set status = 'subscribed', consent_source = excluded.consent_source,
-        consent_text = excluded.consent_text, consented_at = now(), unsubscribed_at = null;
+        consent_text = excluded.consent_text, consented_at = excluded.consented_at, unsubscribed_at = null
+    where public.contact_subscriptions.status <> 'unsubscribed'
+       or public.contact_subscriptions.unsubscribed_at < excluded.consented_at;
 end;
 $$;
 
@@ -541,12 +557,10 @@ revoke all on function public.studio_intake(jsonb) from public, anon, authentica
 grant execute on function public.studio_intake(jsonb) to service_role;
 revoke all on function public.log_activity(text, uuid, uuid, text, text, text, uuid, jsonb) from public, anon;
 grant execute on function public.log_activity(text, uuid, uuid, text, text, text, uuid, jsonb) to authenticated, service_role;
-revoke all on function private.log_activity(text, uuid, uuid, text, text, text, uuid, jsonb) from public;
+revoke all on function private.log_activity(text, uuid, uuid, text, text, text, uuid, jsonb, timestamptz) from public;
 revoke all on function private.upsert_contact(text, text, text, text, text, text, text) from public;
-revoke all on function private.subscribe(uuid, uuid, text, text) from public;
+revoke all on function private.subscribe(uuid, uuid, text, text, timestamptz) from public;
 revoke all on function private.film_audience(text, uuid) from public;
-grant execute on function private.log_activity(text, uuid, uuid, text, text, text, uuid, jsonb) to service_role;
-grant execute on function private.upsert_contact(text, text, text, text, text, text, text) to service_role;
 
 -- ---------------------------------------------------------------------------
 -- Casting and crew applications join the contact and the timeline
@@ -657,3 +671,58 @@ end;
 $$;
 create trigger production_team_contact before insert or update of email on public.production_team
   for each row execute function private.production_team_contact();
+
+-- ---------------------------------------------------------------------------
+-- Merging duplicate contacts (owner only)
+-- ---------------------------------------------------------------------------
+-- Everything linked to the duplicate moves to the kept contact; the duplicate
+-- row stays (marked merged) so its history and audit trail are not lost.
+create function public.merge_contacts(p_from uuid, p_into uuid)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  f public.contacts;
+  t public.contacts;
+begin
+  if not private.is_owner() then
+    raise exception 'Only the owner can merge contacts' using errcode = 'insufficient_privilege';
+  end if;
+  select * into f from public.contacts where id = p_from and merged_into is null for update;
+  select * into t from public.contacts where id = p_into and merged_into is null for update;
+  if f.id is null or t.id is null or f.id = t.id then
+    raise exception 'Choose two different, unmerged contacts' using errcode = 'check_violation';
+  end if;
+
+  update public.casting_applications set contact_id = t.id where contact_id = f.id;
+  update public.production_team set contact_id = t.id where contact_id = f.id;
+  update public.documents set contact_id = t.id where contact_id = f.id;
+  update public.comm_messages set contact_id = t.id where contact_id = f.id;
+  update public.intake_submissions set contact_id = t.id where contact_id = f.id;
+  update public.activity set contact_id = t.id where contact_id = f.id;
+  -- Subscriptions: keep the kept contact's own, add the others. An
+  -- unsubscribe on either side wins.
+  update public.contact_subscriptions s set status = 'unsubscribed', unsubscribed_at = coalesce(o.unsubscribed_at, now())
+  from public.contact_subscriptions o
+  where s.contact_id = t.id and o.contact_id = f.id and o.audience_id = s.audience_id and o.status = 'unsubscribed';
+  update public.contact_subscriptions set contact_id = t.id
+  where contact_id = f.id and audience_id not in (select audience_id from public.contact_subscriptions where contact_id = t.id);
+
+  update public.contacts set
+    phone = coalesce(t.phone, f.phone), city = coalesce(t.city, f.city), website = coalesce(t.website, f.website),
+    company = coalesce(t.company, f.company), roles = coalesce(t.roles, f.roles),
+    notes = case when f.notes is null then t.notes when t.notes is null then f.notes else left(t.notes || E'\n\n' || f.notes, 10000) end,
+    tags = (select coalesce(array_agg(distinct x), '{}') from unnest(t.tags || f.tags) x)
+  where id = t.id;
+  -- The duplicate keeps its row for history, without the email (so the kept
+  -- contact owns that address from now on).
+  update public.contacts set merged_into = t.id, notes = left(coalesce(notes || E'\n\n', '') || 'Merged into ' || t.full_name || coalesce(' <' || f.email || '>', ''), 10000)
+  where id = f.id;
+  perform private.log_activity('contacts', null, t.id, 'contact.merged',
+    'Merged with a duplicate record (' || f.full_name || coalesce(', ' || f.email, '') || ')', 'contacts', f.id);
+end;
+$$;
+revoke all on function public.merge_contacts(uuid, uuid) from public, anon;
+grant execute on function public.merge_contacts(uuid, uuid) to authenticated;
