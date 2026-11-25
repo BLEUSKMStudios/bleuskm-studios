@@ -1,0 +1,138 @@
+# Studio OS database backup (read-only).
+#
+# Dumps the live Supabase database (roles, schema and all data, including
+# sign-ins and file records), then proves the backup is good:
+#   1. every table's row count in the backup matches the live database, and
+#   2. the backup restores cleanly into a throwaway database, with the app's
+#      tables (public, private) holding exactly the backed-up rows.
+# The backup is encrypted (7z, AES-256, file names hidden) with the owner's
+# BACKUP_PASSPHRASE before it is uploaded, because this repository is public.
+# The download expires after 1 day. Logs show table names and counts only.
+# Nothing in the database is changed.
+#
+# Runs on a manual dispatch, or on a push to the Studio OS branch whose
+# commit message contains [db-backup]. Both need the protected
+# supabase-staging environment, which holds the database password.
+
+name: Studio OS database backup
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - claude/project-thread-a60nsn
+    paths:
+      - ".github/workflows/studio-db-backup.yml"
+      - "studio/supabase/scripts/backup-verify.py"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supabase-staging
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    name: Back up and verify the database
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[db-backup]')
+    runs-on: ubuntu-latest
+    environment: supabase-staging
+    env:
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      SUPABASE_PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF }}
+      BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+      SUPABASE_POOLER_HOST: aws-1-us-west-2.pooler.supabase.com
+      VERIFY: studio/supabase/scripts/backup-verify.py
+    services:
+      restore:
+        image: supabase/postgres:17.6.1.054
+        env:
+          POSTGRES_PASSWORD: throwaway-restore-check
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -h localhost"
+          --health-interval 5s --health-timeout 5s --health-retries 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.122.1
+      - name: Install psql
+        run: sudo apt-get update -q && sudo apt-get install -y -q postgresql-client p7zip-full
+
+      - name: Check the settings (never uploads an unencrypted backup)
+        run: |
+          for v in SUPABASE_DB_PASSWORD SUPABASE_PROJECT_REF BACKUP_PASSPHRASE; do
+            if [ -z "${!v}" ]; then echo "::error::$v is not set in the supabase-staging environment"; exit 1; fi
+          done
+          if [ "${#BACKUP_PASSPHRASE}" -lt 16 ]; then echo "::error::BACKUP_PASSPHRASE must be at least 16 characters"; exit 1; fi
+
+      - name: Build the database connection
+        run: |
+          pw=$(python3 -c 'import os,urllib.parse;print(urllib.parse.quote(os.environ["SUPABASE_DB_PASSWORD"],safe=""))')
+          url="postgresql://postgres.${SUPABASE_PROJECT_REF}:${pw}@${SUPABASE_POOLER_HOST}:5432/postgres?sslmode=require"
+          echo "::add-mask::$pw"
+          echo "::add-mask::$url"
+          echo "LIVE_DB_URL=$url" >> "$GITHUB_ENV"
+
+      - name: Dump roles, schema and data
+        run: |
+          mkdir -p "$RUNNER_TEMP/backup"
+          cd "$RUNNER_TEMP/backup"
+          supabase db dump --db-url "$LIVE_DB_URL" -f roles.sql --role-only
+          supabase db dump --db-url "$LIVE_DB_URL" -f schema.sql
+          supabase db dump --db-url "$LIVE_DB_URL" -f data.sql --use-copy --data-only
+          for f in roles.sql schema.sql data.sql; do
+            [ -s "$f" ] || { echo "::error::$f is empty"; exit 1; }
+          done
+          ls -l --block-size=K roles.sql schema.sql data.sql | awk '{print $5, $9}'
+
+      - name: Check every table against the live database
+        run: |
+          cd "$RUNNER_TEMP/backup"
+          python3 "$GITHUB_WORKSPACE/$VERIFY" split data.sql "$RUNNER_TEMP/app-data.sql" counts.tsv
+          python3 "$GITHUB_WORKSPACE/$VERIFY" countsql counts.tsv all > "$RUNNER_TEMP/all-count.sql"
+          psql "$LIVE_DB_URL" -X -At -v ON_ERROR_STOP=1 -f "$RUNNER_TEMP/all-count.sql" > "$RUNNER_TEMP/live.tsv"
+          # A form submitted during the backup shows as a difference; run it again if so.
+          python3 "$GITHUB_WORKSPACE/$VERIFY" compare "$RUNNER_TEMP/live.tsv" counts.tsv "Backup vs live database"
+          echo "Uploaded files recorded in Storage (the files themselves are not in a database backup):"
+          psql "$LIVE_DB_URL" -X -At -c "select '  ' || bucket_id || ': ' || count(*) || ' files, ' || pg_size_pretty(coalesce(sum((metadata->>'size')::bigint), 0)) from storage.objects group by bucket_id order by bucket_id"
+
+      - name: Restore into a throwaway database and check it
+        env:
+          R: postgresql://supabase_admin:throwaway-restore-check@localhost:5433/postgres
+        run: |
+          cd "$RUNNER_TEMP/backup"
+          # Platform roles that exist on every Supabase project but not in a bare database.
+          grep -oE '(ROLE|TO|FROM|GRANTED BY) "[^"]+"' roles.sql | sed -E 's/.*"([^"]+)"/\1/' | sort -u | while read -r r; do
+            echo "do \$\$ begin if not exists (select 1 from pg_roles where rolname = '$r') then create role \"$r\" nologin; end if; end \$\$;"
+          done > "$RUNNER_TEMP/prep.sql"
+          psql "$R" -X -q -v ON_ERROR_STOP=1 -f "$RUNNER_TEMP/prep.sql"
+          psql "$R" -X -q --single-transaction -v ON_ERROR_STOP=1 -o /dev/null \
+            -f roles.sql -f schema.sql -c 'SET session_replication_role = replica' -f "$RUNNER_TEMP/app-data.sql"
+          awk -F'\t' '$1 ~ /^(public|private)\./' counts.tsv > "$RUNNER_TEMP/counts-app.tsv"
+          python3 "$GITHUB_WORKSPACE/$VERIFY" countsql counts.tsv app > "$RUNNER_TEMP/app-count.sql"
+          psql "$R" -X -At -v ON_ERROR_STOP=1 -f "$RUNNER_TEMP/app-count.sql" > "$RUNNER_TEMP/restored.tsv"
+          python3 "$GITHUB_WORKSPACE/$VERIFY" compare "$RUNNER_TEMP/counts-app.tsv" "$RUNNER_TEMP/restored.tsv" "Restored copy vs backup"
+
+      - name: Encrypt the backup
+        run: |
+          cd "$RUNNER_TEMP/backup"
+          stamp=$(date -u +%Y-%m-%d-%H%M)
+          name="studio-os-backup-$stamp.7z"
+          7z a -t7z -mhe=on -mx=9 -p"$BACKUP_PASSPHRASE" "$RUNNER_TEMP/$name" roles.sql schema.sql data.sql counts.tsv > /dev/null
+          7z t -p"$BACKUP_PASSPHRASE" "$RUNNER_TEMP/$name" > /dev/null && echo "The encrypted file opens with the passphrase."
+          rm -f roles.sql schema.sql data.sql "$RUNNER_TEMP/app-data.sql"
+          echo "BACKUP_FILE=$name" >> "$GITHUB_ENV"
+          echo "File: $name"
+          echo "SHA-256: $(sha256sum "$RUNNER_TEMP/$name" | cut -d' ' -f1)"
+
+      - name: Upload the encrypted backup (expires after 1 day)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.BACKUP_FILE }}
+          path: ${{ runner.temp }}/${{ env.BACKUP_FILE }}
+          retention-days: 1
+          if-no-files-found: error
