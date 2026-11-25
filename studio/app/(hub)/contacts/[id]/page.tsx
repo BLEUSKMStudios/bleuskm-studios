@@ -163,7 +163,7 @@ export default async function ContactPage({ params }: { params: Promise<{ id: st
           <div className="panel-head"><h2>Productions and documents</h2><Link className="btn btn-inline btn-quiet" href={`/contracts/new?contact=${id}`}>Send agreement</Link></div>
           <ul className="plain">
             {(team.data ?? []).map((t) => (
-              <li key={t.id as string}><strong>{prod(t.production_id as string)?.title}</strong> · {t.position as string} ({t.team as string}{t.department ? `, ${t.department}` : ""}) · <span className="tag tag-sm">{t.status as string}</span> <Link className="link" href={`/crew-roster/${t.id}`}>Open</Link> · <Link className="link" href={`/contracts/new?team=${t.id}`}>Send agreement</Link></li>
+              <li key={t.id as string}><strong>{prod(t.production_id as string)?.title}</strong> · {t.position as string} ({t.team as string}{t.department ? `, ${t.department}` : ""}) · <span className="tag tag-sm">{t.status as string}</span> <Link className="link" href={`/crew-roster/${t.id}`}>Open</Link> · <Link className="link" href={`/contracts/new?team=${t.id}`}>Send agreement</Link> · <Link className="link" href={`/onboarding/new?team=${t.id}`}>Send materials</Link></li>
             ))}
             {(agreements.data ?? []).filter((g) => g.status !== "signed").map((g) => (
               <li key={g.id as string}>Agreement: <Link className="link" href={`/contracts/${g.id}`}>{String(g.template_key).replace(/_/g, " ")}</Link> · <span className="tag tag-sm">{g.status as string}</span> · {prod(g.production_id as string)?.title ?? ""}</li>

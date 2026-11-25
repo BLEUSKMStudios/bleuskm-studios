@@ -81,6 +81,7 @@ export default async function AgreementPage({ params, searchParams }: { params: 
           <div className="row-actions">
             <a className="btn btn-inline" href={`/api/contracts/${r.id}/pdf`}>Download signed PDF</a>
             <a className="btn btn-inline btn-quiet" href={`/api/contracts/${r.id}/pdf?view=1`} target="_blank" rel="noopener noreferrer">View / print</a>
+            {canEdit && <Link className="btn btn-inline btn-quiet" href={`/onboarding/new?${r.application_id ? `application=${r.application_id}` : r.team_id ? `team=${r.team_id}` : `production=${r.production_id}${r.contact_id ? `&contact=${r.contact_id}` : ""}`}`}>Send onboarding materials</Link>}
           </div>
         )}
       </section>

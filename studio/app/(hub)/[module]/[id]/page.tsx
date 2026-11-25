@@ -12,6 +12,7 @@ import { ModuleTable } from "@/components/hub/ModuleTable";
 import { ActionForm } from "@/components/hub/ActionForm";
 import { deleteModuleRecord } from "@/lib/hub/module-actions";
 import { ScriptPanels } from "@/components/hub/ScriptPanels";
+import { DocumentPanels } from "@/components/hub/DocumentPanels";
 
 // One record: its details, the edit form (with Edit access) and any child list.
 export default async function RecordPage({ params }: { params: Promise<{ module: string; id: string }> }) {
@@ -65,6 +66,7 @@ export default async function RecordPage({ params }: { params: Promise<{ module:
       )}
 
       {def.key === "scripts" && <ScriptPanels row={row} canEdit={canEdit} blocked={blocked} />}
+      {def.table === "documents" && <DocumentPanels row={row} canEdit={canEdit} blocked={blocked} />}
 
       {childDef && children && (
         <section className="panel">

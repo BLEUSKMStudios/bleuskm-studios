@@ -87,6 +87,7 @@ export default async function ApplicantPage({ params }: { params: Promise<{ slug
     supabase.from("contract_requests").select("id, template_key, status, expires_at, signed_at, sent_at, created_at").eq("application_id", a.id).order("created_at", { ascending: false }),
     dbCheck(p.id, "documents", "edit"),
   ]);
+  const { data: packages } = await supabase.from("onboarding_packages").select("id, status, sent_at, acknowledged_at, subject").eq("application_id", a.id).order("created_at", { ascending: false }).limit(20);
 
   return (
     <>
@@ -161,7 +162,7 @@ export default async function ApplicantPage({ params }: { params: Promise<{ slug
         <section className="panel">
           <div className="panel-head">
             <h2>Agreement</h2>
-            {canSendAgreement && <Link className="btn btn-inline" href={`/contracts/new?application=${a.id}`}>Send agreement</Link>}
+            {canSendAgreement && <span className="row-actions"><Link className="btn btn-inline" href={`/contracts/new?application=${a.id}`}>Send agreement</Link><Link className="btn btn-inline btn-quiet" href={`/onboarding/new?application=${a.id}`}>Send materials</Link></span>}
           </div>
           {(agreements ?? []).length === 0 && <p className="small">No agreement yet. {["selected", "offered", "cast"].includes(a.status) ? "Ready for one: Send agreement recommends the right template and fills it in." : "Usually sent once someone is selected."}</p>}
           <ul className="plain">
@@ -175,6 +176,11 @@ export default async function ApplicantPage({ params }: { params: Promise<{ slug
                 </li>
               );
             })}
+            {(packages ?? []).map((k) => (
+              <li key={k.id as string}>Materials: <Link className="link" href={`/onboarding/${k.id}`}>{k.subject as string}</Link>{" "}
+                <span className="tag tag-sm">{k.status === "acknowledged" ? "confirmed received" : k.status as string}</span>{" "}
+                <span className="small">{formatStudioTime((k.acknowledged_at ?? k.sent_at) as string)}</span></li>
+            ))}
           </ul>
         </section>
       )}

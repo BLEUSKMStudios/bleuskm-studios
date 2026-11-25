@@ -169,12 +169,13 @@ export const MODULES: readonly ModuleDef[] = [
   {
     key: "documents", table: "documents", section: "documents", group: "preproduction",
     title: "Documents", singular: "document",
-    lead: "Contracts, releases, permits and paperwork, with signing status and the file in Drive.",
+    lead: "The production's documents: scripts and sides, treatments, schedules, call sheets, guides, contracts, releases and permits, each with its file (stored privately) or Drive link and version history.",
     studioLevel: "allowed", titleField: "title", orderBy: { column: "created_at", ascending: false },
     fields: [
       { name: "title", label: "Title", type: "text", required: true, max: 200, list: true },
-      { name: "category", label: "Category", type: "select", list: true, initial: "contract",
-        options: opts(["contract", "Contract"], ["release", "Release"], ["permit", "Permit"], ["insurance", "Insurance"], ["schedule", "Schedule"], ["report", "Report"], ["guide", "Guide"], ["other", "Other"]) },
+      { name: "category", label: "Category", type: "select", list: true, initial: "other",
+        options: opts(["script", "Script"], ["sides", "Sides"], ["treatment", "Treatment"], ["schedule", "Schedule"], ["rehearsal", "Rehearsal schedule"], ["call_sheet", "Call sheet"],
+          ["location_info", "Location & parking"], ["guide", "Guide or instructions"], ["contract", "Contract"], ["release", "Release"], ["permit", "Permit"], ["insurance", "Insurance"], ["report", "Report"], ["other", "Other"]) },
       { name: "contract_type", label: "Contract type", type: "text", max: 120 },
       { name: "status", label: "Status", type: "select", list: true, initial: "draft",
         options: opts(["draft", "Draft"], ["sent", "Sent"], ["signed", "Signed"], ["filed", "Filed"], ["expired", "Expired"], ["void", "Void"]) },
@@ -420,6 +421,8 @@ export function moduleByKey(key: string): ModuleDef | undefined {
 export function selectColumns(def: ModuleDef): string {
   const cols = new Set(["id", "production_id", "source", "updated_at", ...def.fields.map((f) => f.name), ...Object.keys(def.fixed ?? {})]);
   if (def.child) cols.add("created_at");
+  // Documents: the stored file and version chain are shown in their own panel.
+  if (def.table === "documents") for (const c of ["storage_path", "file_name", "size_bytes", "version", "supersedes_id"]) cols.add(c);
   return [...cols].join(", ");
 }
 

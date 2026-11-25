@@ -77,6 +77,7 @@ export const NAV_ALIASES: Record<string, string> = {
   "/releases": "/distribution",
   "/notes": "/tracking",
   "/administration": "/settings",
+  "/onboarding": "/documents",
 };
 
 /** True when this person holds any grant on the section (any production or Studio level). */
