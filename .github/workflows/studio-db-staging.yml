@@ -25,6 +25,11 @@ on:
         type: choice
         default: none
         options: [none, dry-run, apply, validate]
+      contacts_import:
+        description: "Contacts import from Brevo and the website's Airtable sign-ups (dry-run keeps nothing; never sends email)"
+        type: choice
+        default: none
+        options: [none, dry-run, apply]
 
 permissions:
   contents: read
@@ -136,3 +141,46 @@ jobs:
       - name: Remove the generated file
         if: always()
         run: rm -f "$RUNNER_TEMP/final-hand.sql"
+
+  contacts-import:
+    name: Contacts import (${{ github.event.inputs.contacts_import }})
+    needs: deploy
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.contacts_import != 'none'
+    runs-on: ubuntu-latest
+    environment: supabase-staging
+    defaults:
+      run:
+        working-directory: studio
+    env:
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      SUPABASE_PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF }}
+      SUPABASE_POOLER_HOST: aws-1-us-west-2.pooler.supabase.com
+      AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
+      BREVO_KEY: ${{ secrets.BREVO_KEY }}
+      MODE: ${{ github.event.inputs.contacts_import }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install psql
+        run: sudo apt-get update -q && sudo apt-get install -y -q postgresql-client
+      - name: Check the environment is configured
+        run: |
+          for v in SUPABASE_DB_PASSWORD SUPABASE_PROJECT_REF AIRTABLE_TOKEN BREVO_KEY; do
+            if [ -z "${!v}" ]; then echo "::error::$v is not set in the supabase-staging environment"; exit 1; fi
+          done
+      - name: Build the database connection
+        run: |
+          pw=$(python3 -c 'import os,urllib.parse;print(urllib.parse.quote(os.environ["SUPABASE_DB_PASSWORD"],safe=""))')
+          url="postgresql://postgres.${SUPABASE_PROJECT_REF}:${pw}@${SUPABASE_POOLER_HOST}:5432/postgres?sslmode=require"
+          echo "::add-mask::$pw"
+          echo "::add-mask::$url"
+          echo "STAGING_DB_URL=$url" >> "$GITHUB_ENV"
+      - name: Read Brevo and Airtable and build the import (counts only)
+        run: node scripts/import-contacts.mts --mode="$MODE" --out="$RUNNER_TEMP/contacts.sql"
+      - name: Run it in one transaction
+        run: psql "$STAGING_DB_URL" -X -q -v ON_ERROR_STOP=1 -o /dev/null -f "$RUNNER_TEMP/contacts.sql"
+      - name: Remove the generated file
+        if: always()
+        run: rm -f "$RUNNER_TEMP/contacts.sql"

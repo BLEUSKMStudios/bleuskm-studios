@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { MODULES, moduleByKey, parseFields, checkScope, selectColumns, optionLabel } from "./modules.ts";
 import { NAV, navFor, groupForPath } from "./nav.ts";
 import { writeBlockReason, commsSendBlockReason, integrations, PREVIEW_READ_ONLY } from "./env.ts";
@@ -17,12 +17,14 @@ const form = (v: Record<string, string>) => (k: string) => v[k];
 const migration = (f: string) => readFileSync(new URL(`../../supabase/migrations/${f}`, import.meta.url), "utf8");
 const SQL = migration("20261124090000_studio_modules.sql");
 // Later migrations extend those tables with `alter table … add column` / `add constraint … check`.
-const LATER = migration("20261124100000_workspaces.sql").replace(/^\s*--.*$/gm, "");
+const LATER = readdirSync(new URL("../../supabase/migrations/", import.meta.url))
+  .filter((f) => f.endsWith(".sql") && f > "20261124090000_studio_modules.sql").sort()
+  .map(migration).join("\n").replace(/^\s*--.*$/gm, "");
 function tableBlock(table: string): string {
   const start = SQL.indexOf(`create table public.${table} (`);
   assert.ok(start >= 0, `migration creates public.${table}`);
   const alters = LATER.split(/;\s*\n/).filter((st) => new RegExp(`^alter table public\\.${table}\\s`).test(st.trimStart()))
-    .map((st) => st.replace(/add column\s+/g, "\n  ").replace(/add constraint \w+ check \((\w+) in \(/g, "\n  $1 text check ($1 in ("));
+    .map((st) => st.replace(/add column\s+/g, "\n  ").replace(/add constraint \w+\s+check \((\w+) in \(/g, "\n  $1 text check ($1 in ("));
   return [SQL.slice(start, SQL.indexOf("\n);", start)), ...alters].join("\n");
 }
 function checkValues(block: string, column: string): string[] | null {

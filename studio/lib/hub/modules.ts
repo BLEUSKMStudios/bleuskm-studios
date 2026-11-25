@@ -394,12 +394,12 @@ export const MODULES: readonly ModuleDef[] = [
   {
     key: "contacts", table: "contacts", section: "contacts", group: "operations",
     title: "Contacts", singular: "contact",
-    lead: "Everyone BLEUSKM works with: crew, cast, clients, vendors, locations and festivals.",
+    lead: "Everyone BLEUSKM works with, one record per person: applicants, cast and crew, subscribers, clients and vendors.",
     studioLevel: "only", titleField: "full_name", orderBy: { column: "full_name", ascending: true },
     fields: [
       { name: "full_name", label: "Name", type: "text", required: true, max: 200, list: true },
       { name: "category", label: "Category", type: "select", list: true, initial: "crew",
-        options: opts(["crew", "Crew"], ["cast", "Cast"], ["client", "Client"], ["vendor", "Vendor"], ["location", "Location"], ["festival", "Festival"], ["press", "Press"], ["other", "Other"]) },
+        options: opts(["crew", "Crew"], ["cast", "Cast"], ["subscriber", "Subscriber"], ["client", "Client"], ["inquiry", "Inquiry"], ["vendor", "Vendor"], ["location", "Location"], ["festival", "Festival"], ["press", "Press"], ["other", "Other"]) },
       { name: "kind", label: "Person or company", type: "select", initial: "person", options: opts(["person", "Person"], ["company", "Company"]) },
       { name: "roles", label: "Roles", type: "text", max: 500, list: true },
       { name: "email", label: "Email", type: "email", max: 254, list: true },

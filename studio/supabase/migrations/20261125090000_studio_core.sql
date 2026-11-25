@@ -474,12 +474,12 @@ begin
   if v_kind = 'newsletter' or coalesce((v_consent ->> 'newsletter')::boolean, false) then
     select id into v_aud from public.audiences where key = 'newsletter';
     perform private.subscribe(v_contact, v_aud, v_csource,
-      coalesce(nullif(v_ctext, ''), 'Signed up for the BLEUSKM Studios newsletter on bleuskm.com.'), v_at);
+      coalesce(nullif(v_ctext, ''), 'Signed up for the BLEUSKM Studios newsletter on bleuskm.com.'), v_at, v_origin = 'import');
   end if;
   if v_film is not null and (v_kind = 'film_notify' or coalesce((v_consent ->> 'film_updates')::boolean, false)) then
     v_aud := private.film_audience(v_film, v_prod);
     perform private.subscribe(v_contact, v_aud, v_csource,
-      coalesce(nullif(v_ctext, ''), 'Signed up for updates on ' || v_film || ' on bleuskm.com.'), v_at);
+      coalesce(nullif(v_ctext, ''), 'Signed up for updates on ' || v_film || ' on bleuskm.com.'), v_at, v_origin = 'import');
   end if;
   -- Operational audiences (no marketing consent implied).
   if v_kind in ('casting', 'crew', 'inquiry', 'client_inquiry') then
@@ -507,7 +507,8 @@ begin
 end;
 $$;
 
-create function private.subscribe(p_contact uuid, p_audience uuid, p_source text, p_text text, p_at timestamptz default null)
+create function private.subscribe(p_contact uuid, p_audience uuid, p_source text, p_text text, p_at timestamptz default null,
+                                  p_import boolean default false)
 returns void
 language plpgsql
 security definer
@@ -517,15 +518,14 @@ declare
   v_at timestamptz := coalesce(p_at, now());
 begin
   -- A fresh opt-in re-subscribes someone who left earlier, recorded with its
-  -- own time and wording. An older (imported) opt-in never undoes a later
-  -- unsubscribe.
+  -- own time and wording. An import never undoes an unsubscribe.
   insert into public.contact_subscriptions (contact_id, audience_id, status, consent_source, consent_text, consented_at)
   values (p_contact, p_audience, 'subscribed', p_source, p_text, v_at)
   on conflict (contact_id, audience_id) do update
     set status = 'subscribed', consent_source = excluded.consent_source,
         consent_text = excluded.consent_text, consented_at = excluded.consented_at, unsubscribed_at = null
     where public.contact_subscriptions.status <> 'unsubscribed'
-       or public.contact_subscriptions.unsubscribed_at < excluded.consented_at;
+       or (not p_import and public.contact_subscriptions.unsubscribed_at < excluded.consented_at);
 end;
 $$;
 
@@ -559,7 +559,7 @@ revoke all on function public.log_activity(text, uuid, uuid, text, text, text, u
 grant execute on function public.log_activity(text, uuid, uuid, text, text, text, uuid, jsonb) to authenticated, service_role;
 revoke all on function private.log_activity(text, uuid, uuid, text, text, text, uuid, jsonb, timestamptz) from public;
 revoke all on function private.upsert_contact(text, text, text, text, text, text, text) from public;
-revoke all on function private.subscribe(uuid, uuid, text, text, timestamptz) from public;
+revoke all on function private.subscribe(uuid, uuid, text, text, timestamptz, boolean) from public;
 revoke all on function private.film_audience(text, uuid) from public;
 
 -- ---------------------------------------------------------------------------
@@ -716,8 +716,8 @@ begin
     notes = case when f.notes is null then t.notes when t.notes is null then f.notes else left(t.notes || E'\n\n' || f.notes, 10000) end,
     tags = (select coalesce(array_agg(distinct x), '{}') from unnest(t.tags || f.tags) x)
   where id = t.id;
-  -- The duplicate keeps its row for history, without the email (so the kept
-  -- contact owns that address from now on).
+  -- The duplicate keeps its row for history, marked as merged (the email
+  -- index ignores merged rows, so only the kept contact is matched by email).
   update public.contacts set merged_into = t.id, notes = left(coalesce(notes || E'\n\n', '') || 'Merged into ' || t.full_name || coalesce(' <' || f.email || '>', ''), 10000)
   where id = f.id;
   perform private.log_activity('contacts', null, t.id, 'contact.merged',
