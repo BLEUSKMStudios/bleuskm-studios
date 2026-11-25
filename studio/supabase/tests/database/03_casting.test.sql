@@ -29,9 +29,9 @@ insert into public.casting_roles (id, call_id, production_id, name, status, sort
 
 select is((select production_id from public.casting_roles where id = '00000000-0000-0000-0000-0000000d0001'), :P1::uuid,
   'A role always takes its casting call''s production, whatever was sent');
-select is((select count(*) from public.casting_templates where production_id = :P1), 6::bigint,
-  'The first casting call seeds six email templates for the production');
-select is((select count(*) from public.casting_templates where production_id = :P2), 6::bigint,
+select is((select count(*) from public.casting_templates where production_id = :P1), 10::bigint,
+  'The first casting call seeds ten email templates for the production');
+select is((select count(*) from public.casting_templates where production_id = :P2), 10::bigint,
   'Each production gets its own templates');
 
 -- =========================================================================

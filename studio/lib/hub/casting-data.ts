@@ -24,6 +24,7 @@ export type Application = {
 export type Material = {
   id: string; application_id: string; kind: MaterialKind; storage_path: string | null; url: string | null;
   file_name: string | null; mime_type: string | null; size_bytes: number | null; label: string | null; created_at: string;
+  storage_bucket?: string;
 };
 export type Note = { id: string; application_id: string; author_id: string | null; body: string; created_at: string };
 export type Session = {
@@ -43,12 +44,33 @@ export const CALL_COLS = "id, production_id, public_slug, title, summary, descri
 export const ROLE_COLS = "id, call_id, production_id, name, role_type, summary, description, requirements, age_min, age_max, deadline, status, sort";
 // Never "*": the upload token column is not readable by hub users.
 export const APP_COLS = "id, production_id, call_id, role_id, full_name, email, phone, age, location, pronouns, about, availability, source, access_code, status, rating, status_changed_at, submitted_at";
-export const MATERIAL_COLS = "id, application_id, kind, storage_path, url, file_name, mime_type, size_bytes, label, created_at";
+export const MATERIAL_COLS = "id, application_id, kind, storage_path, url, file_name, mime_type, size_bytes, label, created_at, storage_bucket";
 export const SESSION_COLS = "id, application_id, kind, starts_at, location, meeting_link, status, notes, created_at";
 export const TEMPLATE_COLS = "id, production_id, key, name, subject, body, sets_status, sort";
 export const MESSAGE_COLS = "id, application_id, to_email, subject, body, status, error, sent_by, sent_at";
 
 export const BUCKET = "casting-materials";
+
+/**
+ * Short-lived links to private materials, made with the signed-in person's
+ * own rights (storage policies check Casting access). Keyed by bucket:path.
+ */
+export async function signMaterials(materials: readonly Pick<Material, "storage_path" | "storage_bucket">[], seconds = 3600): Promise<Map<string, string>> {
+  const { supabase } = await loadSession();
+  const out = new Map<string, string>();
+  const byBucket = new Map<string, string[]>();
+  for (const m of materials) {
+    if (!m.storage_path) continue;
+    const b = m.storage_bucket ?? BUCKET;
+    byBucket.set(b, [...(byBucket.get(b) ?? []), m.storage_path]);
+  }
+  for (const [bucket, paths] of byBucket) {
+    const { data } = await supabase.storage.from(bucket).createSignedUrls(paths, seconds);
+    for (const s of data ?? []) if (s.signedUrl && s.path) out.set(`${bucket}:${s.path}`, s.signedUrl);
+  }
+  return out;
+}
+export const materialKey = (m: Pick<Material, "storage_path" | "storage_bucket">) => `${m.storage_bucket ?? BUCKET}:${m.storage_path}`;
 
 /** Calls and roles of one production (Row Level Security decides what comes back). */
 export async function callsAndRoles(productionId: string) {

@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { loadSession } from "@/lib/auth/session";
 import { NoAccess, PageHead } from "@/components/hub/Page";
+import { SendId } from "@/components/hub/SendId";
 import { HubForm, Submit } from "@/components/hub/HubForm";
 import { PickAll, PickBox, PickedInputs, SelectionProvider } from "@/components/hub/Selection";
 import { bulkUpdate, sendEmails } from "@/lib/hub/casting-actions";
+import { inviteToSelfTape } from "@/lib/hub/selftape-actions";
 import { APP_COLS, castingAccess, callsAndRoles, templatesFor, type Application } from "@/lib/hub/casting-data";
 import { APP_STATUSES, APP_STATUS_LABEL, CALL_STATUS_LABEL, formatStudioTime, isOneOf } from "@/lib/hub/casting-core";
 
@@ -134,6 +136,27 @@ export default async function CastingHome({ params, searchParams }: { params: Pr
             <h2>Email ticked applicants</h2>
             <BulkEmail productionId={p.id} templates={templates.map((t) => ({ id: t.id, name: t.name }))} />
           </section>
+          <section className="panel">
+            <h2>Invite ticked applicants to self-tape</h2>
+            <p className="small">Each person gets their own secure upload link. Uses the “Self-tape invitation” template.</p>
+            <HubForm action={inviteToSelfTape} className="action-form" confirm="Send a self-tape invitation to every ticked applicant now?">
+              <SendId />
+              <PickedInputs />
+              <input type="hidden" name="production_id" value={p.id} />
+              <label className="field"><span>Deadline (Central)</span><input type="datetime-local" name="deadline" /></label>
+              <label className="field"><span>Sides link (optional)</span><input name="sides_url" placeholder="https://" /></label>
+              <label className="field"><span>Instructions</span><textarea name="instructions" rows={4} maxLength={10000} /></label>
+              <div><Submit busy="Sending…">Send invitations</Submit></div>
+            </HubForm>
+          </section>
+          <section className="panel">
+            <h2>Compare ticked applicants</h2>
+            <p className="small">Side by side: headshots, self-tapes, answers and ratings.</p>
+            <form method="get" action={`${base}/compare`} className="action-form">
+              <PickedInputs />
+              <button className="btn btn-inline" type="submit">Compare</button>
+            </form>
+          </section>
         </div>
       )}
       </SelectionProvider>
@@ -159,6 +182,7 @@ function BulkStatus({ productionId }: { productionId: string }) {
 function BulkEmail({ productionId, templates }: { productionId: string; templates: { id: string; name: string }[] }) {
   return (
     <HubForm action={sendEmails} className="action-form" confirm="Send this email to every ticked applicant now?">
+      <SendId />
       <PickedInputs />
       <input type="hidden" name="production_id" value={productionId} />
       <label className="field"><span>Template</span>

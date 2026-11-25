@@ -3,7 +3,7 @@
 begin;
 \ir 00_helpers.sql
 
-select plan(40);
+select plan(41);
 
 \set O  '''00000000-0000-0000-0000-0000000000a0'''
 \set A  '''00000000-0000-0000-0000-0000000000a1'''
@@ -26,8 +26,10 @@ insert into public.casting_roles (id, call_id, name, status) values
 -- Seeds
 -- =========================================================================
 select is((select count(*) from public.email_identities), 5::bigint, 'Five sender identities exist');
-select is((select count(*) from public.email_identities where brevo_verified or zoho_send_as or zoho_kind <> 'unverified'),
-  0::bigint, 'No identity starts as verified: the owner confirms each one');
+select is((select string_agg(key, ',' order by key) from public.email_identities where brevo_verified), 'casting,crew',
+  'Only casting@ and crew@ (already sending live) start as verified Brevo senders');
+select is((select count(*) from public.email_identities where zoho_send_as or zoho_kind <> 'unverified'),
+  0::bigint, 'No Zoho identity is assumed: the owner confirms each one');
 select is((select count(*) from public.email_templates where production_id is null), 5::bigint, 'Five confirmation templates exist');
 select is((select count(*) from public.email_templates where auto_send), 0::bigint, 'No confirmation is switched on by default');
 select is((select marketing from public.audiences where key = 'newsletter'), true, 'The newsletter is a marketing audience');

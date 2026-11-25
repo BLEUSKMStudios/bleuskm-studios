@@ -12,7 +12,7 @@ import {
   CASTING_FROM, CREW_FROM, cleanUrl, fillTemplate, firstName, formatStudioTime, isCrewCall, isOneOf, studioLocalToIso, type TemplateVars,
 } from "./casting-core.ts";
 import { slugify } from "./labels.ts";
-import { sendCastingEmail } from "./brevo.ts";
+import { deliverToApplicant } from "./casting-mail.ts";
 import { APP_COLS, type Application } from "./casting-data.ts";
 
 export type ActionState = { error?: string; done?: string } | undefined;
@@ -299,6 +299,9 @@ export async function sendEmails(_: ActionState, form: FormData): Promise<Action
   const templateId = text(form.get("template_id"));
   const applyStatus = text(form.get("apply_status")) === "on";
   const { supabase } = await loadSession();
+  const me = await requireSignedIn();
+  // One id per opened form: submitting the same form twice never sends twice.
+  const sendId = /^[\w-]{8,64}$/.test(text(form.get("send_id"))) ? text(form.get("send_id")) : crypto.randomUUID();
 
   let subject = text(form.get("subject"));
   let body = text(form.get("body"));
@@ -330,17 +333,18 @@ export async function sendEmails(_: ActionState, form: FormData): Promise<Action
   const crewCalls = new Set((calls ?? []).filter((c) => isCrewCall(c.public_slug as string)).map((c) => c.id as string));
 
   let sent = 0;
+  let skipped = 0;
   const failed: string[] = [];
   for (const a of (apps ?? []) as Application[]) {
     const vars = await varsFor(a, ctx);
     const s = fillTemplate(subject, vars).replace(/\s+/g, " ").trim();
     const b = fillTemplate(body, vars);
-    const r = await sendCastingEmail({ email: a.email, name: a.full_name }, s, b, crewCalls.has(a.call_id));
-    await supabase.from("casting_messages").insert({
-      application_id: a.id, production_id: productionId, template_id: template, to_email: a.email,
-      subject: s, body: b, status: r.ok ? "sent" : "failed",
-      provider_id: r.ok ? r.id : null, error: r.ok ? null : r.error,
+    const r = await deliverToApplicant(supabase, {
+      application: { id: a.id, email: a.email, full_name: a.full_name, production_id: productionId },
+      crew: crewCalls.has(a.call_id), subject: s, body: b, templateId: template,
+      sendKey: `casting-email:${sendId}:${a.id}`, sentByName: me.fullName,
     });
+    if (r.ok && r.skipped) { skipped++; continue; }
     if (r.ok) {
       sent++;
       if (applyStatus && setsStatus) await supabase.from("casting_applications").update({ status: setsStatus }).eq("id", a.id);
@@ -351,5 +355,6 @@ export async function sendEmails(_: ActionState, form: FormData): Promise<Action
   revalidatePath("/productions", "layout");
   if (failed.length) return { error: `Sent ${sent}. Not sent: ${failed.slice(0, 5).join("; ")}${failed.length > 5 ? "…" : ""}` };
   const froms = [...new Set(((apps ?? []) as Application[]).map((a) => (crewCalls.has(a.call_id) ? CREW_FROM : CASTING_FROM)))];
-  return { done: `Sent ${sent} email${sent === 1 ? "" : "s"} from ${froms.join(" and ")}.` };
+  const again = skipped ? ` ${skipped} ${skipped === 1 ? "person had" : "people had"} already received this exact email, so it wasn't sent again.` : "";
+  return { done: `Sent ${sent} email${sent === 1 ? "" : "s"} from ${froms.join(" and ")}.${again}` };
 }

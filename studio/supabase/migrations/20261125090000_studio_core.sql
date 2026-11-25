@@ -276,8 +276,9 @@ create trigger audit_intake_submissions after insert or update or delete on publ
 -- ---------------------------------------------------------------------------
 -- Sender identities (casting@, crew@, newsletter@, films@, studio@)
 -- ---------------------------------------------------------------------------
--- Nothing is sent from an identity until the owner marks it verified for the
--- provider that sends it. "kind" records what the address really is in Zoho
+-- Nothing is sent from an identity until it is marked verified for the
+-- provider that sends it (casting@ and crew@ already send live through Brevo;
+-- the others wait for the owner). "kind" records what the address really is in Zoho
 -- (alias, group, forwarding or separate mailbox), so no one has to assume.
 create table public.email_identities (
   key            text primary key check (key ~ '^[a-z]+$'),
@@ -305,12 +306,14 @@ create policy identities_select on public.email_identities for select to authent
 create policy identities_update on public.email_identities for update to authenticated
   using (private.is_owner()) with check (private.is_owner());
 
-insert into public.email_identities (key, address, display_name, purpose) values
-  ('casting',    'casting@bleuskm.com',    'BLEUSKM Studios Casting', 'Casting confirmations, actor messages, self-tape and callback invitations, decisions, audition details.'),
-  ('crew',       'crew@bleuskm.com',       'BLEUSKM Studios Crew',    'Crew confirmations, invitations, decisions, onboarding, department and production updates.'),
-  ('newsletter', 'newsletter@bleuskm.com', 'BLEUSKM Studios',         'Newsletters, announcements and subscriber campaigns.'),
-  ('films',      'films@bleuskm.com',      'BLEUSKM Studios Films',   'Film notifications, casting-open announcements and film campaigns.'),
-  ('studio',     'studio@bleuskm.com',     'BLEUSKM Studios',         'General business and client correspondence.');
+insert into public.email_identities (key, address, display_name, purpose, brevo_verified, notes) values
+  ('casting',    'casting@bleuskm.com',    'BLEUSKM Studios Casting', 'Casting confirmations, actor messages, self-tape and callback invitations, decisions, audition details.',
+   true, 'Already a verified Brevo sender: the live casting emails have gone out from it since November 23.'),
+  ('crew',       'crew@bleuskm.com',       'BLEUSKM Studios Crew',    'Crew confirmations, invitations, decisions, onboarding, department and production updates.',
+   true, 'Already a verified Brevo sender: the live crew-call emails have gone out from it since November 23.'),
+  ('newsletter', 'newsletter@bleuskm.com', 'BLEUSKM Studios',         'Newsletters, announcements and subscriber campaigns.', false, null),
+  ('films',      'films@bleuskm.com',      'BLEUSKM Studios Films',   'Film notifications, casting-open announcements and film campaigns.', false, null),
+  ('studio',     'studio@bleuskm.com',     'BLEUSKM Studios',         'General business and client correspondence.', false, null);
 
 alter table public.audiences add constraint audiences_identity_fk
   foreign key (identity_key) references public.email_identities (key);

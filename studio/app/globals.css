@@ -258,8 +258,8 @@ a { color: inherit; }
 .tag-call-draft { background: var(--warn-bg); color: var(--gold); }
 .tag-call-closed { background: var(--bad-bg); color: var(--bad); }
 .tag-app-submitted { background: var(--warn-bg); color: var(--gold); }
-.tag-app-shortlisted, .tag-app-callback, .tag-app-audition, .tag-app-offered { background: var(--info-bg); color: var(--info); }
-.tag-app-cast { background: var(--good-bg); color: var(--good); }
+.tag-app-shortlisted, .tag-app-selftape_invited, .tag-app-selftape_received, .tag-app-callback, .tag-app-audition, .tag-app-offered { background: var(--info-bg); color: var(--info); }
+.tag-app-cast, .tag-app-selected { background: var(--good-bg); color: var(--good); }
 .tag-app-not_selected, .tag-app-withdrawn { background: var(--bad-bg); color: var(--bad); }
 
 /* Tabs, stages, chips */
@@ -362,3 +362,4 @@ code { font-size: 0.92em; background: var(--bg-2); border: 1px solid var(--line)
 .upload-row .msg, .upload-row .small { flex-basis: 100%; margin: 0; }
 .row-between { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
 .row-between .action-form { margin: 0; }
+.row-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; align-items: center; }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { HubForm, Submit } from "@/components/hub/HubForm";
+import { SendId } from "@/components/hub/SendId";
 import { fillTemplate, missingFields, type TemplateVars } from "@/lib/hub/casting-core";
 
 type T = { id: string; name: string; subject: string; body: string; sets_status: string | null };
@@ -30,6 +31,7 @@ export function EmailComposer({ action, templates, vars, applicationId, producti
   const missing = missingFields(subject + "\n" + body, vars);
   return (
     <HubForm action={action} className="action-form" confirm="Send this email now?">
+      <SendId />
       <input type="hidden" name="ids" value={applicationId} />
       <input type="hidden" name="production_id" value={productionId} />
       <input type="hidden" name="template_id" value={tid} />

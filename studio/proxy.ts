@@ -4,8 +4,10 @@ import { NextResponse, type NextRequest } from "next/server";
 // Keeps the sign-in session fresh on every request and sends signed-out
 // visitors to the sign-in page. Each page still checks access on the server
 // itself (lib/auth/session.ts); this is only the first gate.
-// /api/intake checks its own server secret; it is called by the website, not browsers.
-const PUBLIC_PATHS = ["/login", "/forgot-password", "/auth/confirm", "/auth/signout", "/robots.txt", "/api/intake"];
+// /api/intake checks its own server secret (the website calls it). /upload,
+// /sign and their APIs are personal links for applicants and signers: each
+// checks its own secret token and shows only that person's invitation.
+const PUBLIC_PATHS = ["/login", "/forgot-password", "/auth/confirm", "/auth/signout", "/robots.txt", "/api/intake", "/upload", "/api/selftape", "/sign", "/api/sign", "/d"];
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });

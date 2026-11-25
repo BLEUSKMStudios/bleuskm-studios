@@ -6,7 +6,7 @@ import { writeBlockReason } from "@/lib/hub/env";
 import { moduleByKey } from "@/lib/hub/modules";
 import { isUuid } from "@/lib/sections";
 import { APP_STATUS_LABEL, MATERIAL_LABEL, formatStudioTime, type AppStatus } from "@/lib/hub/casting-core";
-import { BUCKET } from "@/lib/hub/casting-data";
+import { materialKey, signMaterials } from "@/lib/hub/casting-data";
 import { CATEGORY_LABEL, activityLabel } from "@/lib/hub/contacts";
 import { addContactNote, mergeContact, saveContactTags, subscribeContact, unsubscribeContact } from "@/lib/hub/contact-actions";
 import { NoAccess, PageHead } from "@/components/hub/Page";
@@ -16,7 +16,7 @@ import { ActionForm } from "@/components/hub/ActionForm";
 
 type Sub = { id: string; status: string; consent_source: string | null; consent_text: string | null; consented_at: string | null; unsubscribed_at: string | null; audiences: { id: string; name: string; marketing: boolean } | null };
 type App = { id: string; production_id: string; status: AppStatus; submitted_at: string; casting_roles: { name: string } | null; casting_calls: { title: string; public_slug: string } | null };
-type Mat = { id: string; application_id: string; kind: keyof typeof MATERIAL_LABEL; storage_path: string | null; url: string | null; file_name: string | null; label: string | null };
+type Mat = { id: string; application_id: string; kind: keyof typeof MATERIAL_LABEL; storage_path: string | null; storage_bucket: string; url: string | null; file_name: string | null; label: string | null };
 type Activity = { id: string; kind: string; summary: string; occurred_at: string; actor_name: string | null; production_id: string | null };
 type Msg = { id: string; direction: string; channel: string; from_address: string | null; subject: string | null; status: string; sent_at: string | null; created_at: string };
 
@@ -52,15 +52,10 @@ export default async function ContactPage({ params }: { params: Promise<{ id: st
   const applications = (apps.data ?? []) as unknown as App[];
   const appIds = applications.map((a) => a.id);
   const { data: matRows } = appIds.length
-    ? await supabase.from("casting_materials").select("id, application_id, kind, storage_path, url, file_name, label").in("application_id", appIds)
+    ? await supabase.from("casting_materials").select("id, application_id, kind, storage_path, storage_bucket, url, file_name, label").in("application_id", appIds)
     : { data: [] };
   const materials = (matRows ?? []) as Mat[];
-  const signed = new Map<string, string>();
-  const paths = materials.filter((m) => m.storage_path).map((m) => m.storage_path!);
-  if (paths.length) {
-    const { data } = await supabase.storage.from(BUCKET).createSignedUrls(paths, 3600);
-    for (const s of data ?? []) if (s.signedUrl && s.path) signed.set(s.path, s.signedUrl);
-  }
+  const signed = await signMaterials(materials);
   const prod = (pid: string | null) => productions.find((p) => p.id === pid);
   const canEdit = me.isOwner || grants.some((g) => g.section_key === "contacts" && g.production_id === null && g.level === "edit");
   const blocked = writeBlockReason();
@@ -152,7 +147,7 @@ export default async function ContactPage({ params }: { params: Promise<{ id: st
               {files.length > 0 && (
                 <ul className="plain small">
                   {files.map((m) => {
-                    const href = m.storage_path ? signed.get(m.storage_path) : m.url;
+                    const href = m.storage_path ? signed.get(materialKey(m)) : m.url;
                     return <li key={m.id}>{MATERIAL_LABEL[m.kind]}: {href ? <a className="link" href={href} target="_blank" rel="noopener noreferrer">{m.file_name ?? m.label ?? m.url}</a> : "unavailable"}</li>;
                   })}
                 </ul>

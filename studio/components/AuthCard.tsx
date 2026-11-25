@@ -1,8 +1,8 @@
-export function AuthCard({ title, lead, children }: { title: string; lead?: string; children: React.ReactNode }) {
+export function AuthCard({ title, lead, children, eyebrow = "BLEUSKM STUDIO OS" }: { title: string; lead?: string; children: React.ReactNode; eyebrow?: string }) {
   return (
     <main className="auth-wrap">
       <div className="auth-card">
-        <p className="eyebrow">BLEUSKM STUDIO OS</p>
+        <p className="eyebrow">{eyebrow}</p>
         <h1>{title}</h1>
         {lead && <p className="lead">{lead}</p>}
         {children}
