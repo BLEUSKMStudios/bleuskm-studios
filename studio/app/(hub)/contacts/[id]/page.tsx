@@ -39,7 +39,7 @@ export default async function ContactPage({ params }: { params: Promise<{ id: st
     );
   }
 
-  const [subs, apps, team, docs, msgs, acts, audiences, submissions] = await Promise.all([
+  const [subs, apps, team, docs, msgs, acts, audiences, submissions, agreements] = await Promise.all([
     supabase.from("contact_subscriptions").select("id, status, consent_source, consent_text, consented_at, unsubscribed_at, audiences(id, name, marketing)").eq("contact_id", id),
     supabase.from("casting_applications").select("id, production_id, status, submitted_at, casting_roles(name), casting_calls(title, public_slug)").eq("contact_id", id).order("submitted_at", { ascending: false }),
     supabase.from("production_team").select("id, production_id, position, team, department, status").eq("contact_id", id),
@@ -48,6 +48,7 @@ export default async function ContactPage({ params }: { params: Promise<{ id: st
     supabase.from("activity").select("id, kind, summary, occurred_at, actor_name, production_id").eq("contact_id", id).order("occurred_at", { ascending: false }).limit(300),
     supabase.from("audiences").select("id, name, marketing").order("name"),
     supabase.from("intake_submissions").select("id, kind, film_title, payload, received_at").eq("contact_id", id).order("received_at", { ascending: false }).limit(50),
+    supabase.from("contract_requests").select("id, production_id, template_key, status").eq("contact_id", id).order("created_at", { ascending: false }),
   ]);
   const applications = (apps.data ?? []) as unknown as App[];
   const appIds = applications.map((a) => a.id);
@@ -157,12 +158,15 @@ export default async function ContactPage({ params }: { params: Promise<{ id: st
         })}
       </section>
 
-      {((team.data ?? []).length > 0 || (docs.data ?? []).length > 0) && (
+      {((team.data ?? []).length > 0 || (docs.data ?? []).length > 0 || (agreements.data ?? []).length > 0) && (
         <section className="panel">
-          <h2>Productions and documents</h2>
+          <div className="panel-head"><h2>Productions and documents</h2><Link className="btn btn-inline btn-quiet" href={`/contracts/new?contact=${id}`}>Send agreement</Link></div>
           <ul className="plain">
             {(team.data ?? []).map((t) => (
-              <li key={t.id as string}><strong>{prod(t.production_id as string)?.title}</strong> · {t.position as string} ({t.team as string}{t.department ? `, ${t.department}` : ""}) · <span className="tag tag-sm">{t.status as string}</span> <Link className="link" href={`/crew-roster/${t.id}`}>Open</Link></li>
+              <li key={t.id as string}><strong>{prod(t.production_id as string)?.title}</strong> · {t.position as string} ({t.team as string}{t.department ? `, ${t.department}` : ""}) · <span className="tag tag-sm">{t.status as string}</span> <Link className="link" href={`/crew-roster/${t.id}`}>Open</Link> · <Link className="link" href={`/contracts/new?team=${t.id}`}>Send agreement</Link></li>
+            ))}
+            {(agreements.data ?? []).filter((g) => g.status !== "signed").map((g) => (
+              <li key={g.id as string}>Agreement: <Link className="link" href={`/contracts/${g.id}`}>{String(g.template_key).replace(/_/g, " ")}</Link> · <span className="tag tag-sm">{g.status as string}</span> · {prod(g.production_id as string)?.title ?? ""}</li>
             ))}
             {(docs.data ?? []).map((d) => (
               <li key={d.id as string}>Document: <Link className="link" href={`/documents/${d.id}`}>{d.title as string}</Link> · {d.category as string} · <span className="tag tag-sm">{d.status as string}</span>{d.production_id ? ` · ${prod(d.production_id as string)?.title ?? ""}` : ""}</li>

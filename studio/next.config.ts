@@ -13,6 +13,10 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // The signed-agreement PDF embeds these fonts (read from disk at signing).
+  outputFileTracingIncludes: {
+    "/api/sign/**": ["./lib/contracts/fonts/*.ttf"],
+  },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

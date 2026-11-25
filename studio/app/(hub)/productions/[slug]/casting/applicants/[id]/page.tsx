@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { loadSession } from "@/lib/auth/session";
-import { hubContext } from "@/lib/hub/data";
+import { dbCheck, hubContext } from "@/lib/hub/data";
 import { NoAccess, PageHead } from "@/components/hub/Page";
 import { HubForm, Submit } from "@/components/hub/HubForm";
 import { addNote, deleteNote, saveSession, sendEmails, updateApplication } from "@/lib/hub/casting-actions";
@@ -18,6 +18,7 @@ import { EmailComposer } from "./EmailComposer";
 import { ActionForm } from "@/components/hub/ActionForm";
 import { SendId } from "@/components/hub/SendId";
 import { cancelSelfTape, inviteToSelfTape, remindSelfTape } from "@/lib/hub/selftape-actions";
+import { STATUS_LABEL, STATUS_TONE, effectiveStatus } from "@/lib/contracts/data";
 
 const SELFTAPE_STATUS: Record<string, string> = { draft: "Preparing", sent: "Invited", opened: "Link opened", submitted: "Received", expired: "Expired", cancelled: "Cancelled" };
 
@@ -81,6 +82,11 @@ export default async function ApplicantPage({ params }: { params: Promise<{ slug
   const selftapeTpl = templates.find((t) => t.key === "selftape_invite");
   const { data: docRows } = await supabase.from("documents").select("id, title").eq("production_id", p.id).order("title").limit(200);
   const docs = (docRows ?? []) as { id: string; title: string }[];
+  // Agreements show only to people with Documents access (the database decides).
+  const [{ data: agreements }, canSendAgreement] = await Promise.all([
+    supabase.from("contract_requests").select("id, template_key, status, expires_at, signed_at, sent_at, created_at").eq("application_id", a.id).order("created_at", { ascending: false }),
+    dbCheck(p.id, "documents", "edit"),
+  ]);
 
   return (
     <>
@@ -150,6 +156,28 @@ export default async function ApplicantPage({ params }: { params: Promise<{ slug
           <p className="small">Status last changed {formatStudioTime(a.status_changed_at)}.</p>
         </section>
       </div>
+
+      {(canSendAgreement || (agreements ?? []).length > 0) && (
+        <section className="panel">
+          <div className="panel-head">
+            <h2>Agreement</h2>
+            {canSendAgreement && <Link className="btn btn-inline" href={`/contracts/new?application=${a.id}`}>Send agreement</Link>}
+          </div>
+          {(agreements ?? []).length === 0 && <p className="small">No agreement yet. {["selected", "offered", "cast"].includes(a.status) ? "Ready for one: Send agreement recommends the right template and fills it in." : "Usually sent once someone is selected."}</p>}
+          <ul className="plain">
+            {(agreements ?? []).map((g) => {
+              const st = effectiveStatus(g as never);
+              return (
+                <li key={g.id as string}>
+                  <Link className="link" href={`/contracts/${g.id}`}>{String(g.template_key).replace(/_/g, " ")}</Link>{" "}
+                  <span className={`tag tag-sm tone-${STATUS_TONE[st]}`}>{STATUS_LABEL[st]}</span>{" "}
+                  <span className="small">{formatStudioTime((g.signed_at ?? g.sent_at ?? g.created_at) as string)}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
 
       <section className="panel">
         <h2>Callbacks and auditions</h2>

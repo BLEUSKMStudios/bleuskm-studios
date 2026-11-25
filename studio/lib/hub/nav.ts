@@ -40,6 +40,7 @@ export const NAV: readonly NavGroup[] = [
       { key: "locations", label: "Locations", href: "/locations", section: "locations" },
       { key: "scheduling", label: "Scheduling", href: "/scheduling", section: "scheduling" },
       { key: "documents", label: "Documents", href: "/documents", section: "documents" },
+      { key: "contracts", label: "Contracts", href: "/contracts", section: "documents" },
     ],
   },
   {

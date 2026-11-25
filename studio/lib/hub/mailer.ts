@@ -33,6 +33,8 @@ export type SendInput = {
   activitySummary?: string;
   unsubscribeUrl?: string | null;
   tags?: string[];
+  /** Files sent with the email (base64 content), e.g. a signed agreement. */
+  attachments?: { name: string; content: string }[];
 };
 
 export type SendOutcome =
@@ -125,6 +127,7 @@ export async function sendTransactional(admin: SupabaseClient, input: SendInput)
         htmlContent: html,
         tags: input.tags ?? [`studio-os-${input.identityKey}`],
         headers: { "X-Studio-Message": messageId },
+        ...(input.attachments?.length ? { attachment: input.attachments } : {}),
       }),
       signal: AbortSignal.timeout(15000),
     });
