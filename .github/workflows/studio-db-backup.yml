@@ -13,6 +13,9 @@
 # Runs on a manual dispatch, or on a push to the Studio OS branch whose
 # commit message contains [db-backup]. Both need the protected
 # supabase-staging environment, which holds the database password.
+# To restore: open the .7z with the passphrase (7-Zip on Windows, Keka on a
+# Mac), then follow Supabase's "Restore a backup" guide with roles.sql,
+# schema.sql and data.sql in that order.
 
 name: Studio OS database backup
 
