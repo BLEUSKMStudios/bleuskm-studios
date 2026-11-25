@@ -8,7 +8,7 @@ import { NextResponse, type NextRequest } from "next/server";
 // /sign, /d (materials) and /cs (call sheets) and their APIs are personal
 // links for applicants, signers, cast and crew: each
 // checks its own secret token and shows only that person's invitation.
-const PUBLIC_PATHS = ["/login", "/forgot-password", "/auth/confirm", "/auth/signout", "/robots.txt", "/api/intake", "/upload", "/api/selftape", "/sign", "/api/sign", "/d", "/cs"];
+const PUBLIC_PATHS = ["/login", "/forgot-password", "/auth/confirm", "/auth/signout", "/robots.txt", "/api/intake", "/upload", "/api/selftape", "/sign", "/api/sign", "/d", "/cs", "/u"];
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });

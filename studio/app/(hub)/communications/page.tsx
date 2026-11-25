@@ -6,6 +6,7 @@ import { listInbox, zohoConfigured } from "@/lib/hub/zoho";
 import { brevoCampaigns, brevoConfigured, brevoEvents, brevoLists, brevoTemplates } from "@/lib/hub/brevo";
 import { ALIASES } from "@/lib/hub/comms";
 import { commsSendBlockReason } from "@/lib/hub/env";
+import { CAMPAIGN_STATUS } from "@/lib/campaigns/rules";
 import { NoAccess, PageHead } from "@/components/hub/Page";
 import { LocalTime } from "@/components/hub/LocalTime";
 
@@ -130,10 +131,37 @@ export default async function Communications({ searchParams }: { searchParams: P
       </>
     );
   } else if (tab === "campaigns") {
+    const { supabase } = await loadSession();
+    const { data: mine } = studio ? await supabase.from("campaigns").select("id, name, subject, status, recipient_count, sent_at, updated_at").order("updated_at", { ascending: false }).limit(100) : { data: [] };
     const c = await brevoCampaigns();
-    content = !c.ok ? <p className="msg error">{c.error}</p> : (c.data.campaigns ?? []).length === 0 ? <div className="empty-state"><p className="small">No campaigns in Brevo yet.</p></div> : (
+    content = (
       <>
-        <p className="small">Campaigns are created and sent in Brevo. Studio OS shows them here with their results and never creates or sends them.</p>
+        <div className="panel-head"><h2>Studio OS campaigns</h2>{studio && <Link className="btn btn-inline" href="/communications/campaigns/new">New campaign</Link>}</div>
+        <p className="small">Written here, approved by the owner on the exact wording, and sent only to people who opted in. Every email has an unsubscribe link.</p>
+        {(mine ?? []).length === 0 ? <div className="empty-state"><p className="small">No campaigns yet.</p></div> : (
+          <div className="table-wrap">
+            <table className="table">
+              <thead><tr><th>Campaign</th><th>Status</th><th>Recipients</th><th>Updated</th></tr></thead>
+              <tbody>
+                {(mine ?? []).map((x) => {
+                  const st = CAMPAIGN_STATUS[x.status as string] ?? { label: x.status, tone: "info" };
+                  return (
+                    <tr key={x.id as string}>
+                      <th scope="row"><Link className="link" href={`/communications/campaigns/${x.id}`}>{x.name as string}</Link><span className="small block">{x.subject as string}</span></th>
+                      <td><span className={`tag tone-${st.tone}`}>{st.label}</span></td>
+                      <td>{(x.recipient_count as number) || "—"}</td>
+                      <td className="nowrap"><LocalTime iso={(x.sent_at ?? x.updated_at) as string} /></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+        <h2 style={{ marginTop: 28 }}>Earlier campaigns in Brevo</h2>
+        {!c.ok ? <p className="msg error">{c.error}</p> : (c.data.campaigns ?? []).length === 0 ? <div className="empty-state"><p className="small">No campaigns in Brevo.</p></div> : (
+      <>
+        <p className="small">Read-only history from Brevo.</p>
         <div className="table-wrap">
           <table className="table">
             <thead><tr><th>Campaign</th><th>Status</th><th>Sent</th><th>Delivered</th><th>Opened</th><th>Clicked</th><th>Unsubscribed</th></tr></thead>
@@ -152,6 +180,8 @@ export default async function Communications({ searchParams }: { searchParams: P
             </tbody>
           </table>
         </div>
+      </>
+        )}
       </>
     );
   } else if (tab === "lists") {
