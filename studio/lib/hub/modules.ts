@@ -235,12 +235,17 @@ export const MODULES: readonly ModuleDef[] = [
       { name: "title", label: "Title", type: "text", required: true, max: 200, list: true, initial: "Day 1" },
       { name: "shoot_date", label: "Shoot date", type: "date", required: true, list: true },
       { name: "general_call", label: "General call", type: "time", list: true },
+      { name: "crew_call", label: "Crew call", type: "time" },
       { name: "status", label: "Status", type: "select", list: true, initial: "draft",
         options: opts(["draft", "Draft"], ["final", "Final"], ["sent", "Sent"]) },
       { name: "location_text", label: "Location and address", type: "textarea", max: 500, wide: true },
       { name: "parking", label: "Parking", type: "textarea", max: 2000 },
       { name: "nearest_hospital", label: "Nearest hospital", type: "textarea", max: 1000 },
       { name: "weather", label: "Weather", type: "text", max: 500 },
+      { name: "sunrise", label: "Sunrise", type: "text", max: 20 },
+      { name: "sunset", label: "Sunset", type: "text", max: 20 },
+      { name: "key_contacts", label: "Key contacts (name, role, phone)", type: "textarea", max: 2000, wide: true },
+      { name: "safety_notes", label: "Safety notes", type: "textarea", max: 4000, wide: true },
       { name: "schedule", label: "Day schedule", type: "textarea", max: 10000, wide: true },
       NOTES,
     ],
@@ -253,7 +258,9 @@ export const MODULES: readonly ModuleDef[] = [
     fields: [
       { name: "full_name", label: "Name", type: "text", required: true, max: 200, list: true },
       { name: "position", label: "Position", type: "text", max: 200, list: true },
+      { name: "team", label: "Team", type: "select", initial: "crew", options: opts(["crew", "Crew"], ["cast", "Cast"], ["producer", "Producer"], ["other", "Other"]) },
       { name: "call_time", label: "Call time", type: "time", list: true },
+      { name: "email", label: "Email (to send the sheet)", type: "email", max: 254 },
       { name: "notes", label: "Notes", type: "text", max: 2000, list: true },
     ],
   },
@@ -423,6 +430,7 @@ export function selectColumns(def: ModuleDef): string {
   if (def.child) cols.add("created_at");
   // Documents: the stored file and version chain are shown in their own panel.
   if (def.table === "documents") for (const c of ["storage_path", "file_name", "size_bytes", "version", "supersedes_id"]) cols.add(c);
+  if (def.table === "call_sheets") for (const c of ["version", "last_sent_at", "location_id"]) cols.add(c);
   return [...cols].join(", ");
 }
 

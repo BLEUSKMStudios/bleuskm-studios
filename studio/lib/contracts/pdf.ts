@@ -41,16 +41,16 @@ export type PdfInput = {
 };
 
 const W = 612, H = 792, M = 60;
-const BLACK = rgb(0.031, 0.031, 0.031);
-const GOLD = rgb(0.855, 0.686, 0.216);     // #DAAF37 (on black)
-const GOLD_PRINT = rgb(0.62, 0.48, 0.12);  // darker gold for white paper
-const INK = rgb(0.1, 0.1, 0.1);
-const MUTED = rgb(0.38, 0.38, 0.38);
-const RULE = rgb(0.85, 0.82, 0.74);
-const CREAM = rgb(0.918, 0.875, 0.812);    // #EADFCF
+export const BLACK = rgb(0.031, 0.031, 0.031);
+export const GOLD = rgb(0.855, 0.686, 0.216);     // #DAAF37 (on black)
+export const GOLD_PRINT = rgb(0.62, 0.48, 0.12);  // darker gold for white paper
+export const INK = rgb(0.1, 0.1, 0.1);
+export const MUTED = rgb(0.38, 0.38, 0.38);
+export const RULE = rgb(0.85, 0.82, 0.74);
+export const CREAM = rgb(0.918, 0.875, 0.812);    // #EADFCF
 
 let fontCache: { spartan: Uint8Array; script: Uint8Array } | null = null;
-function fontBytes() {
+export function fontBytes() {
   if (!fontCache) {
     const dir = path.join(process.cwd(), "lib", "contracts", "fonts");
     fontCache = {
@@ -106,7 +106,7 @@ const day = (iso: string) => new Intl.DateTimeFormat("en-US", { timeZone: "Ameri
 
 type TextOpts = { x: number; y: number; size: number; font: PDFFont; color: ReturnType<typeof rgb> };
 /** Letter-spaced capitals, as in the BLEUSKM headings. */
-function drawSpaced(p: PDFPage, t: string, o: TextOpts, spacing: number) {
+export function drawSpaced(p: PDFPage, t: string, o: TextOpts, spacing: number) {
   let x = o.x;
   for (const ch of t) {
     p.drawText(ch, { ...o, x });
