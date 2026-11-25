@@ -6,15 +6,17 @@ import { formatDay, relativeDay, studioToday, addDays } from "@/lib/hub/dates";
 import { SetupPending } from "@/components/hub/ModuleView";
 import { ProductionChips, withQuery } from "./ProductionChips";
 import type { WorkspaceSearch } from "@/components/hub/WorkspaceView";
+import { castingCallItems, type CalendarItem, type CallDates } from "@/lib/hub/calendar";
 
-type Item = { key: string; day: string; time: string | null; kind: string; title: string; href: string; production_id: string | null; status: string | null };
+type Item = CalendarItem;
 
 const HREF = "/scheduling?tab=calendar";
 
 /**
  * The master production calendar: every dated schedule entry (milestones,
- * meetings, deadlines, shoot days) and every call sheet, merged by date.
- * Row Level Security filters both queries.
+ * meetings, deadlines, shoot days), every call sheet, and each casting or
+ * crew call's early-access, opening and closing times, merged by date.
+ * Row Level Security filters every query (casting dates need Casting access).
  */
 export async function CalendarView({ search }: { search: WorkspaceSearch & { past?: string } }) {
   const { productions } = await hubContext();
@@ -26,8 +28,9 @@ export async function CalendarView({ search }: { search: WorkspaceSearch & { pas
 
   let ev = supabase.from("schedule_events").select("id, production_id, title, kind, starts_on, ends_on, start_time, status").gte("starts_on", from).order("starts_on").limit(1000);
   let cs = supabase.from("call_sheets").select("id, production_id, title, shoot_date, general_call, status").gte("shoot_date", from).order("shoot_date").limit(500);
-  if (production) { ev = ev.eq("production_id", production); cs = cs.eq("production_id", production); }
-  const [events, sheets] = await Promise.all([ev, cs]);
+  let cc = supabase.from("casting_calls").select("id, production_id, title, status, public_slug, opens_at, deadline, early_access_starts").limit(500);
+  if (production) { ev = ev.eq("production_id", production); cs = cs.eq("production_id", production); cc = cc.eq("production_id", production); }
+  const [events, sheets, calls] = await Promise.all([ev, cs, cc]);
   const missing = [events.error, sheets.error].some((e) => e && isMissingTable(e.code));
   const failed = [events.error, sheets.error].some((e) => e && !isMissingTable(e.code));
 
@@ -41,6 +44,7 @@ export async function CalendarView({ search }: { search: WorkspaceSearch & { pas
       key: `c${c.id}`, day: c.shoot_date!, time: c.general_call, kind: "Call sheet", title: c.title ?? "",
       href: `/call-sheets/${c.id}`, production_id: c.production_id, status: c.status,
     })),
+    ...castingCallItems((calls.data ?? []) as CallDates[], (c) => `/productions/${productions.find((p) => p.id === c.production_id)?.slug ?? ""}/casting/calls/${c.id}`, from),
   ].sort((a, b) => (a.day === b.day ? (a.time ?? "").localeCompare(b.time ?? "") : a.day.localeCompare(b.day)));
 
   const months = new Map<string, Item[]>();
@@ -60,11 +64,12 @@ export async function CalendarView({ search }: { search: WorkspaceSearch & { pas
           ? <Link className="link" href={withQuery(HREF, { production, past: undefined })}>Show upcoming only</Link>
           : <Link className="link" href={withQuery(HREF, { production, past: "1" })}>Include the past year</Link>}
       </p>
+      {calls.error ? <p className="small">Casting and crew call dates couldn&apos;t be loaded this time, so they&apos;re missing below. Refresh to try again.</p> : null}
       <section className="panel">
         {missing ? <SetupPending what="Scheduling" /> : failed ? (
           <p className="msg error" role="alert">The calendar couldn&apos;t be loaded. Refresh to try again.</p>
         ) : items.length === 0 ? (
-          <div className="empty-state"><h3>Nothing scheduled</h3><p className="small">Add milestones, meetings, deadlines, shoot days or call sheets in the tabs above.</p></div>
+          <div className="empty-state"><h3>Nothing scheduled</h3><p className="small">Add milestones, meetings, deadlines, shoot days or call sheets in the tabs above. Casting and crew call dates appear here automatically.</p></div>
         ) : (
           [...months.entries()].map(([m, list]) => (
             <div key={m} className="cal-month">
