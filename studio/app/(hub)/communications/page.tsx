@@ -2,7 +2,7 @@ import Link from "next/link";
 import { loadSession } from "@/lib/auth/session";
 import { dbCheck, hubContext } from "@/lib/hub/data";
 import { holdsSection } from "@/lib/hub/nav";
-import { listInbox, zohoConfigured } from "@/lib/hub/zoho";
+import { listInbox, searchInbox, zohoConfigured } from "@/lib/hub/zoho";
 import { brevoCampaigns, brevoConfigured, brevoEvents, brevoLists, brevoTemplates } from "@/lib/hub/brevo";
 import { ALIASES } from "@/lib/hub/comms";
 import { commsSendBlockReason } from "@/lib/hub/env";
@@ -33,10 +33,12 @@ function Missing({ what, vars }: { what: string; vars: string[] }) {
 
 // One place for the studio's email: the Zoho inbox, everything sent from Studio
 // OS, Brevo templates, campaigns and lists, and what each address is for.
-export default async function Communications({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
+export default async function Communications({ searchParams }: { searchParams: Promise<{ tab?: string; q?: string; sent?: string }> }) {
   const { me, grants, productions } = await hubContext();
   if (!me.isOwner && !holdsSection(grants, "communications")) return <NoAccess what="Communications" />;
-  const raw = (await searchParams).tab;
+  const sp = await searchParams;
+  const raw = sp.tab;
+  const q = (sp.q ?? "").trim().slice(0, 100);
   const tab: Tab = TABS.some(([k]) => k === raw) ? (raw as Tab) : "inbox";
   const studio = me.isOwner || (await dbCheck(null, "communications", "view"));
   const titleOf = (id: string | null) => (id ? productions.find((p) => p.id === id)?.title ?? "—" : "Studio-wide");
@@ -48,9 +50,18 @@ export default async function Communications({ searchParams }: { searchParams: P
     if (!studio) content = studioOnly;
     else if (!zohoConfigured()) content = <Missing what="Zoho Mail" vars={["ZOHO_MAIL_USER", "ZOHO_MAIL_APP_PASSWORD"]} />;
     else {
-      const inbox = await listInbox(40);
-      content = !inbox.ok ? <p className="msg error" role="alert">{inbox.error}</p>
-        : inbox.items.length === 0 ? <div className="empty-state"><p className="small">The inbox is empty.</p></div>
+      const inbox = q ? await searchInbox(q, 50) : await listInbox(40);
+      const search = (
+        <form className="inline-form" action="/communications" method="get" role="search" style={{ marginBottom: 12 }}>
+          <input type="hidden" name="tab" value="inbox" />
+          <input name="q" defaultValue={q} placeholder="Search sender, subject or text" aria-label="Search the inbox" maxLength={100} />
+          <button className="btn btn-inline btn-quiet" type="submit">Search</button>
+          {q && <Link className="link small" href="/communications?tab=inbox">Clear</Link>}
+          <Link className="btn btn-inline" href="/communications/compose" style={{ marginLeft: "auto" }}>New email</Link>
+        </form>
+      );
+      content = <>{search}{!inbox.ok ? <p className="msg error" role="alert">{inbox.error}</p>
+        : inbox.items.length === 0 ? <div className="empty-state"><p className="small">{q ? `Nothing in the inbox matches “${q}”.` : "The inbox is empty."}</p></div>
         : (
           <ul className="mail-list">
             {inbox.items.map((m) => (
@@ -63,12 +74,12 @@ export default async function Communications({ searchParams }: { searchParams: P
               </li>
             ))}
           </ul>
-        );
+        )}</>;
     }
   } else if (tab === "history") {
     const { supabase } = await loadSession();
     const [{ data: hub }, { data: casting }] = await Promise.all([
-      supabase.from("comm_messages").select("id, production_id, channel, direction, from_address, to_addresses, subject, status, sent_by_name, sent_at, source").order("sent_at", { ascending: false, nullsFirst: false }).limit(100),
+      supabase.from("comm_messages").select("id, production_id, channel, direction, from_address, to_addresses, subject, status, sent_by_name, sent_at, source").eq("direction", "outbound").order("sent_at", { ascending: false, nullsFirst: false }).limit(100),
       supabase.from("casting_messages").select("id, production_id, to_email, subject, status, sent_at").order("sent_at", { ascending: false }).limit(100),
     ]);
     const rows = [
@@ -221,6 +232,7 @@ export default async function Communications({ searchParams }: { searchParams: P
         {TABS.map(([k, l]) => <Link key={k} href={`/communications?tab=${k}`} className={k === tab ? "on" : undefined} aria-current={k === tab ? "page" : undefined}>{l}</Link>)}
       </nav>
       {tab === "inbox" && studio && zohoConfigured() && sendNote && <p className="small" style={{ marginTop: -8 }}>Replying is switched off. {sendNote.includes("COMMS_SEND_ENABLED") ? "The owner can turn it on with COMMS_SEND_ENABLED=on." : ""}</p>}
+      {sp.sent === "1" && tab === "history" && <p className="msg" role="status">Email sent. It&apos;s logged below and on the person&apos;s timeline.</p>}
       <section className="panel">{content}</section>
     </>
   );

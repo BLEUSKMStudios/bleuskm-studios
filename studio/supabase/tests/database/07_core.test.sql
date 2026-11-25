@@ -25,7 +25,7 @@ insert into public.casting_roles (id, call_id, name, status) values
 -- =========================================================================
 -- Seeds
 -- =========================================================================
-select is((select count(*) from public.email_identities), 5::bigint, 'Five sender identities exist');
+select is((select count(*) from public.email_identities), 6::bigint, 'Six sender identities exist (clients@ added with the inbox)');
 select is((select string_agg(key, ',' order by key) from public.email_identities where brevo_verified), 'casting,crew',
   'Only casting@ and crew@ (already sending live) start as verified Brevo senders');
 select is((select count(*) from public.email_identities where zoho_send_as or zoho_kind <> 'unverified'),

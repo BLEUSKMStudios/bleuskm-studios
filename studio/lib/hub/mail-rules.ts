@@ -1,5 +1,7 @@
 // Rules for whether an email may be sent. Pure code (unit-tested).
 
+import { createHash } from "node:crypto";
+
 export type IdentityRow = {
   key: string;
   address: string;
@@ -55,3 +57,27 @@ export function identityFor(o: { crew?: boolean; kind?: string }): string {
   if (o.kind === "studio" || o.kind === "inquiry" || o.kind === "client_inquiry") return "studio";
   return o.crew ? "crew" : "casting";
 }
+
+/** Why a message may not go out through Zoho (reply or new email), or null when it may. */
+export function zohoSendGate(o: {
+  sendBlock: string | null;
+  configured: boolean;
+  identity: IdentityRow | null;
+  to: string;
+  emailStatus: string | null;
+}): string | null {
+  if (o.sendBlock) return o.sendBlock;
+  if (!o.configured) return "Zoho Mail isn't connected yet (ZOHO_MAIL_USER and ZOHO_MAIL_APP_PASSWORD).";
+  const from = zohoFromGate(o.identity);
+  if (from) return from;
+  if (!EMAIL_RE.test(o.to)) return "The email address is not valid.";
+  if (o.emailStatus && o.emailStatus !== "ok") return `This address is marked ${o.emailStatus}, so nothing is sent to it.`;
+  return null;
+}
+
+/** Stable, short idempotency key for an inbound message (Message-ID can be long). */
+export function inboundKey(messageId: string): string {
+  return `zoho-in:${createHash("sha256").update(messageId.trim()).digest("hex").slice(0, 40)}`;
+}
+
+export { EMAIL_RE };

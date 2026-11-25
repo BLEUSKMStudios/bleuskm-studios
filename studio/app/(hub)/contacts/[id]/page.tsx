@@ -81,7 +81,7 @@ export default async function ContactPage({ params }: { params: Promise<{ id: st
             <RecordForm module="contacts" fields={def.fields} values={c} id={id} scope="" submitLabel="Save changes" />
           ) : (
             <dl className="facts">
-              {c.email && <><dt>Email</dt><dd><a className="link" href={`mailto:${c.email}`}>{c.email as string}</a></dd></>}
+              {c.email && <><dt>Email</dt><dd><a className="link" href={`mailto:${c.email}`}>{c.email as string}</a> · <Link className="link small" href={`/communications/compose?contact=${id}`}>Email from Studio OS</Link></dd></>}
               {c.phone && <><dt>Phone</dt><dd>{c.phone as string}</dd></>}
               {c.city && <><dt>City</dt><dd>{c.city as string}</dd></>}
               {c.roles && <><dt>Roles</dt><dd>{c.roles as string}</dd></>}

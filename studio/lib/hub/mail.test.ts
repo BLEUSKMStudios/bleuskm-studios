@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import { parseIntake, secretMatches } from "./intake-rules.ts";
-import { identityFor, marketingEligible, sendGate, zohoFromGate, type IdentityRow } from "./mail-rules.ts";
+import { identityFor, inboundKey, marketingEligible, sendGate, zohoFromGate, zohoSendGate, type IdentityRow } from "./mail-rules.ts";
 import { confirmationKey, firstName, missing, placeholders, render, toHtml } from "./templates.ts";
 
 const id = (o: Partial<IdentityRow> = {}): IdentityRow => ({
@@ -89,4 +89,22 @@ test("intake secret must be long and match exactly", () => {
   assert.equal(secretMatches("short", "short"), false);
   assert.equal(secretMatches(null, s), false);
   assert.equal(secretMatches(s, undefined), false);
+});
+
+test("Zoho sends need sending on, Zoho connected, a confirmed From and a deliverable address", () => {
+  const base = { sendBlock: null, configured: true, identity: id(), to: "a@example.com", emailStatus: "ok" };
+  assert.equal(zohoSendGate(base), null);
+  assert.match(zohoSendGate({ ...base, sendBlock: "Sending is switched off" })!, /switched off/);
+  assert.match(zohoSendGate({ ...base, configured: false })!, /isn't connected/);
+  assert.match(zohoSendGate({ ...base, identity: id({ zoho_send_as: false }) })!, /send as/);
+  assert.match(zohoSendGate({ ...base, identity: null })!, /does not exist/);
+  assert.match(zohoSendGate({ ...base, to: "a@b" })!, /not valid/);
+  assert.match(zohoSendGate({ ...base, emailStatus: "bounced" })!, /bounced/);
+});
+
+test("an inbox message has one stable key", () => {
+  const k = inboundKey("<abc@mail.example.com>");
+  assert.equal(k, inboundKey(" <abc@mail.example.com> "));
+  assert.notEqual(k, inboundKey("<abd@mail.example.com>"));
+  assert.match(k, /^zoho-in:[0-9a-f]{40}$/);
 });

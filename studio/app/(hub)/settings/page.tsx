@@ -12,6 +12,7 @@ export const metadata = { title: "Settings & Administration · BLEUSKM Studio OS
 const CARDS = [
   { href: "/settings/users", title: "User Access", text: "Invite people, deactivate or reactivate them, send password resets, and set No/View/Edit for each section and production." },
   { href: "/settings/productions", title: "Productions & lifecycle", text: "Details, lifecycle stages, the sections each production uses, and team role labels." },
+  { href: "/settings/senders", title: "Email senders", text: "What each studio address is in Zoho and Brevo, confirmed by you. Nothing is sent from an address until it's marked here." },
   { href: "/settings/audit", title: "Audit log", text: "Every change to people, access, productions and records, with who made it and when." },
   { href: "/status", title: "System status", text: "Database connection, security rules and migrations on this environment." },
 ];
