@@ -1,4 +1,4 @@
-# Applies Studio OS database migrations to the Supabase STAGING project.
+# Applies Studio OS database migrations to the Supabase project (the live Studio OS database; the environment is named "supabase-staging").
 #
 # Runs when migration files change on main or the Studio OS development
 # branch. On the development branch the deploy job runs only for a commit whose
