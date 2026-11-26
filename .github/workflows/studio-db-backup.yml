@@ -27,6 +27,7 @@ on:
     paths:
       - ".github/workflows/studio-db-backup.yml"
       - "studio/supabase/scripts/backup-verify.py"
+      - "studio/supabase/scripts/post-migration-check.sql"
 
 permissions:
   contents: read
@@ -103,6 +104,12 @@ jobs:
           python3 "$GITHUB_WORKSPACE/$VERIFY" compare "$RUNNER_TEMP/live.tsv" counts.tsv "Backup vs live database"
           echo "Uploaded files recorded in Storage (the files themselves are not in a database backup):"
           psql "$LIVE_DB_URL" -X -At -c "select '  ' || bucket_id || ': ' || count(*) || ' files, ' || pg_size_pretty(coalesce(sum((metadata->>'size')::bigint), 0)) from storage.objects group by bucket_id order by bucket_id"
+
+      - name: Check the Studio OS tables and the casting data
+        run: |
+          # Read-only (its one view is temporary and vanishes with the session). Names and counts only.
+          psql "$LIVE_DB_URL" -X -q -At -v ON_ERROR_STOP=1 -f studio/supabase/scripts/post-migration-check.sql | tee "$RUNNER_TEMP/check.txt"
+          grep -q '^RESULT: all present$' "$RUNNER_TEMP/check.txt"
 
       - name: Restore into a throwaway database and check it
         env:
