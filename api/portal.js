@@ -29,7 +29,7 @@ const FILES_ATTACHMENT_FIELD = 'fldlZcbMXEFM0AfQH'; // Portal Files â Attac
 
 const {
   USER_MAP, DEPT_LABELS, COOKIE, SESSION_SECONDS,
-  equal, createSession, verifySession, isRecordId, formulaText
+  equal, createSession, verifySession, isRecordId, formulaText, portalRetired, STUDIO_OS_URL
 } = require('./_lib/portal-session');
 
 // Rejects record IDs that are not plain Airtable IDs, so request values can
@@ -902,6 +902,12 @@ if (action === 'add-crew') {
 
 // ââ Vercel adapter ââ
 module.exports = async (req, res) => {
+  if (portalRetired()) {
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Cache-Control', 'no-store');
+    res.status(410).send(JSON.stringify({ ok: false, error: 'portal_retired', moved: STUDIO_OS_URL }));
+    return;
+  }
   const event = {
     httpMethod: req.method,
     queryStringParameters: req.query || {},

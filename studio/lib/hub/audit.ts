@@ -1,3 +1,4 @@
+import { MODULES } from "./modules.ts";
 import { LEVEL_LABEL, SECTION_LABEL, STAGE_LABEL, STAGE_STATUS_LABEL, STATUS_LABEL } from "./labels.ts";
 
 export type AuditRow = {
@@ -65,8 +66,16 @@ export function describeAudit(r: AuditRow, n: Names): string {
       if (r.action === "DELETE") return `${p}: department ${str(row.name)} removed`;
       return `${p}: department ${str(old.name)} renamed to ${str(row.name)}`;
     }
-    default:
+    default: {
+      const def = MODULES.find((m) => m.table === r.table_name);
+      if (def) {
+        const name = str(row[def.titleField]) || def.singular;
+        const where = r.production_id ? ` (${prod(r.production_id)})` : "";
+        const verb = r.action === "INSERT" ? "Added" : r.action === "DELETE" ? "Deleted" : "Updated";
+        return `${verb} ${def.singular} “${name}” in ${def.title}${where}`;
+      }
       return `${r.action.toLowerCase()} on ${r.table_name}`;
+    }
   }
 }
 

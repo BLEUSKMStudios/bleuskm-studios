@@ -524,6 +524,8 @@ async function doLogin() {
       sessionStorage.setItem('portal_user', username);
       sessionStorage.setItem('portal_name', STATE.name);
       startApp();
+    } else if (json.error === 'portal_retired') {
+      err.innerHTML = 'This portal has moved to <a href="https://bleuskm-studio-os.vercel.app/" style="color:inherit;text-decoration:underline">BLEUSKM Studio OS</a>.';
     } else {
       err.textContent = 'Incorrect username or password.';
     }
@@ -2112,7 +2114,7 @@ function viewContract(recordId) {
       <div class="sig-lbl">Signatures</div>
       <div class="sig-grid">
         <div>
-          <div class="sig-img-box"><img src="https://www.bleuskm.com/contracts/zaria-signature.png" alt="Zaria signature"></div>
+          <div class="sig-img-box"><span class="zaria-sig-typed" style="font-family:'Brush Script MT','Segoe Script','Snell Roundhand',cursive;font-size:30px;line-height:1;color:inherit">Zaria Lashae</span></div>
           <div class="sig-name">Zaria Lashae — Founder &amp; Director, BLEUSKM Studios</div>
         </div>
         <div>

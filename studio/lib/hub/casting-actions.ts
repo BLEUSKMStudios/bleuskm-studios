@@ -1,5 +1,7 @@
 "use server";
 
+import { writeBlockReason } from "./env.ts";
+
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { requireSignedIn, loadSession } from "@/lib/auth/session";
@@ -10,7 +12,7 @@ import {
   CASTING_FROM, CREW_FROM, cleanUrl, fillTemplate, firstName, formatStudioTime, isCrewCall, isOneOf, studioLocalToIso, type TemplateVars,
 } from "./casting-core.ts";
 import { slugify } from "./labels.ts";
-import { sendCastingEmail } from "./brevo.ts";
+import { deliverToApplicant } from "./casting-mail.ts";
 import { APP_COLS, type Application } from "./casting-data.ts";
 
 export type ActionState = { error?: string; done?: string } | undefined;
@@ -39,11 +41,20 @@ const NO_EDIT: ActionState = { error: "You need Edit access to Casting on this p
 // Casting calls
 // ---------------------------------------------------------------------------
 export async function saveCall(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   const productionId = text(form.get("production_id"));
   if (!(await canEdit(productionId))) return NO_EDIT;
   const id = text(form.get("id"));
   const title = text(form.get("title"));
-  const slug = slugify(text(form.get("public_slug")) || title);
+  let slug = slugify(text(form.get("public_slug")) || title);
+  // New calls: the type is part of the website key (crew calls end in "-crew"),
+  // which is also how crew applicants get their emails from crew@.
+  if (!text(form.get("id"))) {
+    const kind = text(form.get("call_kind")) || "cast";
+    if (kind !== "cast" && kind !== "crew") return { error: "Choose a call type." };
+    if (kind === "crew" && !/-crew$/.test(slug)) slug = `${slug}-crew`.replace(/^-/, "");
+    if (kind === "cast" && /-crew$/.test(slug)) return { error: "Cast call website keys can't end in “-crew” (that marks a crew call)." };
+  }
   const status = text(form.get("status")) || "draft";
   const opensRaw = text(form.get("opens_at"));
   const deadlineRaw = text(form.get("deadline"));
@@ -80,6 +91,7 @@ export async function saveCall(_: ActionState, form: FormData): Promise<ActionSt
 // Roles
 // ---------------------------------------------------------------------------
 export async function saveRole(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   const productionId = text(form.get("production_id"));
   if (!(await canEdit(productionId))) return NO_EDIT;
   const id = text(form.get("id"));
@@ -117,6 +129,7 @@ export async function saveRole(_: ActionState, form: FormData): Promise<ActionSt
 }
 
 export async function deleteRole(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   const productionId = text(form.get("production_id"));
   if (!(await canEdit(productionId))) return NO_EDIT;
   const id = text(form.get("id"));
@@ -138,6 +151,7 @@ async function applicationProduction(id: string): Promise<string | null> {
 }
 
 export async function updateApplication(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   const id = text(form.get("id"));
   const productionId = await applicationProduction(id);
   if (!productionId || !(await canEdit(productionId))) return NO_EDIT;
@@ -153,6 +167,7 @@ export async function updateApplication(_: ActionState, form: FormData): Promise
 }
 
 export async function bulkUpdate(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   const productionId = text(form.get("production_id"));
   if (!(await canEdit(productionId))) return NO_EDIT;
   const ids = form.getAll("ids").map(text).filter(isUuid).slice(0, 500);
@@ -167,6 +182,7 @@ export async function bulkUpdate(_: ActionState, form: FormData): Promise<Action
 }
 
 export async function addNote(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   const id = text(form.get("application_id"));
   const productionId = await applicationProduction(id);
   if (!productionId || !(await canEdit(productionId))) return NO_EDIT;
@@ -179,6 +195,7 @@ export async function addNote(_: ActionState, form: FormData): Promise<ActionSta
 }
 
 export async function deleteNote(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   const productionId = text(form.get("production_id"));
   if (!(await canEdit(productionId))) return NO_EDIT;
   const id = text(form.get("id"));
@@ -190,6 +207,7 @@ export async function deleteNote(_: ActionState, form: FormData): Promise<Action
 }
 
 export async function saveSession(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   const applicationId = text(form.get("application_id"));
   const productionId = await applicationProduction(applicationId);
   if (!productionId || !(await canEdit(productionId))) return NO_EDIT;
@@ -216,7 +234,7 @@ export async function saveSession(_: ActionState, form: FormData): Promise<Actio
   // Scheduling a callback or audition moves the applicant along, unless they're further already.
   if (!id && (kind === "callback" || kind === "audition")) {
     await supabase.from("casting_applications").update({ status: kind }).eq("id", applicationId)
-      .in("status", ["submitted", "reviewing", "shortlisted", "on_hold", ...(kind === "audition" ? ["callback"] : [])]);
+      .in("status", ["submitted", "reviewing", "shortlisted", "selftape_invited", "selftape_received", "on_hold", ...(kind === "audition" ? ["callback"] : [])]);
   }
   return done(id ? "Session updated." : `${SESSION_KIND_LABEL[kind]} added.`);
 }
@@ -225,6 +243,7 @@ export async function saveSession(_: ActionState, form: FormData): Promise<Actio
 // Email templates
 // ---------------------------------------------------------------------------
 export async function saveTemplate(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   const productionId = text(form.get("production_id"));
   if (!(await canEdit(productionId))) return NO_EDIT;
   const id = text(form.get("id"));
@@ -272,6 +291,7 @@ async function varsFor(a: Application, ctx: Ctx): Promise<TemplateVars> {
 }
 
 export async function sendEmails(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   const productionId = text(form.get("production_id"));
   if (!(await canEdit(productionId))) return NO_EDIT;
   const ids = form.getAll("ids").map(text).filter(isUuid).slice(0, 100);
@@ -279,6 +299,9 @@ export async function sendEmails(_: ActionState, form: FormData): Promise<Action
   const templateId = text(form.get("template_id"));
   const applyStatus = text(form.get("apply_status")) === "on";
   const { supabase } = await loadSession();
+  const me = await requireSignedIn();
+  // One id per opened form: submitting the same form twice never sends twice.
+  const sendId = /^[\w-]{8,64}$/.test(text(form.get("send_id"))) ? text(form.get("send_id")) : crypto.randomUUID();
 
   let subject = text(form.get("subject"));
   let body = text(form.get("body"));
@@ -310,17 +333,18 @@ export async function sendEmails(_: ActionState, form: FormData): Promise<Action
   const crewCalls = new Set((calls ?? []).filter((c) => isCrewCall(c.public_slug as string)).map((c) => c.id as string));
 
   let sent = 0;
+  let skipped = 0;
   const failed: string[] = [];
   for (const a of (apps ?? []) as Application[]) {
     const vars = await varsFor(a, ctx);
     const s = fillTemplate(subject, vars).replace(/\s+/g, " ").trim();
     const b = fillTemplate(body, vars);
-    const r = await sendCastingEmail({ email: a.email, name: a.full_name }, s, b, crewCalls.has(a.call_id));
-    await supabase.from("casting_messages").insert({
-      application_id: a.id, production_id: productionId, template_id: template, to_email: a.email,
-      subject: s, body: b, status: r.ok ? "sent" : "failed",
-      provider_id: r.ok ? r.id : null, error: r.ok ? null : r.error,
+    const r = await deliverToApplicant(supabase, {
+      application: { id: a.id, email: a.email, full_name: a.full_name, production_id: productionId },
+      crew: crewCalls.has(a.call_id), subject: s, body: b, templateId: template,
+      sendKey: `casting-email:${sendId}:${a.id}`, sentByName: me.fullName,
     });
+    if (r.ok && r.skipped) { skipped++; continue; }
     if (r.ok) {
       sent++;
       if (applyStatus && setsStatus) await supabase.from("casting_applications").update({ status: setsStatus }).eq("id", a.id);
@@ -331,5 +355,6 @@ export async function sendEmails(_: ActionState, form: FormData): Promise<Action
   revalidatePath("/productions", "layout");
   if (failed.length) return { error: `Sent ${sent}. Not sent: ${failed.slice(0, 5).join("; ")}${failed.length > 5 ? "…" : ""}` };
   const froms = [...new Set(((apps ?? []) as Application[]).map((a) => (crewCalls.has(a.call_id) ? CREW_FROM : CASTING_FROM)))];
-  return { done: `Sent ${sent} email${sent === 1 ? "" : "s"} from ${froms.join(" and ")}.` };
+  const again = skipped ? ` ${skipped} ${skipped === 1 ? "person had" : "people had"} already received this exact email, so it wasn't sent again.` : "";
+  return { done: `Sent ${sent} email${sent === 1 ? "" : "s"} from ${froms.join(" and ")}.${again}` };
 }

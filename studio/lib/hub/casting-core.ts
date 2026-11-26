@@ -3,9 +3,12 @@
 
 export const CALL_STATUSES = ["draft", "open", "closed"] as const;
 export const ROLE_STATUSES = ["open", "closed", "cast"] as const;
+// The pipeline order: New → Reviewing → Shortlisted → Self-tape invited →
+// Self-tape received → Callback → Audition → Selected → Offered → Cast,
+// or Declined / Withdrawn / On hold at any point.
 export const APP_STATUSES = [
-  "submitted", "reviewing", "shortlisted", "callback", "audition",
-  "on_hold", "offered", "cast", "not_selected", "withdrawn",
+  "submitted", "reviewing", "shortlisted", "selftape_invited", "selftape_received", "callback", "audition",
+  "selected", "on_hold", "offered", "cast", "not_selected", "withdrawn",
 ] as const;
 export const MATERIAL_KINDS = ["headshot", "resume", "portfolio", "reel", "self_tape", "other"] as const;
 export const SESSION_KINDS = ["audition", "callback", "chemistry_read", "self_tape"] as const;
@@ -28,12 +31,15 @@ export const APP_STATUS_LABEL: Record<AppStatus, string> = {
   submitted: "New",
   reviewing: "Reviewing",
   shortlisted: "Shortlisted",
+  selftape_invited: "Self-tape invited",
+  selftape_received: "Self-tape received",
   callback: "Callback",
   audition: "Audition",
+  selected: "Selected",
   on_hold: "On hold",
   offered: "Offered",
   cast: "Cast",
-  not_selected: "Not selected",
+  not_selected: "Declined",
   withdrawn: "Withdrawn",
 };
 export const MATERIAL_LABEL: Record<MaterialKind, string> = {

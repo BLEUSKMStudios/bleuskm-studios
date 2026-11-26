@@ -28,7 +28,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
   const last = rows && rows.length === PAGE ? (rows[rows.length - 1].id as number) : null;
   return (
     <>
-      <PageHead title="Audit log" lead={<><Link className="link" href="/settings">Settings</Link> · Newest first. Entries are written by the database and can't be edited.</>} />
+      <PageHead title="Audit log" lead={<><Link className="link" href="/settings">Settings &amp; Administration</Link> · Newest first. Entries are written by the database and can't be edited.</>} />
       <section className="panel">
         {list.length === 0 ? <p className="small">Nothing recorded yet.</p> : (
           <div className="table-wrap">

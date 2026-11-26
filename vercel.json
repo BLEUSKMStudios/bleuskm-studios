@@ -11,6 +11,16 @@
       "source": "/studio/:path*",
       "destination": "https://bleuskm-studio-os.vercel.app/",
       "permanent": false
+    },
+    {
+      "source": "/dashboard",
+      "destination": "https://bleuskm-studio-os.vercel.app/",
+      "permanent": false
+    },
+    {
+      "source": "/dashboard/:path*",
+      "destination": "https://bleuskm-studio-os.vercel.app/",
+      "permanent": false
     }
   ],
   "rewrites": [

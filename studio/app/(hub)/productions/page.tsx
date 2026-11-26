@@ -3,7 +3,7 @@ import { hubContext } from "@/lib/hub/data";
 import { PageHead } from "@/components/hub/Page";
 import { ProductionTable } from "@/components/hub/ProductionTable";
 
-export const metadata = { title: "Productions · BLEUSKM Studio OS" };
+export const metadata = { title: "Projects · BLEUSKM Studio OS" };
 
 export default async function ProductionsPage({ searchParams }: { searchParams: Promise<{ show?: string }> }) {
   const { me, productions } = await hubContext();
@@ -12,7 +12,7 @@ export default async function ProductionsPage({ searchParams }: { searchParams: 
   const archivedCount = productions.filter((p) => p.status === "archived").length;
   return (
     <>
-      <PageHead title="Productions" lead={showArchived ? "Archived productions" : "Productions you can open"}>
+      <PageHead title="Projects" lead={showArchived ? "Archived productions" : "Every film and production you can open, from development to distribution"}>
         {me.isOwner && <Link className="btn btn-inline" href="/productions/new">New production</Link>}
       </PageHead>
       <section className="panel">

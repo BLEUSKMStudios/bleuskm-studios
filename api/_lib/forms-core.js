@@ -205,6 +205,67 @@ function pick(map, fields) {
   return out;
 }
 
+// ── Studio OS mirror ─────────────────────────────────────────────────────────
+// Every form also lands in Studio OS (contacts, consent, timeline). Off unless
+// STUDIO_INTAKE_URL and STUDIO_INTAKE_SECRET are set, so the website behaves
+// exactly as before until the owner switches it on. The casting form is not
+// mirrored: Love Me Like This applications already go straight into Studio OS
+// through casting_apply, and that path stays as it is.
+//
+// STUDIO_CONFIRMATIONS (comma list of form keys, e.g. "newsletter,notify")
+// hands a form's confirmation email to Studio OS, whose templates are edited
+// there. The website then skips its own Brevo template for that form, unless
+// Studio OS could not be reached (then the website sends it, as today).
+const STUDIO_KINDS = { notify: 'film_notify', 'coming-soon': 'film_notify', newsletter: 'newsletter', crew: 'crew', inquiry: 'client_inquiry' };
+
+function studioConfigured() { return !!(env('STUDIO_INTAKE_URL') && env('STUDIO_INTAKE_SECRET')); }
+
+function studioOwnsConfirmation(form) {
+  if (!studioConfigured() || !STUDIO_KINDS[form]) return false;
+  return env('STUDIO_CONFIRMATIONS').split(',').map(s => s.trim()).includes(form);
+}
+
+function studioPayload(form, fields, input, wantsNewsletter, confirmation) {
+  const sid = String(input.submissionId || '').replace(/[^\w-]/g, '').slice(0, 80);
+  const key = 'web:' + form + ':' + (sid.length >= 8 ? sid : (fields.Email + ':' + Math.floor(Date.now() / 60000)).replace(/[^\w.@-]/g, ''));
+  const payload = {};
+  for (const [k, v] of Object.entries(fields)) if (k !== 'Email' && k !== 'Name') payload[k] = v;
+  const film = fields.Film || null;
+  return {
+    kind: STUDIO_KINDS[form],
+    submission_key: key.slice(0, 200),
+    email: fields.Email,
+    name: fields.Name || null,
+    phone: fields.Phone || fields['Phone number'] || null,
+    city: fields.City || null,
+    website: fields['Resume / Portfolio Link'] || null,
+    film,
+    role: fields.Role || fields['Role Interested In'] || null,
+    payload,
+    consent: {
+      newsletter: form === 'newsletter' || wantsNewsletter,
+      film_updates: form === 'notify' || form === 'coming-soon',
+      source: 'bleuskm.com ' + form + ' form',
+      text: form === 'newsletter' || wantsNewsletter
+        ? 'Opted in to the BLEUSKM Studios newsletter on the bleuskm.com ' + form + ' form.'
+        : (film ? 'Asked for updates on ' + film + ' on bleuskm.com.' : null)
+    },
+    confirmation
+  };
+}
+
+async function mirrorToStudio(body) {
+  const res = await fetch(env('STUDIO_INTAKE_URL'), {
+    method: 'POST',
+    headers: { Authorization: 'Bearer ' + env('STUDIO_INTAKE_SECRET'), 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+    signal: AbortSignal.timeout(8000)
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || !data.ok) throw new Error('studio_intake_' + res.status + '_' + String(data.error || '').replace(/\W/g, ''));
+  return data;
+}
+
 // ── Main entry ───────────────────────────────────────────────────────────────
 // Returns { status, body }. Body never contains Airtable or Brevo data.
 async function processSubmission(input, opts = {}) {
@@ -259,7 +320,20 @@ async function processSubmission(input, opts = {}) {
     return { status: 502, body: { ok: false, error: 'save_failed' } };
   }
 
-  // 2) Brevo follow-ups. Emails go out only when a new record was created.
+  // 2) Studio OS (when switched on). If Studio OS owns this form's
+  // confirmation and records it, the website does not send its own.
+  let handOff = false;
+  if (studioConfigured() && STUDIO_KINDS[input.form]) {
+    const owns = studioOwnsConfirmation(input.form) && !!spec.email && !duplicate;
+    try {
+      await mirrorToStudio(studioPayload(input.form, fields, input, wantsNewsletter, owns ? 'studio' : (spec.email ? 'website' : 'none')));
+      handOff = owns;
+    } catch (e) {
+      console.error('[form-submit] studio mirror failed: ' + e.message);
+    }
+  }
+
+  // 3) Brevo follow-ups. Emails go out only when a new record was created.
   const warnings = [];
   const run = async (label, fn) => { try { await fn(); } catch (e) { warnings.push(label); console.error('[form-submit] ' + label + ': ' + e.message); } };
   const brevoReady = !!ctx.brevoKey;
@@ -270,7 +344,7 @@ async function processSubmission(input, opts = {}) {
       email: fields.Email, attributes: Object.assign({ FIRSTNAME: name }, pick(spec.list.attrs, fields)),
       listIds: [spec.list.id], updateEnabled: true
     }));
-    if (spec.email && !duplicate) {
+    if (spec.email && !duplicate && !handOff) {
       await run('email', () => brevo(ctx, '/smtp/email', {
         sender: SENDERS[spec.email.template], to: [{ email: fields.Email, name: name || fields.Email }],
         templateId: spec.email.template, params: pick(spec.email.params, fields)
@@ -303,4 +377,4 @@ async function processSubmission(input, opts = {}) {
   return { status: 200, body: { ok: true, duplicate, warnings } };
 }
 
-module.exports = { processSubmission, FORMS, TABLES, _sanitize: sanitize };
+module.exports = { processSubmission, FORMS, TABLES, _sanitize: sanitize, _studioPayload: studioPayload, _studioOwnsConfirmation: studioOwnsConfirmation };

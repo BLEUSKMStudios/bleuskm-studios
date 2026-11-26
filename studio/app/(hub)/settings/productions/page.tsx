@@ -11,7 +11,7 @@ export default async function ProductionSettingsList() {
   const { productions } = await hubContext();
   return (
     <>
-      <PageHead title="Productions" lead={<><Link className="link" href="/settings">Settings</Link> · Details, stages, sections and departments</>}>
+      <PageHead title="Productions" lead={<><Link className="link" href="/settings">Settings &amp; Administration</Link> · Details, stages, sections and departments</>}>
         <Link className="btn btn-inline" href="/productions/new">New production</Link>
       </PageHead>
       <section className="panel">

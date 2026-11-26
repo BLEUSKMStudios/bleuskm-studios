@@ -46,10 +46,14 @@ export const SECTION_LABEL: Record<string, string> = {
   locations: "Locations",
   documents: "Documents",
   communications: "Communications",
-  script_breakdown: "Script and Breakdown",
+  script_breakdown: "Scripts & Treatments",
   budget: "Budget",
   set_records: "Set Records",
-  tasks: "Tasks",
+  tasks: "Production Tracking",
+  development: "Development Resources",
+  post: "Post-Production",
+  distribution: "Distribution",
+  contacts: "Contacts",
   settings: "Settings",
 };
 

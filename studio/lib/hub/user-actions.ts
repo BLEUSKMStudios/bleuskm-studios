@@ -1,5 +1,7 @@
 "use server";
 
+import { writeBlockReason } from "./env.ts";
+
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { requireOwner, loadSession } from "@/lib/auth/session";
@@ -27,6 +29,7 @@ async function target(id: string) {
 }
 
 export async function invitePerson(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   await requireOwner(); // checked on every post: a form can be sent from anywhere
   const email = text(form.get("email")).toLowerCase();
   const fullName = text(form.get("full_name"));
@@ -46,6 +49,7 @@ export async function invitePerson(_: ActionState, form: FormData): Promise<Acti
 }
 
 export async function setActive(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   await requireOwner();
   const person = await target(text(form.get("user_id")));
   if (!person) return { error: "That account can't be changed here." };
@@ -66,6 +70,7 @@ export async function setActive(_: ActionState, form: FormData): Promise<ActionS
 }
 
 export async function sendReset(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   await requireOwner();
   const person = await target(text(form.get("user_id")));
   if (!person) return { error: "That account can't be changed here." };
@@ -77,6 +82,7 @@ export async function sendReset(_: ActionState, form: FormData): Promise<ActionS
 }
 
 export async function resendInvite(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   await requireOwner();
   const person = await target(text(form.get("user_id")));
   if (!person) return { error: "That account can't be changed here." };
@@ -118,6 +124,7 @@ async function productionIds(): Promise<Set<string>> {
 }
 
 export async function saveGrid(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   await requireOwner();
   const person = await target(text(form.get("user_id")));
   if (!person) return { error: "That account can't be changed here." };
@@ -129,6 +136,7 @@ export async function saveGrid(_: ActionState, form: FormData): Promise<ActionSt
 }
 
 export async function copyAccess(_: ActionState, form: FormData): Promise<ActionState> {
+  { const blocked = writeBlockReason(); if (blocked) return { error: blocked }; }
   await requireOwner();
   const person = await target(text(form.get("user_id")));
   const source = await target(text(form.get("from_user_id")));

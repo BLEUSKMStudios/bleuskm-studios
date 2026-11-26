@@ -1,4 +1,4 @@
-# Applies Studio OS database migrations to the Supabase STAGING project.
+# Applies Studio OS database migrations to the Supabase project (the live Studio OS database; the environment is named "supabase-staging").
 #
 # Runs when migration files change on main or the Studio OS development
 # branch. On the development branch the deploy job runs only for a commit whose
@@ -14,10 +14,22 @@ on:
     branches:
       - main
       - claude/project-thread-75yn22
+      - claude/project-thread-a60nsn
     paths:
       - "studio/supabase/migrations/**"
       - ".github/workflows/studio-db-staging.yml"
   workflow_dispatch:
+    inputs:
+      final_hand_import:
+        description: "The Final Hand import from Airtable (runs after migrations; dry-run keeps nothing)"
+        type: choice
+        default: none
+        options: [none, dry-run, apply, validate]
+      contacts_import:
+        description: "Contacts import from Brevo and the website's Airtable sign-ups (dry-run keeps nothing; never sends email)"
+        type: choice
+        default: none
+        options: [none, dry-run, apply]
 
 permissions:
   contents: read
@@ -82,3 +94,93 @@ jobs:
         run: supabase db push --yes --db-url "$STAGING_DB_URL"
       - name: Show applied migrations
         run: supabase migration list --db-url "$STAGING_DB_URL"
+
+  # The Final Hand portal import (Airtable -> Studio OS). Only on a manual run
+  # with final_hand_import set, after the migrations above, and again behind
+  # the protected environment. Airtable is only read; nothing is deleted.
+  # Logs show counts only (this repository's logs are public).
+  final-hand-import:
+    name: The Final Hand import (${{ github.event.inputs.final_hand_import }})
+    needs: deploy
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.final_hand_import != 'none'
+    runs-on: ubuntu-latest
+    environment: supabase-staging
+    defaults:
+      run:
+        working-directory: studio
+    env:
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      SUPABASE_PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF }}
+      SUPABASE_POOLER_HOST: aws-1-us-west-2.pooler.supabase.com
+      AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
+      MODE: ${{ github.event.inputs.final_hand_import }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install psql
+        run: sudo apt-get update -q && sudo apt-get install -y -q postgresql-client
+      - name: Check the environment is configured
+        run: |
+          for v in SUPABASE_DB_PASSWORD SUPABASE_PROJECT_REF AIRTABLE_TOKEN; do
+            if [ -z "${!v}" ]; then echo "::error::$v is not set in the supabase-staging environment"; exit 1; fi
+          done
+      - name: Build the database connection
+        run: |
+          pw=$(python3 -c 'import os,urllib.parse;print(urllib.parse.quote(os.environ["SUPABASE_DB_PASSWORD"],safe=""))')
+          url="postgresql://postgres.${SUPABASE_PROJECT_REF}:${pw}@${SUPABASE_POOLER_HOST}:5432/postgres?sslmode=require"
+          echo "::add-mask::$pw"
+          echo "::add-mask::$url"
+          echo "STAGING_DB_URL=$url" >> "$GITHUB_ENV"
+      - name: Read Airtable and build the import (counts only)
+        run: node scripts/import-final-hand.mts --mode="$MODE" --out="$RUNNER_TEMP/final-hand.sql"
+      - name: Run it in one transaction
+        # -o /dev/null keeps query results out of the public log.
+        run: psql "$STAGING_DB_URL" -X -q -v ON_ERROR_STOP=1 -o /dev/null -f "$RUNNER_TEMP/final-hand.sql"
+      - name: Remove the generated file
+        if: always()
+        run: rm -f "$RUNNER_TEMP/final-hand.sql"
+
+  contacts-import:
+    name: Contacts import (${{ github.event.inputs.contacts_import }})
+    needs: deploy
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.contacts_import != 'none'
+    runs-on: ubuntu-latest
+    environment: supabase-staging
+    defaults:
+      run:
+        working-directory: studio
+    env:
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      SUPABASE_PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF }}
+      SUPABASE_POOLER_HOST: aws-1-us-west-2.pooler.supabase.com
+      AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
+      BREVO_KEY: ${{ secrets.BREVO_KEY }}
+      MODE: ${{ github.event.inputs.contacts_import }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install psql
+        run: sudo apt-get update -q && sudo apt-get install -y -q postgresql-client
+      - name: Check the environment is configured
+        run: |
+          for v in SUPABASE_DB_PASSWORD SUPABASE_PROJECT_REF AIRTABLE_TOKEN BREVO_KEY; do
+            if [ -z "${!v}" ]; then echo "::error::$v is not set in the supabase-staging environment"; exit 1; fi
+          done
+      - name: Build the database connection
+        run: |
+          pw=$(python3 -c 'import os,urllib.parse;print(urllib.parse.quote(os.environ["SUPABASE_DB_PASSWORD"],safe=""))')
+          url="postgresql://postgres.${SUPABASE_PROJECT_REF}:${pw}@${SUPABASE_POOLER_HOST}:5432/postgres?sslmode=require"
+          echo "::add-mask::$pw"
+          echo "::add-mask::$url"
+          echo "STAGING_DB_URL=$url" >> "$GITHUB_ENV"
+      - name: Read Brevo and Airtable and build the import (counts only)
+        run: node scripts/import-contacts.mts --mode="$MODE" --out="$RUNNER_TEMP/contacts.sql"
+      - name: Run it in one transaction
+        run: psql "$STAGING_DB_URL" -X -q -v ON_ERROR_STOP=1 -o /dev/null -f "$RUNNER_TEMP/contacts.sql"
+      - name: Remove the generated file
+        if: always()
+        run: rm -f "$RUNNER_TEMP/contacts.sql"
